@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      Student Management
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,12 +9,51 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">Student Management</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="ion-padding">
+    <h2>Add Student by ID</h2>
+    
+    <ion-item>
+      <ion-label position="floating">Enter Student ID</ion-label>
+      <ion-input [(ngModel)]="studentIdInput" type="text"></ion-input>
+    </ion-item>
+    
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+    
+    <ion-button expand="block" (click)="addStudentById()" class="ion-margin-top">
+      Add Student
+    </ion-button>
+    
+    <h2 class="ion-margin-top">Selected Students</h2>
+    
+    <!-- Display selected students -->
+    <ion-list>
+      <ion-item-sliding *ngFor="let student of selectedStudents; let i = index">
+        <ion-item>
+          <ion-label>
+            <h2>{{ student.first_name }} {{ student.last_name }}</h2>
+            <p>Grade: {{ student.grade_level }} | Section: {{ student.section_id }}</p>
+            <p>Birthdate: {{ student.birthdate }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="removeStudent(i)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+
+      <!-- Show message if no students selected -->
+      <ion-item *ngIf="selectedStudents.length === 0">
+        <ion-label class="ion-text-center">
+          No students added. Enter a student ID above to add a student.
+        </ion-label>
+      </ion-item>
+    </ion-list>
   </div>
 </ion-content>

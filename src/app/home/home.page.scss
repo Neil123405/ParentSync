@@ -25,3 +25,17 @@
 #container a {
   text-decoration: none;
 }
+
+.error-message {
+  color: var(--ion-color-danger);
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+ion-list {
+  margin-top: 20px;
+}
+
+h2 {
+  margin-bottom: 10px;
+}
