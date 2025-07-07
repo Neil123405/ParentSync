@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>ParentSync</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="login-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ isRegistering ? 'Create Account' : 'Welcome Back' }}</ion-card-title>
+        <ion-card-subtitle>{{ isRegistering ? 'Sign up for ParentSync' : 'Sign in to your account' }}</ion-card-subtitle>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="floating">Username</ion-label>
+          <ion-input 
+            type="text" 
+            [(ngModel)]="credentials.username"
+            required>
+          </ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label position="floating">Password</ion-label>
+          <ion-input 
+            type="password" 
+            [(ngModel)]="credentials.password"
+            required>
+          </ion-input>
+        </ion-item>
+        
+        <ion-button 
+          expand="block" 
+          (click)="isRegistering ? register() : login()" 
+          [disabled]="!credentials.username || !credentials.password"
+          class="ion-margin-top">
+          {{ isRegistering ? 'Create Account' : 'Login' }}
+        </ion-button>
+        
+        <ion-button 
+          expand="block" 
+          fill="clear" 
+          (click)="toggleMode()"
+          class="ion-margin-top">
+          {{ isRegistering ? 'Already have an account? Login' : 'Need an account? Register' }}
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

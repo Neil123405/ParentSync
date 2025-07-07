@@ -1,15 +1,54 @@
 import { Component, OnInit } from '@angular/core';
-import { Firestore, collection, collectionData, doc, getDoc, addDoc, serverTimestamp} from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { ApiService, User, ParentProfile } from '../services/api.service';
 
-interface Student {
+// Laravel API interfaces
+interface LaravelStudent {
+  student_id: number;
   first_name: string;
   last_name: string;
-  birthdate: string; 
+  birthdate: string;
   grade_level: number;
-  section_id: number;
-  id?: string;
+  section_name: string;
+  grade_name: string;
+}
+
+interface LaravelAnnouncement {
+  announcement_id: number;
+  title: string;
+  content: string;
+  scope: string;
+  created_at: string;
+  student_id?: number;
+}
+
+interface LaravelEvent {
+  event_id: number;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  cost: number;
+  scope: string;
+  created_at: string;
+}
+
+interface ConsentForm {
+  form_id: number;
+  title: string;
+  description: string;
+  deadline: string;
+  signed: boolean;
+}
+
+interface AttendanceRecord {
+  attendance_id: number;
+  date: string;
+  status: string;
+  teacher_first_name: string;
+  teacher_last_name: string;
 }
 
 @Component({
@@ -19,83 +58,244 @@ interface Student {
   standalone: false,
 })
 export class HomePage implements OnInit {
-  // Array to hold selected students
-  selectedStudents: Student[] = [];
+  // Auth properties
+  currentUser: User | null = null;
+  currentProfile: ParentProfile | null = null;
+
+  // Laravel API properties
+  laravelChildren: LaravelStudent[] = [];
+  laravelAnnouncements: LaravelAnnouncement[] = [];
+  laravelEvents: LaravelEvent[] = [];
   
-  // Student ID input
-  studentIdInput: string = '';
+  // Selected child data
+  selectedChild: LaravelStudent | null = null;
+  consentForms: ConsentForm[] = [];
+  attendanceRecords: AttendanceRecord[] = [];
+  attendanceSummary: any = null;
+  studentEvents: LaravelEvent[] = [];
   
-  // Error message
-  errorMessage: string = '';
+  // UI state
+  activeSection: string = '';
+  segmentValue: string = 'children'; // Changed default to children
 
   constructor(
-    private firestore: Firestore,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private loadingController: LoadingController,
+    private apiService: ApiService,
+    private router: Router
   ) {}
 
-  ngOnInit() {}
-
-  // Add a student by ID
-  async addStudentById() {
-    if (!this.studentIdInput) {
-      this.errorMessage = 'Please enter a student ID';
+  ngOnInit() {
+    // Check authentication using ApiService
+    this.currentUser = this.apiService.getCurrentUser();
+    this.currentProfile = this.apiService.getCurrentProfile();
+    
+    if (!this.currentUser) {
+      this.router.navigate(['/login']);
       return;
     }
-    
-    try {
-      const studentId = this.studentIdInput.trim();
-      const studentDocRef = doc(this.firestore, 'students', this.studentIdInput);
-      const studentSnap = await getDoc(studentDocRef);
-      
-      if (studentSnap.exists()) {
-        const studentData = studentSnap.data() as Student;
-        studentData.id = studentId;
-        this.selectedStudents.push(studentData);
-        await this.createParentStudentLink(studentId);
-        
-        this.studentIdInput = ''; // Clear the input
-        this.errorMessage = ''; // Clear any error message
-        this.showSuccessAlert(studentData.first_name, studentData.last_name);
-      } else {
-        this.errorMessage = 'No student found with this ID';
-      }
-    } catch (error) {
-      console.error('Error fetching student:', error);
-      this.errorMessage = 'Error fetching student data';
-    }
-  }
 
-  private async createParentStudentLink(studentId: string) {
-    try {
-      // Get reference to the parentStudentLinks collection
-      const linksCollection = collection(this.firestore, 'parentStudentLinks');
-      
-      // Add new document with student_id field
-      await addDoc(linksCollection, {
-        student_id: studentId,
-        created_at: serverTimestamp(), // Optional: add a timestamp
-        // You can add more fields as needed, like parent_id if available
-      });
-      
-      console.log('Parent-student link created successfully');
-    } catch (error) {
-      console.error('Error creating parent-student link:', error);
-      throw error; // Rethrow to be caught by the calling function
-    }
-  }
-
-  private async showSuccessAlert(firstName: string, lastName: string) {
-    const alert = await this.alertController.create({
-      header: 'Student Added',
-      message: `${firstName} ${lastName} was added successfully and linked to your account.`,
-      buttons: ['OK']
+    // Subscribe to user changes
+    this.apiService.currentUser$.subscribe(user => {
+      this.currentUser = user;
     });
+
+    this.apiService.currentProfile$.subscribe(profile => {
+      this.currentProfile = profile;
+    });
+
+    // Load Laravel data
+    if (this.currentProfile) {
+      this.loadData();
+    }
+  }
+
+  async loadData() {
+    if (!this.currentProfile) return;
+
+    const loading = await this.loadingController.create({
+      message: 'Loading data...',
+    });
+    await loading.present();
+
+    try {
+      // Load children
+      this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.laravelChildren = response.children;
+          }
+        },
+        error: (error) => console.error('Error loading children:', error)
+      });
+
+      // Load announcements
+      this.apiService.getParentAnnouncements(this.currentProfile.parent_id).subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.laravelAnnouncements = response.announcements;
+          }
+        },
+        error: (error) => console.error('Error loading announcements:', error)
+      });
+
+      // Load events for announcements page
+      this.apiService.getParentEvents(this.currentProfile.parent_id).subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.laravelEvents = response.events;
+          }
+        },
+        error: (error) => console.error('Error loading events:', error)
+      });
+
+      await loading.dismiss();
+    } catch (error) {
+      await loading.dismiss();
+      console.error('Error loading data:', error);
+    }
+  }
+
+  async refreshData() {
+    await this.loadData();
+  }
+
+  selectChild(child: LaravelStudent) {
+    this.selectedChild = child;
+    this.activeSection = ''; // Reset active section
+    // Clear previous data
+    this.consentForms = [];
+    this.attendanceRecords = [];
+    this.attendanceSummary = null;
+    this.studentEvents = [];
+  }
+
+  async showSection(section: string) {
+    this.activeSection = section;
     
+    if (!this.selectedChild) return;
+
+    const loading = await this.loadingController.create({
+      message: 'Loading data...',
+    });
+    await loading.present();
+
+    try {
+      switch (section) {
+        case 'consent':
+          await this.loadConsentForms();
+          break;
+        case 'attendance':
+          await this.loadAttendance();
+          break;
+        case 'events':
+          await this.loadStudentEvents();
+          break;
+      }
+      await loading.dismiss();
+    } catch (error) {
+      await loading.dismiss();
+      console.error('Error loading section data:', error);
+    }
+  }
+
+  async loadConsentForms() {
+    // Mock data for now - you can replace with actual API call
+    this.consentForms = [
+      {
+        form_id: 1,
+        title: 'Field Trip Permission',
+        description: 'Permission for upcoming science museum trip',
+        deadline: '2024-12-25',
+        signed: true
+      },
+      {
+        form_id: 2,
+        title: 'Sports Activity Consent',
+        description: 'Consent for participation in school sports activities',
+        deadline: '2024-12-30',
+        signed: false
+      }
+    ];
+  }
+
+  async loadAttendance() {
+    if (!this.selectedChild) return;
+
+    // Load attendance records
+    this.apiService.getStudentAttendance(this.selectedChild.student_id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.attendanceRecords = response.attendance;
+        }
+      },
+      error: (error) => console.error('Error loading attendance:', error)
+    });
+
+    // Load attendance summary
+    this.apiService.getAttendanceSummary(this.selectedChild.student_id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          // Convert array to object for easier access
+          const summary: any = {};
+          response.summary.forEach((item: any) => {
+            summary[item.status.toLowerCase()] = item.count;
+          });
+          this.attendanceSummary = summary;
+        }
+      },
+      error: (error) => console.error('Error loading attendance summary:', error)
+    });
+  }
+
+  async loadStudentEvents() {
+    if (!this.selectedChild) return;
+
+    this.apiService.getStudentEvents(this.selectedChild.student_id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.studentEvents = response.events;
+        }
+      },
+      error: (error) => console.error('Error loading student events:', error)
+    });
+  }
+
+  getAttendanceColor(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'present':
+        return 'success';
+      case 'absent':
+        return 'danger';
+      case 'late':
+        return 'warning';
+      default:
+        return 'medium';
+    }
+  }
+
+  async logout() {
+    const alert = await this.alertController.create({
+      header: 'Logout',
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Logout',
+          handler: () => {
+            this.apiService.logout();
+            this.router.navigate(['/login']);
+          }
+        }
+      ]
+    });
     await alert.present();
   }
 
-  // Remove a student from selected list
-  removeStudent(index: number) {
-    this.selectedStudents.splice(index, 1);
+  switchTab(tab: string) {
+    this.segmentValue = tab;
   }
 }

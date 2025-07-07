@@ -5,13 +5,8 @@ import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { FormsModule } from '@angular/forms'; // <-- Import FormsModule for two-way binding
-
-// Firebase imports
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { environment } from '../environments/environment';
-
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,12 +14,11 @@ import { environment } from '../environments/environment';
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
-    FormsModule, // <-- Add FormsModule here
+    FormsModule,
+    HttpClientModule,
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideFirestore(() => getFirestore()),
   ],
   bootstrap: [AppComponent],
 })
