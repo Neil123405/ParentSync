@@ -15,6 +15,13 @@ export class LoginPage {
     password: ''
   };
 
+  parentInfo = {
+    first_name: '',
+    last_name: '',
+    email: '',
+    contactNo: ''
+  };
+
   isRegistering = false;
 
   constructor(
@@ -25,7 +32,7 @@ export class LoginPage {
   ) {}
 
   async login() {
-    if (!this.credentials.username || !this.credentials.password) {
+    if (!this.isLoginValid()) {
       this.showAlert('Error', 'Please fill in all fields');
       return;
     }
@@ -40,7 +47,7 @@ export class LoginPage {
         await loading.dismiss();
         console.log('Login successful:', response);
         
-        // Store user data using ApiService (which has the setCurrentUser method)
+        // Store user data using ApiService
         this.apiService.setCurrentUser(response.user, response.profile);
         
         // Navigate to home page
@@ -57,15 +64,31 @@ export class LoginPage {
   }
 
   async register() {
-    if (!this.credentials.username || !this.credentials.password) {
-      this.showAlert('Error', 'Please fill in all fields');
+    if (!this.isRegistrationValid()) {
+      this.showAlert('Error', 'Please fill in all required fields');
+      return;
+    }
+
+    // Validate email format
+    if (!this.isValidEmail(this.parentInfo.email)) {
+      this.showAlert('Error', 'Please enter a valid email address');
+      return;
+    }
+
+    // Validate contact number format (Philippine format)
+    if (!this.isValidContactNumber(this.parentInfo.contactNo)) {
+      this.showAlert('Error', 'Please enter a valid Philippine mobile number (09XXXXXXXXX)');
       return;
     }
 
     const userData = {
       username: this.credentials.username,
       password: this.credentials.password,
-      role: 'parent'
+      role: 'parent',
+      first_name: this.parentInfo.first_name,
+      last_name: this.parentInfo.last_name,
+      email: this.parentInfo.email,
+      contactNo: this.parentInfo.contactNo
     };
 
     const loading = await this.loadingController.create({
@@ -80,7 +103,7 @@ export class LoginPage {
         
         this.showAlert('Success', 'Account created successfully! You can now login.');
         this.isRegistering = false;
-        this.credentials = { username: '', password: '' };
+        this.clearForms();
       },
       error: async (error) => {
         await loading.dismiss();
@@ -103,6 +126,42 @@ export class LoginPage {
 
   toggleMode() {
     this.isRegistering = !this.isRegistering;
+    this.clearForms();
+  }
+
+  private clearForms() {
     this.credentials = { username: '', password: '' };
+    this.parentInfo = {
+      first_name: '',
+      last_name: '',
+      email: '',
+      contactNo: ''
+    };
+  }
+
+  isLoginValid(): boolean {
+    return !!(this.credentials.username && this.credentials.password);
+  }
+
+  isRegistrationValid(): boolean {
+    return !!(
+      this.credentials.username && 
+      this.credentials.password && 
+      this.parentInfo.first_name && 
+      this.parentInfo.last_name && 
+      this.parentInfo.email && 
+      this.parentInfo.contactNo
+    );
+  }
+
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  private isValidContactNumber(contactNo: string): boolean {
+    // Philippine mobile number format: 09XXXXXXXXX (11 digits starting with 09)
+    const phoneRegex = /^09\d{9}$/;
+    return phoneRegex.test(contactNo);
   }
 }

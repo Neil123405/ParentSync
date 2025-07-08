@@ -13,6 +13,7 @@
       </ion-card-header>
       
       <ion-card-content>
+        <!-- Login Fields -->
         <ion-item>
           <ion-label position="floating">Username</ion-label>
           <ion-input 
@@ -30,11 +31,51 @@
             required>
           </ion-input>
         </ion-item>
+
+        <!-- Additional Registration Fields -->
+        <div *ngIf="isRegistering">
+          <ion-item>
+            <ion-label position="floating">First Name</ion-label>
+            <ion-input 
+              type="text" 
+              [(ngModel)]="parentInfo.first_name"
+              required>
+            </ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="floating">Last Name</ion-label>
+            <ion-input 
+              type="text" 
+              [(ngModel)]="parentInfo.last_name"
+              required>
+            </ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="floating">Email Address</ion-label>
+            <ion-input 
+              type="email" 
+              [(ngModel)]="parentInfo.email"
+              required>
+            </ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="floating">Contact Number</ion-label>
+            <ion-input 
+              type="tel" 
+              [(ngModel)]="parentInfo.contactNo"
+              placeholder="09XXXXXXXXX"
+              required>
+            </ion-input>
+          </ion-item>
+        </div>
         
         <ion-button 
           expand="block" 
           (click)="isRegistering ? register() : login()" 
-          [disabled]="!credentials.username || !credentials.password"
+          [disabled]="isRegistering ? !isRegistrationValid() : !isLoginValid()"
           class="ion-margin-top">
           {{ isRegistering ? 'Create Account' : 'Login' }}
         </ion-button>
