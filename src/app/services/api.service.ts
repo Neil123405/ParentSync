@@ -21,9 +21,10 @@ export interface ParentProfile {
 }
 
 export interface AuthResponse {
-  message: string;
+  token: string; // <-- Add this line
   user: User;
   profile?: ParentProfile;
+  message?: string;
 }
 
 @Injectable({
@@ -45,9 +46,11 @@ export class ApiService {
   }
 
   private getHeaders() {
+    const token = localStorage.getItem('token');
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Accept': 'application/json'
+      'Accept': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
     });
   }
 
@@ -146,5 +149,25 @@ export class ApiService {
 
   getAttendanceSummary(studentId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/attendance/student/${studentId}/summary`, { headers: this.getHeaders() });
+  }
+
+  linkStudentToParent(parentId: number, studentId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/parent/link-student`, {
+      parent_id: parentId,
+      student_id: studentId
+    }, { headers: this.getHeaders() });
+  }
+
+  // Consent Forms
+  getConsentFormsForStudent(studentId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/consent-forms/student/${studentId}`, { headers: this.getHeaders() });
+  }
+
+  getConsentFormDetail(formId: number, studentId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/consent-forms/${formId}/student/${studentId}`, { headers: this.getHeaders() });
+  }
+
+  signConsentForm(formId: number, studentId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/consent-forms/${formId}/sign`, { student_id: studentId }, { headers: this.getHeaders() });
   }
 }

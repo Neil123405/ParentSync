@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { ApiService, User, ParentProfile } from '../services/api.service';
 
 interface LaravelStudent {
@@ -62,11 +62,14 @@ export class ChildrenPage implements OnInit {
   
   activeSection: string = '';
 
+  newStudentId: number | null = null;
+
   constructor(
     private router: Router,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private toastController: ToastController
   ) { }
 
   ngOnInit() {
@@ -95,7 +98,11 @@ export class ChildrenPage implements OnInit {
   }
 
   async loadData() {
-    if (!this.currentProfile) return;
+    console.log('loadData called');
+    if (!this.currentProfile) {
+    console.log('No currentProfile, returning');
+    return;
+  }
 
     const loading = await this.loadingController.create({
       message: 'Loading children...',
@@ -104,13 +111,20 @@ export class ChildrenPage implements OnInit {
 
     try {
       // Load children
+      console.log('About to call getParentChildren with:', this.currentProfile.parent_id);
       this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
         next: (response) => {
+          console.log('API response for children:', response);
           if (response.success) {
             this.laravelChildren = response.children;
+            console.log('laravelChildren set to:', this.laravelChildren);
+          } else {
+            console.warn('API response did not have success=true:', response);
           }
         },
-        error: (error) => console.error('Error loading children:', error)
+        error: (error) => {
+          console.error('Error loading children:', error);
+        }
       });
 
       await loading.dismiss();
@@ -260,5 +274,47 @@ export class ChildrenPage implements OnInit {
 
   async refreshData() {
     await this.loadData();
+  }
+
+  async addStudent() {
+    if (!this.newStudentId || !this.currentProfile) {
+      this.showToast('Please enter a valid Student ID.');
+      return;
+    }
+
+    const loading = await this.loadingController.create({
+      message: 'Linking student...',
+    });
+    await loading.present();
+
+    this.apiService.linkStudentToParent(this.currentProfile.parent_id, this.newStudentId).subscribe({
+      next: async (response) => {
+        await loading.dismiss();
+        if (response.success) {
+          this.showToast('Student linked successfully!');
+          this.newStudentId = null;
+          this.loadData(); // Refresh children list
+        } else {
+          this.showToast(response.message || 'Failed to link student.');
+        }
+      },
+      error: async (error) => {
+        await loading.dismiss();
+        this.showToast(error.error?.message || 'Failed to link student.');
+      }
+    });
+  }
+
+  async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      color: 'primary'
+    });
+    toast.present();
+  }
+
+  goToConsentForms(child: LaravelStudent) {
+    this.router.navigate(['/consent-forms', child.student_id]);
   }
 }

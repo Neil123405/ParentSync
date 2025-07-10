@@ -47,6 +47,7 @@ export class LoginPage {
         await loading.dismiss();
         console.log('Login successful:', response);
         
+        localStorage.setItem('token', response.token); // Store the token
         // Store user data using ApiService
         this.apiService.setCurrentUser(response.user, response.profile);
         

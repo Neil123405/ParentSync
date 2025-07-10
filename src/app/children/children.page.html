@@ -14,6 +14,7 @@
 
 <ion-content [fullscreen]="true">
   <!-- Horizontal Students Section -->
+  <!-- List of Children -->
   <div class="students-horizontal-section ion-padding-top">
     <h2>Your Children</h2>
     <div class="students-horizontal-container">
@@ -33,137 +34,14 @@
         </div>
       </div>
     </div>
-
-    <ion-item *ngIf="laravelChildren.length === 0">
-      <ion-label class="ion-text-center">
-        No children found. Please contact the school administration.
-      </ion-label>
-    </ion-item>
   </div>
 
-  <!-- Selected Child Actions -->
-  <div *ngIf="selectedChild" class="selected-child-section ion-padding">
-    <h3>{{ selectedChild.first_name }} {{ selectedChild.last_name }}</h3>
-    <div class="action-buttons">
-      <ion-button 
-        expand="block" 
-        fill="outline" 
-        (click)="showSection('consent')"
-        [class.active-button]="activeSection === 'consent'">
-        <ion-icon name="document-text" slot="start"></ion-icon>
-        Consent Forms
-      </ion-button>
-      
-      <ion-button 
-        expand="block" 
-        fill="outline" 
-        (click)="showSection('attendance')"
-        [class.active-button]="activeSection === 'attendance'">
-        <ion-icon name="checkmark-circle" slot="start"></ion-icon>
-        Attendance
-      </ion-button>
-      
-      <ion-button 
-        expand="block" 
-        fill="outline" 
-        (click)="showSection('events')"
-        [class.active-button]="activeSection === 'events'">
-        <ion-icon name="calendar" slot="start"></ion-icon>
-        School Events
-      </ion-button>
-    </div>
-
-    <!-- Consent Forms Section -->
-    <div *ngIf="activeSection === 'consent'" class="content-section">
-      <h4>Consent Forms</h4>
-      <ion-card *ngFor="let form of consentForms" class="consent-card">
-        <ion-card-content>
-          <h5>{{ form.title }}</h5>
-          <p *ngIf="form.description">{{ form.description }}</p>
-          <p><strong>Deadline:</strong> {{ form.deadline | date }}</p>
-          <ion-badge color="success" *ngIf="form.signed">Signed</ion-badge>
-          <ion-badge color="warning" *ngIf="!form.signed">Pending</ion-badge>
-        </ion-card-content>
-      </ion-card>
-
-      <ion-item *ngIf="consentForms.length === 0">
-        <ion-label class="ion-text-center">
-          No consent forms available.
-        </ion-label>
-      </ion-item>
-    </div>
-
-    <!-- Attendance Section -->
-    <div *ngIf="activeSection === 'attendance'" class="content-section">
-      <h4>Attendance Records</h4>
-      
-      <!-- Attendance Summary -->
-      <ion-card class="attendance-summary" *ngIf="attendanceSummary">
-        <ion-card-content>
-          <h5>Attendance Summary</h5>
-          <div class="summary-stats">
-            <div class="stat-item">
-              <span class="stat-number">{{ attendanceSummary.present || 0 }}</span>
-              <span class="stat-label">Present</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-number">{{ attendanceSummary.absent || 0 }}</span>
-              <span class="stat-label">Absent</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-number">{{ attendanceSummary.late || 0 }}</span>
-              <span class="stat-label">Late</span>
-            </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
-
-      <!-- Attendance Records -->
-      <ion-card *ngFor="let record of attendanceRecords" class="attendance-card">
-        <ion-card-content>
-          <div class="attendance-info">
-            <span class="attendance-date">{{ record.date | date }}</span>
-            <ion-badge 
-              [color]="getAttendanceColor(record.status)"
-              class="attendance-status">
-              {{ record.status }}
-            </ion-badge>
-          </div>
-          <p *ngIf="record.teacher_first_name">
-            Marked by: {{ record.teacher_first_name }} {{ record.teacher_last_name }}
-          </p>
-        </ion-card-content>
-      </ion-card>
-
-      <ion-item *ngIf="attendanceRecords.length === 0">
-        <ion-label class="ion-text-center">
-          No attendance records available.
-        </ion-label>
-      </ion-item>
-    </div>
-
-    <!-- School Events Section -->
-    <div *ngIf="activeSection === 'events'" class="content-section">
-      <h4>School Events</h4>
-      <ion-card *ngFor="let event of studentEvents" class="event-card">
-        <ion-card-content>
-          <h5>{{ event.title }}</h5>
-          <p *ngIf="event.description">{{ event.description }}</p>
-          <div class="event-details">
-            <p><strong>Date:</strong> {{ event.date | date }}</p>
-            <p><strong>Time:</strong> {{ event.time }}</p>
-            <p *ngIf="event.location"><strong>Location:</strong> {{ event.location }}</p>
-            <p *ngIf="event.cost > 0"><strong>Cost:</strong> ${{ event.cost }}</p>
-          </div>
-        </ion-card-content>
-      </ion-card>
-
-      <ion-item *ngIf="studentEvents.length === 0">
-        <ion-label class="ion-text-center">
-          No upcoming events.
-        </ion-label>
-      </ion-item>
-    </div>
+  <!-- Consent Forms Button -->
+  <div *ngIf="selectedChild" class="ion-padding">
+    <ion-button expand="block" color="primary" (click)="goToConsentForms(selectedChild)">
+      <ion-icon name="document-text" slot="start"></ion-icon>
+      Consent Forms
+    </ion-button>
   </div>
 
   <!-- Default message when no child is selected -->
@@ -179,4 +57,15 @@
 
   <!-- Add bottom padding -->
   <div style="height: 80px;"></div>
+
+  <!-- Add Student Section -->
+  <div class="add-student-section ion-padding">
+    <ion-item>
+      <ion-label position="floating">Student ID</ion-label>
+      <ion-input type="number" [(ngModel)]="newStudentId"></ion-input>
+    </ion-item>
+    <ion-button expand="block" (click)="addStudent()" color="primary">
+      Add Student
+    </ion-button>
+  </div>
 </ion-content>

@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Consent Form</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="form">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>{{ form.title }}</ion-card-title>
+      <ion-card-subtitle>Deadline: {{ form.deadline | date }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{ form.description }}</p>
+      <ion-button expand="block" color="success" (click)="signForm()" [disabled]="alreadySigned">
+        {{ alreadySigned ? 'Already Signed' : 'Sign Consent Form' }}
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
