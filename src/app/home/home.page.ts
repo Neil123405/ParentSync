@@ -81,8 +81,10 @@ export class HomePage implements OnInit {
       // Load announcements
       this.apiService.getParentAnnouncements(this.currentProfile.parent_id).subscribe({
         next: (response) => {
+          console.log(response);
           if (response.success) {
             this.laravelAnnouncements = response.announcements;
+            console.log(response);
           }
         },
         error: (error) => console.error('Error loading announcements:', error)

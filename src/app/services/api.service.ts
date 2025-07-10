@@ -120,20 +120,20 @@ export class ApiService {
 
   // Announcements
   getParentAnnouncements(parentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/announcements/parent/${parentId}`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/parent/${parentId}/announcements`, { headers: this.getHeaders() });
   }
 
   getStudentAnnouncements(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/announcements/student/${studentId}`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/student/${studentId}/announcements`, { headers: this.getHeaders() });
   }
 
   // Events
   getParentEvents(parentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/events/parent/${parentId}`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/parent/${parentId}/events`, { headers: this.getHeaders() });
   }
 
   getStudentEvents(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/events/student/${studentId}`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/student/${studentId}/events`, { headers: this.getHeaders() });
   }
 
   participateInEvent(eventId: number, studentId: number): Observable<any> {
