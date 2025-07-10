@@ -1,0 +1,30 @@
+<div *ngIf="showFooter" class="global-footer-container">
+  <div class="footer-buttons">
+    <!-- Home Button -->
+    <div 
+      class="footer-tab"
+      [class.active]="isActive('/home')"
+      (click)="navigateTo('/home')">
+      <ion-icon name="home"></ion-icon>
+      <span>Home</span>
+    </div>
+    
+    <!-- Children Button -->
+    <div 
+      class="footer-tab"
+      [class.active]="isActive('/children')"
+      (click)="navigateTo('/children')">
+      <ion-icon name="people"></ion-icon>
+      <span>Children</span>
+    </div>
+
+    <!-- Calendar Button -->
+    <div 
+      class="footer-tab"
+      [class.active]="isActive('/calendar')"
+      (click)="navigateTo('/calendar')">
+      <ion-icon name="calendar"></ion-icon>
+      <span>Calendar</span>
+    </div>
+  </div>
+</div>

@@ -1,18 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { ApiService, User, ParentProfile } from '../services/api.service';
-
-// Laravel API interfaces
-interface LaravelStudent {
-  student_id: number;
-  first_name: string;
-  last_name: string;
-  birthdate: string;
-  grade_level: number;
-  section_name: string;
-  grade_name: string;
-}
 
 interface LaravelAnnouncement {
   announcement_id: number;
@@ -35,22 +24,6 @@ interface LaravelEvent {
   created_at: string;
 }
 
-interface ConsentForm {
-  form_id: number;
-  title: string;
-  description: string;
-  deadline: string;
-  signed: boolean;
-}
-
-interface AttendanceRecord {
-  attendance_id: number;
-  date: string;
-  status: string;
-  teacher_first_name: string;
-  teacher_last_name: string;
-}
-
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -58,35 +31,21 @@ interface AttendanceRecord {
   standalone: false,
 })
 export class HomePage implements OnInit {
-  // Auth properties
   currentUser: User | null = null;
   currentProfile: ParentProfile | null = null;
-
-  // Laravel API properties
-  laravelChildren: LaravelStudent[] = [];
+  
   laravelAnnouncements: LaravelAnnouncement[] = [];
   laravelEvents: LaravelEvent[] = [];
-  
-  // Selected child data
-  selectedChild: LaravelStudent | null = null;
-  consentForms: ConsentForm[] = [];
-  attendanceRecords: AttendanceRecord[] = [];
-  attendanceSummary: any = null;
-  studentEvents: LaravelEvent[] = [];
-  
-  // UI state
-  activeSection: string = '';
-  segmentValue: string = 'children'; // Changed default to children
 
   constructor(
+    private router: Router,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private apiService: ApiService,
-    private router: Router
-  ) {}
+    private apiService: ApiService
+  ) { }
 
   ngOnInit() {
-    // Check authentication using ApiService
+    // Check authentication
     this.currentUser = this.apiService.getCurrentUser();
     this.currentProfile = this.apiService.getCurrentProfile();
     
@@ -104,7 +63,7 @@ export class HomePage implements OnInit {
       this.currentProfile = profile;
     });
 
-    // Load Laravel data
+    // Load data
     if (this.currentProfile) {
       this.loadData();
     }
@@ -114,21 +73,11 @@ export class HomePage implements OnInit {
     if (!this.currentProfile) return;
 
     const loading = await this.loadingController.create({
-      message: 'Loading data...',
+      message: 'Loading announcements...',
     });
     await loading.present();
 
     try {
-      // Load children
-      this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.laravelChildren = response.children;
-          }
-        },
-        error: (error) => console.error('Error loading children:', error)
-      });
-
       // Load announcements
       this.apiService.getParentAnnouncements(this.currentProfile.parent_id).subscribe({
         next: (response) => {
@@ -139,7 +88,7 @@ export class HomePage implements OnInit {
         error: (error) => console.error('Error loading announcements:', error)
       });
 
-      // Load events for announcements page
+      // Load events
       this.apiService.getParentEvents(this.currentProfile.parent_id).subscribe({
         next: (response) => {
           if (response.success) {
@@ -158,120 +107,6 @@ export class HomePage implements OnInit {
 
   async refreshData() {
     await this.loadData();
-  }
-
-  selectChild(child: LaravelStudent) {
-    this.selectedChild = child;
-    this.activeSection = ''; // Reset active section
-    // Clear previous data
-    this.consentForms = [];
-    this.attendanceRecords = [];
-    this.attendanceSummary = null;
-    this.studentEvents = [];
-  }
-
-  async showSection(section: string) {
-    this.activeSection = section;
-    
-    if (!this.selectedChild) return;
-
-    const loading = await this.loadingController.create({
-      message: 'Loading data...',
-    });
-    await loading.present();
-
-    try {
-      switch (section) {
-        case 'consent':
-          await this.loadConsentForms();
-          break;
-        case 'attendance':
-          await this.loadAttendance();
-          break;
-        case 'events':
-          await this.loadStudentEvents();
-          break;
-      }
-      await loading.dismiss();
-    } catch (error) {
-      await loading.dismiss();
-      console.error('Error loading section data:', error);
-    }
-  }
-
-  async loadConsentForms() {
-    // Mock data for now - you can replace with actual API call
-    this.consentForms = [
-      {
-        form_id: 1,
-        title: 'Field Trip Permission',
-        description: 'Permission for upcoming science museum trip',
-        deadline: '2024-12-25',
-        signed: true
-      },
-      {
-        form_id: 2,
-        title: 'Sports Activity Consent',
-        description: 'Consent for participation in school sports activities',
-        deadline: '2024-12-30',
-        signed: false
-      }
-    ];
-  }
-
-  async loadAttendance() {
-    if (!this.selectedChild) return;
-
-    // Load attendance records
-    this.apiService.getStudentAttendance(this.selectedChild.student_id).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.attendanceRecords = response.attendance;
-        }
-      },
-      error: (error) => console.error('Error loading attendance:', error)
-    });
-
-    // Load attendance summary
-    this.apiService.getAttendanceSummary(this.selectedChild.student_id).subscribe({
-      next: (response) => {
-        if (response.success) {
-          // Convert array to object for easier access
-          const summary: any = {};
-          response.summary.forEach((item: any) => {
-            summary[item.status.toLowerCase()] = item.count;
-          });
-          this.attendanceSummary = summary;
-        }
-      },
-      error: (error) => console.error('Error loading attendance summary:', error)
-    });
-  }
-
-  async loadStudentEvents() {
-    if (!this.selectedChild) return;
-
-    this.apiService.getStudentEvents(this.selectedChild.student_id).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.studentEvents = response.events;
-        }
-      },
-      error: (error) => console.error('Error loading student events:', error)
-    });
-  }
-
-  getAttendanceColor(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'present':
-        return 'success';
-      case 'absent':
-        return 'danger';
-      case 'late':
-        return 'warning';
-      default:
-        return 'medium';
-    }
   }
 
   async logout() {
@@ -293,9 +128,5 @@ export class HomePage implements OnInit {
       ]
     });
     await alert.present();
-  }
-
-  switchTab(tab: string) {
-    this.segmentValue = tab;
   }
 }

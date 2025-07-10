@@ -1,0 +1,42 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>ParentSync - Calendar</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshData()">
+        <ion-icon name="refresh" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="calendar-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>School Calendar</ion-card-title>
+        <ion-card-subtitle>Coming Soon</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="placeholder-content">
+          <ion-icon name="calendar-outline" size="large"></ion-icon>
+          <h2>Calendar Feature</h2>
+          <p>The calendar functionality will be implemented here.</p>
+          <p>This will include:</p>
+          <ul>
+            <li>School events and activities</li>
+            <li>Assignment due dates</li>
+            <li>Parent-teacher conferences</li>
+            <li>Holiday schedules</li>
+            <li>Exam dates</li>
+          </ul>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Add bottom padding to prevent content overlap with footer -->
+  <div style="height: 80px;"></div>
+</ion-content>

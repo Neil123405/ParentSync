@@ -50,7 +50,7 @@ export class LoginPage {
         // Store user data using ApiService
         this.apiService.setCurrentUser(response.user, response.profile);
         
-        // Navigate to home page
+        // Navigate to home page (announcements)
         this.router.navigate(['/home']);
       },
       error: async (error) => {
