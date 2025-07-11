@@ -300,7 +300,14 @@ export class ChildrenPage implements OnInit {
       },
       error: async (error) => {
         await loading.dismiss();
-        this.showToast(error.error?.message || 'Failed to link student.');
+        let errorMessage = error.error?.message || 'Failed to link student.';
+        if (error.error?.errors) {
+          const details = Object.entries(error.error.errors)
+            .map(([field, messages]) => `${field}: ${(messages as string[]).join(', ')}`)
+            .join('\n');
+          errorMessage += '\n' + details;
+        }
+        this.showToast(errorMessage);
       }
     });
   }

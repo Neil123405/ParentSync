@@ -109,8 +109,15 @@ export class LoginPage {
       error: async (error) => {
         await loading.dismiss();
         console.error('Registration failed:', error);
-        
-        const errorMessage = error.error?.message || 'Registration failed';
+
+        let errorMessage = error.error?.message || 'Registration failed';
+        // If there are validation errors, append them to the message
+        if (error.error?.errors) {
+          const details = Object.entries(error.error.errors)
+            .map(([field, messages]) => `${field}: ${(messages as string[]).join(', ')}`)
+            .join('<br>');
+          errorMessage += '<br>' + details;
+        }
         this.showAlert('Registration Failed', errorMessage);
       }
     });
