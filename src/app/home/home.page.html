@@ -13,50 +13,98 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding content-with-footer">
-  <!-- Announcements Section -->
-  <h2>Latest Announcements</h2>
-  
-  <ion-card *ngFor="let announcement of laravelAnnouncements" class="announcement-card">
-    <ion-card-content>
-      <h3>{{ announcement.title }}</h3>
-      <p>{{ announcement.content }}</p>
-      <ion-note>
-        <small>{{ announcement.created_at | date:'medium' }}</small>
-      </ion-note>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-item *ngIf="laravelAnnouncements.length === 0">
-    <ion-label class="ion-text-center">
-      No announcements available.
-    </ion-label>
-  </ion-item>
-
-  <!-- Events Section -->
-  <h2 class="ion-margin-top">Upcoming Events</h2>
-  
-  <ion-card *ngFor="let event of laravelEvents" class="event-card">
-    <ion-card-content>
-      <h3>{{ event.title }}</h3>
-      <p *ngIf="event.description">{{ event.description }}</p>
-      <div class="event-details">
-        <p><strong>Date:</strong> {{ event.date | date }}</p>
-        <p><strong>Time:</strong> {{ event.time }}</p>
-        <p *ngIf="event.location"><strong>Location:</strong> {{ event.location }}</p>
-        <p *ngIf="event.cost > 0"><strong>Cost:</strong> ${{ event.cost }}</p>
+  <h2>Announcements</h2>
+  <ng-container *ngFor="let item of mixedFeed">
+    <ion-card
+      *ngIf="item.type === 'announcement'"
+      class="announcement-card"
+      (click)="openAnnouncement(item.data)"
+      style="cursor: pointer; display: flex; align-items: center;"
+    >
+      <div style="margin: 16px; display: flex; align-items: center; justify-content: center;">
+        <ion-icon name="person-circle" style="font-size: 40px; color: #888;"></ion-icon>
       </div>
-    </ion-card-content>
-  </ion-card>
+      <ion-card-content style="flex: 1;">
+        <h3>{{ item.data.title }}</h3>
+        <p>{{ item.data.content }}</p>
+        <ion-note>
+          <small>{{ item.data.created_at | date:'medium' }}</small>
+        </ion-note>
+      </ion-card-content>
+    </ion-card>
+    <ion-card
+      *ngIf="item.type === 'consent'"
+      class="consent-card"
+      (click)="openConsentForm(item.data)"
+      style="cursor: pointer; display: flex; align-items: center;"
+    >
+      <div style="margin: 16px; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;">
+        <ng-container *ngIf="item.data.student?.photo_url; else noPhoto">
+          <img [src]="item.data.student.photo_url"
+               alt="Student Photo"
+               style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" />
+        </ng-container>
+        <ng-template #noPhoto>
+          <ion-icon name="person-circle" style="font-size: 40px; color: #888;"></ion-icon>
+        </ng-template>
+      </div>
+      <ion-card-content style="flex: 1;">
+        <h3>{{ item.data.title }}</h3>
+        <p>{{ item.data.description }}</p>
+        <p>
+          <strong>Student:</strong>
+          {{ item.data.student?.first_name }} {{ item.data.student?.last_name }}
+        </p>
+        <p>
+          <strong>Status:</strong>
+          <span [style.color]="item.data.signed ? 'green' : 'red'">
+            {{ item.data.signed ? 'Signed' : 'Not Signed' }}
+          </span>
+        </p>
+        <ion-note *ngIf="item.data.deadline">
+          <small>Deadline: {{ item.data.deadline | date:'mediumDate' }}</small>
+        </ion-note>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
 
-  <ion-item *ngIf="laravelEvents.length === 0">
+  <ion-item *ngIf="mixedFeed.length === 0">
     <ion-label class="ion-text-center">
-      No upcoming events.
+      No announcements or consent forms available.
     </ion-label>
   </ion-item>
 
-  <!-- Debugging Information - Remove in Production -->
-  <pre>{{ laravelAnnouncements | json }}</pre>
-  <pre>{{ laravelEvents | json }}</pre>
+  <h2>School Events</h2>
+  <ion-list>
+    <ion-item *ngFor="let event of laravelEvents">
+      <div style="margin: 16px; display: flex; align-items: center; justify-content: center;">
+        <ng-container *ngIf="getStudentById(event.student_id)?.photo_url; else eventNoPhoto">
+          <img [src]="getStudentById(event.student_id)?.photo_url"
+               alt="Student Photo"
+               style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" />
+        </ng-container>
+        <ng-template #eventNoPhoto>
+          <ion-icon name="person-circle" style="font-size: 40px; color: #3880ff;"></ion-icon>
+        </ng-template>
+      </div>
+      <ion-label>
+        <h3>{{ event.title }}</h3>
+        <p>{{ event.description }}</p>
+        <ion-note>
+          <small>
+            {{ event.date | date:'mediumDate' }}
+            <span *ngIf="event.time">at {{ event.time }}</span>
+          </small>
+        </ion-note>
+      </ion-label>
+      <ion-button fill="clear" slot="end" (click)="openEventDetail(event)">
+        <ion-icon name="eye" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-item>
+    <ion-item *ngIf="laravelEvents.length === 0">
+      <ion-label>No events available.</ion-label>
+    </ion-item>
+  </ion-list>
 
   <!-- Add bottom padding to prevent content overlap with footer -->
   <div style="height: 80px;"></div>

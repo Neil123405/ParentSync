@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController, ModalController, ActionSheetController } from '@ionic/angular';
 import { ApiService, User, ParentProfile } from '../services/api.service';
+import { AddStudentModalComponent } from '../components/add-student-modal/add-student-modal.component';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 interface LaravelStudent {
   student_id: number;
@@ -11,6 +13,7 @@ interface LaravelStudent {
   grade_level: number;
   section_name: string;
   grade_name: string;
+  photo_url?: string; // <-- Add this line
 }
 
 interface ConsentForm {
@@ -64,12 +67,21 @@ export class ChildrenPage implements OnInit {
 
   newStudentId: number | null = null;
 
+  // Timeline and consent form states
+  showTimeline: { [studentId: number]: boolean } = {};
+  signedConsentForms: { [studentId: number]: any[] } = {};
+
+  showTasks = false;
+  showSchoolEvents = false;
+
   constructor(
     private router: Router,
     private alertController: AlertController,
     private loadingController: LoadingController,
     private apiService: ApiService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private modalController: ModalController,
+    private actionSheetController: ActionSheetController
   ) { }
 
   ngOnInit() {
@@ -137,6 +149,9 @@ export class ChildrenPage implements OnInit {
   selectChild(child: LaravelStudent) {
     this.selectedChild = child;
     this.activeSection = '';
+    this.showTasks = false;
+    // Optionally reset timeline dropdown
+    Object.keys(this.showTimeline).forEach(key => this.showTimeline[+key] = false);
     // Clear previous data
     this.consentForms = [];
     this.attendanceRecords = [];
@@ -144,32 +159,14 @@ export class ChildrenPage implements OnInit {
     this.studentEvents = [];
   }
 
-  async showSection(section: string) {
+  showSection(section: string) {
     this.activeSection = section;
-    
     if (!this.selectedChild) return;
 
-    const loading = await this.loadingController.create({
-      message: 'Loading data...',
-    });
-    await loading.present();
-
-    try {
-      switch (section) {
-        case 'consent':
-          await this.loadConsentForms();
-          break;
-        case 'attendance':
-          await this.loadAttendance();
-          break;
-        case 'events':
-          await this.loadStudentEvents();
-          break;
-      }
-      await loading.dismiss();
-    } catch (error) {
-      await loading.dismiss();
-      console.error('Error loading section data:', error);
+    if (section === 'tasks') {
+      // No need to load consent forms list, just show the button
+    } else if (section === 'timeline') {
+      this.toggleTimeline(this.selectedChild);
     }
   }
 
@@ -221,16 +218,35 @@ export class ChildrenPage implements OnInit {
     });
   }
 
-  async loadStudentEvents() {
-    if (!this.selectedChild) return;
+  toggleSchoolEvents() {
+    this.activeSection = 'tasks'; // Ensure the right section is active
+    this.showSchoolEvents = !this.showSchoolEvents;
+    if (this.showSchoolEvents && this.selectedChild) {
+      this.loadStudentEvents();
+    }
+  }
 
+  async loadStudentEvents() {
+    if (!this.selectedChild) {
+      console.warn('No selectedChild!');
+      return;
+    }
+    console.log('Loading events for student:', this.selectedChild.student_id);
     this.apiService.getStudentEvents(this.selectedChild.student_id).subscribe({
       next: (response) => {
+        console.log('getStudentEvents response:', response);
         if (response.success) {
           this.studentEvents = response.events;
+          console.log('studentEvents set:', this.studentEvents);
+        } else {
+          console.warn('API did not return success=true:', response);
+          this.studentEvents = [];
         }
       },
-      error: (error) => console.error('Error loading student events:', error)
+      error: (error) => {
+        console.error('Error loading student events:', error);
+        this.studentEvents = [];
+      }
     });
   }
 
@@ -323,5 +339,104 @@ export class ChildrenPage implements OnInit {
 
   goToConsentForms(child: LaravelStudent) {
     this.router.navigate(['/consent-forms', child.student_id]);
+  }
+
+  goToSchoolEvents(child: LaravelStudent) {
+    this.router.navigate(['/school-events', child.student_id]);
+  }
+
+  toggleTimeline(child: LaravelStudent) {
+    const studentId = child.student_id;
+    // Toggle only for selected child
+    this.showTimeline[studentId] = !this.showTimeline[studentId];
+
+    if (this.showTimeline[studentId] && !this.signedConsentForms[studentId]) {
+      this.apiService.getSignedConsentForms(studentId).subscribe({
+        next: (response) => {
+          this.signedConsentForms[studentId] = response.forms || [];
+        },
+        error: (err) => {
+          this.signedConsentForms[studentId] = [];
+        }
+      });
+    }
+  }
+
+  // Modal logic
+  async openAddStudentModal() {
+    const modal = await this.modalController.create({
+      component: AddStudentModalComponent // You need to create this component below
+    });
+    modal.onDidDismiss().then((result) => {
+      if (result.data && result.data.studentId) {
+        this.addStudentById(result.data.studentId);
+      }
+    });
+    await modal.present();
+  }
+
+  addStudentById(studentId: number) {
+    if (!studentId || !this.currentProfile) {
+      this.showToast('Please enter a valid Student ID.');
+      return;
+    }
+    this.apiService.linkStudentToParent(this.currentProfile.parent_id, studentId).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.showToast('Student linked successfully!');
+          this.loadData();
+        } else {
+          this.showToast(response.message || 'Failed to link student.');
+        }
+      },
+      error: () => this.showToast('Failed to link student.')
+    });
+  }
+
+  async changeStudentPhoto(student: any) {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Change Photo',
+      buttons: [
+        {
+          text: 'Take Photo',
+          icon: 'camera',
+          handler: () => this.getPhoto(student, CameraSource.Camera)
+        },
+        {
+          text: 'Upload from Device',
+          icon: 'image',
+          handler: () => this.getPhoto(student, CameraSource.Photos)
+        },
+        {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel'
+        }
+      ]
+    });
+    await actionSheet.present();
+  }
+
+  async getPhoto(student: any, source: CameraSource) {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 80,
+        allowEditing: true,
+        resultType: CameraResultType.Base64,
+        source
+      });
+      if (image && image.base64String) {
+        this.apiService.uploadStudentPhoto(student.student_id, image.base64String).subscribe({
+          next: (res) => {
+            student.photo_url = res.photo_url;
+          },
+          error: (err) => {
+            console.error('Upload error:', err);
+          }
+        });
+      }
+    } catch (err) {
+      console.error('Camera error:', err);
+    }
   }
 }

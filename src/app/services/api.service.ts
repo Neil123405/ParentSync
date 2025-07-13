@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Http } from '@capacitor-community/http';
 
 export interface User {
   user_id: number;
@@ -31,7 +32,9 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = environment.apiUrl || 'http://localhost:8000/api';
+  private apiUrl = environment.apiUrl || 'http://192.168.1.17:8000/api';
+  // http://192.168.1.17:8000/api/...
+  // http://localhost:8000/api
   
   // User management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -127,6 +130,10 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/student/${studentId}/announcements`, { headers: this.getHeaders() });
   }
 
+  getAnnouncementDetail(announcementId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/announcements/${announcementId}`, { headers: this.getHeaders() });
+  }
+
   // Events
   getParentEvents(parentId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/parent/${parentId}/events`, { headers: this.getHeaders() });
@@ -140,6 +147,10 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/events/${eventId}/participate`, 
       { student_id: studentId }, 
       { headers: this.getHeaders() });
+  }
+
+  getEventDetail(eventId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/events/${eventId}`, { headers: this.getHeaders() });
   }
 
   // Attendance
@@ -169,5 +180,20 @@ export class ApiService {
 
   signConsentForm(formId: number, studentId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/consent-forms/${formId}/sign`, { student_id: studentId }, { headers: this.getHeaders() });
+  }
+
+  getSignedConsentForms(studentId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/consent-forms/student/${studentId}?signed=1`, { headers: this.getHeaders() });
+  }
+
+  getUnsignedConsentFormsForStudent(studentId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/consent-forms/student/${studentId}/unsigned`, { headers: this.getHeaders() });
+  }
+
+  uploadStudentPhoto(studentId: number, base64Image: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/students/${studentId}/upload-photo`, 
+      { image: base64Image }, 
+      { headers: this.getHeaders() }
+    );
   }
 }

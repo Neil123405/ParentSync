@@ -31,6 +31,18 @@ const routes: Routes = [
     path: 'consent-form-detail/:formId/:studentId',
     loadChildren: () => import('./consent-form-detail/consent-form-detail.module').then( m => m.ConsentFormDetailPageModule)
   },
+  {
+    path: 'school-events/:studentId',
+    loadChildren: () => import('./school-events/school-events.module').then( m => m.SchoolEventsPageModule)
+  },
+  {
+  path: 'school-event-detail/:eventId/:studentId',
+  loadChildren: () => import('./school-events/school-events.module').then( m => m.SchoolEventsPageModule)
+  },
+  {
+    path: 'announcement-detail/:announcementId',
+    loadChildren: () => import('./announcement-detail/announcement-detail.module').then( m => m.AnnouncementDetailPageModule)
+  },
 ];
 
 @NgModule({

@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { AlertController, LoadingController } from '@ionic/angular';
+import { environment } from '../../environments/environment'; // Add this at the top if not already
+
 
 @Component({
   selector: 'app-login',
@@ -62,6 +64,7 @@ export class LoginPage {
         this.showAlert('Login Failed', errorMessage);
       }
     });
+    console.log('API URL:', environment.apiUrl);
   }
 
   async register() {
@@ -121,6 +124,7 @@ export class LoginPage {
         this.showAlert('Registration Failed', errorMessage);
       }
     });
+      console.log('API URL:', environment.apiUrl); // <-- Add this line
   }
 
   private async showAlert(header: string, message: string) {

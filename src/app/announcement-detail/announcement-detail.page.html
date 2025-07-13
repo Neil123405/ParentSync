@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Announcement Detail</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ng-container *ngIf="announcement">
+    <h2>{{ announcement.title }}</h2>
+    <p>{{ announcement.content }}</p>
+    <ion-note>
+      <small>{{ announcement.created_at | date:'medium' }}</small>
+    </ion-note>
+  </ng-container>
+  <ion-label *ngIf="!announcement">Loading...</ion-label>
+</ion-content>
