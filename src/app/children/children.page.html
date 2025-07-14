@@ -42,6 +42,14 @@
           <h4>{{ child.last_name }}</h4>
           <p>Grade {{ child.grade_level }}</p>
           <p>{{ child.section_name }}</p>
+          <div style="margin-top: 8px;">
+            <ion-badge color="primary">
+              {{
+                (consentFormCounts[child.student_id] || 0) +
+                (schoolEventCounts[child.student_id] || 0)
+              }} Items
+            </ion-badge>
+          </div>
         </div>
         <!-- Three-dot menu at top right -->
         <ion-button
@@ -82,15 +90,21 @@
   </div>
 
   <!-- Consent Forms and School Events Buttons under Tasks -->
-  <div *ngIf="activeSection === 'tasks' && selectedChild" class="ion-padding">
-    <ion-button expand="block" color="primary" (click)="goToConsentForms(selectedChild)">
-      <ion-icon name="document-text" slot="start"></ion-icon>
-      Consent Forms
-    </ion-button>
-    <ion-button expand="block" color="tertiary" (click)="goToSchoolEvents(selectedChild)">
-      <ion-icon name="calendar" slot="start"></ion-icon>
-      School Events
-    </ion-button>
+  <div *ngIf="activeSection === 'tasks' && selectedChild" class="ion-padding tasks-buttons">
+    <div class="task-btn-wrapper">
+      <ion-button expand="block" class="task-btn" (click)="goToConsentForms(selectedChild)">
+        <ion-icon name="document-text" slot="start"></ion-icon>
+        Consent Forms
+      </ion-button>
+      <span class="task-badge">{{ consentForms.length }}</span>
+    </div>
+    <div class="task-btn-wrapper">
+      <ion-button expand="block" class="task-btn" (click)="goToSchoolEvents(selectedChild)">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        School Events
+      </ion-button>
+      <span class="task-badge">{{ studentEvents.length }}</span>
+    </div>
   </div>
 
   <!-- Consent Forms Section -->
@@ -145,31 +159,6 @@
         <p>Click on any child to see their consent forms, attendance, and school events.</p>
       </ion-card-content>
     </ion-card>
-  </div>
-
-  <!-- Show this section only when a child is selected -->
-  <div *ngIf="selectedChild" class="selected-child-section ion-padding">
-    <div style="display: flex; align-items: center; gap: 16px;">
-      <div style="margin: 8px 0;">
-        <ng-container *ngIf="selectedChild.photo_url; else noPhoto">
-          <img [src]="selectedChild.photo_url"
-               alt="Student Photo"
-               style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover;" />
-        </ng-container>
-        <ng-template #noPhoto>
-          <ion-icon name="person-circle" style="font-size: 64px; color: #888;"></ion-icon>
-        </ng-template>
-      </div>
-      <div>
-        <h3>{{ selectedChild.first_name }} {{ selectedChild.last_name }}</h3>
-        <p>Grade {{ selectedChild.grade_level }} - {{ selectedChild.section_name }}</p>
-        <!-- Change Photo Button -->
-        <ion-button size="small" (click)="changeStudentPhoto(selectedChild)">
-          <ion-icon name="camera" slot="start"></ion-icon>
-          Change Photo
-        </ion-button>
-      </div>
-    </div>
   </div>
 
   <!-- Add bottom padding -->

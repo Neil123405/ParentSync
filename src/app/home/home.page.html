@@ -15,7 +15,7 @@
 <ion-content [fullscreen]="true" class="ion-padding content-with-footer">
   <h2>Announcements</h2>
   <ng-container *ngFor="let item of mixedFeed">
-    <div style="display: flex; align-items: center; margin-bottom: 16px;">
+    <div style="display: flex; align-items: center; margin-bottom: 6px;">
       <!-- Student photo/icon OUTSIDE the card -->
       <div style="margin-right: 16px; display: flex; align-items: center; justify-content: center;">
         <ng-container *ngIf="getStudentById(item.data.student_id)?.photo_url; else noPhoto">
@@ -36,10 +36,6 @@
       >
         <ion-card-content style="flex: 1;">
           <h3>{{ item.data.title }}</h3>
-          <p>{{ item.data.content }}</p>
-          <ion-note>
-            <small>{{ item.data.created_at | date:'medium' }}</small>
-          </ion-note>
         </ion-card-content>
       </ion-card>
     </div>
@@ -51,30 +47,26 @@
     </ion-label>
   </ion-item>
 
-  <h2>School Events</h2>
+  <h2>What's Coming Up</h2>
   <div *ngFor="let event of laravelEvents" class="event-list-item">
     <ion-card (click)="openEventDetail(event)" class="event-card-custom">
-      <div style="display: flex; align-items: center;">
-        <div style="margin: 16px; display: flex; align-items: center; justify-content: center;">
-          <ng-container *ngIf="getStudentById(event.student_id)?.photo_url; else eventNoPhoto">
-            <img [src]="getStudentById(event.student_id)?.photo_url"
-                 alt="Student Photo"
-                 class="event-student-photo" />
-          </ng-container>
-          <ng-template #eventNoPhoto>
-            <ion-icon name="person-circle" style="font-size: 40px; color: #3880ff;"></ion-icon>
-          </ng-template>
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center;">
+          <div style="margin: 16px; display: flex; align-items: center; justify-content: center;">
+            <ng-container *ngIf="getStudentById(event.student_id)?.photo_url; else eventNoPhoto">
+              <img [src]="getStudentById(event.student_id)?.photo_url"
+                   alt="Student Photo"
+                   class="event-student-photo" />
+            </ng-container>
+            <ng-template #eventNoPhoto>
+              <ion-icon name="person-circle" style="font-size: 40px; color: #3880ff;"></ion-icon>
+            </ng-template>
+          </div>
+          <h3 style="margin: 0;">{{ event.title }}</h3>
         </div>
-        <ion-label>
-          <h3>{{ event.title }}</h3>
-          <p>{{ event.description }}</p>
-          <ion-note>
-            <small>
-              {{ event.date | date:'mediumDate' }}
-              <span *ngIf="event.time">at {{ event.time }}</span>
-            </small>
-          </ion-note>
-        </ion-label>
+        <div style="margin-right: 16px; color: #222; font-weight: 500;">
+          {{ event.date | date:'mediumDate' }}
+        </div>
       </div>
     </ion-card>
   </div>

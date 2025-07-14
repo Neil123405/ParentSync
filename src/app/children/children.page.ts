@@ -72,6 +72,9 @@ export class ChildrenPage implements OnInit {
   showTimeline: { [studentId: number]: boolean } = {};
   signedConsentForms: { [studentId: number]: any[] } = {};
 
+  consentFormCounts: { [studentId: number]: number } = {};
+  schoolEventCounts: { [studentId: number]: number } = {};
+
   showTasks = false;
   showSchoolEvents = false;
 
@@ -131,6 +134,16 @@ export class ChildrenPage implements OnInit {
           if (response.success) {
             this.laravelChildren = response.children;
             console.log('laravelChildren set to:', this.laravelChildren);
+
+            // Fetch counts for each child
+            this.laravelChildren.forEach(child => {
+              this.apiService.getConsentFormsForStudent(child.student_id).subscribe(res => {
+                this.consentFormCounts[child.student_id] = (res.forms || []).length;
+              });
+              this.apiService.getStudentEvents(child.student_id).subscribe(res => {
+                this.schoolEventCounts[child.student_id] = (res.events || []).length;
+              });
+            });
           } else {
             console.warn('API response did not have success=true:', response);
           }
@@ -165,30 +178,25 @@ export class ChildrenPage implements OnInit {
     if (!this.selectedChild) return;
 
     if (section === 'tasks') {
-      // No need to load consent forms list, just show the button
+      this.loadConsentForms();      // <-- Load consent forms
+      this.loadStudentEvents();     // <-- Load events
     } else if (section === 'timeline') {
       this.toggleTimeline(this.selectedChild);
     }
   }
 
   async loadConsentForms() {
-    // Mock data for now
-    this.consentForms = [
-      {
-        form_id: 1,
-        title: 'Field Trip Permission',
-        description: 'Permission for upcoming science museum trip',
-        deadline: '2024-12-25',
-        signed: true
+    if (!this.selectedChild) return;
+    this.apiService.getConsentFormsForStudent(this.selectedChild.student_id).subscribe({
+      next: (response) => {
+        console.log('Consent forms API response:', response);
+        this.consentForms = response.forms || [];
       },
-      {
-        form_id: 2,
-        title: 'Sports Activity Consent',
-        description: 'Consent for participation in school sports activities',
-        deadline: '2024-12-30',
-        signed: false
+      error: (err) => {
+        console.error('Consent forms API error:', err);
+        this.consentForms = [];
       }
-    ];
+    });
   }
 
   async loadAttendance() {

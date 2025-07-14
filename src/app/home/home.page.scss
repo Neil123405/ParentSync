@@ -67,7 +67,7 @@ ion-tab-bar {
 }
 
 .announcement-card {
-  margin-bottom: 16px;
+  margin-bottom: 4px; // or 6px for a tiny gap
 
   h3 {
     margin: 0 0 8px 0;
@@ -277,6 +277,13 @@ ion-tab-bar {
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   cursor: pointer;
+
+  h3 {
+    font-size: 1.17em; // or 22px to match h3, adjust as needed
+    margin: 0 0 8px 0;
+    color: #222 !important;
+    font-weight: 500;
+  }
 }
 
 .event-student-photo {
@@ -285,4 +292,8 @@ ion-tab-bar {
   border-radius: 6px;
   object-fit: cover;
   display: block;
+}
+
+h2, h3, h4, h5, ion-label, .announcement-card h3, .event-card-custom h3 {
+  color: #222 !important;
 }
