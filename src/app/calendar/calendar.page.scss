@@ -1,0 +1,5 @@
+:host ::ng-deep ion-content,
+:host ::ng-deep ion-content .inner-scroll,
+:host ::ng-deep ion-content .scroll-content {
+  background: #23272f !important; /* or any color you want to test */
+}

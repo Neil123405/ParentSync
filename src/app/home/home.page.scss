@@ -109,6 +109,14 @@ ion-tab-bar {
   }
 }
 
+.event-list-item {
+  margin-bottom: 0px;         // just a tiny gap
+  border-radius: 14px;         // rounded corners
+  overflow: hidden;            // ensures children respect border-radius
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04); // optional: subtle shadow for separation
+  --border-width: 0;
+}
+
 // Horizontal Students Layout
 .students-horizontal-section {
   border-bottom: 1px solid var(--ion-color-light);
@@ -261,4 +269,20 @@ ion-tab-bar {
     font-size: 14px;
     color: var(--ion-color-medium);
   }
+}
+
+.event-card-custom {
+  margin: 4px 0 !important;   // just a tiny gap between cards
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  cursor: pointer;
+}
+
+.event-student-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+  display: block;
 }

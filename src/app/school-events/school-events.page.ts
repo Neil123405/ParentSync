@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 
 @Component({
@@ -15,6 +15,7 @@ export class SchoolEventsPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private apiService: ApiService
   ) {}
 
@@ -23,7 +24,11 @@ export class SchoolEventsPage implements OnInit {
     if (this.studentId) {
       this.apiService.getStudentEvents(this.studentId).subscribe({
         next: (res) => {
-          this.events = res.events || [];
+          // Attach studentId to each event
+          this.events = (res.events || []).map((e: any) => ({
+            ...e,
+            student_id: this.studentId
+          }));
           this.loading = false;
         },
         error: () => {
@@ -33,5 +38,10 @@ export class SchoolEventsPage implements OnInit {
     } else {
       this.loading = false;
     }
+  }
+
+  openEventDetail(event: any) {
+    // Pass both event_id and student_id to match your routing
+    this.router.navigate(['/school-event-detail', event.event_id, event.student_id]);
   }
 }

@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Account Settings</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <div class="ion-text-center" style="margin-bottom: 24px;">
+    <ng-container *ngIf="parent?.photo_url; else noPhoto">
+      <img [src]="parent?.photo_url"
+           alt="Parent Photo"
+           style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;" />
+    </ng-container>
+    <ng-template #noPhoto>
+      <ion-icon name="person-circle" style="font-size: 80px; color: #888;"></ion-icon>
+    </ng-template>
+    <ion-button size="small" (click)="changePhoto()">
+      <ion-icon name="camera" slot="start"></ion-icon>
+      Change Photo
+    </ion-button>
+  </div>
+  <ion-item>
+    <ion-label position="floating">Username</ion-label>
+    <ion-input [(ngModel)]="username"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">New Password</ion-label>
+    <ion-input [(ngModel)]="password" type="password"></ion-input>
+  </ion-item>
+  <ion-button expand="block" color="primary" (click)="saveChanges()">
+    Save Changes
+  </ion-button>
+</ion-content>

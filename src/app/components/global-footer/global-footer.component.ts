@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { ModalController } from '@ionic/angular';
+
+import { DashboardMenuModalComponent } from '../dashboard-menu-modal/dashboard-menu-modal.component';
 
 @Component({
   selector: 'app-global-footer',
@@ -12,7 +15,10 @@ export class GlobalFooterComponent implements OnInit {
   currentRoute: string = '';
   showFooter: boolean = true;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private modalController: ModalController
+  ) {}
 
   ngOnInit() {
     // Track current route to highlight active tab
@@ -36,5 +42,14 @@ export class GlobalFooterComponent implements OnInit {
 
   isActive(route: string): boolean {
     return this.currentRoute === route;
+  }
+
+  async openAccountMenu(ev: Event) {
+    ev.stopPropagation();
+    const modal = await this.modalController.create({
+      component: DashboardMenuModalComponent,
+      cssClass: 'dashboard-menu-modal'
+    });
+    await modal.present();
   }
 }

@@ -14,7 +14,6 @@ export class HomePage implements OnInit {
   currentProfile: ParentProfile | null = null;
   
   laravelAnnouncements: any[] = [];
-  consentForms: any[] = [];
   mixedFeed: any[] = [];
   laravelChildren: any[] = [];
   laravelEvents: any[] = [];
@@ -29,108 +28,57 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.currentUser = this.apiService.getCurrentUser();
     this.currentProfile = this.apiService.getCurrentProfile();
-    console.log('ngOnInit: currentUser', this.currentUser);
-    console.log('ngOnInit: currentProfile', this.currentProfile);
 
     if (!this.currentUser) {
-      console.log('No user, redirecting to login');
       this.router.navigate(['/login']);
       return;
     }
 
     this.apiService.currentUser$.subscribe(user => {
       this.currentUser = user;
-      console.log('currentUser$ updated:', user);
     });
 
     this.apiService.currentProfile$.subscribe(profile => {
       this.currentProfile = profile;
-      console.log('currentProfile$ updated:', profile);
     });
 
     if (this.currentProfile) {
-      console.log('Loading children and feed...');
-      this.loadChildrenAndFeed();
-    } else {
-      console.warn('No currentProfile, not loading feed');
+      this.loadAnnouncementsAndEvents();
     }
   }
 
-  loadChildrenAndFeed() {
-    if (!this.currentProfile) {
-      console.warn('loadChildrenAndFeed: No currentProfile');
-      return;
-    }
-    console.log('Calling getParentChildren with', this.currentProfile.parent_id);
-    this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
-      next: (response) => {
-        console.log('getParentChildren response:', response);
-        this.laravelChildren = response.children || [];
-        this.loadAnnouncementsAndConsentForms();
-      }
-    });
-  }
+  loadAnnouncementsAndEvents() {
+    if (!this.currentProfile) return;
 
-  loadAnnouncementsAndConsentForms() {
-    if (!this.currentProfile) {
-      console.warn('loadAnnouncementsAndConsentForms: No currentProfile');
-      return;
-    }
-    console.log('Calling getParentAnnouncements with', this.currentProfile.parent_id);
+    // Announcements
     this.apiService.getParentAnnouncements(this.currentProfile.parent_id).subscribe({
       next: (response) => {
-        console.log('getParentAnnouncements response:', response);
         this.laravelAnnouncements = response.announcements || [];
-        this.tryMixFeed();
+        // Only announcements in mixedFeed
+        this.mixedFeed = this.laravelAnnouncements.map((a: any) => ({
+          type: 'announcement',
+          data: a
+        }));
       }
     });
 
-    // Fetch consent forms for all children
-    this.consentForms = [];
-    let loaded = 0;
-    if (this.laravelChildren.length === 0) {
-      this.tryMixFeed();
-      return;
-    }
-    this.laravelChildren.forEach(child => {
-      this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
-        if (res.forms) {
-          this.consentForms.push(...res.forms.map((f: any) => ({ ...f, student: child })));
-        }
-        loaded++;
-        if (loaded === this.laravelChildren.length) {
-          this.tryMixFeed();
-        }
-      });
-    });
-
-    // Fetch events for the parent
+    // Events for all children
     this.apiService.getParentEvents(this.currentProfile.parent_id).subscribe({
       next: (response) => {
         this.laravelEvents = response.events || [];
       }
     });
-  }
 
-  tryMixFeed() {
-    // Only mix when both arrays are loaded
-    if (this.laravelAnnouncements && this.consentForms) {
-      this.mixedFeed = [];
-      const maxLen = Math.max(this.laravelAnnouncements.length, this.consentForms.length);
-      let a = 0, c = 0;
-      for (let i = 0; i < maxLen; i++) {
-        if (a < this.laravelAnnouncements.length) {
-          this.mixedFeed.push({ type: 'announcement', data: this.laravelAnnouncements[a++] });
-        }
-        if (c < this.consentForms.length) {
-          this.mixedFeed.push({ type: 'consent', data: this.consentForms[c++] });
-        }
+    // Children (for getStudentById)
+    this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
+      next: (response) => {
+        this.laravelChildren = response.children || [];
       }
-    }
+    });
   }
 
   async refreshData() {
-    await this.loadChildrenAndFeed();
+    this.loadAnnouncementsAndEvents();
   }
 
   async logout() {
@@ -152,11 +100,6 @@ export class HomePage implements OnInit {
       ]
     });
     await alert.present();
-  }
-
-  openConsentForm(form: any) {
-    // form.student.student_id is available because you attached student info when mixing
-    this.router.navigate(['/consent-form-detail', form.form_id, form.student.student_id]);
   }
 
   openAnnouncement(announcement: any) {

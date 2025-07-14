@@ -4,6 +4,7 @@ import { AlertController, LoadingController, ToastController, ModalController, A
 import { ApiService, User, ParentProfile } from '../services/api.service';
 import { AddStudentModalComponent } from '../components/add-student-modal/add-student-modal.component';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { ChildOptionsModalComponent } from '../components/child-options-modal/child-options-modal.component';
 
 interface LaravelStudent {
   student_id: number;
@@ -227,24 +228,20 @@ export class ChildrenPage implements OnInit {
   }
 
   async loadStudentEvents() {
-    if (!this.selectedChild) {
-      console.warn('No selectedChild!');
-      return;
-    }
-    console.log('Loading events for student:', this.selectedChild.student_id);
+    if (!this.selectedChild) return;
     this.apiService.getStudentEvents(this.selectedChild.student_id).subscribe({
       next: (response) => {
-        console.log('getStudentEvents response:', response);
         if (response.success) {
-          this.studentEvents = response.events;
-          console.log('studentEvents set:', this.studentEvents);
+          // Attach student_id to each event
+          this.studentEvents = (response.events || []).map((e: any) => ({
+            ...e,
+            student_id: this.selectedChild ? this.selectedChild.student_id : null
+          }));
         } else {
-          console.warn('API did not return success=true:', response);
           this.studentEvents = [];
         }
       },
-      error: (error) => {
-        console.error('Error loading student events:', error);
+      error: () => {
         this.studentEvents = [];
       }
     });
@@ -438,5 +435,19 @@ export class ChildrenPage implements OnInit {
     } catch (err) {
       console.error('Camera error:', err);
     }
+  }
+
+  async openChildOptions(ev: Event, child: LaravelStudent) {
+    ev.stopPropagation(); // Prevents card click event
+    const modal = await this.modalController.create({
+      component: ChildOptionsModalComponent,
+      componentProps: { child }
+    });
+    await modal.present();
+  }
+
+  openEventDetail(event: any) {
+    // Pass both event_id and student_id to match your routing
+    this.router.navigate(['/school-event-detail', event.event_id, event.student_id]);
   }
 }

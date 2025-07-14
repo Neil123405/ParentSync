@@ -43,7 +43,12 @@
 
 /* Ensure content doesn't get hidden behind fixed footer */
 ion-content {
+  background: #474747 !important;
   margin-bottom: 60px;
+}
+
+ion-content, ion-content .inner-scroll, ion-content .scroll-content {
+  background: #20438a !important; /* or your preferred dark color */
 }
 
 /* Global styles for the footer */
@@ -60,4 +65,15 @@ ion-content {
 /* Hide footer on login page */
 .login-page .global-footer {
   display: none !important;
+}
+
+body, ion-app, ion-content, ion-content .inner-scroll, ion-content .scroll-content {
+  background: #23272f !important;
+  background-image: none !important;
+}
+
+
+ion-content {
+  --background: #ececec !important;
+  color: #fff !important;
 }

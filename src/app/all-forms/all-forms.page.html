@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>All Pending Forms</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-spinner *ngIf="loading" class="ion-margin"></ion-spinner>
+  <ion-list *ngIf="!loading">
+    <ion-item *ngFor="let form of allConsentForms">
+      <ion-label>
+        <h3>{{ form.title }}</h3>
+        <p>{{ form.description }}</p>
+        <p>
+          <strong>Student:</strong>
+          {{ form.student?.first_name }} {{ form.student?.last_name }}
+        </p>
+        <ion-note *ngIf="form.deadline">
+          <small>Deadline: {{ form.deadline | date:'mediumDate' }}</small>
+        </ion-note>
+      </ion-label>
+    </ion-item>
+    <ion-item *ngIf="allConsentForms.length === 0">
+      <ion-label>No pending forms found.</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

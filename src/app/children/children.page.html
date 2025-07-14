@@ -24,7 +24,9 @@
         *ngFor="let child of laravelChildren" 
         class="student-card-horizontal"
         [class.active]="selectedChild?.student_id === child.student_id"
-        (click)="selectChild(child)">
+        (click)="selectChild(child)"
+        style="position: relative;"
+      >
         <div class="student-avatar">
           <ng-container *ngIf="child.photo_url; else childNoPhoto">
             <img [src]="child.photo_url"
@@ -41,6 +43,14 @@
           <p>Grade {{ child.grade_level }}</p>
           <p>{{ child.section_name }}</p>
         </div>
+        <!-- Three-dot menu at top right -->
+        <ion-button
+          fill="clear"
+          size="small"
+          style="position: absolute; top: 0; right: 0; z-index: 2;"
+          (click)="openChildOptions($event, child)">
+          <ion-icon name="ellipsis-vertical"></ion-icon>
+        </ion-button>
       </div>
     </div>
   </div>
@@ -115,7 +125,7 @@
 
   <!-- School Events List (dropdown style) -->
   <ion-list *ngIf="showSchoolEvents && activeSection === 'tasks' && selectedChild">
-    <ion-item *ngFor="let event of studentEvents">
+    <ion-item *ngFor="let event of studentEvents" (click)="openEventDetail(event)">
       <ion-label>
         <h2>{{ event.title }}</h2>
         <p>{{ event.date }} - {{ event.location }}</p>

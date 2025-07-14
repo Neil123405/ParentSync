@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Student Details</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="selected-child-section ion-padding">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div style="margin: 8px 0;">
+        <ng-container *ngIf="child.photo_url; else noPhoto">
+          <img [src]="child.photo_url"
+               alt="Student Photo"
+               style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover;" />
+        </ng-container>
+        <ng-template #noPhoto>
+          <ion-icon name="person-circle" style="font-size: 64px; color: #888;"></ion-icon>
+        </ng-template>
+      </div>
+      <div>
+        <h3>{{ child.first_name }} {{ child.last_name }}</h3>
+        <p>Grade {{ child.grade_level }} - {{ child.section_name }}</p>
+      </div>
+    </div>
+    <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 12px;">
+      <ion-button expand="block" color="primary" (click)="changeStudentPhoto(child)">
+        <ion-icon name="camera" slot="start"></ion-icon>
+        Change Photo
+      </ion-button>
+      <ion-button expand="block" color="danger" (click)="unlinkStudent(child)">
+        <ion-icon name="unlink" slot="start"></ion-icon>
+        Unlink Student
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

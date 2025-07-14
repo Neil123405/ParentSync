@@ -19,6 +19,8 @@ export interface ParentProfile {
   last_name: string;
   email: string;
   contactNo: string;
+  photo_url?: string; // <-- Add this line if missing
+  username?: string;  // <-- Add this if you want to edit username
 }
 
 export interface AuthResponse {
@@ -35,6 +37,7 @@ export class ApiService {
   private apiUrl = environment.apiUrl || 'http://192.168.1.17:8000/api';
   // http://192.168.1.17:8000/api/...
   // http://localhost:8000/api
+  // http://192.168.1.4:8000/api
   
   // User management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -169,6 +172,12 @@ export class ApiService {
     }, { headers: this.getHeaders() });
   }
 
+  unlinkStudentFromParent(studentId: number) {
+    return this.http.post(`${this.apiUrl}/parent/unlink-student`, { student_id: studentId }, {
+      headers: this.getHeaders()
+    });
+  }
+
   // Consent Forms
   getConsentFormsForStudent(studentId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/consent-forms/student/${studentId}`, { headers: this.getHeaders() });
@@ -195,5 +204,13 @@ export class ApiService {
       { image: base64Image }, 
       { headers: this.getHeaders() }
     );
+  }
+
+  uploadParentPhoto(base64: string) {
+    return this.http.post(`${this.apiUrl}/parent/upload-photo`, { photo: base64 }, { headers: this.getHeaders() });
+  }
+
+  updateParentAccount(data: { username: string, password?: string }) {
+    return this.http.post(`${this.apiUrl}/parent/update-account`, data, { headers: this.getHeaders() });
   }
 }

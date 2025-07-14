@@ -37,11 +37,23 @@ const routes: Routes = [
   },
   {
   path: 'school-event-detail/:eventId/:studentId',
-  loadChildren: () => import('./school-events/school-events.module').then( m => m.SchoolEventsPageModule)
+  loadChildren: () => import('./event-detail/event-detail.module').then( m => m.EventDetailPageModule)
   },
   {
     path: 'announcement-detail/:announcementId',
     loadChildren: () => import('./announcement-detail/announcement-detail.module').then( m => m.AnnouncementDetailPageModule)
+  },
+  {
+    path: 'all-events',
+    loadChildren: () => import('./all-events/all-events.module').then( m => m.AllEventsPageModule)
+  },
+  {
+    path: 'all-forms',
+    loadChildren: () => import('./all-forms/all-forms.module').then( m => m.AllFormsPageModule)
+  },
+  {
+    path: 'event-detail',
+    loadChildren: () => import('./event-detail/event-detail.module').then( m => m.EventDetailPageModule)
   },
 ];
 
