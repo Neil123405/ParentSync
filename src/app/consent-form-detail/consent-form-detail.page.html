@@ -12,9 +12,19 @@
     </ion-card-header>
     <ion-card-content>
       <p>{{ form.description }}</p>
-      <ion-button expand="block" color="success" (click)="signForm()" [disabled]="alreadySigned">
-        {{ alreadySigned ? 'Already Signed' : 'Sign Consent Form' }}
-      </ion-button>
+
+      <div *ngIf="!alreadySigned">
+        <app-signature-pad (signature)="submitSignature($event)"></app-signature-pad>
+      </div>
+      <div *ngIf="alreadySigned">
+        <div *ngIf="signatureImage; else alreadySignedText">
+          <p>Your Signature:</p>
+          <img [src]="signatureImage" alt="Signature" style="border:1px solid #ccc; border-radius:8px; background:#fff; max-width:100%; height:auto;" />
+        </div>
+        <ng-template #alreadySignedText>
+          <ion-label color="success">Already Signed</ion-label>
+        </ng-template>
+      </div>
     </ion-card-content>
   </ion-card>
 </ion-content>

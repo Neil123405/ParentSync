@@ -30,11 +30,17 @@ export interface AuthResponse {
   message?: string;
 }
 
+interface SignConsentResponse {
+  success: boolean;
+  signatureImage?: string; // Add this line
+  // Add other properties if needed
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = environment.apiUrl || 'http://192.168.1.17:8000/api';
+  private apiUrl = environment.apiUrl || 'http://192.168.1.9:8000/api';
   // http://192.168.1.17:8000/api/...
   // http://localhost:8000/api
   // http://192.168.1.4:8000/api
@@ -187,8 +193,11 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/consent-forms/${formId}/student/${studentId}`, { headers: this.getHeaders() });
   }
 
-  signConsentForm(formId: number, studentId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/consent-forms/${formId}/sign`, { student_id: studentId }, { headers: this.getHeaders() });
+  signConsentForm(formId: number, studentId: number, signatureData: string): Observable<SignConsentResponse> {
+    return this.http.post<SignConsentResponse>(`${this.apiUrl}/consent-forms/${formId}/sign`, {
+      student_id: studentId,
+      signature: signatureData
+    }, { headers: this.getHeaders() });
   }
 
   getSignedConsentForms(studentId: number): Observable<any> {
