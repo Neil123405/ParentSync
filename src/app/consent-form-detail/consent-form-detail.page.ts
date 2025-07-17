@@ -71,6 +71,8 @@ export class ConsentFormDetailPage implements OnInit {
         } else {
           this.signatureImage = signatureData;
         }
+        // Notify that this form was signed
+        this.apiService.consentFormSigned$.next({ formId: this.formId, studentId: this.studentId });
       }
     });
   }

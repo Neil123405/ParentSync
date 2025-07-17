@@ -14,10 +14,11 @@ import { DashboardMenuModalComponent } from '../dashboard-menu-modal/dashboard-m
 export class GlobalFooterComponent implements OnInit {
   currentRoute: string = '';
   showFooter: boolean = true;
+  parent: any;
 
   constructor(
     private router: Router,
-    private modalController: ModalController
+    private modalController: ModalController,
   ) {}
 
   ngOnInit() {
@@ -51,5 +52,8 @@ export class GlobalFooterComponent implements OnInit {
       cssClass: 'dashboard-menu-modal'
     });
     await modal.present();
+    await modal.onDidDismiss();
+    // You need to get a reference to HomePage and call loadAnnouncementsAndEvents()
+    // Or, use an event or shared service to notify HomePage to reload
   }
 }

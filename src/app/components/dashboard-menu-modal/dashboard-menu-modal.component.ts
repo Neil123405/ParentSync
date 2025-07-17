@@ -36,6 +36,10 @@ export class DashboardMenuModalComponent implements OnInit {
       cssClass: 'account-menu-modal'
     });
     await modal.present();
+    await modal.onDidDismiss();
+
+    // Refresh the parent profile after closing the modal
+    this.parent = this.apiService.getCurrentProfile();
   }
 
   openUpcomingEvents() {

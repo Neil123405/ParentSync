@@ -13,13 +13,38 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding content-with-footer">
+  <!-- Announcements Filters -->
+  <div class="filter-row">
+    <ion-item>
+      <ion-label>Student</ion-label>
+      <ion-select [(ngModel)]="announcementStudentFilter" interface="popover">
+        <ion-select-option value="">All</ion-select-option>
+        <ion-select-option *ngFor="let child of laravelChildren" [value]="child.student_id">
+          {{ child.first_name }} {{ child.last_name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Sort</ion-label>
+      <ion-select [(ngModel)]="announcementSort" interface="popover">
+        <ion-select-option value="latest">Latest</ion-select-option>
+        <ion-select-option value="oldest">Oldest</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Show</ion-label>
+      <ion-input type="number" [(ngModel)]="announcementLimit" min="1" style="width: 60px;"></ion-input>
+    </ion-item>
+  </div>
+
   <h2>Announcements</h2>
-  <ng-container *ngFor="let item of mixedFeed">
+  <!-- Announcements List -->
+  <ng-container *ngFor="let announcement of filteredAnnouncements">
     <div style="display: flex; align-items: center; margin-bottom: 6px;">
       <!-- Student photo/icon OUTSIDE the card -->
       <div style="margin-right: 16px; display: flex; align-items: center; justify-content: center;">
-        <ng-container *ngIf="getStudentById(item.data.student_id)?.photo_url; else noPhoto">
-          <img [src]="getStudentById(item.data.student_id)?.photo_url"
+        <ng-container *ngIf="getStudentById(announcement.student_id)?.photo_url; else noPhoto">
+          <img [src]="getStudentById(announcement.student_id)?.photo_url"
                alt="Student Photo"
                style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 0 0 2px #e0e0e0;" />
         </ng-container>
@@ -29,26 +54,50 @@
       </div>
       <!-- The announcement card -->
       <ion-card
-        *ngIf="item.type === 'announcement'"
         class="announcement-card"
-        (click)="openAnnouncement(item.data)"
+        (click)="openAnnouncement(announcement)"
         style="flex: 1; cursor: pointer; display: flex; align-items: center;"
       >
         <ion-card-content style="flex: 1;">
-          <h3>{{ item.data.title }}</h3>
+          <h3>{{ announcement.title }}</h3>
         </ion-card-content>
       </ion-card>
     </div>
   </ng-container>
 
-  <ion-item *ngIf="mixedFeed.length === 0">
+  <ion-item *ngIf="filteredAnnouncements.length === 0">
     <ion-label class="ion-text-center">
-      No announcements or consent forms available.
+      No announcements available.
     </ion-label>
   </ion-item>
 
+  <!-- Events Filters -->
+  <div class="filter-row">
+    <ion-item>
+      <ion-label>Student</ion-label>
+      <ion-select [(ngModel)]="eventStudentFilter" interface="popover">
+        <ion-select-option value="">All</ion-select-option>
+        <ion-select-option *ngFor="let child of laravelChildren" [value]="child.student_id">
+          {{ child.first_name }} {{ child.last_name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Sort</ion-label>
+      <ion-select [(ngModel)]="eventSort" interface="popover">
+        <ion-select-option value="latest">Latest</ion-select-option>
+        <ion-select-option value="oldest">Oldest</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Show</ion-label>
+      <ion-input type="number" [(ngModel)]="eventLimit" min="1" style="width: 60px;"></ion-input>
+    </ion-item>
+  </div>
+
   <h2>What's Coming Up</h2>
-  <div *ngFor="let event of laravelEvents" class="event-list-item">
+  <!-- Events List -->
+  <div *ngFor="let event of filteredEvents" class="event-list-item">
     <ion-card (click)="openEventDetail(event)" class="event-card-custom">
       <div style="display: flex; align-items: center; justify-content: space-between;">
         <div style="display: flex; align-items: center;">
@@ -70,7 +119,7 @@
       </div>
     </ion-card>
   </div>
-  <ion-item *ngIf="laravelEvents.length === 0">
+  <ion-item *ngIf="filteredEvents.length === 0">
     <ion-label>No events available.</ion-label>
   </ion-item>
 

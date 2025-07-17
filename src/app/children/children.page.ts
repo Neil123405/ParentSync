@@ -111,6 +111,18 @@ export class ChildrenPage implements OnInit {
     if (this.currentProfile) {
       this.loadData();
     }
+
+    // Listen for signed consent forms
+    this.apiService.consentFormSigned$.subscribe(({ formId, studentId }) => {
+      // Only update if the selected child matches
+      if (this.selectedChild && this.selectedChild.student_id === studentId) {
+        this.consentForms = this.consentForms.filter(f => f.form_id !== formId);
+      }
+      // Optionally, update the badge/counts as well
+      if (this.consentFormCounts[studentId] !== undefined) {
+        this.consentFormCounts[studentId] = Math.max(0, this.consentFormCounts[studentId] - 1);
+      }
+    });
   }
 
   async loadData() {
@@ -137,7 +149,7 @@ export class ChildrenPage implements OnInit {
 
             // Fetch counts for each child
             this.laravelChildren.forEach(child => {
-              this.apiService.getConsentFormsForStudent(child.student_id).subscribe(res => {
+              this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
                 this.consentFormCounts[child.student_id] = (res.forms || []).length;
               });
               this.apiService.getStudentEvents(child.student_id).subscribe(res => {
@@ -187,13 +199,11 @@ export class ChildrenPage implements OnInit {
 
   async loadConsentForms() {
     if (!this.selectedChild) return;
-    this.apiService.getConsentFormsForStudent(this.selectedChild.student_id).subscribe({
+    this.apiService.getUnsignedConsentFormsForStudent(this.selectedChild.student_id).subscribe({
       next: (response) => {
-        console.log('Consent forms API response:', response);
         this.consentForms = response.forms || [];
       },
       error: (err) => {
-        console.error('Consent forms API error:', err);
         this.consentForms = [];
       }
     });

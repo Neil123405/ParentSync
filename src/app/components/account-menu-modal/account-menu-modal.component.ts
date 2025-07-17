@@ -82,12 +82,55 @@ export class AccountMenuModalComponent implements OnInit {
   }
 
   saveChanges() {
-    this.apiService.updateParentAccount({
-      username: this.username,
-      password: this.password
+    if (!this.parent) return;
+    this.apiService.updateParentAccount(this.parent.parent_id, {
+      first_name: this.parent.first_name,
+      last_name: this.parent.last_name,
+      email: this.parent.email,
+      contactNo: this.parent.contactNo
     }).subscribe({
-      next: () => this.showToast('Account updated!'),
-      error: () => this.showToast('Update failed.')
+      next: (res) => {
+        this.showToast('Account updated!');
+        this.apiService.setCurrentUser(
+          this.apiService.getCurrentUser()!,
+          { ...this.parent, ...(res as any).parent }
+        );
+        if (this.parent) {
+          this.apiService.getParentProfile(this.parent.parent_id).subscribe(profileRes => {
+            this.apiService.setCurrentUser(
+              this.apiService.getCurrentUser()!,
+              profileRes.parent
+            );
+            // Notify others that the profile was updated
+            this.apiService.profileUpdated$.next();
+          });
+        } else {
+          // Notify even if no profile reload
+          this.apiService.profileUpdated$.next();
+        }
+        this.close();
+      },
+      error: (err) => {
+        // Narrow the error type
+        if (
+          err &&
+          typeof err === 'object' &&
+          'status' in err &&
+          err.status === 422 &&
+          err.error &&
+          typeof err.error === 'object' &&
+          'errors' in err.error
+        ) {
+          // Now err.error.errors is safe to use
+          const errors = (err.error as any).errors;
+          const messages = Object.values(err.error.errors)
+  .reduce((acc: string[], val: any) => acc.concat(val), [])
+  .join(' ');
+          this.showToast(messages);
+        } else {
+          this.showToast('Update failed.');
+        }
+      }
     });
   }
 

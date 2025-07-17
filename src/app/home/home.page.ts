@@ -18,6 +18,14 @@ export class HomePage implements OnInit {
   laravelChildren: any[] = [];
   laravelEvents: any[] = [];
 
+  announcementStudentFilter: string = '';
+  announcementSort: string = 'latest';
+  announcementLimit: number = 5;
+
+  eventStudentFilter: string = '';
+  eventSort: string = 'latest';
+  eventLimit: number = 5;
+
   constructor(
     private apiService: ApiService,
     private router: Router,
@@ -40,6 +48,11 @@ export class HomePage implements OnInit {
 
     this.apiService.currentProfile$.subscribe(profile => {
       this.currentProfile = profile;
+    });
+
+    // Subscribe to profile updates
+    this.apiService.profileUpdated$.subscribe(() => {
+      this.loadAnnouncementsAndEvents();
     });
 
     if (this.currentProfile) {
@@ -112,5 +125,37 @@ export class HomePage implements OnInit {
 
   getStudentById(studentId: number) {
     return this.laravelChildren.find(child => child.student_id === studentId);
+  }
+
+  // Filtered Announcements
+  get filteredAnnouncements() {
+    let list = this.laravelAnnouncements;
+    if (this.announcementStudentFilter) {
+      list = list.filter(a => a.student_id == this.announcementStudentFilter);
+    }
+    list = [...list].sort((a, b) => {
+      if (this.announcementSort === 'latest') {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      } else {
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      }
+    });
+    return list.slice(0, this.announcementLimit);
+  }
+
+  // Filtered Events
+  get filteredEvents() {
+    let list = this.laravelEvents;
+    if (this.eventStudentFilter) {
+      list = list.filter(e => e.student_id == this.eventStudentFilter);
+    }
+    list = [...list].sort((a, b) => {
+      if (this.eventSort === 'latest') {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      } else {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      }
+    });
+    return list.slice(0, this.eventLimit);
   }
 }

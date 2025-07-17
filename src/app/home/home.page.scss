@@ -297,3 +297,11 @@ ion-tab-bar {
 h2, h3, h4, h5, ion-label, .announcement-card h3, .event-card-custom h3 {
   color: #222 !important;
 }
+
+/* home.page.scss */
+.filter-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: center;
+}

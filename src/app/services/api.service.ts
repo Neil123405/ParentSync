@@ -1,7 +1,7 @@
 // src/app/services/api.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Http } from '@capacitor-community/http';
 
@@ -51,6 +51,8 @@ export class ApiService {
   
   public currentUser$ = this.currentUserSubject.asObservable();
   public currentProfile$ = this.currentProfileSubject.asObservable();
+  public profileUpdated$ = new Subject<void>();
+  consentFormSigned$ = new Subject<{ formId: number, studentId: number }>();
 
   constructor(private http: HttpClient) {
     // Load stored user data on service initialization
@@ -223,8 +225,8 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/parent/upload-photo`, { photo: base64 }, { headers: this.getHeaders() });
   }
 
-  updateParentAccount(data: { username: string, password?: string }) {
-    return this.http.post(`${this.apiUrl}/parent/update-account`, data, { headers: this.getHeaders() });
+  updateParentAccount(parentId: number, data: { first_name: string; last_name: string; email: string; contactNo: string }) {
+    return this.http.put(`${this.apiUrl}/parent/${parentId}/profile`, data, { headers: this.getHeaders() });
   }
 
   getParentEventsByDate(parentId: number, date: string) {
