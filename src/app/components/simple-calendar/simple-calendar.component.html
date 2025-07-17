@@ -1,0 +1,16 @@
+<div class="calendar-header">
+  <button (click)="prevMonth()">&lt;</button>
+  <span>{{ getMonthName(currentMonth) }} {{ currentYear }}</span>
+  <button (click)="nextMonth()">&gt;</button>
+</div>
+<div class="calendar-grid">
+  <div class="calendar-day-name" *ngFor="let d of ['Su','Mo','Tu','We','Th','Fr','Sa']">{{ d }}</div>
+  <div
+    class="calendar-day"
+    *ngFor="let day of monthDays"
+    [class.event-day]="isEventDay(day)"
+    [class.today]="isToday(day)"
+    (click)="onDayClick(day)">
+    {{ day || '' }}
+  </div>
+</div>

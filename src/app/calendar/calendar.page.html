@@ -35,6 +35,30 @@
         </div>
       </ion-card-content>
     </ion-card>
+
+    <!-- Simple calendar component -->
+    <app-simple-calendar [events]="calendarEvents" (dayClick)="showAllEventsForDay($event)"></app-simple-calendar>
+
+    <!-- Show events for the selected day -->
+    <div *ngIf="selectedDayEvents.length > 0">
+      <h3>Events for {{ selectedDay | date:'mediumDate' }}</h3>
+      <ion-list>
+        <ion-item *ngFor="let event of selectedDayEvents" (click)="openEventDetail(event)">
+          <ion-label>
+            <h2>{{ event.title }}</h2>
+            <p>{{ event.description }}</p>
+            <p><strong>Student ID:</strong> {{ event.student_id }}</p>
+            <p><strong>Time:</strong> {{ event.time }}</p>
+            <p><strong>Location:</strong> {{ event.location }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+    <div *ngIf="selectedDay && selectedDayEvents.length === 0">
+      <ion-card>
+        <ion-card-content>No events for this day.</ion-card-content>
+      </ion-card>
+    </div>
   </div>
 
   <!-- Add bottom padding to prevent content overlap with footer -->

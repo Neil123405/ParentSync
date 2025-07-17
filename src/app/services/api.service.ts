@@ -162,6 +162,10 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/events/${eventId}`, { headers: this.getHeaders() });
   }
 
+  getAllEvents() {
+    return this.http.get<{ events: any[] }>(`${this.apiUrl}/events`);
+  }
+
   // Attendance
   getStudentAttendance(studentId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/attendance/student/${studentId}`, { headers: this.getHeaders() });
@@ -221,5 +225,12 @@ export class ApiService {
 
   updateParentAccount(data: { username: string, password?: string }) {
     return this.http.post(`${this.apiUrl}/parent/update-account`, data, { headers: this.getHeaders() });
+  }
+
+  getParentEventsByDate(parentId: number, date: string) {
+    return this.http.get<{ events: any[] }>(
+      `${this.apiUrl}/parent-events-by-date`,
+      { params: { parent_id: parentId, date } }
+    );
   }
 }

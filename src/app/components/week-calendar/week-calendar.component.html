@@ -1,0 +1,13 @@
+<p>
+  week-calendar works!
+</p>
+<div class="week-calendar">
+  <div
+    class="week-day"
+    *ngFor="let day of weekDays"
+    [class.selected]="isSelected(day)"
+    (click)="onDayClick(day)">
+    <div>{{ day | date:'EEE' }}</div>
+    <div>{{ day | date:'d' }}</div>
+  </div>
+</div>

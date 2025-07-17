@@ -52,8 +52,12 @@ const routes: Routes = [
     loadChildren: () => import('./all-forms/all-forms.module').then( m => m.AllFormsPageModule)
   },
   {
-    path: 'event-detail',
+    path: 'event-detail/:eventId/:studentId',
     loadChildren: () => import('./event-detail/event-detail.module').then( m => m.EventDetailPageModule)
+  },
+  {
+    path: 'day-events/:date',
+    loadChildren: () => import('./day-events/day-events.module').then( m => m.DayEventsPageModule)
   },
 ];
 

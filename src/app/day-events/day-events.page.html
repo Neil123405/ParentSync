@@ -1,0 +1,35 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>day-events</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">day-events</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Week Calendar -->
+  <app-week-calendar
+    [selectedDate]="date"
+    (dayClick)="onWeekDayClick($event)">
+  </app-week-calendar>
+
+  <!-- Events List -->
+  <ion-list *ngIf="events.length > 0">
+    <ion-item *ngFor="let event of events" (click)="openEventDetail(event)">
+      <ion-label>
+        <h2>{{ event.title }}</h2>
+        <p>{{ event.description }}</p>
+        <p><strong>Student ID:</strong> {{ event.student_id }}</p>
+        <p><strong>Time:</strong> {{ event.time }}</p>
+        <p><strong>Location:</strong> {{ event.location }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-card *ngIf="events.length === 0">
+    <ion-card-content>No events for this day.</ion-card-content>
+  </ion-card>
+</ion-content>
