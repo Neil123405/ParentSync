@@ -1,20 +1,34 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/children"></ion-back-button>
+    </ion-buttons>
     <ion-title>School Events</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-spinner *ngIf="loading" class="ion-margin"></ion-spinner>
-  <ion-list *ngIf="!loading">
-    <ion-item *ngFor="let event of events" (click)="openEventDetail(event)">
-      <ion-label>
-        <h2>{{ event.title }}</h2>
-        <p>{{ event.date }} - {{ event.location }}</p>
-      </ion-label>
-    </ion-item>
-    <ion-item *ngIf="events.length === 0">
-      <ion-label>No school events found.</ion-label>
-    </ion-item>
-  </ion-list>
+  <!-- Decorative School Events Button (not clickable) -->
+  <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
+    <ion-button expand="block" class="task-btn giant-btn">
+      <span class="btn-content">
+        <img src="assets/images/events.png" alt="School Events" class="task-img-giant" />
+        <span class="btn-label">School Events</span>
+      </span>
+    </ion-button>
+  </div>
+
+  <div class="events-background-box">
+    <ion-list>
+      <ion-item *ngFor="let event of events" class="event-card" (click)="openEventDetail(event)">
+        <ion-label>
+          <h2>{{ event.title }}</h2>
+          <p>{{ event.date }} - {{ event.location }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="events.length === 0">
+        <ion-label>No school events found.</ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
 </ion-content>

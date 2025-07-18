@@ -27,6 +27,7 @@ export class SchoolEventsPage implements OnInit {
           // Attach studentId to each event
           this.events = (res.events || []).map((e: any) => ({
             ...e,
+            event_id: e.event_id ?? e.id, // Ensure event_id exists
             student_id: this.studentId
           }));
           this.loading = false;
@@ -41,7 +42,7 @@ export class SchoolEventsPage implements OnInit {
   }
 
   openEventDetail(event: any) {
-    // Pass both event_id and student_id to match your routing
+    console.log('Event clicked:', event); // Debug line
     this.router.navigate(['/school-event-detail', event.event_id, event.student_id]);
   }
 }

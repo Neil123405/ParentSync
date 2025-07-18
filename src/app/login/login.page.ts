@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { environment } from '../../environments/environment'; // Add this at the top if not already
-
+import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment'; // Add this at the
   styleUrls: ['./login.page.scss'],
   standalone: false
 })
-export class LoginPage {
+export class LoginPage implements AfterViewInit, OnDestroy {
   credentials = {
     username: '',
     password: ''
@@ -25,6 +25,7 @@ export class LoginPage {
   };
 
   isRegistering = false;
+  private keyboardShowListener: any;
 
   constructor(
     private apiService: ApiService,
@@ -32,6 +33,23 @@ export class LoginPage {
     private loadingController: LoadingController,
     private router: Router
   ) { }
+
+  ngAfterViewInit() {
+    this.keyboardShowListener = Keyboard.addListener('keyboardWillShow', async () => {
+      const el = document.activeElement as HTMLElement;
+      if (el && (el.tagName === 'INPUT' || el.tagName === 'ION-INPUT')) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.keyboardShowListener) {
+      this.keyboardShowListener.remove();
+    }
+  }
 
   async login() {
     if (!this.isLoginValid()) {

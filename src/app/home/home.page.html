@@ -1,20 +1,16 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>ParentSync - Home</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="refreshData()">
-        <ion-icon name="refresh" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button (click)="logout()">
-        <ion-icon name="log-out" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+    <ion-title class="parent-sync-title">ParentSync</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding content-with-footer">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <!-- Announcements Filters -->
-  <div class="filter-row">
+  <div class="filter-row filter-card">
     <ion-item>
       <ion-label>Student</ion-label>
       <ion-select [(ngModel)]="announcementStudentFilter" interface="popover">
@@ -31,9 +27,17 @@
         <ion-select-option value="oldest">Oldest</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item>
-      <ion-label>Show</ion-label>
-      <ion-input type="number" [(ngModel)]="announcementLimit" min="1" style="width: 60px;"></ion-input>
+    <ion-item class="show-input-item">
+      <div class="show-input-container">
+    <ion-label class="show-label">Show</ion-label>
+    <ion-input
+      type="number"
+      [(ngModel)]="announcementLimit"
+      min="1"
+      class="centered-number-input"
+      style="width: 60px;"
+    ></ion-input>
+  </div>
     </ion-item>
   </div>
 
@@ -72,7 +76,7 @@
   </ion-item>
 
   <!-- Events Filters -->
-  <div class="filter-row">
+  <div class="filter-row filter-card">
     <ion-item>
       <ion-label>Student</ion-label>
       <ion-select [(ngModel)]="eventStudentFilter" interface="popover">
@@ -89,9 +93,17 @@
         <ion-select-option value="oldest">Oldest</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item>
-      <ion-label>Show</ion-label>
-      <ion-input type="number" [(ngModel)]="eventLimit" min="1" style="width: 60px;"></ion-input>
+    <ion-item class="show-input-item">
+      <div class="show-input-container">
+      <ion-label class="show-label">Show</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="eventLimit"
+        min="1"
+        class="centered-number-input"
+        style="width: 60px;"
+      ></ion-input>
+    </div>
     </ion-item>
   </div>
 

@@ -51,4 +51,10 @@ export class DashboardMenuModalComponent implements OnInit {
     this.close();
     this.router.navigate(['/all-forms']);
   }
+
+  logout() {
+    this.close(); // Close the modal first
+    this.apiService.logout();
+    this.router.navigate(['/login']);
+  }
 }

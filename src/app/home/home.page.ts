@@ -108,8 +108,11 @@ export class HomePage implements OnInit {
     });
   }
 
-  async refreshData() {
-    this.loadAnnouncementsAndEvents();
+  async refreshData(event?: any) {
+    await this.loadAnnouncementsAndEvents();
+    if (event) {
+      event.target.complete();
+    }
   }
 
   async logout() {

@@ -8,7 +8,7 @@ const config: CapacitorConfig = {
     cleartext: true,
     androidScheme: 'http', // <--- Add this line
     hostname: 'localhost'
-  }
+  },
 };
 
 export default config;

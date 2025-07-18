@@ -1,0 +1,10 @@
+.logout-btn {
+  --ion-color-base: #f44336 !important; /* For Ionic v6+ */
+  background: #f44336 !important;
+  color: #fff !important;
+  border: none;
+}
+.logout-btn ion-card-title,
+.logout-btn ion-card-content {
+  color: #fff !important;
+}

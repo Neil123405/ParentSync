@@ -317,8 +317,11 @@ export class ChildrenPage implements OnInit {
     this.router.navigate(['/home']);
   }
 
-  async refreshData() {
+  async refreshData(event?: any) {
     await this.loadData();
+    if (event) {
+      event.target.complete();
+    }
   }
 
   async addStudent() {

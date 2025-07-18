@@ -2,6 +2,7 @@
 .students-horizontal-section {
   border-bottom: 1px solid var(--ion-color-light);
   margin-bottom: 16px;
+  padding-top: 64px; // Add enough space for the floating button
 }
 
 .students-horizontal-container {
@@ -103,8 +104,9 @@
     position: absolute;
     top: -14px;      // Move badge up, so half is outside
     right: -14px;    // Move badge right, so half is outside
-    background: var(--ion-color-primary);
-    color: #fff;
+    background: #3fff38 !important;
+    color: #222 !important; // for contrast, or keep #fff if preferred
+    border: 3px solid #fff; // Optional: white border for contrast
     border-radius: 50%;
     min-width: 38px;
     height: 38px;
@@ -117,7 +119,6 @@
     padding: 0;
     box-shadow: 0 2px 8px rgba(0,0,0,0.16);
     pointer-events: none;
-    border: 3px solid #fff; // Optional: white border for contrast
   }
 }
 
@@ -303,26 +304,27 @@ ion-tab-bar {
 .task-btn-wrapper {
   position: relative;
   margin-bottom: 8px;
-}
 
-.task-badge {
-  position: absolute;
-  top: 6px;
-  right: 18px;
-  background: var(--ion-color-primary);
-  color: #fff;
-  border-radius: 50%;
-  min-width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 600;
-  z-index: 10;
-  padding: 0 6px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-  pointer-events: none;
+  .task-badge {
+    position: absolute;
+    top: -7px;      // Half of 38px height, so exactly half outside
+    right: -7px;    // Half of 38px width, so exactly half outside
+    background: #3fff38 !important;
+    color: #222 !important; // for contrast, or keep #fff if preferred
+    border: 3px solid #fff; // Optional: white border for contrast
+    border-radius: 50%;
+    min-width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    z-index: 11;
+    padding: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.16);
+    pointer-events: none;
+  }
 }
 
 .btn-content {
@@ -370,4 +372,34 @@ ion-tab-bar {
   font-weight: bold;
   letter-spacing: 1px;
   color: #222;
+}
+
+.floating-add-btn {
+  position: absolute;
+  top: 80px; // was 24px, now below the header
+  right: 24px;
+  z-index: 100;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #3fff38 !important;
+  color: #222 !important;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+.floating-add-btn:active {
+  background: #2ecc2e !important; // Slightly darker for press effect
+}
+
+.children-title {
+  color: black;
+  font-family: 'Exo', sans-serif !important;
+  font-weight: 100;
+  letter-spacing: 1px;
 }

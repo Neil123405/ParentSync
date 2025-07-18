@@ -1,10 +1,23 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
     <ion-title>Event Details</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <!-- Decorative School Events Button (not clickable) -->
+  <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
+    <ion-button expand="block" class="task-btn giant-btn">
+      <span class="btn-content">
+        <img src="assets/images/events.png" alt="School Events" class="task-img-giant" />
+        <span class="btn-label">School Events</span>
+      </span>
+    </ion-button>
+  </div>
+
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">event-detail</ion-title>

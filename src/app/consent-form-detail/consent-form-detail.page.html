@@ -1,10 +1,23 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/children"></ion-back-button>
+    </ion-buttons>
     <ion-title>Consent Form</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content *ngIf="form">
+  <!-- Decorative Consent Forms Button (not clickable) -->
+  <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
+    <ion-button expand="block" class="task-btn giant-btn">
+      <span class="btn-content">
+        <img src="assets/images/consent.png" alt="Consent Forms" class="task-img-giant" />
+        <span class="btn-label">Consent Forms</span>
+      </span>
+    </ion-button>
+  </div>
+
   <ion-card>
     <ion-card-header>
       <ion-card-title>{{ form.title }}</ion-card-title>

@@ -1,24 +1,22 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-buttons slot="end">
-      <ion-button (click)="openAddStudentModal()">
-        <ion-icon name="add"></ion-icon>
-      </ion-button>
-      <ion-button (click)="refreshData()">
-        <ion-icon name="refresh" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button (click)="logout()">
-        <ion-icon name="log-out" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+    <ion-title class="children-title">Children</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Floating Add Button -->
+  <button class="floating-add-btn" (click)="openAddStudentModal()">
+    <ion-icon name="add"></ion-icon>
+  </button>
+
   <!-- Horizontal Students Section -->
   <!-- List of Children -->
   <div class="students-horizontal-section ion-padding-top">
-    <h2>Your Children</h2>
     <div class="students-horizontal-container">
       <div 
         *ngFor="let child of laravelChildren" 
@@ -91,7 +89,9 @@
           <span class="btn-label">Consent Forms</span>
         </span>
       </ion-button>
-      <span class="task-badge">{{ consentForms.length }}</span>
+      <span class="task-badge">
+        {{ consentForms.length }}
+      </span>
     </div>
     <div class="task-btn-wrapper">
       <ion-button expand="block" class="task-btn giant-btn" (click)="goToSchoolEvents(selectedChild)">
@@ -100,7 +100,9 @@
           <span class="btn-label">School Events</span>
         </span>
       </ion-button>
-      <span class="task-badge">{{ studentEvents.length }}</span>
+      <span class="task-badge">
+        {{ studentEvents.length }}
+      </span>
     </div>
   </div>
 
@@ -134,8 +136,17 @@
     </ion-item>
   </ion-list>
 
+<!-- Decorative School Events Button (not clickable) -->
+<div *ngIf="activeSection === 'schoolEvents' && selectedChild" class="task-btn-wrapper" style="margin-bottom: 24px;">
+  <ion-button expand="block" class="task-btn giant-btn" disabled>
+    <span class="btn-content">
+      <img src="assets/images/events.png" alt="School Events" class="task-img-giant" />
+      <span class="btn-label">School Events</span>
+    </span>
+  </ion-button>
+</div>
   <!-- School Events List (dropdown style) -->
-  <ion-list *ngIf="showSchoolEvents && activeSection === 'tasks' && selectedChild">
+  <!-- <ion-list *ngIf="showSchoolEvents && activeSection === 'tasks' && selectedChild">
     <ion-item *ngFor="let event of studentEvents" (click)="openEventDetail(event)">
       <ion-label>
         <h2>{{ event.title }}</h2>
@@ -145,7 +156,7 @@
     <ion-item *ngIf="studentEvents.length === 0">
       <ion-label>No school events found.</ion-label>
     </ion-item>
-  </ion-list>
+  </ion-list> -->
 
   <!-- Default message when no child is selected -->
   <div *ngIf="!selectedChild && laravelChildren.length > 0" class="no-selection ion-padding">
