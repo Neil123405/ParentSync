@@ -80,6 +80,8 @@ export class ChildrenPage implements OnInit {
 
   pendingStudents: LaravelStudent[] = [];
 
+  pressTimer: any = null;
+
   constructor(
     private router: Router,
     private alertController: AlertController,
@@ -478,5 +480,19 @@ export class ChildrenPage implements OnInit {
   openEventDetail(event: any) {
     // Pass both event_id and student_id to match your routing
     this.router.navigate(['/school-event-detail', event.event_id, event.student_id]);
+  }
+
+  startPress(event: Event, child: any) {
+    // Only prevent default for mouse events, not touch events
+    if (event instanceof MouseEvent) {
+      event.preventDefault();
+    }
+    this.pressTimer = setTimeout(() => {
+      this.openChildOptions(event, child);
+    }, 600); // 600ms for long press
+  }
+
+  endPress() {
+    clearTimeout(this.pressTimer);
   }
 }

@@ -25,40 +25,33 @@
         class="student-card-horizontal"
         [class.active]="selectedChild?.student_id === child.student_id"
         (click)="selectChild(child)"
+        (mousedown)="startPress($event, child)"
+        (mouseup)="endPress()"
+        (mouseleave)="endPress()"
+        (touchstart)="startPress($event, child)"
+        (touchend)="endPress()"
         style="position: relative;"
       >
+        <!-- Badge at top right -->
+        <span class="student-badge">
+          {{
+            (consentFormCounts[child.student_id] || 0) +
+            (schoolEventCounts[child.student_id] || 0)
+          }}
+        </span>
         <div class="student-avatar">
           <ng-container *ngIf="child.photo_url; else childNoPhoto">
-            <img [src]="child.photo_url"
-                 alt="Student Photo"
-                 style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" />
+            <img [src]="child.photo_url" alt="Student Photo" />
           </ng-container>
           <ng-template #childNoPhoto>
-            <ion-icon name="person-circle" style="font-size: 40px; color: #888;"></ion-icon>
+            <ion-icon name="person-circle"></ion-icon>
           </ng-template>
         </div>
         <div class="student-info">
           <h4>{{ child.first_name }}</h4>
           <h4>{{ child.last_name }}</h4>
           <p>Grade {{ child.grade_level }}</p>
-          <p>{{ child.section_name }}</p>
-          <div style="margin-top: 8px;">
-            <ion-badge color="primary">
-              {{
-                (consentFormCounts[child.student_id] || 0) +
-                (schoolEventCounts[child.student_id] || 0)
-              }} Items
-            </ion-badge>
-          </div>
         </div>
-        <!-- Three-dot menu at top right -->
-        <ion-button
-          fill="clear"
-          size="small"
-          style="position: absolute; top: 0; right: 0; z-index: 2;"
-          (click)="openChildOptions($event, child)">
-          <ion-icon name="ellipsis-vertical"></ion-icon>
-        </ion-button>
       </div>
     </div>
   </div>
@@ -92,16 +85,20 @@
   <!-- Consent Forms and School Events Buttons under Tasks -->
   <div *ngIf="activeSection === 'tasks' && selectedChild" class="ion-padding tasks-buttons">
     <div class="task-btn-wrapper">
-      <ion-button expand="block" class="task-btn" (click)="goToConsentForms(selectedChild)">
-        <ion-icon name="document-text" slot="start"></ion-icon>
-        Consent Forms
+      <ion-button expand="block" class="task-btn giant-btn" (click)="goToConsentForms(selectedChild)">
+        <span class="btn-content">
+          <img src="assets/images/consent.png" alt="Consent Forms" class="task-img-giant" />
+          <span class="btn-label">Consent Forms</span>
+        </span>
       </ion-button>
       <span class="task-badge">{{ consentForms.length }}</span>
     </div>
     <div class="task-btn-wrapper">
-      <ion-button expand="block" class="task-btn" (click)="goToSchoolEvents(selectedChild)">
-        <ion-icon name="calendar" slot="start"></ion-icon>
-        School Events
+      <ion-button expand="block" class="task-btn giant-btn" (click)="goToSchoolEvents(selectedChild)">
+        <span class="btn-content">
+          <img src="assets/images/events.png" alt="School Events" class="task-img-giant" />
+          <span class="btn-label">School Events</span>
+        </span>
       </ion-button>
       <span class="task-badge">{{ studentEvents.length }}</span>
     </div>
