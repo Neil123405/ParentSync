@@ -12,7 +12,7 @@ import { ApiService, User, ParentProfile } from '../services/api.service';
 export class HomePage implements OnInit {
   currentUser: User | null = null;
   currentProfile: ParentProfile | null = null;
-  
+
   laravelAnnouncements: any[] = [];
   mixedFeed: any[] = [];
   laravelChildren: any[] = [];
@@ -31,30 +31,48 @@ export class HomePage implements OnInit {
     private router: Router,
     private alertController: AlertController,
     private loadingController: LoadingController
-  ) { }
+  ) {
+    console.log('HomePage constructor');
+  }
 
   ngOnInit() {
-    this.currentUser = this.apiService.getCurrentUser();
-    this.currentProfile = this.apiService.getCurrentProfile();
+    // this.currentUser = this.apiService.getCurrentUser();
+    // this.currentProfile = this.apiService.getCurrentProfile();
+    // console.log('currentProfile in HomePage ngOnInit:', this.currentProfile);
 
-    if (!this.currentUser) {
-      this.router.navigate(['/login']);
-      return;
-    }
+    // if (!this.currentUser) {
+    //   this.router.navigate(['/login']);
+    //   return;
+    // }
 
     this.apiService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-    });
+    this.currentUser = user;
+    if (!this.currentUser) {
+      this.router.navigate(['/login']);
+    }
+  });
 
-    this.apiService.currentProfile$.subscribe(profile => {
-      this.currentProfile = profile;
-    });
-
-    // Subscribe to profile updates
-    this.apiService.profileUpdated$.subscribe(() => {
+  this.apiService.currentProfile$.subscribe(profile => {
+    console.log('HomePage currentProfile$ subscription:', profile);
+    this.currentProfile = profile;
+    if (this.currentProfile) {
       this.loadAnnouncementsAndEvents();
-    });
+    }
+  });
 
+  // Listen for profile updates (e.g., after editing profile)
+  this.apiService.profileUpdated$.subscribe(() => {
+    if (this.currentProfile) {
+      this.loadAnnouncementsAndEvents();
+    }
+  });
+    // if (this.currentProfile) {
+    //   this.loadAnnouncementsAndEvents();
+    // }
+  }
+
+  ionViewWillEnter() {
+    // Refresh data every time Home is shown
     if (this.currentProfile) {
       this.loadAnnouncementsAndEvents();
     }

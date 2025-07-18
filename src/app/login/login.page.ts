@@ -31,7 +31,7 @@ export class LoginPage {
     private alertController: AlertController,
     private loadingController: LoadingController,
     private router: Router
-  ) {}
+  ) { }
 
   async login() {
     if (!this.isLoginValid()) {
@@ -48,18 +48,29 @@ export class LoginPage {
       next: async (response) => {
         await loading.dismiss();
         console.log('Login successful:', response);
-        
+
         localStorage.setItem('token', response.token); // Store the token
         // Store user data using ApiService
         this.apiService.setCurrentUser(response.user, response.profile);
-        
-        // Navigate to home page (announcements)
+        console.log('After setCurrentUser:', {
+  user: this.apiService.getCurrentUser(),
+  profile: this.apiService.getCurrentProfile()
+});
+
+        // Wait for currentProfile$ to emit a non-null value before navigating
+        // const sub = this.apiService.currentProfile$.subscribe(profile => {
+        //   if (profile) {
+        //     sub.unsubscribe();
+        //     this.router.navigate(['/home']);
+        //   }
+        // });
+
         this.router.navigate(['/home']);
       },
       error: async (error) => {
         await loading.dismiss();
         console.error('Login failed:', error);
-        
+
         const errorMessage = error.error?.message || 'Invalid credentials';
         this.showAlert('Login Failed', errorMessage);
       }
@@ -104,7 +115,7 @@ export class LoginPage {
       next: async (response) => {
         await loading.dismiss();
         console.log('Registration successful:', response);
-        
+
         this.showAlert('Success', 'Account created successfully! You can now login.');
         this.isRegistering = false;
         this.clearForms();
@@ -124,7 +135,7 @@ export class LoginPage {
         this.showAlert('Registration Failed', errorMessage);
       }
     });
-      console.log('API URL:', environment.apiUrl); // <-- Add this line
+    console.log('API URL:', environment.apiUrl); // <-- Add this line
   }
 
   private async showAlert(header: string, message: string) {
@@ -157,11 +168,11 @@ export class LoginPage {
 
   isRegistrationValid(): boolean {
     return !!(
-      this.credentials.username && 
-      this.credentials.password && 
-      this.parentInfo.first_name && 
-      this.parentInfo.last_name && 
-      this.parentInfo.email && 
+      this.credentials.username &&
+      this.credentials.password &&
+      this.parentInfo.first_name &&
+      this.parentInfo.last_name &&
+      this.parentInfo.email &&
       this.parentInfo.contactNo
     );
   }

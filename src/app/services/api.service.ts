@@ -83,9 +83,12 @@ export class ApiService {
     this.currentUserSubject.next(user);
     
     if (profile) {
-      localStorage.setItem('currentProfile', JSON.stringify(profile));
-      this.currentProfileSubject.next(profile);
-    }
+    localStorage.setItem('currentProfile', JSON.stringify(profile));
+    this.currentProfileSubject.next(profile);
+    console.log('setCurrentUser: profile set', profile);
+  } else {
+    console.log('setCurrentUser: profile is null or undefined');
+  }
   }
 
   getCurrentUser(): User | null {
@@ -116,6 +119,8 @@ export class ApiService {
     }
     if (storedProfile) {
       this.currentProfileSubject.next(JSON.parse(storedProfile));
+      
+    console.log('loadStoredUser: loaded profile', JSON.parse(storedProfile));
     }
   }
 
@@ -235,4 +240,8 @@ export class ApiService {
       { params: { parent_id: parentId, date } }
     );
   }
+
+  getPendingChildren(parentId: number): Observable<any> {
+  return this.http.get(`${this.apiUrl}/parent/${parentId}/pending-children`, { headers: this.getHeaders() });
+}
 }

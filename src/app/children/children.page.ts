@@ -78,6 +78,8 @@ export class ChildrenPage implements OnInit {
   showTasks = false;
   showSchoolEvents = false;
 
+  pendingStudents: LaravelStudent[] = [];
+
   constructor(
     private router: Router,
     private alertController: AlertController,
@@ -162,6 +164,16 @@ export class ChildrenPage implements OnInit {
         },
         error: (error) => {
           console.error('Error loading children:', error);
+        }
+      });
+
+      // Load pending students
+      this.apiService.getPendingChildren(this.currentProfile.parent_id).subscribe({
+        next: (res) => {
+          this.pendingStudents = res.pending || [];
+        },
+        error: () => {
+          this.pendingStudents = [];
         }
       });
 
@@ -399,7 +411,6 @@ export class ChildrenPage implements OnInit {
       next: (response) => {
         if (response.success) {
           this.showToast('Student linked successfully!');
-          this.loadData();
         } else {
           this.showToast(response.message || 'Failed to link student.');
         }

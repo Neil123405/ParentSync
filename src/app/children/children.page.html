@@ -161,6 +161,17 @@
     </ion-card>
   </div>
 
+  <!-- Pending Students Section -->
+  <ion-list *ngIf="pendingStudents.length">
+    <ion-list-header color="warning">Pending Students</ion-list-header>
+    <ion-item *ngFor="let student of pendingStudents">
+      <ion-label>
+        {{ student.first_name }} {{ student.last_name }} (ID: {{ student.student_id }})
+      </ion-label>
+      <ion-note slot="end" color="warning">Pending Verification</ion-note>
+    </ion-item>
+  </ion-list>
+
   <!-- Add bottom padding -->
   <div style="height: 80px;"></div>
   
