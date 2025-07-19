@@ -10,6 +10,10 @@ import { CalendarPage } from './calendar.page';
 
 import { SharedModule } from '../shared/shared.module';
 
+import { CalendarModule } from 'angular-calendar';
+import { DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+
 
 @NgModule({
   imports: [
@@ -18,6 +22,7 @@ import { SharedModule } from '../shared/shared.module';
     IonicModule,
     CalendarPageRoutingModule,
     SharedModule, // <-- Add this
+    CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
   ],
   declarations: [CalendarPage]
 })

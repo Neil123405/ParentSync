@@ -13,33 +13,28 @@
 </ion-header> -->
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <div class="calendar-container">
-
-    <!-- Simple calendar component -->
-    <app-simple-calendar [events]="calendarEvents" (dayClick)="showAllEventsForDay($event)"></app-simple-calendar>
-
-    <!-- Show events for the selected day -->
-    <div *ngIf="selectedDayEvents.length > 0">
-      <h3>Events for {{ selectedDay | date:'mediumDate' }}</h3>
-      <ion-list>
-        <ion-item *ngFor="let event of selectedDayEvents" (click)="openEventDetail(event)">
-          <ion-label>
-            <h2>{{ event.title }}</h2>
-            <p>{{ event.description }}</p>
-            <p><strong>Student:</strong> {{ event.first_name }} {{ event.last_name }}</p>
-            <p><strong>Time:</strong> {{ event.time }}</p>
-            <p><strong>Location:</strong> {{ event.location }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </div>
-    <div *ngIf="selectedDay && selectedDayEvents.length === 0">
-      <ion-card>
-        <ion-card-content>No events for this day.</ion-card-content>
-      </ion-card>
-    </div>
-  </div>
-
-  <!-- Add bottom padding to prevent content overlap with footer -->
+   <ion-card>
+    <ion-card-header>
+      <ion-card-title>School Calendar</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+        <ion-button fill="clear" (click)="previousMonth()">
+          <ion-icon name="chevron-back-outline"></ion-icon>
+        </ion-button>
+        <span style="font-weight: bold; margin: 0 16px;">
+          {{ viewDate | date: 'MMMM yyyy' }}
+        </span>
+        <ion-button fill="clear" (click)="nextMonth()">
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+      <mwl-calendar-month-view
+        [viewDate]="viewDate"
+        [events]="calendarEvents"
+        (dayClicked)="dayClicked($event.day)">
+      </mwl-calendar-month-view>
+    </ion-card-content>
+  </ion-card>
   <div style="height: 80px;"></div>
 </ion-content>
