@@ -13,28 +13,103 @@
 </ion-header> -->
 
 <ion-content [fullscreen]="true" class="ion-padding">
-   <ion-card>
+  <ion-card>
     <ion-card-header>
       <ion-card-title>School Calendar</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+      <div class="calendar-nav">
         <ion-button fill="clear" (click)="previousMonth()">
           <ion-icon name="chevron-back-outline"></ion-icon>
         </ion-button>
-        <span style="font-weight: bold; margin: 0 16px;">
-          {{ viewDate | date: 'MMMM yyyy' }}
+        <span class="calendar-month-label">
+          {{ monthNames[currentMonth] }} {{ currentYear }}
         </span>
         <ion-button fill="clear" (click)="nextMonth()">
           <ion-icon name="chevron-forward-outline"></ion-icon>
         </ion-button>
       </div>
-      <mwl-calendar-month-view
-        [viewDate]="viewDate"
-        [events]="calendarEvents"
-        (dayClicked)="dayClicked($event.day)">
-      </mwl-calendar-month-view>
+      <div class="calendar-view-wrapper">
+        <div class="calendar-week-row">
+          <span class="calendar-week-name" *ngFor="let d of weekDays">{{ d }}</span>
+        </div>
+        <div class="calendar-days-grid">
+          <ng-container *ngFor="let week of calendarGrid">
+            <div class="calendar-week">
+              <span
+                *ngFor="let day of week"
+                class="calendar-day"
+                [class.today]="isToday(day)"
+                [class.selected]="isSelected(day)"
+                [class.other-month]="!day?.inMonth"
+                [class.no-events]="!day?.events?.length && !day?.forms?.length"
+                (click)="(day?.events?.length || day?.forms?.length) ? dayClicked(day) : null">
+                {{ day?.date ? day.date.getDate() : '' }}
+                <span *ngIf="day?.events?.length" class="event-dot"></span>
+                <span *ngIf="day?.forms?.length" class="form-dot"></span>
+              </span>
+            </div>
+          </ng-container>
+        </div>
+      </div>
     </ion-card-content>
   </ion-card>
+
+  <!-- Toggle Buttons -->
+  <div class="ion-margin-bottom" style="display: flex; gap: 8px; justify-content: center;">
+    <ion-button [fill]="showUpcomingEvents ? 'solid' : 'outline'" (click)="showUpcomingEvents = true">
+      Upcoming Events
+    </ion-button>
+    <ion-button [fill]="!showUpcomingEvents ? 'solid' : 'outline'" (click)="showUpcomingEvents = false">
+      Upcoming Consent Forms
+    </ion-button>
+  </div>
+
+  <!-- Upcoming Events List -->
+  <div *ngIf="showUpcomingEvents && upcomingEvents.length > 0" class="upcoming-reminders ion-margin-bottom">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Upcoming Events</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let event of upcomingEvents" (click)="openEventDetail(event)" button detail>
+            <ion-label>
+              <h3>{{ event.title }}</h3>
+              <p>
+                {{ event.start | date:'mediumDate' }}
+                <span *ngIf="event.meta?.description">- {{ event.meta.description }}</span>
+              </p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Upcoming Consent Forms List -->
+  <div *ngIf="!showUpcomingEvents && upcomingConsentForms.length > 0" class="upcoming-reminders ion-margin-bottom">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Upcoming Consent Forms</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let form of upcomingConsentForms" (click)="openConsentFormDetail(form)" button detail>
+            <ion-label>
+              <h3>{{ form.title }}</h3>
+              <p>
+                Deadline: {{ form.deadline | date:'mediumDate' }}
+                <span *ngIf="form.description">- {{ form.description }}</span>
+              </p>
+              <p *ngIf="form.student?.first_name && form.student?.last_name">
+                <strong>Student:</strong> {{ form.student.first_name }} {{ form.student.last_name }}
+              </p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
   <div style="height: 80px;"></div>
 </ion-content>

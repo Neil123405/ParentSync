@@ -37,6 +37,7 @@ export class AllFormsPage implements OnInit {
     this.laravelChildren.forEach(child => {
       this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
         if (res.forms) {
+          // Only push unsigned forms
           this.allConsentForms.push(...res.forms.map((f: any) => ({ ...f, student: child })));
         }
         loaded++;

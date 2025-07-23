@@ -125,7 +125,7 @@
 
   <!-- Timeline Section -->
   <ion-list *ngIf="activeSection === 'timeline' && selectedChild">
-    <ion-item *ngFor="let form of signedConsentForms[selectedChild.student_id]">
+    <ion-item *ngFor="let form of signedConsentForms[selectedChild.student_id]" (click)="openConsentFormDetail(form)">
       <ion-label>
         <h3>{{ form.title }}</h3>
         <p>Signed at: {{ form.signed_at | date:'medium' }}</p>

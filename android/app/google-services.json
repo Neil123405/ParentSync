@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "31169409558",
+    "project_id": "parentsync-47fe6",
+    "storage_bucket": "parentsync-47fe6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:31169409558:android:182c9b57c640f91130bb37",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIVVlpq5gtr4GrWKU9G_bKCLI1HcQb9WU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,6 +4,7 @@ import { ApiService } from '../services/api.service';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { environment } from '../../environments/environment'; // Add this at the top if not already
 import { Keyboard } from '@capacitor/keyboard';
+import { PushNotifications } from '@capacitor/push-notifications';
 
 @Component({
   selector: 'app-login',
@@ -71,17 +72,34 @@ export class LoginPage implements AfterViewInit, OnDestroy {
         // Store user data using ApiService
         this.apiService.setCurrentUser(response.user, response.profile);
         console.log('After setCurrentUser:', {
-  user: this.apiService.getCurrentUser(),
-  profile: this.apiService.getCurrentProfile()
-});
+          user: this.apiService.getCurrentUser(),
+          profile: this.apiService.getCurrentProfile()
+        });
 
-        // Wait for currentProfile$ to emit a non-null value before navigating
-        // const sub = this.apiService.currentProfile$.subscribe(profile => {
-        //   if (profile) {
-        //     sub.unsubscribe();
-        //     this.router.navigate(['/home']);
-        //   }
-        // });
+        // --- FCM Registration and Token Sending ---
+        // Only run on device (not browser)
+        if ((window as any).Capacitor?.isNativePlatform) {
+          try {
+            const permResult = await PushNotifications.requestPermissions();
+            if (permResult.receive === 'granted') {
+              await PushNotifications.register();
+              PushNotifications.addListener('registration', (token) => {
+                console.log('FCM Token:', token.value);
+                this.apiService.setFcmToken(token.value); // <-- Add this line
+                const profile = this.apiService.getCurrentProfile();
+                if (profile) {
+                  this.apiService.savePushToken(profile.parent_id, token.value).subscribe({
+                    next: (res) => console.log('Token saved!', res),
+                    error: (err) => console.error('Failed to save token', err)
+                  });
+                }
+              });
+            }
+          } catch (err) {
+            console.error('Push notification setup failed:', err);
+          }
+        }
+        // --- End FCM Registration ---
 
         this.router.navigate(['/home']);
       },

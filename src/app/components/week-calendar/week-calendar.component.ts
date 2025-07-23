@@ -8,25 +8,11 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from
 })
 export class WeekCalendarComponent implements OnChanges {
   @Input() selectedDate!: string; // format: 'YYYY-MM-DD'
+  @Input() weekDays: string[] = [];
   @Output() dayClick = new EventEmitter<string>();
 
-  weekDays: string[] = [];
-
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['selectedDate'] && this.selectedDate) {
-      this.weekDays = this.getWeekDays(this.selectedDate);
-    }
-  }
-
-  getWeekDays(selectedDate: string): string[] {
-    const date = new Date(selectedDate);
-    const start = new Date(date);
-    start.setDate(date.getDate() - date.getDay()); // Sunday
-    return Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
-      return d.toISOString().slice(0, 10);
-    });
+    // weekDays now comes from parent, so no need to recalculate here
   }
 
   isSelected(day: string): boolean {

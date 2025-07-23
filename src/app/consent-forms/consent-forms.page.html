@@ -18,19 +18,35 @@
     </ion-button>
   </div>
 
+  <!-- Filter Buttons -->
+  <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+    <ion-segment [(ngModel)]="filter">
+      <ion-segment-button value="all" (click)="setFilter('all')">
+        <ion-label>All</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="unsigned" (click)="setFilter('unsigned')">
+        <ion-label>Unsigned</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="signed" (click)="setFilter('signed')">
+        <ion-label>Signed</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
   <div class="consent-background-box">
     <ion-list>
-      <ion-item *ngFor="let form of consentForms" class="consent-card" (click)="openConsentForm(form)">
+      <ion-item *ngFor="let form of filteredConsentForms" class="consent-card" (click)="openConsentForm(form)" [color]="form.signed ? 'success' : ''">
         <ion-label>
-          <h2>{{ form.title }}</h2>
+          <h2 [style.color]="form.signed ? 'green' : ''">{{ form.title }}</h2>
           <p>{{ form.description }}</p>
           <ion-note *ngIf="form.deadline">
             <small>Deadline: {{ form.deadline | date:'mediumDate' }}</small>
           </ion-note>
+          <ion-badge *ngIf="form.signed" color="success" style="margin-left:8px;">Signed</ion-badge>
         </ion-label>
         <ion-icon name="chevron-forward" slot="end"></ion-icon>
       </ion-item>
-      <ion-item *ngIf="consentForms.length === 0">
+      <ion-item *ngIf="filteredConsentForms.length === 0">
         <ion-label>No consent forms found.</ion-label>
       </ion-item>
     </ion-list>

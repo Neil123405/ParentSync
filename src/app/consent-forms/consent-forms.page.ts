@@ -11,6 +11,7 @@ import { ApiService } from '../services/api.service';
 export class ConsentFormsPage implements OnInit {
   studentId!: number;
   consentForms: any[] = [];
+  filter: 'all' | 'signed' | 'unsigned' = 'all';
 
   constructor(
     private route: ActivatedRoute,
@@ -21,13 +22,25 @@ export class ConsentFormsPage implements OnInit {
   ngOnInit() {
     this.studentId = +this.route.snapshot.paramMap.get('studentId')!;
     this.apiService.getConsentFormsForStudent(this.studentId).subscribe(res => {
-      console.log('Consent forms API response:', res);
       this.consentForms = res.forms;
     });
   }
 
+  setFilter(filter: 'all' | 'signed' | 'unsigned') {
+    this.filter = filter;
+  }
+
+  get filteredConsentForms() {
+    if (this.filter === 'signed') {
+      return this.consentForms.filter(f => f.signed);
+    }
+    if (this.filter === 'unsigned') {
+      return this.consentForms.filter(f => !f.signed);
+    }
+    return this.consentForms;
+  }
+
   openConsentForm(form: any) {
-    console.log('Navigating to detail for form:', form.form_id, 'student:', this.studentId);
     this.router.navigate(['/consent-form-detail', form.form_id, this.studentId]);
   }
 }

@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Http } from '@capacitor-community/http';
+import { PushNotifications } from '@capacitor/push-notifications';
 
 export interface User {
   user_id: number;
@@ -54,6 +55,8 @@ export class ApiService {
   public profileUpdated$ = new Subject<void>();
   consentFormSigned$ = new Subject<{ formId: number, studentId: number }>();
 
+  private fcmToken: string | null = null;
+
   constructor(private http: HttpClient) {
     // Load stored user data on service initialization
     this.loadStoredUser();
@@ -100,6 +103,15 @@ export class ApiService {
   }
 
   logout(): void {
+    // Remove FCM token from backend if on device
+    if ((window as any).Capacitor?.isNativePlatform && this.fcmToken) {
+      this.removePushToken(this.fcmToken).subscribe({
+        next: () => console.log('FCM token removed on logout'),
+        error: (err) => console.error('Failed to remove FCM token on logout:', err)
+      });
+    }
+
+    localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentProfile');
     this.currentUserSubject.next(null);
@@ -244,4 +256,33 @@ export class ApiService {
   getPendingChildren(parentId: number): Observable<any> {
   return this.http.get(`${this.apiUrl}/parent/${parentId}/pending-children`, { headers: this.getHeaders() });
 }
+
+getParentEventParticipants(parentId: number) {
+  return this.http.get<{ eventParticipants: any[] }>(
+    `${this.apiUrl}/parent/${parentId}/event-participants`,
+    { headers: this.getHeaders() }
+  );
+}
+
+savePushToken(parentId: number, fcmToken: string): Observable<any> {
+  return this.http.post(
+    `${this.apiUrl}/save-fcm-token`,
+    { parent_id: parentId, fcm_token: fcmToken },
+    { headers: this.getHeaders() }
+  );
+}
+
+removePushToken(fcmToken: string): Observable<any> {
+  return this.http.post(
+    `${this.apiUrl}/remove-fcm-token`,
+    { fcm_token: fcmToken },
+    { headers: this.getHeaders() }
+  );
+}
+
+// ...existing code...
+setFcmToken(token: string) {
+  this.fcmToken = token;
+}
+// ...existing code...
 }

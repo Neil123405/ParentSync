@@ -1,5 +1,293 @@
 :host ::ng-deep ion-content,
 :host ::ng-deep ion-content .inner-scroll,
 :host ::ng-deep ion-content .scroll-content {
-  background: #23272f !important; /* or any color you want to test */
+  background: #f6f8ff !important;
+  padding-bottom: 80px;
+}
+
+ion-card {
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  margin: 12px 8px;
+  background: #fff;
+}
+
+.upcoming-reminders ion-card {
+  border-left: 4px solid #1976d2;
+  margin-bottom: 18px;
+}
+
+ion-card-header {
+  padding: 18px 16px 8px 16px;
+  border-radius: 18px 18px 0 0;
+  background: #1976d2;
+  color: #fff;
+}
+
+ion-card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+ion-card-content {
+  padding: 16px;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.calendar-nav ion-button {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 1.3rem;
+  --background: #e3f2fd;
+  --color: #1976d2;
+  border-radius: 50%;
+}
+
+.calendar-month-label {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1976d2;
+  margin: 0 12px;
+  letter-spacing: 1px;
+}
+
+.mwl-calendar-month-view {
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 16px;
+  min-width: 100%; // Make the calendar grid wider than most phones
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  font-size: 1.1rem;
+}
+
+.calendar-view-wrapper {
+  width: 100%;
+  min-height: 340px;
+  background: transparent;
+}
+
+.calendar-week-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+  padding: 0 8px;
+}
+
+.calendar-week-name {
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #888;
+  letter-spacing: 1px;
+  padding: 4px 0;
+}
+
+.calendar-days-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 8px;
+}
+
+.calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+}
+
+.calendar-day {
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #222;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  margin: 4px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  background: transparent;
+}
+
+.calendar-day.today {
+  background: #1976d2;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(25,118,210,0.15);
+}
+
+.calendar-day.selected {
+  background: #1976d2;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(25,118,210,0.15);
+}
+
+.calendar-day.other-month {
+  color: #bbb;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+:host ::ng-deep .mwl-calendar-table {
+  border-collapse: separate !important;
+  border-spacing: 0 8px !important;
+  background: transparent !important;
+}
+
+:host ::ng-deep .mwl-calendar-table thead {
+  display: none !important;
+}
+
+:host ::ng-deep .mwl-calendar-table th,
+:host ::ng-deep .mwl-calendar-table td {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-width: auto !important;
+  height: 38px;
+  text-align: center;
+  width: 14.28% !important;
+}
+
+:host ::ng-deep .mwl-calendar-table td .cal-day-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+}
+
+:host ::ng-deep .mwl-calendar-table td .cal-day-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #222;
+  background: transparent;
+  transition: background 0.2s, color 0.2s;
+}
+
+:host ::ng-deep .mwl-calendar-table td .cal-day-number.cal-today {
+  background: #1976d2;
+  color: #fff;
+  font-weight: bold;
+}
+
+:host ::ng-deep .mwl-calendar-table td .cal-day-number.selected {
+  background: #1976d2;
+  color: #fff;
+  font-weight: bold;
+}
+
+:host ::ng-deep .mwl-calendar-table td .cal-day-number.cal-event {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: bold;
+}
+
+:host ::ng-deep .mwl-calendar-table td {
+  position: relative;
+}
+
+:host ::ng-deep .mwl-calendar-table td .cal-cell-top {
+  display: none !important;
+}
+
+.event-dot {
+  display: inline-block;
+  margin: 2px 2px 0 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #1976d2; // blue for events
+}
+
+.form-dot {
+  display: inline-block;
+  margin: 2px 0 0 2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff9800; // orange for consent forms
+}
+
+@media (max-width: 500px) {
+  ion-card {
+    margin: 4px 2px;
+    border-radius: 14px;
+  }
+  ion-card-header {
+    padding: 12px 10px 6px 10px;
+    font-size: 1.1rem;
+    border-radius: 14px 14px 0 0;
+  }
+  ion-card-content {
+    padding: 10px;
+  }
+  .calendar-nav {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .calendar-nav ion-button {
+    min-width: 38px;
+    min-height: 38px;
+    font-size: 1.1rem;
+  }
+  .calendar-month-label {
+    font-size: 1.05rem;
+    margin: 0 6px;
+  }
+  .mwl-calendar-month-view {
+    min-width: 500px;
+    width: 500px;
+    font-size: 1.1rem;
+  }
+  .calendar-view-wrapper {
+    min-height: 340px;
+    overflow-x: auto;
+    padding: 0;
+  }
+  .mwl-calendar-table th,
+  .mwl-calendar-table td {
+    padding: 12px 0 !important;
+    font-size: 1.1rem !important;
+    min-width: 44px;
+  }
+  .calendar-week-row {
+    font-size: 0.9rem;
+    padding: 0 2px;
+  }
+  .calendar-week-name {
+    font-size: 0.9rem;
+    padding: 2px 0;
+  }
+  :host ::ng-deep .mwl-calendar-table th,
+  :host ::ng-deep .mwl-calendar-table td {
+    min-width: 24px;
+    height: 28px;
+  }
+  :host ::ng-deep .mwl-calendar-table td .cal-day-number {
+    width: 22px;
+    height: 22px;
+    font-size: 0.9rem;
+  }
 }

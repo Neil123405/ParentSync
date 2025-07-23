@@ -211,7 +211,7 @@ export class ChildrenPage implements OnInit {
     }
   }
 
-  async loadConsentForms() {
+  loadConsentForms() {
     if (!this.selectedChild) return;
     this.apiService.getUnsignedConsentFormsForStudent(this.selectedChild.student_id).subscribe({
       next: (response) => {
@@ -497,5 +497,13 @@ export class ChildrenPage implements OnInit {
 
   endPress() {
     clearTimeout(this.pressTimer);
+  }
+
+  openConsentFormDetail(form: any) {
+    const formId = form.form_id;
+    const studentId = form.student_id || (this.selectedChild && this.selectedChild.student_id);
+    if (formId && studentId) {
+      this.router.navigate(['/consent-form-detail', formId, studentId]);
+    }
   }
 }

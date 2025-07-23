@@ -1,9 +1,9 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/calendar"></ion-back-button>
+      <ion-back-button defaultHref="/calendar" (click)="goBackToCalendar()"></ion-back-button>
     </ion-buttons>
-    <ion-title>day-events</ion-title>
+    <ion-title>Day Details</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,25 +14,72 @@
     </ion-toolbar>
   </ion-header>
 
+  <!-- Week Calendar Navigation (arrows only, centered, small text) -->
+  <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px; gap: 18px;">
+    <ion-button fill="clear" shape="round" size="small" (click)="previousWeek()" style="font-size: 1.7rem;">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </ion-button>
+    <span style="font-weight: 600; font-size: 0.95rem; white-space: nowrap;">
+      {{ weekDays[0] | date:'MMM d' }} - {{ weekDays[6] | date:'MMM d, yyyy' }}
+    </span>
+    <ion-button fill="clear" shape="round" size="small" (click)="nextWeek()" style="font-size: 1.7rem;">
+      <ion-icon name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+  </div>
+
   <!-- Week Calendar -->
   <app-week-calendar
     [selectedDate]="date"
+    [weekDays]="weekDays"
     (dayClick)="onWeekDayClick($event)">
   </app-week-calendar>
 
   <!-- Events List -->
-  <ion-list *ngIf="events.length > 0">
-    <ion-item *ngFor="let event of events" (click)="openEventDetail(event)">
-      <ion-label>
-        <h2>{{ event.title }}</h2>
-        <p>{{ event.description }}</p>
-        <p><strong>Student:</strong> {{ event.first_name }} {{ event.last_name }}</p>
-        <p><strong>Time:</strong> {{ event.time }}</p>
-        <p><strong>Location:</strong> {{ event.location }}</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
-  <ion-card *ngIf="events.length === 0">
-    <ion-card-content>No events for this day.</ion-card-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title style="font-size: 1.05rem;">Events</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let event of events" (click)="openEventDetail(event)">
+          <ion-label style="font-size: 0.95rem;">
+            <h2 style="font-size: 1rem;">{{ event.title }}</h2>
+            <p style="font-size: 0.92rem;">{{ event.description }}</p>
+            <p *ngIf="event.first_name && event.last_name" style="font-size: 0.92rem;">
+              <strong>Student:</strong> {{ event.first_name }} {{ event.last_name }}
+            </p>
+            <p *ngIf="event.time" style="font-size: 0.92rem;"><strong>Time:</strong> {{ event.time }}</p>
+            <p *ngIf="event.location" style="font-size: 0.92rem;"><strong>Location:</strong> {{ event.location }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-item *ngIf="events.length === 0">
+          <ion-label style="font-size: 0.95rem;">No events for this day.</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Consent Forms List -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title style="font-size: 1.05rem;">Consent Forms</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let form of forms" (click)="openConsentFormDetail(form)">
+          <ion-label style="font-size: 0.95rem;">
+            <h2 style="font-size: 1rem;">{{ form.title }}</h2>
+            <p style="font-size: 0.92rem;">{{ form.description }}</p>
+            <p *ngIf="form.student?.first_name && form.student?.last_name" style="font-size: 0.92rem;">
+              <strong>Student:</strong> {{ form.student.first_name }} {{ form.student.last_name }}
+            </p>
+            <p *ngIf="form.deadline" style="font-size: 0.92rem;"><strong>Deadline:</strong> {{ form.deadline | date:'mediumDate' }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-item *ngIf="forms.length === 0">
+          <ion-label style="font-size: 0.95rem;">No consent forms for this day.</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
   </ion-card>
 </ion-content>
