@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+
 import { ActivatedRoute } from '@angular/router';
+
 import { ApiService } from '../services/api.service';
 
 @Component({
@@ -18,6 +20,7 @@ export class AnnouncementDetailPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    // the plus converts the string to a number
     this.announcementId = +this.route.snapshot.paramMap.get('announcementId')!;
     this.apiService.getAnnouncementDetail(this.announcementId).subscribe(res => {
       this.announcement = res.announcement;

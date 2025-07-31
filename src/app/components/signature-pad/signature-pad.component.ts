@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, Output, EventEmitter } from '@angular/core';
+
 import SignaturePad from 'signature_pad';
 
 @Component({

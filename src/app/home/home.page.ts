@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+
 import { Router } from '@angular/router';
-import { AlertController, LoadingController } from '@ionic/angular';
+// import { AlertController, LoadingController } from '@ionic/angular';
+
 import { ApiService, User, ParentProfile } from '../services/api.service';
 
 @Component({
@@ -29,48 +31,42 @@ export class HomePage implements OnInit {
   constructor(
     private apiService: ApiService,
     private router: Router,
-    private alertController: AlertController,
-    private loadingController: LoadingController
+    // private alertController: AlertController,
+    // private loadingController: LoadingController
   ) {
-    console.log('HomePage constructor');
+    // console.log('HomePage constructor');
   }
 
+  //* already read!
   ngOnInit() {
-    // this.currentUser = this.apiService.getCurrentUser();
-    // this.currentProfile = this.apiService.getCurrentProfile();
-    // console.log('currentProfile in HomePage ngOnInit:', this.currentProfile);
-
-    // if (!this.currentUser) {
-    //   this.router.navigate(['/login']);
-    //   return;
-    // }
-
+    // Subscribe to user and profile changes
     this.apiService.currentUser$.subscribe(user => {
-    this.currentUser = user;
-    if (!this.currentUser) {
-      this.router.navigate(['/login']);
-    }
-  });
+      this.currentUser = user;
+      if (!this.currentUser) {
+        this.router.navigate(['/login']);
+      }
+    });
 
-  this.apiService.currentProfile$.subscribe(profile => {
-    console.log('HomePage currentProfile$ subscription:', profile);
-    this.currentProfile = profile;
-    if (this.currentProfile) {
-      this.loadAnnouncementsAndEvents();
-    }
-  });
+    this.apiService.currentProfile$.subscribe(profile => {
+      // console.log('HomePage currentProfile$ subscription:', profile);
+      this.currentProfile = profile;
+      if (this.currentProfile) {
+        this.loadAnnouncementsAndEvents();
+      }
+    });
 
-  // Listen for profile updates (e.g., after editing profile)
-  this.apiService.profileUpdated$.subscribe(() => {
-    if (this.currentProfile) {
-      this.loadAnnouncementsAndEvents();
-    }
-  });
+    // Listen for profile updates (e.g., after editing profile)
+    this.apiService.profileUpdated$.subscribe(() => {
+      if (this.currentProfile) {
+        this.loadAnnouncementsAndEvents();
+      }
+    });
     // if (this.currentProfile) {
     //   this.loadAnnouncementsAndEvents();
     // }
   }
 
+  //* already read!
   ionViewWillEnter() {
     // Refresh data every time Home is shown
     if (this.currentProfile) {
@@ -78,6 +74,7 @@ export class HomePage implements OnInit {
     }
   }
 
+  //* already read!
   loadAnnouncementsAndEvents() {
     if (!this.currentProfile) return;
 
@@ -86,6 +83,7 @@ export class HomePage implements OnInit {
       next: (response) => {
         this.laravelAnnouncements = response.announcements || [];
         // Only announcements in mixedFeed
+        // map means get each announcement and add a type called announcement, the data is the announcement itself
         this.mixedFeed = this.laravelAnnouncements.map((a: any) => ({
           type: 'announcement',
           data: a
@@ -108,54 +106,71 @@ export class HomePage implements OnInit {
     });
   }
 
+  //* already read!
   async refreshData(event?: any) {
     await this.loadAnnouncementsAndEvents();
     if (event) {
+      // stops the refresh spinner
       event.target.complete();
     }
   }
 
-  async logout() {
-    const alert = await this.alertController.create({
-      header: 'Logout',
-      message: 'Are you sure you want to logout?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Logout',
-          handler: () => {
-            this.apiService.logout();
-            this.router.navigate(['/login']);
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
+  // async logout() {
+  //   const alert = await this.alertController.create({
+  //     header: 'Logout',
+  //     message: 'Are you sure you want to logout?',
+  //     buttons: [
+  //       {
+  //         text: 'Cancel',
+  //         role: 'cancel'
+  //       },
+  //       {
+  //         text: 'Logout',
+  //         handler: () => {
+  //           this.apiService.logout();
+  //           this.router.navigate(['/login']);
+  //         }
+  //       }
+  //     ]
+  //   });
+  //   await alert.present();
+  // }
 
+  //* already read!
   openAnnouncement(announcement: any) {
     this.router.navigate(['/announcement-detail', announcement.announcement_id]);
   }
 
+  //* already read!
   openEventDetail(event: any) {
     this.router.navigate(['/school-event-detail', event.event_id, event.student_id]);
   }
 
+  //* already read!
   getStudentById(studentId: number) {
     return this.laravelChildren.find(child => child.student_id === studentId);
   }
 
   // Filtered Announcements
+  //* already read!
   get filteredAnnouncements() {
     let list = this.laravelAnnouncements;
     if (this.announcementStudentFilter) {
       list = list.filter(a => a.student_id == this.announcementStudentFilter);
     }
+    // a and b are announcement objects
+    // the top is just a filter, this one is the sort (important)
+    // sort function negative means a comes first, positive means b comes first, it is FIXED RULE OF JAVASCRIPT
     list = [...list].sort((a, b) => {
       if (this.announcementSort === 'latest') {
+        // a.created_at = '2024-01-01'
+        // b.created_at = '2025-01-01'
+        // For latest:
+        // new Date(b).getTime() - new Date(a).getTime() → positive → b first (newest first)
+
+        // For oldest:
+        // new Date(a).getTime() - new Date(b).getTime() → negative → a first (oldest first)
+        // algorithm by google https://stackoverflow.com/questions/10123953/how-to-sort-an-object-array-by-date-property
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       } else {
         return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
@@ -165,6 +180,7 @@ export class HomePage implements OnInit {
   }
 
   // Filtered Events
+  //* already read! same as announcements
   get filteredEvents() {
     let list = this.laravelEvents;
     if (this.eventStudentFilter) {

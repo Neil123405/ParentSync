@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+
 import { ActivatedRoute } from '@angular/router';
+
 import { ApiService } from '../services/api.service';
 
 @Component({
@@ -20,6 +22,7 @@ export class EventDetailPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    // why there is a studentId? to know who owns the event despite the getEventDetail only needing eventId, because in the MySQL there is no description for event participants
     this.eventId = +this.route.snapshot.paramMap.get('eventId')!;
     this.studentId = +this.route.snapshot.paramMap.get('studentId')!;
     this.apiService.getEventDetail(this.eventId).subscribe({

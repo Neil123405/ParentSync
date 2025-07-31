@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+
 import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
+
 import { ModalController } from '@ionic/angular';
+
+import { filter } from 'rxjs/operators';
 
 import { DashboardMenuModalComponent } from '../dashboard-menu-modal/dashboard-menu-modal.component';
 
@@ -22,19 +25,17 @@ export class GlobalFooterComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Track current route to highlight active tab
+    // Set initial route and footer visibility, showing footer on all routes except '/login'
+    this.currentRoute = this.router.url;
+    this.showFooter = !this.currentRoute.startsWith('/login');
+
+    // Listen for route changes, so to show the footer only on specific routes like Home, Dashboard, etc.
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.currentRoute = event.url;
-        
-        // Hide footer on login page
-        this.showFooter = !['/login', '/'].includes(this.currentRoute);
+        this.showFooter = !this.currentRoute.startsWith('/login');
       });
-
-    // Set initial route
-    this.currentRoute = this.router.url;
-    this.showFooter = !['/login', '/'].includes(this.currentRoute);
   }
 
   navigateTo(route: string) {

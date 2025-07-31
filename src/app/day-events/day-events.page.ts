@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { ApiService } from '../services/api.service';
 
 @Component({
@@ -22,7 +23,7 @@ export class DayEventsPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private apiService: ApiService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.date = this.route.snapshot.paramMap.get('date')!;
@@ -77,8 +78,8 @@ export class DayEventsPage implements OnInit {
     lastDayOfWeek.setDate(this.currentWeekStart.getDate() + 6);
     const month = lastDayOfWeek.getMonth();
     const year = lastDayOfWeek.getFullYear();
-    
-  console.log('Navigating back to calendar with:', { month, year, lastDayOfWeek });
+
+    // console.log('Navigating back to calendar with:', { month, year, lastDayOfWeek });
     this.router.navigate(['/calendar'], {
       state: {
         month,

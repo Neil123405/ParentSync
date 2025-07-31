@@ -1,10 +1,13 @@
 // src/app/services/api.service.ts
 import { Injectable } from '@angular/core';
+
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
+
 import { environment } from '../../environments/environment';
-import { Http } from '@capacitor-community/http';
-import { PushNotifications } from '@capacitor/push-notifications';
+// import { Http } from '@capacitor-community/http';
+// import { PushNotifications } from '@capacitor/push-notifications';
 
 export interface User {
   user_id: number;
@@ -45,11 +48,11 @@ export class ApiService {
   // http://192.168.1.17:8000/api/...
   // http://localhost:8000/api
   // http://192.168.1.4:8000/api
-  
+
   // User management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   private currentProfileSubject = new BehaviorSubject<ParentProfile | null>(null);
-  
+
   public currentUser$ = this.currentUserSubject.asObservable();
   public currentProfile$ = this.currentProfileSubject.asObservable();
   public profileUpdated$ = new Subject<void>();
@@ -84,14 +87,14 @@ export class ApiService {
   setCurrentUser(user: User, profile?: ParentProfile): void {
     localStorage.setItem('currentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
-    
+
     if (profile) {
-    localStorage.setItem('currentProfile', JSON.stringify(profile));
-    this.currentProfileSubject.next(profile);
-    console.log('setCurrentUser: profile set', profile);
-  } else {
-    console.log('setCurrentUser: profile is null or undefined');
-  }
+      localStorage.setItem('currentProfile', JSON.stringify(profile));
+      this.currentProfileSubject.next(profile);
+      // console.log('setCurrentUser: profile set', profile);
+    } else {
+      // console.log('setCurrentUser: profile is null or undefined');
+    }
   }
 
   getCurrentUser(): User | null {
@@ -105,10 +108,11 @@ export class ApiService {
   logout(): void {
     // Remove FCM token from backend if on device
     if ((window as any).Capacitor?.isNativePlatform && this.fcmToken) {
-      this.removePushToken(this.fcmToken).subscribe({
-        next: () => console.log('FCM token removed on logout'),
-        error: (err) => console.error('Failed to remove FCM token on logout:', err)
-      });
+      this.removePushToken(this.fcmToken).subscribe();
+      // {
+      //   next: () => console.log('FCM token removed on logout'),
+      //   error: (err) => console.error('Failed to remove FCM token on logout:', err)
+      // }
     }
 
     localStorage.removeItem('token');
@@ -125,14 +129,14 @@ export class ApiService {
   private loadStoredUser(): void {
     const storedUser = localStorage.getItem('currentUser');
     const storedProfile = localStorage.getItem('currentProfile');
-    
+
     if (storedUser) {
       this.currentUserSubject.next(JSON.parse(storedUser));
     }
     if (storedProfile) {
       this.currentProfileSubject.next(JSON.parse(storedProfile));
-      
-    console.log('loadStoredUser: loaded profile', JSON.parse(storedProfile));
+
+      // console.log('loadStoredUser: loaded profile', JSON.parse(storedProfile));
     }
   }
 
@@ -172,8 +176,8 @@ export class ApiService {
   }
 
   participateInEvent(eventId: number, studentId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/events/${eventId}/participate`, 
-      { student_id: studentId }, 
+    return this.http.post(`${this.apiUrl}/events/${eventId}/participate`,
+      { student_id: studentId },
       { headers: this.getHeaders() });
   }
 
@@ -186,13 +190,13 @@ export class ApiService {
   }
 
   // Attendance
-  getStudentAttendance(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/attendance/student/${studentId}`, { headers: this.getHeaders() });
-  }
+  // getStudentAttendance(studentId: number): Observable<any> {
+  //   return this.http.get(`${this.apiUrl}/attendance/student/${studentId}`, { headers: this.getHeaders() });
+  // }
 
-  getAttendanceSummary(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/attendance/student/${studentId}/summary`, { headers: this.getHeaders() });
-  }
+  // getAttendanceSummary(studentId: number): Observable<any> {
+  //   return this.http.get(`${this.apiUrl}/attendance/student/${studentId}/summary`, { headers: this.getHeaders() });
+  // }
 
   linkStudentToParent(parentId: number, studentId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/parent/link-student`, {
@@ -232,8 +236,8 @@ export class ApiService {
   }
 
   uploadStudentPhoto(studentId: number, base64Image: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/students/${studentId}/upload-photo`, 
-      { image: base64Image }, 
+    return this.http.post(`${this.apiUrl}/students/${studentId}/upload-photo`,
+      { image: base64Image },
       { headers: this.getHeaders() }
     );
   }
@@ -254,35 +258,34 @@ export class ApiService {
   }
 
   getPendingChildren(parentId: number): Observable<any> {
-  return this.http.get(`${this.apiUrl}/parent/${parentId}/pending-children`, { headers: this.getHeaders() });
-}
+    return this.http.get(`${this.apiUrl}/parent/${parentId}/pending-children`, { headers: this.getHeaders() });
+  }
 
-getParentEventParticipants(parentId: number) {
-  return this.http.get<{ eventParticipants: any[] }>(
-    `${this.apiUrl}/parent/${parentId}/event-participants`,
-    { headers: this.getHeaders() }
-  );
-}
+  getParentEventParticipants(parentId: number) {
+    return this.http.get<{ eventParticipants: any[] }>(
+      `${this.apiUrl}/parent/${parentId}/event-participants`,
+      { headers: this.getHeaders() }
+    );
+  }
 
-savePushToken(parentId: number, fcmToken: string): Observable<any> {
-  return this.http.post(
-    `${this.apiUrl}/save-fcm-token`,
-    { parent_id: parentId, fcm_token: fcmToken },
-    { headers: this.getHeaders() }
-  );
-}
+  savePushToken(parentId: number, fcmToken: string): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/save-fcm-token`,
+      { parent_id: parentId, fcm_token: fcmToken },
+      { headers: this.getHeaders() }
+    );
+  }
 
-removePushToken(fcmToken: string): Observable<any> {
-  return this.http.post(
-    `${this.apiUrl}/remove-fcm-token`,
-    { fcm_token: fcmToken },
-    { headers: this.getHeaders() }
-  );
-}
+  removePushToken(fcmToken: string): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/remove-fcm-token`,
+      { fcm_token: fcmToken },
+      { headers: this.getHeaders() }
+    );
+  }
 
-// ...existing code...
-setFcmToken(token: string) {
-  this.fcmToken = token;
-}
-// ...existing code...
+  setFcmToken(token: string) {
+    this.fcmToken = token;
+  }
+
 }

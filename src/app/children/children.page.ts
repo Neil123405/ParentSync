@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+
 import { Router } from '@angular/router';
+
 import { AlertController, LoadingController, ToastController, ModalController, ActionSheetController } from '@ionic/angular';
+
+// import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+
 import { ApiService, User, ParentProfile } from '../services/api.service';
 import { AddStudentModalComponent } from '../components/add-student-modal/add-student-modal.component';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { ChildOptionsModalComponent } from '../components/child-options-modal/child-options-modal.component';
 
 interface LaravelStudent {
@@ -14,7 +18,7 @@ interface LaravelStudent {
   grade_level: number;
   section_name: string;
   grade_name: string;
-  photo_url?: string; // <-- Add this line
+  photo_url?: string; 
 }
 
 interface ConsentForm {
@@ -25,13 +29,13 @@ interface ConsentForm {
   signed: boolean;
 }
 
-interface AttendanceRecord {
-  attendance_id: number;
-  date: string;
-  status: string;
-  teacher_first_name: string;
-  teacher_last_name: string;
-}
+// interface AttendanceRecord {
+//   attendance_id: number;
+//   date: string;
+//   status: string;
+//   teacher_first_name: string;
+//   teacher_last_name: string;
+// }
 
 interface LaravelEvent {
   event_id: number;
@@ -54,16 +58,16 @@ interface LaravelEvent {
 export class ChildrenPage implements OnInit {
   currentUser: User | null = null;
   currentProfile: ParentProfile | null = null;
-  
+
   laravelChildren: LaravelStudent[] = [];
   selectedChild: LaravelStudent | null = null;
-  
+
   // Child-specific data
   consentForms: ConsentForm[] = [];
-  attendanceRecords: AttendanceRecord[] = [];
-  attendanceSummary: any = null;
+  // attendanceRecords: AttendanceRecord[] = [];
+  // attendanceSummary: any = null;
   studentEvents: LaravelEvent[] = [];
-  
+
   activeSection: string = '';
 
   newStudentId: number | null = null;
@@ -84,19 +88,19 @@ export class ChildrenPage implements OnInit {
 
   constructor(
     private router: Router,
-    private alertController: AlertController,
+    // private alertController: AlertController,
     private loadingController: LoadingController,
     private apiService: ApiService,
     private toastController: ToastController,
     private modalController: ModalController,
-    private actionSheetController: ActionSheetController
+    // private actionSheetController: ActionSheetController
   ) { }
 
   ngOnInit() {
     // Check authentication
     this.currentUser = this.apiService.getCurrentUser();
     this.currentProfile = this.apiService.getCurrentProfile();
-    
+
     if (!this.currentUser) {
       this.router.navigate(['/login']);
       return;
@@ -111,12 +115,13 @@ export class ChildrenPage implements OnInit {
       this.currentProfile = profile;
     });
 
-    // Load data
+    // Load data including this.consentFormCounts
     if (this.currentProfile) {
       this.loadData();
     }
 
-    // Listen for signed consent forms
+    // Listen for signed consent forms signed
+    //* already read!
     this.apiService.consentFormSigned$.subscribe(({ formId, studentId }) => {
       // Only update if the selected child matches
       if (this.selectedChild && this.selectedChild.student_id === studentId) {
@@ -130,11 +135,11 @@ export class ChildrenPage implements OnInit {
   }
 
   async loadData() {
-    console.log('loadData called');
+    // console.log('loadData called');
     if (!this.currentProfile) {
-    console.log('No currentProfile, returning');
-    return;
-  }
+      // console.log('No currentProfile, returning');
+      return;
+    }
 
     const loading = await this.loadingController.create({
       message: 'Loading children...',
@@ -143,13 +148,13 @@ export class ChildrenPage implements OnInit {
 
     try {
       // Load children
-      console.log('About to call getParentChildren with:', this.currentProfile.parent_id);
+      // console.log('About to call getParentChildren with:', this.currentProfile.parent_id);
       this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
         next: (response) => {
-          console.log('API response for children:', response);
+          // console.log('API response for children:', response);
           if (response.success) {
             this.laravelChildren = response.children;
-            console.log('laravelChildren set to:', this.laravelChildren);
+            // console.log('laravelChildren set to:', this.laravelChildren);
 
             // Fetch counts for each child
             this.laravelChildren.forEach(child => {
@@ -161,11 +166,11 @@ export class ChildrenPage implements OnInit {
               });
             });
           } else {
-            console.warn('API response did not have success=true:', response);
+            // console.warn('API response did not have success=true:', response);
           }
         },
         error: (error) => {
-          console.error('Error loading children:', error);
+          // console.error('Error loading children:', error);
         }
       });
 
@@ -182,7 +187,7 @@ export class ChildrenPage implements OnInit {
       await loading.dismiss();
     } catch (error) {
       await loading.dismiss();
-      console.error('Error loading data:', error);
+      // console.error('Error loading data:', error);
     }
   }
 
@@ -190,12 +195,14 @@ export class ChildrenPage implements OnInit {
     this.selectedChild = child;
     this.activeSection = '';
     this.showTasks = false;
-    // Optionally reset timeline dropdown
+    // Optionally reset timeline dropdown of all children when you click a child, think of it as closing all timelines for all children
+    // so that only the selected child's timeline is open
+    // +key converts string keys to numbers
     Object.keys(this.showTimeline).forEach(key => this.showTimeline[+key] = false);
     // Clear previous data
     this.consentForms = [];
-    this.attendanceRecords = [];
-    this.attendanceSummary = null;
+    // this.attendanceRecords = [];
+    // this.attendanceSummary = null;
     this.studentEvents = [];
   }
 
@@ -223,33 +230,33 @@ export class ChildrenPage implements OnInit {
     });
   }
 
-  async loadAttendance() {
-    if (!this.selectedChild) return;
+  // async loadAttendance() {
+  //   if (!this.selectedChild) return;
 
-    // Load attendance records
-    this.apiService.getStudentAttendance(this.selectedChild.student_id).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.attendanceRecords = response.attendance;
-        }
-      },
-      error: (error) => console.error('Error loading attendance:', error)
-    });
+  //   // Load attendance records
+  //   this.apiService.getStudentAttendance(this.selectedChild.student_id).subscribe({
+  //     next: (response) => {
+  //       if (response.success) {
+  //         this.attendanceRecords = response.attendance;
+  //       }
+  //     },
+  //     error: (error) => console.error('Error loading attendance:', error)
+  //   });
 
-    // Load attendance summary
-    this.apiService.getAttendanceSummary(this.selectedChild.student_id).subscribe({
-      next: (response) => {
-        if (response.success) {
-          const summary: any = {};
-          response.summary.forEach((item: any) => {
-            summary[item.status.toLowerCase()] = item.count;
-          });
-          this.attendanceSummary = summary;
-        }
-      },
-      error: (error) => console.error('Error loading attendance summary:', error)
-    });
-  }
+  //   // Load attendance summary
+  //   this.apiService.getAttendanceSummary(this.selectedChild.student_id).subscribe({
+  //     next: (response) => {
+  //       if (response.success) {
+  //         const summary: any = {};
+  //         response.summary.forEach((item: any) => {
+  //           summary[item.status.toLowerCase()] = item.count;
+  //         });
+  //         this.attendanceSummary = summary;
+  //       }
+  //     },
+  //     error: (error) => console.error('Error loading attendance summary:', error)
+  //   });
+  // }
 
   toggleSchoolEvents() {
     this.activeSection = 'tasks'; // Ensure the right section is active
@@ -279,39 +286,39 @@ export class ChildrenPage implements OnInit {
     });
   }
 
-  getAttendanceColor(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'present':
-        return 'success';
-      case 'absent':
-        return 'danger';
-      case 'late':
-        return 'warning';
-      default:
-        return 'medium';
-    }
-  }
+  // getAttendanceColor(status: string): string {
+  //   switch (status.toLowerCase()) {
+  //     case 'present':
+  //       return 'success';
+  //     case 'absent':
+  //       return 'danger';
+  //     case 'late':
+  //       return 'warning';
+  //     default:
+  //       return 'medium';
+  //   }
+  // }
 
-  async logout() {
-    const alert = await this.alertController.create({
-      header: 'Logout',
-      message: 'Are you sure you want to logout?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Logout',
-          handler: () => {
-            this.apiService.logout();
-            this.router.navigate(['/login']);
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
+  // async logout() {
+  //   const alert = await this.alertController.create({
+  //     header: 'Logout',
+  //     message: 'Are you sure you want to logout?',
+  //     buttons: [
+  //       {
+  //         text: 'Cancel',
+  //         role: 'cancel'
+  //       },
+  //       {
+  //         text: 'Logout',
+  //         handler: () => {
+  //           this.apiService.logout();
+  //           this.router.navigate(['/login']);
+  //         }
+  //       }
+  //     ]
+  //   });
+  //   await alert.present();
+  // }
 
   navigateToHome() {
     this.router.navigate(['/home']);
@@ -334,7 +341,7 @@ export class ChildrenPage implements OnInit {
       message: 'Linking student...',
     });
     await loading.present();
-
+    //* already read!
     this.apiService.linkStudentToParent(this.currentProfile.parent_id, this.newStudentId).subscribe({
       next: async (response) => {
         await loading.dismiss();
@@ -424,52 +431,52 @@ export class ChildrenPage implements OnInit {
     });
   }
 
-  async changeStudentPhoto(student: any) {
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Change Photo',
-      buttons: [
-        {
-          text: 'Take Photo',
-          icon: 'camera',
-          handler: () => this.getPhoto(student, CameraSource.Camera)
-        },
-        {
-          text: 'Upload from Device',
-          icon: 'image',
-          handler: () => this.getPhoto(student, CameraSource.Photos)
-        },
-        {
-          text: 'Cancel',
-          icon: 'close',
-          role: 'cancel'
-        }
-      ]
-    });
-    await actionSheet.present();
-  }
+  // async changeStudentPhoto(student: any) {
+  //   const actionSheet = await this.actionSheetController.create({
+  //     header: 'Change Photo',
+  //     buttons: [
+  //       {
+  //         text: 'Take Photo',
+  //         icon: 'camera',
+  //         handler: () => this.getPhoto(student, CameraSource.Camera)
+  //       },
+  //       {
+  //         text: 'Upload from Device',
+  //         icon: 'image',
+  //         handler: () => this.getPhoto(student, CameraSource.Photos)
+  //       },
+  //       {
+  //         text: 'Cancel',
+  //         icon: 'close',
+  //         role: 'cancel'
+  //       }
+  //     ]
+  //   });
+  //   await actionSheet.present();
+  // }
 
-  async getPhoto(student: any, source: CameraSource) {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 80,
-        allowEditing: true,
-        resultType: CameraResultType.Base64,
-        source
-      });
-      if (image && image.base64String) {
-        this.apiService.uploadStudentPhoto(student.student_id, image.base64String).subscribe({
-          next: (res) => {
-            student.photo_url = res.photo_url;
-          },
-          error: (err) => {
-            console.error('Upload error:', err);
-          }
-        });
-      }
-    } catch (err) {
-      console.error('Camera error:', err);
-    }
-  }
+  // async getPhoto(student: any, source: CameraSource) {
+  //   try {
+  //     const image = await Camera.getPhoto({
+  //       quality: 80,
+  //       allowEditing: true,
+  //       resultType: CameraResultType.Base64,
+  //       source
+  //     });
+  //     if (image && image.base64String) {
+  //       this.apiService.uploadStudentPhoto(student.student_id, image.base64String).subscribe({
+  //         next: (res) => {
+  //           student.photo_url = res.photo_url;
+  //         },
+  //         error: (err) => {
+  //           // console.error('Upload error:', err);
+  //         }
+  //       });
+  //     }
+  //   } catch (err) {
+  //     // console.error('Camera error:', err);
+  //   }
+  // }
 
   async openChildOptions(ev: Event, child: LaravelStudent) {
     ev.stopPropagation(); // Prevents card click event
@@ -487,6 +494,7 @@ export class ChildrenPage implements OnInit {
 
   startPress(event: Event, child: any) {
     // Only prevent default for mouse events, not touch events
+    // event.preventDefault(); prevents default for browser's default behavior like text selection
     if (event instanceof MouseEvent) {
       event.preventDefault();
     }

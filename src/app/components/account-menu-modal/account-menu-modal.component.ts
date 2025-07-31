@@ -1,17 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, ToastController, ActionSheetController } from '@ionic/angular';
-import { ApiService, ParentProfile } from '../../services/api.service';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
+import { ModalController, ToastController, ActionSheetController } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
+
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+
+import { ApiService, ParentProfile } from '../../services/api.service';
+
 
 @Component({
   selector: 'app-account-menu-modal',
   templateUrl: './account-menu-modal.component.html',
   styleUrls: ['./account-menu-modal.component.scss'],
-  
-    imports: [IonicModule, FormsModule, CommonModule]
+  imports: [FormsModule, CommonModule, IonicModule]
 })
 export class AccountMenuModalComponent implements OnInit {
   parent: ParentProfile | null = null;
@@ -23,7 +27,7 @@ export class AccountMenuModalComponent implements OnInit {
     private apiService: ApiService,
     private toastController: ToastController,
     private actionSheetController: ActionSheetController
-  ) {}
+  ) { }
 
   ngOnInit() {
     const profile = this.apiService.getCurrentProfile();
@@ -122,10 +126,10 @@ export class AccountMenuModalComponent implements OnInit {
           'errors' in err.error
         ) {
           // Now err.error.errors is safe to use
-          const errors = (err.error as any).errors;
+          // const errors = (err.error as any).errors;
           const messages = Object.values(err.error.errors)
-  .reduce((acc: string[], val: any) => acc.concat(val), [])
-  .join(' ');
+            .reduce((acc: string[], val: any) => acc.concat(val), [])
+            .join(' ');
           this.showToast(messages);
         } else {
           this.showToast('Update failed.');

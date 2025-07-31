@@ -2,7 +2,7 @@ import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { AlertController, LoadingController } from '@ionic/angular';
-import { environment } from '../../environments/environment'; // Add this at the top if not already
+// import { environment } from '../../environments/environment'; 
 import { Keyboard } from '@capacitor/keyboard';
 import { PushNotifications } from '@capacitor/push-notifications';
 
@@ -12,6 +12,7 @@ import { PushNotifications } from '@capacitor/push-notifications';
   styleUrls: ['./login.page.scss'],
   standalone: false
 })
+//* already read!
 export class LoginPage implements AfterViewInit, OnDestroy {
   credentials = {
     username: '',
@@ -35,6 +36,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     private router: Router
   ) { }
 
+  // prevents keyboard from covering input fields
   ngAfterViewInit() {
     this.keyboardShowListener = Keyboard.addListener('keyboardWillShow', async () => {
       const el = document.activeElement as HTMLElement;
@@ -46,6 +48,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     });
   }
 
+  // cleans up the keyboard listener when the component is destroyed
   ngOnDestroy() {
     if (this.keyboardShowListener) {
       this.keyboardShowListener.remove();
@@ -66,15 +69,15 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     this.apiService.login(this.credentials).subscribe({
       next: async (response) => {
         await loading.dismiss();
-        console.log('Login successful:', response);
+        // console.log('Login successful:', response);
 
         localStorage.setItem('token', response.token); // Store the token
         // Store user data using ApiService
         this.apiService.setCurrentUser(response.user, response.profile);
-        console.log('After setCurrentUser:', {
-          user: this.apiService.getCurrentUser(),
-          profile: this.apiService.getCurrentProfile()
-        });
+        // console.log('After setCurrentUser:', {
+        //   user: this.apiService.getCurrentUser(),
+        //   profile: this.apiService.getCurrentProfile()
+        // });
 
         // --- FCM Registration and Token Sending ---
         // Only run on device (not browser)
@@ -83,15 +86,16 @@ export class LoginPage implements AfterViewInit, OnDestroy {
             const permResult = await PushNotifications.requestPermissions();
             if (permResult.receive === 'granted') {
               await PushNotifications.register();
+              // listens for the registration event granted by the phone
               PushNotifications.addListener('registration', (token) => {
-                console.log('FCM Token:', token.value);
+                // console.log('FCM Token:', token.value);
                 this.apiService.setFcmToken(token.value); // <-- Add this line
                 const profile = this.apiService.getCurrentProfile();
                 if (profile) {
-                  this.apiService.savePushToken(profile.parent_id, token.value).subscribe({
-                    next: (res) => console.log('Token saved!', res),
-                    error: (err) => console.error('Failed to save token', err)
-                  });
+                  this.apiService.savePushToken(profile.parent_id, token.value).subscribe(); // {
+                  //   next: (res) => console.log('Token saved!', res),
+                  //   error: (err) => console.error('Failed to save token', err)
+                  // });
                 }
               });
             }
@@ -105,13 +109,13 @@ export class LoginPage implements AfterViewInit, OnDestroy {
       },
       error: async (error) => {
         await loading.dismiss();
-        console.error('Login failed:', error);
+        // console.error('Login failed:', error);
 
         const errorMessage = error.error?.message || 'Invalid credentials';
         this.showAlert('Login Failed', errorMessage);
       }
     });
-    console.log('API URL:', environment.apiUrl);
+    // console.log('API URL:', environment.apiUrl);
   }
 
   async register() {
@@ -150,7 +154,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     this.apiService.register(userData).subscribe({
       next: async (response) => {
         await loading.dismiss();
-        console.log('Registration successful:', response);
+        // console.log('Registration successful:', response);
 
         this.showAlert('Success', 'Account created successfully! You can now login.');
         this.isRegistering = false;
@@ -158,8 +162,8 @@ export class LoginPage implements AfterViewInit, OnDestroy {
       },
       error: async (error) => {
         await loading.dismiss();
-        console.error('Registration failed:', error);
-
+        // console.error('Registration failed:', error);
+        // error.error is an object with message and possibly errors, the second one is inside of an object which is the first error
         let errorMessage = error.error?.message || 'Registration failed';
         // If there are validation errors, append them to the message
         if (error.error?.errors) {
@@ -171,7 +175,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
         this.showAlert('Registration Failed', errorMessage);
       }
     });
-    console.log('API URL:', environment.apiUrl); // <-- Add this line
+    // console.log('API URL:', environment.apiUrl); // <-- Add this line
   }
 
   private async showAlert(header: string, message: string) {
@@ -214,11 +218,13 @@ export class LoginPage implements AfterViewInit, OnDestroy {
   }
 
   private isValidEmail(email: string): boolean {
+    // convnetional email validation regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
 
   private isValidContactNumber(contactNo: string): boolean {
+    // conventional regex for validating Philippine mobile numbers
     // Philippine mobile number format: 09XXXXXXXXX (11 digits starting with 09)
     const phoneRegex = /^09\d{9}$/;
     return phoneRegex.test(contactNo);

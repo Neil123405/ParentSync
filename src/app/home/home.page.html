@@ -13,6 +13,7 @@
   <div class="filter-row filter-card">
     <ion-item>
       <ion-label>Student</ion-label>
+      <!-- the value is based on the selected student which is the ion-select-option -->
       <ion-select [(ngModel)]="announcementStudentFilter" interface="popover">
         <ion-select-option value="">All</ion-select-option>
         <ion-select-option *ngFor="let child of laravelChildren" [value]="child.student_id">
@@ -47,6 +48,7 @@
     <div style="display: flex; align-items: center; margin-bottom: 6px;">
       <!-- Student photo/icon OUTSIDE the card -->
       <div style="margin-right: 16px; display: flex; align-items: center; justify-content: center;">
+        <!-- gets the student by ID and checks if they have a photo URL -->
         <ng-container *ngIf="getStudentById(announcement.student_id)?.photo_url; else noPhoto">
           <img [src]="getStudentById(announcement.student_id)?.photo_url"
                alt="Student Photo"

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+
 import { FormsModule } from '@angular/forms';
+
+import { ModalController, IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-add-student-modal',

@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+
 import { Router } from '@angular/router';
 import { CalendarEvent } from 'angular-calendar';
+
+import { ViewWillEnter } from '@ionic/angular';
+
 import { startOfDay } from 'date-fns';
 import { ApiService } from '../services/api.service';
-import { ViewWillEnter } from '@ionic/angular';
 
 @Component({
   selector: 'app-calendar',
@@ -252,7 +255,7 @@ export class CalendarPage implements OnInit, ViewWillEnter {
     } else {
       // Show a toast or alert for missing info
       alert('Cannot open event details: missing student or event information.');
-      console.warn('Missing eventId or studentId for event detail navigation', event);
+      // console.warn('Missing eventId or studentId for event detail navigation', event);
     }
   }
 

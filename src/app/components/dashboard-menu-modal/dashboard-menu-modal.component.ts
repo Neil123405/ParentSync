@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService, ParentProfile } from '../../services/api.service';
-import { AccountMenuModalComponent } from '../account-menu-modal/account-menu-modal.component';
+
 import { Router } from '@angular/router';
-import { ModalController, IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
+import { ModalController, IonicModule } from '@ionic/angular';
+
+import { ApiService, ParentProfile } from '../../services/api.service';
+import { AccountMenuModalComponent } from '../account-menu-modal/account-menu-modal.component';
 
 @Component({
   selector: 'app-dashboard-menu-modal',
@@ -20,7 +23,7 @@ export class DashboardMenuModalComponent implements OnInit {
     private modalCtrl: ModalController,
     private apiService: ApiService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.parent = this.apiService.getCurrentProfile();
@@ -55,6 +58,6 @@ export class DashboardMenuModalComponent implements OnInit {
   logout() {
     this.close(); // Close the modal first
     this.apiService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 }

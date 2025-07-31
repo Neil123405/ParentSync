@@ -1,9 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, ToastController, ActionSheetController, IonicModule } from '@ionic/angular';
+import { Component, Input, OnInit } from '@angular/core'
+
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ApiService } from '../../services/api.service';
+
+import { ModalController, ToastController, ActionSheetController, IonicModule } from '@ionic/angular';
+
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-child-options-modal',

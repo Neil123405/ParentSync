@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { ApiService } from '../services/api.service';
 
 @Component({
@@ -42,7 +44,7 @@ export class SchoolEventsPage implements OnInit {
   }
 
   openEventDetail(event: any) {
-    console.log('Event clicked:', event); // Debug line
+    // console.log('Event clicked:', event); // Debug line
     this.router.navigate(['/school-event-detail', event.event_id, event.student_id]);
   }
 }

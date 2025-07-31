@@ -26,7 +26,7 @@ export class SimpleCalendarComponent {
     if (!day) return false;
     const dateStr = this.formatDate(this.currentYear, this.currentMonth, day);
     // Debug log:
-    console.log('Checking', dateStr, this.events.map(e => e.date));
+    // console.log('Checking', dateStr, this.events.map(e => e.date));
     return this.events.some(e => e.date.slice(0, 10) === dateStr);
   }
 
