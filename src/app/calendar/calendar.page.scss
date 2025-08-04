@@ -230,6 +230,53 @@ ion-card-content {
   background: #ff9800; // orange for consent forms
 }
 
+// :root {
+//   --ion-color-green: #28a745;
+//   --ion-color-green-rgb: 40, 167, 69;
+//   --ion-color-green-contrast: #ffffff;
+//   --ion-color-green-contrast-rgb: 255, 255, 255;
+//   --ion-color-green-shade: #218838;
+//   --ion-color-green-tint: #34d058;
+// }
+
+
+ion-button.consent-toggle-btn[fill="outline"] {
+  --border-color: var(--consent-green) !important;
+  --color: var(--consent-green) !important;
+  --background: #fff !important;
+  color: var(--consent-green) !important;
+  transition: all 0.18s;
+}
+
+ion-button.consent-toggle-btn[fill="solid"] {
+  --background: var(--consent-green) !important;
+  --color: #fff !important;
+  --border-color: var(--consent-green) !important;
+  background: var(--consent-green) !important;
+  color: #fff !important;
+}
+
+// /* Strong selector for both modes */
+// :host ::ng-deep ion-button.consent-toggle-btn.button-outline,
+// :host ::ng-deep ion-button.consent-toggle-btn[fill="outline"] {
+//   --background: #fff !important;
+//   --color: var(--consent-green) !important;
+//   --border-color: var(--consent-green) !important;
+//   color: var(--consent-green) !important;
+//   border: 2px solid var(--consent-green) !important;
+//   transition: all 0.18s;
+// }
+
+// :host ::ng-deep ion-button.consent-toggle-btn.button-solid,
+// :host ::ng-deep ion-button.consent-toggle-btn[fill="solid"] {
+//   --background: var(--consent-green) !important;
+//   --color: #fff !important;
+//   --border-color: var(--consent-green) !important;
+//   background: var(--consent-green) !important;
+//   color: #fff !important;
+//   border: 2px solid var(--consent-green) !important;
+// }
+
 @media (max-width: 500px) {
   ion-card {
     margin: 4px 2px;

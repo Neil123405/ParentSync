@@ -415,7 +415,7 @@ export class ChildrenPage implements OnInit {
     // Toggle only for selected child
     this.showTimeline[studentId] = !this.showTimeline[studentId];
 
-    if (this.showTimeline[studentId] && !this.signedConsentForms[studentId]) {
+    if (this.showTimeline[studentId]) {
       this.apiService.getSignedConsentForms(studentId).subscribe({
         next: (response) => {
           this.signedConsentForms[studentId] = response.forms || [];
