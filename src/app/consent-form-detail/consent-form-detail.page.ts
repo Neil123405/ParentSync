@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '../services/api.service';
 
+import { AlertController } from '@ionic/angular';
+
 @Component({
   selector: 'app-consent-form-detail',
   templateUrl: './consent-form-detail.page.html',
@@ -27,8 +29,9 @@ export class ConsentFormDetailPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private apiService: ApiService
-  ) {}
+    private apiService: ApiService,
+    private alertController: AlertController,
+  ) { }
 
   ngOnInit() {
     this.formId = +this.route.snapshot.paramMap.get('formId')!;
@@ -58,24 +61,40 @@ export class ConsentFormDetailPage implements OnInit {
     // Called when signature is finished
   }
 
-  submitSignature(signatureData: string) {
-    this.apiService.signConsentForm(this.formId, this.studentId, signatureData).subscribe(res => {
-      if (res.success) {
-        this.alreadySigned = true;
-        if (res.signatureImage) {
-          if (res.signatureImage.startsWith('data:')) {
-            this.signatureImage = res.signatureImage;
-          } else if (res.signatureImage.startsWith('http')) {
-            this.signatureImage = res.signatureImage;
-          } else {
-            this.signatureImage = `data:image/png;base64,${res.signatureImage}`;
+  async submitSignature(signatureData: string) {
+    const alert = await this.alertController.create({
+      header: 'Confirm Submission',
+      message: 'Are you sure you want to submit your signature for this consent form?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Submit',
+          handler: () => {
+            this.apiService.signConsentForm(this.formId, this.studentId, signatureData).subscribe(res => {
+              if (res.success) {
+                this.alreadySigned = true;
+                if (res.signatureImage) {
+                  if (res.signatureImage.startsWith('data:')) {
+                    this.signatureImage = res.signatureImage;
+                  } else if (res.signatureImage.startsWith('http')) {
+                    this.signatureImage = res.signatureImage;
+                  } else {
+                    this.signatureImage = `data:image/png;base64,${res.signatureImage}`;
+                  }
+                } else {
+                  this.signatureImage = signatureData;
+                }
+                // Notify that this form was signed
+                // this.apiService.consentFormSigned$.next({ formId: this.formId, studentId: this.studentId });
+              }
+            });
           }
-        } else {
-          this.signatureImage = signatureData;
         }
-        // Notify that this form was signed
-        this.apiService.consentFormSigned$.next({ formId: this.formId, studentId: this.studentId });
-      }
+      ]
     });
+    await alert.present();
   }
 }

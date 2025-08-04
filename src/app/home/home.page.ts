@@ -16,7 +16,7 @@ export class HomePage implements OnInit {
   currentProfile: ParentProfile | null = null;
 
   laravelAnnouncements: any[] = [];
-  mixedFeed: any[] = [];
+  // mixedFeed: any[] = [];
   laravelChildren: any[] = [];
   laravelEvents: any[] = [];
 
@@ -27,6 +27,10 @@ export class HomePage implements OnInit {
   eventStudentFilter: string = '';
   eventSort: string = 'latest';
   eventLimit: number = 5;
+
+  studentFilter: string = '';
+  feedSort: string = 'latest';
+  feedLimit: number = 5;
 
   constructor(
     private apiService: ApiService,
@@ -84,10 +88,10 @@ export class HomePage implements OnInit {
         this.laravelAnnouncements = response.announcements || [];
         // Only announcements in mixedFeed
         // map means get each announcement and add a type called announcement, the data is the announcement itself
-        this.mixedFeed = this.laravelAnnouncements.map((a: any) => ({
-          type: 'announcement',
-          data: a
-        }));
+        // this.mixedFeed = this.laravelAnnouncements.map((a: any) => ({
+        //   type: 'announcement',
+        //   data: a
+        // }));
       }
     });
 
@@ -143,7 +147,7 @@ export class HomePage implements OnInit {
 
   //* already read!
   openEventDetail(event: any) {
-    this.router.navigate(['/school-event-detail', event.event_id, event.student_id]);
+    this.router.navigate(['/event-detail', event.event_id, event.student_id]);
   }
 
   //* already read!
@@ -155,14 +159,14 @@ export class HomePage implements OnInit {
   //* already read!
   get filteredAnnouncements() {
     let list = this.laravelAnnouncements;
-    if (this.announcementStudentFilter) {
-      list = list.filter(a => a.student_id == this.announcementStudentFilter);
+    if (this.studentFilter) {
+      list = list.filter(a => a.student_id == this.studentFilter);
     }
     // a and b are announcement objects
     // the top is just a filter, this one is the sort (important)
     // sort function negative means a comes first, positive means b comes first, it is FIXED RULE OF JAVASCRIPT
     list = [...list].sort((a, b) => {
-      if (this.announcementSort === 'latest') {
+      if (this.feedSort === 'latest') {
         // a.created_at = '2024-01-01'
         // b.created_at = '2025-01-01'
         // For latest:
@@ -176,23 +180,23 @@ export class HomePage implements OnInit {
         return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
       }
     });
-    return list.slice(0, this.announcementLimit);
+    return list.slice(0, this.feedLimit);
   }
 
   // Filtered Events
   //* already read! same as announcements
   get filteredEvents() {
     let list = this.laravelEvents;
-    if (this.eventStudentFilter) {
-      list = list.filter(e => e.student_id == this.eventStudentFilter);
+    if (this.studentFilter) {
+      list = list.filter(e => e.student_id == this.studentFilter);
     }
     list = [...list].sort((a, b) => {
-      if (this.eventSort === 'latest') {
+      if (this.feedSort === 'latest') {
         return new Date(b.date).getTime() - new Date(a.date).getTime();
       } else {
         return new Date(a.date).getTime() - new Date(b.date).getTime();
       }
     });
-    return list.slice(0, this.eventLimit);
+    return list.slice(0, this.feedLimit);
   }
 }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '../services/api.service';
@@ -91,7 +92,7 @@ export class DayEventsPage implements OnInit {
   loadEventsForDate(date: string) {
     this.events = [];
     if (this.parentProfile) {
-      this.apiService.getParentEventsByDate(this.parentProfile.parent_id, date)
+      this.apiService.getParentEvents(this.parentProfile.parent_id, date)
         .subscribe(res => {
           this.events = res.events || [];
         });
@@ -141,5 +142,16 @@ export class DayEventsPage implements OnInit {
 
   openConsentFormDetail(form: any) {
     this.router.navigate(['/consent-form-detail', form.form_id, form.student_id ?? form.student?.student_id]);
+  }
+
+  doRefresh(event: any) {
+    // Reload your data here (e.g., call loadEventsForDate and loadConsentFormsForDate)
+    this.loadEventsForDate(this.date);
+    this.loadConsentFormsForDate(this.date);
+
+    // Complete the refresher after data is loaded
+    setTimeout(() => {
+      event.target.complete();
+    }, 1000); // Adjust timeout as needed or call complete after data is actually loaded
   }
 }

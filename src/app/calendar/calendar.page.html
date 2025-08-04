@@ -13,6 +13,9 @@
 </ion-header> -->
 
 <ion-content [fullscreen]="true" class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-card>
     <ion-card-header>
       <ion-card-title>School Calendar</ion-card-title>
@@ -80,6 +83,10 @@
                 {{ event.start | date:'mediumDate' }}
                 <span *ngIf="event.meta?.description">- {{ event.meta.description }}</span>
               </p>
+              
+    <p *ngIf="event.meta?.student?.first_name && event.meta?.student?.last_name">
+      <strong>Student:</strong> {{ event.meta.student.first_name }} {{ event.meta.student.last_name }}
+    </p>
             </ion-label>
           </ion-item>
         </ion-list>

@@ -45,4 +45,11 @@ export class ConsentFormsPage implements OnInit {
   openConsentForm(form: any) {
     this.router.navigate(['/consent-form-detail', form.form_id, this.studentId]);
   }
+
+  doRefresh(event: any) {
+  this.ngOnInit(); // Replace with your actual data loading method
+  setTimeout(() => {
+    event.target.complete();
+  }, 1000); // Or call complete after data is actually loaded
+}
 }

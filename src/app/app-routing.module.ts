@@ -35,10 +35,10 @@ const routes: Routes = [
     path: 'school-events/:studentId',
     loadChildren: () => import('./school-events/school-events.module').then( m => m.SchoolEventsPageModule)
   },
-  {
-  path: 'school-event-detail/:eventId/:studentId',
-  loadChildren: () => import('./event-detail/event-detail.module').then( m => m.EventDetailPageModule)
-  },
+  // {
+  // path: 'school-event-detail/:eventId/:studentId',
+  // loadChildren: () => import('./event-detail/event-detail.module').then( m => m.EventDetailPageModule)
+  // },
   {
     path: 'announcement-detail/:announcementId',
     loadChildren: () => import('./announcement-detail/announcement-detail.module').then( m => m.AnnouncementDetailPageModule)
@@ -63,6 +63,11 @@ const routes: Routes = [
     path: 'day-events/:date',
     loadChildren: () => import('./day-events/day-events.module').then( m => m.DayEventsPageModule)
   },
+  {
+    path: 'student-announcements/:studentId',
+    loadChildren: () => import('./student-announcements/student-announcements.module').then( m => m.StudentAnnouncementsPageModule)
+  },
+
 ];
 
 @NgModule({

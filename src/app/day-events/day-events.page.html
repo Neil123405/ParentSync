@@ -8,6 +8,9 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">day-events</ion-title>
@@ -82,4 +85,6 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
+  <!-- Add this at the very end of your ion-content in day-events.page.html -->
+<div style="height: 80px;"></div>
 </ion-content>

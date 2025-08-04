@@ -10,37 +10,95 @@
   </ion-refresher>
 
   <!-- Announcements Filters -->
-  <div class="filter-row filter-card">
-    <ion-item>
-      <ion-label>Student</ion-label>
-      <!-- the value is based on the selected student which is the ion-select-option -->
-      <ion-select [(ngModel)]="announcementStudentFilter" interface="popover">
-        <ion-select-option value="">All</ion-select-option>
-        <ion-select-option *ngFor="let child of laravelChildren" [value]="child.student_id">
-          {{ child.first_name }} {{ child.last_name }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item>
-      <ion-label>Sort</ion-label>
-      <ion-select [(ngModel)]="announcementSort" interface="popover">
-        <ion-select-option value="latest">Latest</ion-select-option>
-        <ion-select-option value="oldest">Oldest</ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item class="show-input-item">
-      <div class="show-input-container">
-    <ion-label class="show-label">Show</ion-label>
+  <!-- Unified Filters for both Announcements and Events -->
+   <div class="filter-row filter-card">
+  <ion-item>
+    <ion-label>Student</ion-label>
+    <ion-select [(ngModel)]="studentFilter" interface="popover">
+      <ion-select-option value="">All</ion-select-option>
+      <ion-select-option *ngFor="let child of laravelChildren" [value]="child.student_id">
+        {{ child.first_name }} {{ child.last_name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+</div>
+
+<!-- Sort Filter (row 2) -->
+<div class="filter-row filter-card">
+  <ion-item>
+    <ion-label>Sort</ion-label>
+    <ion-select [(ngModel)]="feedSort" interface="popover">
+      <ion-select-option value="latest">Latest</ion-select-option>
+      <ion-select-option value="oldest">Oldest</ion-select-option>
+    </ion-select>
+  </ion-item>
+</div>
+
+<!-- Show Filter (row 3) -->
+<div class="filter-row filter-card">
+  <ion-item>
+    <ion-label>Show</ion-label>
     <ion-input
       type="number"
-      [(ngModel)]="announcementLimit"
+      [(ngModel)]="feedLimit"
       min="1"
       class="centered-number-input"
       style="width: 60px;"
     ></ion-input>
-  </div>
-    </ion-item>
-  </div>
+  </ion-item>
+</div>
+
+<!-- <div class="filter-row filter-card" style="display: flex; gap: 12px;">
+  <ion-item style="flex: 1;">
+    <ion-label>Sort</ion-label>
+    <ion-select [(ngModel)]="feedSort" interface="popover">
+      <ion-select-option value="latest">Latest</ion-select-option>
+      <ion-select-option value="oldest">Oldest</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item style="flex: 1;">
+    <div class="show-input-container" style="display: flex; align-items: center;">
+      <ion-label class="show-label" style="margin-right: 8px;">Show</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="feedLimit"
+        min="1"
+        class="centered-number-input"
+        style="width: 60px;"
+      ></ion-input>
+    </div>
+  </ion-item>
+</div> -->
+<!-- <div class="filter-row filter-card">
+  <ion-item>
+    <ion-label>Student</ion-label>
+    <ion-select [(ngModel)]="studentFilter" interface="popover">
+      <ion-select-option value="">All</ion-select-option>
+      <ion-select-option *ngFor="let child of laravelChildren" [value]="child.student_id">
+        {{ child.first_name }} {{ child.last_name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label>Sort</ion-label>
+    <ion-select [(ngModel)]="feedSort" interface="popover">
+      <ion-select-option value="latest">Latest</ion-select-option>
+      <ion-select-option value="oldest">Oldest</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item class="show-input-item">
+    <div class="show-input-container">
+      <ion-label class="show-label">Show</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="feedLimit"
+        min="1"
+        class="centered-number-input"
+        style="width: 60px;"
+      ></ion-input>
+    </div>
+  </ion-item>
+</div> -->
 
   <h2>Announcements</h2>
   <!-- Announcements List -->
@@ -78,7 +136,7 @@
   </ion-item>
 
   <!-- Events Filters -->
-  <div class="filter-row filter-card">
+  <!-- <div class="filter-row filter-card">
     <ion-item>
       <ion-label>Student</ion-label>
       <ion-select [(ngModel)]="eventStudentFilter" interface="popover">
@@ -107,7 +165,7 @@
       ></ion-input>
     </div>
     </ion-item>
-  </div>
+  </div> -->
 
   <h2>What's Coming Up</h2>
   <!-- Events List -->

@@ -27,7 +27,7 @@ export class SchoolEventsPage implements OnInit {
       this.apiService.getStudentEvents(this.studentId).subscribe({
         next: (res) => {
           // Attach studentId to each event
-          this.events = (res.events || []).map((e: any) => ({
+            this.events = (res.events || []).map((e: any) => ({ 
             ...e,
             event_id: e.event_id ?? e.id, // Ensure event_id exists
             student_id: this.studentId
@@ -45,6 +45,13 @@ export class SchoolEventsPage implements OnInit {
 
   openEventDetail(event: any) {
     // console.log('Event clicked:', event); // Debug line
-    this.router.navigate(['/school-event-detail', event.event_id, event.student_id]);
+    this.router.navigate(['/event-detail', event.event_id, event.student_id]);
   }
+
+  doRefresh(event: any) {
+  this.ngOnInit(); // Replace with your actual data loading method
+  setTimeout(() => {
+    event.target.complete();
+  }, 1000); // Or call complete after data is actually loaded
+}
 }

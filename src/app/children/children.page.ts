@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 
 import { Router } from '@angular/router';
 
-import { AlertController, LoadingController, ToastController, ModalController, ActionSheetController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
+
+import { LoadingController, ToastController, ModalController } from '@ionic/angular';
 
 // import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
@@ -18,7 +20,7 @@ interface LaravelStudent {
   grade_level: number;
   section_name: string;
   grade_name: string;
-  photo_url?: string; 
+  photo_url?: string;
 }
 
 interface ConsentForm {
@@ -47,6 +49,14 @@ interface LaravelEvent {
   cost: number;
   scope: string;
   created_at: string;
+}
+
+interface Announcement {
+  id: number;
+  title: string;
+  content: string;
+  date: string;
+  // add other fields as needed
 }
 
 @Component({
@@ -78,6 +88,7 @@ export class ChildrenPage implements OnInit {
 
   consentFormCounts: { [studentId: number]: number } = {};
   schoolEventCounts: { [studentId: number]: number } = {};
+  announcementCounts: { [studentId: number]: number } = {};
 
   showTasks = false;
   showSchoolEvents = false;
@@ -86,9 +97,11 @@ export class ChildrenPage implements OnInit {
 
   pressTimer: any = null;
 
+  studentAnnouncements: Announcement[] = [];
+
   constructor(
     private router: Router,
-    // private alertController: AlertController,
+    private alertController: AlertController,
     private loadingController: LoadingController,
     private apiService: ApiService,
     private toastController: ToastController,
@@ -122,16 +135,16 @@ export class ChildrenPage implements OnInit {
 
     // Listen for signed consent forms signed
     //* already read!
-    this.apiService.consentFormSigned$.subscribe(({ formId, studentId }) => {
-      // Only update if the selected child matches
-      if (this.selectedChild && this.selectedChild.student_id === studentId) {
-        this.consentForms = this.consentForms.filter(f => f.form_id !== formId);
-      }
-      // Optionally, update the badge/counts as well
-      if (this.consentFormCounts[studentId] !== undefined) {
-        this.consentFormCounts[studentId] = Math.max(0, this.consentFormCounts[studentId] - 1);
-      }
-    });
+    // this.apiService.consentFormSigned$.subscribe(({ formId, studentId }) => {
+    //   // Only update if the selected child matches
+    //   if (this.selectedChild && this.selectedChild.student_id === studentId) {
+    //     this.consentForms = this.consentForms.filter(f => f.form_id !== formId);
+    //   }
+    //   // // Optionally, update the badge/counts as well
+    //   // if (this.consentFormCounts[studentId] !== undefined) {
+    //   //   this.consentFormCounts[studentId] = Math.max(0, this.consentFormCounts[studentId] - 1);
+    //   // }
+    // });
   }
 
   async loadData() {
@@ -160,9 +173,15 @@ export class ChildrenPage implements OnInit {
             this.laravelChildren.forEach(child => {
               this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
                 this.consentFormCounts[child.student_id] = (res.forms || []).length;
+
+                this.consentForms = res.forms || [];
               });
               this.apiService.getStudentEvents(child.student_id).subscribe(res => {
                 this.schoolEventCounts[child.student_id] = (res.events || []).length;
+              });
+              // Fetch announcements count
+              this.apiService.getStudentAnnouncements(child.student_id).subscribe(res => {
+                this.announcementCounts[child.student_id] = (res.announcements || []).length;
               });
             });
           } else {
@@ -204,6 +223,7 @@ export class ChildrenPage implements OnInit {
     // this.attendanceRecords = [];
     // this.attendanceSummary = null;
     this.studentEvents = [];
+    this.studentAnnouncements = [];
   }
 
   showSection(section: string) {
@@ -212,8 +232,10 @@ export class ChildrenPage implements OnInit {
 
     if (section === 'tasks') {
       this.loadConsentForms();      // <-- Load consent forms
-      this.loadStudentEvents();     // <-- Load events
-    } else if (section === 'timeline') {
+      this.loadStudentEvents();
+      this.loadStudentAnnouncements();   // <-- Load events
+    }
+    else if (section === 'timeline') {
       this.toggleTimeline(this.selectedChild);
     }
   }
@@ -331,41 +353,41 @@ export class ChildrenPage implements OnInit {
     }
   }
 
-  async addStudent() {
-    if (!this.newStudentId || !this.currentProfile) {
-      this.showToast('Please enter a valid Student ID.');
-      return;
-    }
+  // async addStudent() {
+  //   if (!this.newStudentId || !this.currentProfile) {
+  //     this.showToast('Please enter a valid Student ID.');
+  //     return;
+  //   }
 
-    const loading = await this.loadingController.create({
-      message: 'Linking student...',
-    });
-    await loading.present();
-    //* already read!
-    this.apiService.linkStudentToParent(this.currentProfile.parent_id, this.newStudentId).subscribe({
-      next: async (response) => {
-        await loading.dismiss();
-        if (response.success) {
-          this.showToast('Student linked successfully!');
-          this.newStudentId = null;
-          this.loadData(); // Refresh children list
-        } else {
-          this.showToast(response.message || 'Failed to link student.');
-        }
-      },
-      error: async (error) => {
-        await loading.dismiss();
-        let errorMessage = error.error?.message || 'Failed to link student.';
-        if (error.error?.errors) {
-          const details = Object.entries(error.error.errors)
-            .map(([field, messages]) => `${field}: ${(messages as string[]).join(', ')}`)
-            .join('\n');
-          errorMessage += '\n' + details;
-        }
-        this.showToast(errorMessage);
-      }
-    });
-  }
+  //   const loading = await this.loadingController.create({
+  //     message: 'Linking student...',
+  //   });
+  //   await loading.present();
+  //   //* already read!
+  //   this.apiService.linkStudentToParent(this.currentProfile.parent_id, this.newStudentId).subscribe({
+  //     next: async (response) => {
+  //       await loading.dismiss();
+  //       if (response.success) {
+  //         this.showToast('Student linked successfully!');
+  //         this.newStudentId = null;
+  //         this.loadData(); // Refresh children list
+  //       } else {
+  //         this.showToast(response.message || 'Failed to link student.');
+  //       }
+  //     },
+  //     error: async (error) => {
+  //       await loading.dismiss();
+  //       let errorMessage = error.error?.message || 'Failed to link student.';
+  //       if (error.error?.errors) {
+  //         const details = Object.entries(error.error.errors)
+  //           .map(([field, messages]) => `${field}: ${(messages as string[]).join(', ')}`)
+  //           .join('\n');
+  //         errorMessage += '\n' + details;
+  //       }
+  //       this.showToast(errorMessage);
+  //     }
+  //   });
+  // }
 
   async showToast(message: string) {
     const toast = await this.toastController.create({
@@ -382,6 +404,10 @@ export class ChildrenPage implements OnInit {
 
   goToSchoolEvents(child: LaravelStudent) {
     this.router.navigate(['/school-events', child.student_id]);
+  }
+
+  goToStudentAnnouncements(child: LaravelStudent) {
+    this.router.navigate(['/student-announcements', child.student_id]);
   }
 
   toggleTimeline(child: LaravelStudent) {
@@ -404,7 +430,7 @@ export class ChildrenPage implements OnInit {
   // Modal logic
   async openAddStudentModal() {
     const modal = await this.modalController.create({
-      component: AddStudentModalComponent // You need to create this component below
+      component: AddStudentModalComponent
     });
     modal.onDidDismiss().then((result) => {
       if (result.data && result.data.studentId) {
@@ -414,21 +440,42 @@ export class ChildrenPage implements OnInit {
     await modal.present();
   }
 
-  addStudentById(studentId: number) {
+  async addStudentById(studentId: number) {
     if (!studentId || !this.currentProfile) {
       this.showToast('Please enter a valid Student ID.');
       return;
     }
-    this.apiService.linkStudentToParent(this.currentProfile.parent_id, studentId).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.showToast('Student linked successfully!');
-        } else {
-          this.showToast(response.message || 'Failed to link student.');
+    const alert = await this.alertController.create({
+      header: 'Confirm Link',
+      message: 'Are you sure you want to link this student to your account?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            if (this.currentProfile && this.currentProfile.parent_id !== undefined) {
+              this.apiService.linkStudentToParent(this.currentProfile.parent_id, studentId).subscribe({
+                next: (response) => {
+                  if (response.success) {
+                    this.showToast('Student linked successfully!');
+                  } else {
+                    this.showToast(response.message || 'Failed to link student.');
+                  }
+                },
+                error: () => this.showToast('Failed to link student.')
+              });
+            } else {
+              this.showToast('Parent ID is missing.');
+            }
+          }
         }
-      },
-      error: () => this.showToast('Failed to link student.')
+      ]
     });
+
+    await alert.present();
   }
 
   // async changeStudentPhoto(student: any) {
@@ -489,7 +536,7 @@ export class ChildrenPage implements OnInit {
 
   openEventDetail(event: any) {
     // Pass both event_id and student_id to match your routing
-    this.router.navigate(['/school-event-detail', event.event_id, event.student_id]);
+    this.router.navigate(['/event-detail', event.event_id, event.student_id]);
   }
 
   startPress(event: Event, child: any) {
@@ -513,5 +560,21 @@ export class ChildrenPage implements OnInit {
     if (formId && studentId) {
       this.router.navigate(['/consent-form-detail', formId, studentId]);
     }
+  }
+
+  loadStudentAnnouncements() {
+    if (!this.selectedChild) return;
+    this.apiService.getStudentAnnouncements(this.selectedChild.student_id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.studentAnnouncements = response.announcements || [];
+        } else {
+          this.studentAnnouncements = [];
+        }
+      },
+      error: () => {
+        this.studentAnnouncements = [];
+      }
+    });
   }
 }

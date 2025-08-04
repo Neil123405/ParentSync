@@ -6,6 +6,7 @@ import { CalendarEvent } from 'angular-calendar';
 import { ViewWillEnter } from '@ionic/angular';
 
 import { startOfDay } from 'date-fns';
+
 import { ApiService } from '../services/api.service';
 
 @Component({
@@ -41,7 +42,7 @@ export class CalendarPage implements OnInit, ViewWillEnter {
   constructor(
     private router: Router,
     private apiService: ApiService
-  ) {}
+  ) { }
 
   // This will run every time the page is shown (not just on first load)
   ionViewWillEnter() {
@@ -50,20 +51,20 @@ export class CalendarPage implements OnInit, ViewWillEnter {
 
   ngOnInit() {
     // Only use navState if it contains BOTH month and year AND they are in a reasonable range
-    const navState = window.history.state;
-    if (
-      typeof navState.month === 'number' &&
-      typeof navState.year === 'number' &&
-      navState.month >= 0 && navState.month <= 11 &&
-      navState.year > 2000 && navState.year < 2100
-    ) {
-      this.currentMonth = navState.month;
-      this.currentYear = navState.year;
-    } else {
-      const today = new Date();
-      this.currentMonth = today.getMonth();
-      this.currentYear = today.getFullYear();
-    }
+    // const navState = window.history.state;
+    // if (
+    //   typeof navState.month === 'number' &&
+    //   typeof navState.year === 'number' &&
+    //   navState.month >= 0 && navState.month <= 11 &&
+    //   navState.year > 2000 && navState.year < 2100
+    // ) {
+    //   this.currentMonth = navState.month;
+    //   this.currentYear = navState.year;
+    // } else {
+    const today = new Date();
+    this.currentMonth = today.getMonth();
+    this.currentYear = today.getFullYear();
+    // }
 
     const parentProfile = this.apiService.getCurrentProfile();
     if (parentProfile) {
@@ -71,47 +72,72 @@ export class CalendarPage implements OnInit, ViewWillEnter {
         const childrenArray = childrenRes.children || [];
         this.linkedStudentIds = childrenArray.map((child: any) => child.student_id);
 
+        // let allForms: any[] = [];
+        // let loaded = 0;
+        if (this.linkedStudentIds.length === 0) {
+          this.loadedConsentForms = [];
+          this.generateCalendar(this.linkedEventIds, []);
+          return;
+        }
         // Fetch all events
         this.apiService.getParentEvents(parentProfile.parent_id).subscribe(res => {
           this._calendarEvents = (res.events || []).map((event: any) => ({
+            ...event,
             start: new Date(event.date),
             title: event.title,
             id: event.id ?? event.event_id,
             student_id: event.student_id,
-            meta: { student_id: event.student_id, description: event.description }
+            meta: {
+              student_id: event.student_id, description: event.description,
+              student: {
+                first_name: event.first_name,
+                last_name: event.last_name
+              }
+            }
           }));
 
           // Fetch event participants for this parent
-          this.apiService.getParentEventParticipants(parentProfile.parent_id).subscribe(epRes => {
-            const eventParticipants = epRes.eventParticipants || [];
-            this.linkedEventIds = new Set(eventParticipants.map((ep: any) => ep.event_id));
+          // this.apiService.getParentEventParticipants(parentProfile.parent_id).subscribe(epRes => {
+          //   const eventParticipants = epRes.eventParticipants || [];
+          // this.linkedEventIds = new Set(eventParticipants.map((ep: any) => ep.event_id));
+          this.linkedEventIds = new Set(this._calendarEvents.map((ev: any) => ev.id));
+        });
+        // Fetch consent forms for all linked students
+        // this.linkedStudentIds.forEach(studentId => {
+        //   this.apiService.getUnsignedConsentFormsForStudent(studentId).subscribe(res => {
+        //     if (res.forms) {
+        //       const formsWithStudent = res.forms.map((form: any) => ({
+        //         ...form,
+        //         student_id: studentId,
+        //         student: (childrenArray || []).find((c: any) => c.student_id === studentId)
+        //       }));
+        //       allForms.push(...formsWithStudent);
+        //     }
+        //     loaded++;
+        //     if (loaded === this.linkedStudentIds.length) {
+        //       this.loadedConsentForms = allForms;
+        //       this.generateCalendar(this.linkedEventIds, this.loadedConsentForms);
+        //     }
+        //   });
+        // });
+        // });
 
-            // Fetch consent forms for all linked students
-            let allForms: any[] = [];
-            let loaded = 0;
-            if (this.linkedStudentIds.length === 0) {
-              this.loadedConsentForms = [];
-              this.generateCalendar(this.linkedEventIds, []);
-              return;
-            }
-            this.linkedStudentIds.forEach(studentId => {
-              this.apiService.getUnsignedConsentFormsForStudent(studentId).subscribe(res => {
-                if (res.forms) {
-                  const formsWithStudent = res.forms.map((form: any) => ({
-                    ...form,
-                    student_id: studentId,
-                    student: (childrenArray || []).find((c: any) => c.student_id === studentId)
-                  }));
-                  allForms.push(...formsWithStudent);
-                }
-                loaded++;
-                if (loaded === this.linkedStudentIds.length) {
-                  this.loadedConsentForms = allForms;
-                  this.generateCalendar(this.linkedEventIds, this.loadedConsentForms);
-                }
-              });
-            });
-          });
+        this.apiService.getAllUnsignedConsentFormsForParent(parentProfile.parent_id).subscribe(res => {
+          if (res.forms) {
+            this.loadedConsentForms = res.forms.map((form: any) => ({
+              ...form,
+              student_id: form.student_id,
+              student: {
+                first_name: form.first_name,
+                last_name: form.last_name,
+                student_id: form.student_id
+              }
+            }));
+            this.generateCalendar(this.linkedEventIds, this.loadedConsentForms);
+          } else {
+            this.loadedConsentForms = [];
+            this.generateCalendar(this.linkedEventIds, []);
+          }
         });
       });
     }
@@ -195,6 +221,7 @@ export class CalendarPage implements OnInit, ViewWillEnter {
     const weeks: any[][] = [];
     let week: any[] = [];
 
+    // returns null for days before the first day of the month similar to a real calendar
     for (let i = 0; i < firstDay.getDay(); i++) {
       week.push(null);
     }
@@ -214,6 +241,8 @@ export class CalendarPage implements OnInit, ViewWillEnter {
       });
 
       // Consent forms for this day (by deadline)
+      // Consent forms is passed as an argument to this function and converted to Date objects
+      // returns true if the form's deadline matches the day and false otherwise
       const dayForms = consentForms.filter(form => {
         const deadlineDate = startOfDay(new Date(form.deadline));
         return (
@@ -223,6 +252,7 @@ export class CalendarPage implements OnInit, ViewWillEnter {
         );
       });
 
+      // week is a placeholder for the current week being generated
       week.push({ date: dayDate, inMonth: true, events: dayEvents, forms: dayForms });
       if (week.length === 7) {
         weeks.push(week);
@@ -230,6 +260,7 @@ export class CalendarPage implements OnInit, ViewWillEnter {
       }
     }
 
+    // Fill the last week with nulls if it has less than 7 days
     if (week.length) {
       while (week.length < 7) {
         week.push(null);
@@ -300,5 +331,15 @@ export class CalendarPage implements OnInit, ViewWillEnter {
       const daysDiff = (deadlineDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
       return daysDiff >= 0 && daysDiff <= maxDaysAhead;
     }).sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
+  }
+
+  doRefresh(event: any) {
+    // Reload your data here (call ngOnInit or your data-loading logic)
+    this.ngOnInit();
+
+    // Complete the refresher after data is loaded
+    setTimeout(() => {
+      event.target.complete();
+    }, 1000); // Adjust timeout as needed or call complete after data is actually loaded
   }
 }

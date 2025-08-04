@@ -23,12 +23,12 @@ export interface ParentProfile {
   last_name: string;
   email: string;
   contactNo: string;
-  photo_url?: string; // <-- Add this line if missing
-  username?: string;  // <-- Add this if you want to edit username
+  photo_url?: string; 
+  username?: string; 
 }
 
 export interface AuthResponse {
-  token: string; // <-- Add this line
+  token: string; 
   user: User;
   profile?: ParentProfile;
   message?: string;
@@ -36,15 +36,14 @@ export interface AuthResponse {
 
 interface SignConsentResponse {
   success: boolean;
-  signatureImage?: string; // Add this line
-  // Add other properties if needed
+  signatureImage?: string; 
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = environment.apiUrl || 'http://YOUR IP ADDRESS:8000/api';
+  private apiUrl = environment.apiUrl || 'http://192.168.1.7:8000/api';
 
   // User management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -53,7 +52,7 @@ export class ApiService {
   public currentUser$ = this.currentUserSubject.asObservable();
   public currentProfile$ = this.currentProfileSubject.asObservable();
   public profileUpdated$ = new Subject<void>();
-  consentFormSigned$ = new Subject<{ formId: number, studentId: number }>();
+  // consentFormSigned$ = new Subject<{ formId: number, studentId: number }>();
 
   private fcmToken: string | null = null;
 
@@ -164,26 +163,34 @@ export class ApiService {
   }
 
   // Events
-  getParentEvents(parentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/parent/${parentId}/events`, { headers: this.getHeaders() });
+  // getParentEvents(parentId: number): Observable<any> {
+  //   return this.http.get(`${this.apiUrl}/parent/${parentId}/events`, { headers: this.getHeaders() });
+  // }
+
+  getParentEvents(parentId: number, date?: string): Observable<any> {
+    const options: any = { headers: this.getHeaders() };
+    if (date) {
+      options.params = { date };
+    }
+    return this.http.get(`${this.apiUrl}/parent/${parentId}/events`, options);
   }
 
   getStudentEvents(studentId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/student/${studentId}/events`, { headers: this.getHeaders() });
   }
 
-  participateInEvent(eventId: number, studentId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/events/${eventId}/participate`,
-      { student_id: studentId },
-      { headers: this.getHeaders() });
-  }
+  // participateInEvent(eventId: number, studentId: number): Observable<any> {
+  //   return this.http.post(`${this.apiUrl}/events/${eventId}/participate`,
+  //     { student_id: studentId },
+  //     { headers: this.getHeaders() });
+  // }
 
   getEventDetail(eventId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/events/${eventId}`, { headers: this.getHeaders() });
   }
 
   getAllEvents() {
-    return this.http.get<{ events: any[] }>(`${this.apiUrl}/events`);
+    return this.http.get<{ events: any[] }>(`${this.apiUrl}/events`, { headers: this.getHeaders() });
   }
 
   // Attendance
@@ -233,7 +240,7 @@ export class ApiService {
   }
 
   uploadStudentPhoto(studentId: number, base64Image: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/students/${studentId}/upload-photo`,
+    return this.http.post(`${this.apiUrl}/student/${studentId}/upload-photo`,
       { image: base64Image },
       { headers: this.getHeaders() }
     );
@@ -247,23 +254,23 @@ export class ApiService {
     return this.http.put(`${this.apiUrl}/parent/${parentId}/profile`, data, { headers: this.getHeaders() });
   }
 
-  getParentEventsByDate(parentId: number, date: string) {
-    return this.http.get<{ events: any[] }>(
-      `${this.apiUrl}/parent-events-by-date`,
-      { params: { parent_id: parentId, date } }
-    );
-  }
+  // getParentEventsByDate(parentId: number, date: string) {
+  //   return this.http.get<{ events: any[] }>(
+  //     `${this.apiUrl}/parent-events-by-date`,
+  //     { params: { parent_id: parentId, date } }
+  //   );
+  // }
 
   getPendingChildren(parentId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/parent/${parentId}/pending-children`, { headers: this.getHeaders() });
   }
 
-  getParentEventParticipants(parentId: number) {
-    return this.http.get<{ eventParticipants: any[] }>(
-      `${this.apiUrl}/parent/${parentId}/event-participants`,
-      { headers: this.getHeaders() }
-    );
-  }
+  // getParentEventParticipants(parentId: number) {
+  //   return this.http.get<{ eventParticipants: any[] }>(
+  //     `${this.apiUrl}/parent/${parentId}/event-participants`,
+  //     { headers: this.getHeaders() }
+  //   );
+  // }
 
   savePushToken(parentId: number, fcmToken: string): Observable<any> {
     return this.http.post(
@@ -283,6 +290,13 @@ export class ApiService {
 
   setFcmToken(token: string) {
     this.fcmToken = token;
+  }
+
+  getAllUnsignedConsentFormsForParent(parentId: number): Observable<any> {
+    return this.http.get<{ forms: any[] }>(
+      `${this.apiUrl}/parent/${parentId}/unsigned-consent-forms`,
+      { headers: this.getHeaders() }
+    );
   }
 
 }

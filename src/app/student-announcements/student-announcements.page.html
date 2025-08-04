@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/children"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Announcements</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <!-- Decorative Announcements Button (not clickable) -->
+  <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
+    <ion-button expand="block" class="task-btn giant-btn">
+      <span class="btn-content">
+        <img src="assets/images/announcements.png" alt="Announcements" class="task-img-giant" />
+        <span class="btn-label">Announcements</span>
+      </span>
+    </ion-button>
+  </div>
+
+  <div class="events-background-box">
+    <ion-list>
+      <ion-item *ngFor="let announcement of announcements" class="event-card" (click)="openAnnouncementDetail(announcement)">
+        <ion-label>
+          <h2>{{ announcement.title }}</h2>
+          <p>{{ announcement.content }}</p>
+          <p style="font-size: 0.9em; color: #888;">{{ announcement.date | date:'mediumDate' }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="announcements.length === 0">
+        <ion-label>No announcements found.</ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>

@@ -1,16 +1,35 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/children"></ion-back-button>
+    </ion-buttons>
     <ion-title>Announcement Detail</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
+  <!-- Decorative Announcements Button (not clickable) -->
+  <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
+    <ion-button expand="block" class="task-btn giant-btn">
+      <span class="btn-content">
+        <img src="assets/images/announcements.png" alt="Announcements" class="task-img-giant" />
+        <span class="btn-label">Announcements</span>
+      </span>
+    </ion-button>
+  </div>
+
   <ng-container *ngIf="announcement">
-    <h2>{{ announcement.title }}</h2>
-    <p>{{ announcement.content }}</p>
-    <ion-note>
-      <small>{{ announcement.created_at | date:'medium' }}</small>
-    </ion-note>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ announcement.title }}</ion-card-title>
+        <ion-card-subtitle>
+          {{ announcement.created_at | date:'medium' }}
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ announcement.content }}</p>
+      </ion-card-content>
+    </ion-card>
   </ng-container>
   <ion-label *ngIf="!announcement">Loading...</ion-label>
 </ion-content>
