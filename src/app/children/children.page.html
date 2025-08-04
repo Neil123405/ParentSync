@@ -51,7 +51,8 @@
         <span class="student-badge">
           {{
             (consentFormCounts[child.student_id] || 0) +
-            (schoolEventCounts[child.student_id] || 0)
+            (schoolEventCounts[child.student_id] || 0) +
+            (announcementCounts[child.student_id] || 0)
           }}
         </span>
         <div class="student-avatar">
