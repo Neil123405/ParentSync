@@ -67,7 +67,10 @@ export class ChildOptionsModalComponent implements OnInit {
       if (image && image.base64String) {
         this.apiService.uploadStudentPhoto(child.student_id, image.base64String).subscribe({
           next: (res) => {
-            child.photo_url = res.photo_url;
+            this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
+      child.photo_url = profile.photo_url;
+      // ...update other fields if needed
+    });
             this.showToast('Photo updated!');
           },
           error: (err) => {

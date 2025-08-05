@@ -299,4 +299,8 @@ export class ApiService {
     );
   }
 
+  getStudentProfile(studentId: number): Observable<any> {
+  return this.http.get(`${this.apiUrl}/student/${studentId}/profile`, { headers: this.getHeaders() });
+}
+
 }

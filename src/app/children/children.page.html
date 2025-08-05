@@ -56,8 +56,8 @@
           }}
         </span>
         <div class="student-avatar">
-          <ng-container *ngIf="child.photo_url; else childNoPhoto">
-            <img [src]="child.photo_url" alt="Student Photo" />
+          <ng-container *ngIf="child.photo_url && child.photo_url.startsWith('http'); else childNoPhoto">
+            <img [src]="child?.photo_url" alt="Student Photo" />
           </ng-container>
           <ng-template #childNoPhoto>
             <ion-icon name="person-circle"></ion-icon>

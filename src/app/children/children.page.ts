@@ -127,6 +127,7 @@ export class ChildrenPage implements OnInit {
     this.apiService.currentProfile$.subscribe(profile => {
       this.currentProfile = profile;
     });
+    
 
     // Load data including this.consentFormCounts
     if (this.currentProfile) {
@@ -182,6 +183,10 @@ export class ChildrenPage implements OnInit {
               // Fetch announcements count
               this.apiService.getStudentAnnouncements(child.student_id).subscribe(res => {
                 this.announcementCounts[child.student_id] = (res.announcements || []).length;
+              });
+              this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
+                child.photo_url = profile.photo_url;
+                // ...update other fields if needed
               });
             });
           } else {
