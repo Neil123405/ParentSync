@@ -438,21 +438,23 @@ export class ChildrenPage implements OnInit {
       component: AddStudentModalComponent
     });
     modal.onDidDismiss().then((result) => {
-      if (result.data && result.data.studentId) {
-        this.addStudentById(result.data.studentId);
-      }
+      if (result.data && result.data.student_id) {
+    this.addStudentById(result.data.student_id);
+  }
     });
     await modal.present();
   }
 
   async addStudentById(studentId: number) {
     if (!studentId || !this.currentProfile) {
-      this.showToast('Please enter a valid Student ID.');
+      this.showToast('Please enter a valid Student ID, First Name, and Last Name.');
       return;
     }
+    this.apiService.getStudentProfile(studentId).subscribe({
+      next: async (profile) => {
     const alert = await this.alertController.create({
       header: 'Confirm Link',
-      message: 'Are you sure you want to link this student to your account?',
+      message: `Are you sure you want to link this student to your account? ${profile.first_name} ${profile.last_name} (ID: ${profile.student_id})`,
       buttons: [
         {
           text: 'Cancel',
@@ -466,6 +468,7 @@ export class ChildrenPage implements OnInit {
                 next: (response) => {
                   if (response.success) {
                     this.showToast('Student linked successfully!');
+                    this.loadData();
                   } else {
                     this.showToast(response.message || 'Failed to link student.');
                   }
@@ -481,6 +484,11 @@ export class ChildrenPage implements OnInit {
     });
 
     await alert.present();
+  },
+  error: () => {
+      this.showToast('Student not found.');
+    }
+  });
   }
 
   // async changeStudentPhoto(student: any) {
