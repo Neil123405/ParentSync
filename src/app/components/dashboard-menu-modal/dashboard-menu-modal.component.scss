@@ -8,3 +8,27 @@
 .logout-btn ion-card-content {
   color: #fff !important;
 }
+:host ::ng-deep ion-content {
+  --background: linear-gradient(135deg, #e8f5e9 0%, #b2ffb2 25%, #3fff38 50%, #2ecc40 75%, #1db954 100%) !important;
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  min-height: 100vh;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Make sure modal content is above the background */
+ion-content > * {
+  position: relative;
+  z-index: 1;
+}

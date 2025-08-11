@@ -56,6 +56,7 @@ export class HomePage implements OnInit {
       this.currentProfile = profile;
       if (this.currentProfile) {
         this.loadAnnouncementsAndEvents();
+        this.loadChildrenWithPhotos(); 
       }
     });
 
@@ -63,11 +64,37 @@ export class HomePage implements OnInit {
     this.apiService.profileUpdated$.subscribe(() => {
       if (this.currentProfile) {
         this.loadAnnouncementsAndEvents();
+        this.loadChildrenWithPhotos(); 
       }
     });
     // if (this.currentProfile) {
     //   this.loadAnnouncementsAndEvents();
     // }
+  }
+
+  loadChildrenWithPhotos() {
+    if (!this.currentProfile) {
+      return;
+    }
+     this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
+    next: (response) => {
+      if (response.success) {
+        this.laravelChildren = response.children;
+
+        // For each child, fetch the full profile (with full photo_url)
+        this.laravelChildren.forEach(child => {
+          this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
+            child.photo_url = profile.photo_url;
+            // ...update other fields if needed
+          });
+        });
+      }
+    },
+    error: (error) => {
+      // handle error if needed
+    }
+  });
+    
   }
 
   //* already read!
@@ -103,16 +130,17 @@ export class HomePage implements OnInit {
     });
 
     // Children (for getStudentById)
-    this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
-      next: (response) => {
-        this.laravelChildren = response.children || [];
-      }
-    });
+    // this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
+    //   next: (response) => {
+    //     this.laravelChildren = response.children || [];
+    //   }
+    // });
   }
 
   //* already read!
   async refreshData(event?: any) {
     await this.loadAnnouncementsAndEvents();
+    await this.loadChildrenWithPhotos();
     if (event) {
       // stops the refresh spinner
       event.target.complete();
@@ -142,12 +170,14 @@ export class HomePage implements OnInit {
 
   //* already read!
   openAnnouncement(announcement: any) {
+    // console.log('Announcement clicked:', announcement);
     this.router.navigate(['/announcement-detail', announcement.announcement_id]);
   }
 
   //* already read!
   openEventDetail(event: any) {
-    this.router.navigate(['/event-detail', event.event_id, event.student_id]);
+    // console.log('Event clicked:', event);
+    this.router.navigate(['/event-detail', event.id]);
   }
 
   //* already read!

@@ -170,7 +170,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
           const details = Object.entries(error.error.errors)
             .map(([field, messages]) => `${field}: ${(messages as string[]).join(', ')}`)
             .join('<br>');
-          errorMessage += '<br>' + details;
+          errorMessage += '\n' + details;
         }
         this.showAlert('Registration Failed', errorMessage);
       }

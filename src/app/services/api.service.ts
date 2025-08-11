@@ -43,7 +43,11 @@ interface SignConsentResponse {
   providedIn: 'root'
 })
 export class ApiService {
+<<<<<<< HEAD
   private apiUrl = environment.apiUrl || 'http://172.20.10.3:8000/api';
+=======
+  private apiUrl = environment.apiUrl || 'http://192.168.1.12:8000/api';
+>>>>>>> aac54962b1e75f70b57da41b153a55581ea18ac5
 
   // User management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -298,5 +302,9 @@ export class ApiService {
       { headers: this.getHeaders() }
     );
   }
+
+  getStudentProfile(studentId: number): Observable<any> {
+  return this.http.get(`${this.apiUrl}/student/${studentId}/profile`, { headers: this.getHeaders() });
+}
 
 }

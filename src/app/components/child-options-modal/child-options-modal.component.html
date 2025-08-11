@@ -12,7 +12,7 @@
   <div class="selected-child-section ion-padding">
     <div style="display: flex; align-items: center; gap: 16px;">
       <div style="margin: 8px 0;">
-        <ng-container *ngIf="child.photo_url; else noPhoto">
+        <ng-container *ngIf="child.photo_url && child.photo_url.startsWith('http'); else noPhoto">
           <img [src]="child.photo_url"
                alt="Student Photo"
                style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover;" />
