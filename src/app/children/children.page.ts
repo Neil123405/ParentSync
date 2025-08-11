@@ -91,7 +91,7 @@ export class ChildrenPage implements OnInit {
   announcementCounts: { [studentId: number]: number } = {};
 
   showTasks = false;
-  showSchoolEvents = false;
+  showSchoolEvents = false; 
 
   pendingStudents: LaravelStudent[] = [];
 

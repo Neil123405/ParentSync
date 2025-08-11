@@ -43,7 +43,7 @@ interface SignConsentResponse {
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = environment.apiUrl || 'http://192.168.1.7:8000/api';
+  private apiUrl = environment.apiUrl || 'http://172.20.10.3:8000/api';
 
   // User management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
