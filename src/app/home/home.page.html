@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
     <ion-title class="parent-sync-title">ParentSync</ion-title>
   </ion-toolbar>
@@ -11,44 +11,39 @@
 
   <!-- Announcements Filters -->
   <!-- Unified Filters for both Announcements and Events -->
-   <div class="filter-row filter-card">
-  <ion-item>
-    <ion-label>Student</ion-label>
-    <ion-select [(ngModel)]="studentFilter" interface="popover">
-      <ion-select-option value="">All</ion-select-option>
-      <ion-select-option *ngFor="let child of laravelChildren" [value]="child.student_id">
-        {{ child.first_name }} {{ child.last_name }}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
-</div>
+  <div class="filter-row filter-card">
+    <ion-item class="student-section">
+      <ion-label>Student</ion-label>
+      <ion-select [(ngModel)]="studentFilter" interface="popover">
+        <ion-select-option value="">All</ion-select-option>
+        <ion-select-option *ngFor="let child of laravelChildren" [value]="child.student_id">
+          {{ child.first_name }} {{ child.last_name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
 
-<!-- Sort Filter (row 2) -->
-<div class="filter-row filter-card">
-  <ion-item>
-    <ion-label>Sort</ion-label>
-    <ion-select [(ngModel)]="feedSort" interface="popover">
-      <ion-select-option value="latest">Latest</ion-select-option>
-      <ion-select-option value="oldest">Oldest</ion-select-option>
-    </ion-select>
-  </ion-item>
-</div>
+  <!-- Sort Filter (row 2) -->
+  <div class="filter-row filter-card">
+    <ion-item class="sort-section">
+      <ion-label>Sort</ion-label>
+      <ion-select [(ngModel)]="feedSort" interface="popover">
+        <ion-select-option value="latest">Latest</ion-select-option>
+        <ion-select-option value="oldest">Oldest</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
 
-<!-- Show Filter (row 3) -->
-<div class="filter-row filter-card">
-  <ion-item>
-    <ion-label>Show</ion-label>
-    <ion-input
-      type="number"
-      [(ngModel)]="feedLimit"
-      min="1"
-      class="centered-number-input"
-      style="width: 60px;"
-    ></ion-input>
-  </ion-item>
-</div>
+  <!-- Show Filter (row 3) -->
+  <div class="filter-row filter-card">
+    <ion-item class="show-section">
+      <ion-label>Show</ion-label>
+      <ion-input type="number" [(ngModel)]="feedLimit" min="1" class="centered-number-input"
+        style="width: 60px;"></ion-input>
+    </ion-item>
+  </div>
 
-<!-- <div class="filter-row filter-card" style="display: flex; gap: 12px;">
+  <!-- <div class="filter-row filter-card" style="display: flex; gap: 12px;">
   <ion-item style="flex: 1;">
     <ion-label>Sort</ion-label>
     <ion-select [(ngModel)]="feedSort" interface="popover">
@@ -69,7 +64,7 @@
     </div>
   </ion-item>
 </div> -->
-<!-- <div class="filter-row filter-card">
+  <!-- <div class="filter-row filter-card">
   <ion-item>
     <ion-label>Student</ion-label>
     <ion-select [(ngModel)]="studentFilter" interface="popover">
@@ -107,21 +102,18 @@
       <!-- Student photo/icon OUTSIDE the card -->
       <div style="margin-right: 16px; display: flex; align-items: center; justify-content: center;">
         <!-- gets the student by ID and checks if they have a photo URL -->
-        <ng-container *ngIf="getStudentById(announcement.student_id)?.photo_url && getStudentById(announcement.student_id)?.photo_url.startsWith('http'); else noPhoto">
-          <img [src]="getStudentById(announcement.student_id)?.photo_url"
-               alt="Student Photo"
-               style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 0 0 2px #e0e0e0;" />
+        <ng-container
+          *ngIf="getStudentById(announcement.student_id)?.photo_url && getStudentById(announcement.student_id)?.photo_url.startsWith('http'); else noPhoto">
+          <img [src]="getStudentById(announcement.student_id)?.photo_url" alt="Student Photo"
+            style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 0 0 2px #e0e0e0;" />
         </ng-container>
         <ng-template #noPhoto>
           <ion-icon name="person-circle" style="font-size: 48px; color: #888;"></ion-icon>
         </ng-template>
       </div>
       <!-- The announcement card -->
-      <ion-card
-        class="announcement-card"
-        (click)="openAnnouncement(announcement)"
-        style="flex: 1; cursor: pointer; display: flex; align-items: center;"
-      >
+      <ion-card class="announcement-card" (click)="openAnnouncement(announcement)"
+        style="flex: 1; cursor: pointer; display: flex; align-items: center;">
         <ion-card-content style="flex: 1;">
           <h3>{{ announcement.title }}</h3>
         </ion-card-content>
@@ -174,10 +166,10 @@
       <div style="display: flex; align-items: center; justify-content: space-between;">
         <div style="display: flex; align-items: center;">
           <div style="margin: 16px; display: flex; align-items: center; justify-content: center;">
-            <ng-container *ngIf="getStudentById(event.student_id)?.photo_url && getStudentById(event.student_id)?.photo_url.startsWith('http'); else eventNoPhoto">
-              <img [src]="getStudentById(event.student_id)?.photo_url"
-                   alt="Student Photo"
-                   class="event-student-photo" />
+            <ng-container
+              *ngIf="getStudentById(event.student_id)?.photo_url && getStudentById(event.student_id)?.photo_url.startsWith('http'); else eventNoPhoto">
+              <img [src]="getStudentById(event.student_id)?.photo_url" alt="Student Photo"
+                class="event-student-photo" />
             </ng-container>
             <ng-template #eventNoPhoto>
               <ion-icon name="person-circle" style="font-size: 40px; color: #3880ff;"></ion-icon>

@@ -397,9 +397,15 @@ ion-tab-bar {
   background: #2ecc2e !important; // Slightly darker for press effect
 }
 
-.children-title {
-  color: black;
-  font-family: 'Exo', sans-serif !important;
-  font-weight: 100;
-  letter-spacing: 1px;
+
+ion-header, ion-toolbar {
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+}
+
+ion-header, ion-toolbar {
+  --background: #3fff38;
+
 }
