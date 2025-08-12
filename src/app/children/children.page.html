@@ -35,25 +35,17 @@
   <div class="students-horizontal-section ion-padding-top">
     <div class="students-horizontal-container">
       <!-- there are a lot of children, so with class.active we can highlight the selected child -->
-      <div 
-        *ngFor="let child of laravelChildren" 
-        class="student-card-horizontal"
+      <div *ngFor="let child of laravelChildren" class="student-card-horizontal"
         [class.active]="selectedChild?.student_id === child.student_id"
-        [class.long-pressed]="longPressedId === child.student_id"
-        (click)="selectChild(child)"
-        (mousedown)="startPress($event, child)"
-        (mouseup)="endPress()"
-        (mouseleave)="endPress()"
-        (touchstart)="startPress($event, child)"
-        (touchend)="endPress()"
-        style="position: relative;"
-      >
+        [class.long-pressed]="longPressedId === child.student_id" (click)="selectChild(child)"
+        (mousedown)="startPress($event, child)" (mouseup)="endPress()" (mouseleave)="endPress()"
+        (touchstart)="startPress($event, child)" (touchend)="endPress()" style="position: relative;">
         <!-- Badge at top right -->
         <span class="student-badge">
           {{
-            (consentFormCounts[child.student_id] || 0) +
-            (schoolEventCounts[child.student_id] || 0) +
-            (announcementCounts[child.student_id] || 0)
+          (consentFormCounts[child.student_id] || 0) +
+          (schoolEventCounts[child.student_id] || 0) +
+          (announcementCounts[child.student_id] || 0)
           }}
         </span>
         <div class="student-avatar">
@@ -75,25 +67,13 @@
 
   <!-- Action Buttons (Tasks & Timeline) -->
   <div class="ion-padding action-buttons" style="display: flex; gap: 8px;">
-    <ion-button
-      expand="block"
-      color="primary"
-      [disabled]="!selectedChild"
-      [fill]="activeSection === 'tasks' ? 'solid' : 'outline'"
-      (click)="showSection('tasks')"
-      style="flex: 1;"
-    >
+    <ion-button expand="block" color="primary" [disabled]="!selectedChild"
+      [fill]="activeSection === 'tasks' ? 'solid' : 'outline'" (click)="showSection('tasks')" style="flex: 1;">
       <ion-icon name="list" slot="start"></ion-icon>
       Tasks
     </ion-button>
-    <ion-button
-      expand="block"
-      color="secondary"
-      [disabled]="!selectedChild"
-      [fill]="activeSection === 'timeline' ? 'solid' : 'outline'"
-      (click)="showSection('timeline')"
-      style="flex: 1;"
-    >
+    <ion-button expand="block" color="secondary" [disabled]="!selectedChild"
+      [fill]="activeSection === 'timeline' ? 'solid' : 'outline'" (click)="showSection('timeline')" style="flex: 1;">
       <ion-icon name="time" slot="start"></ion-icon>
       Timeline
     </ion-button>
@@ -124,16 +104,16 @@
       </span>
     </div>
     <div class="task-btn-wrapper">
-    <ion-button expand="block" class="task-btn giant-btn" (click)="goToStudentAnnouncements(selectedChild)">
-      <span class="btn-content">
-        <img src="assets/images/announcements.png" alt="Announcements" class="task-img-giant" />
-        <span class="btn-label">Announcements</span>
+      <ion-button expand="block" class="task-btn giant-btn" (click)="goToStudentAnnouncements(selectedChild)">
+        <span class="btn-content">
+          <img src="assets/images/announcements.png" alt="Announcements" class="task-img-giant" />
+          <span class="btn-label">Announcements</span>
+        </span>
+      </ion-button>
+      <span class="task-badge">
+        {{ studentAnnouncements.length }}
       </span>
-    </ion-button>
-    <span class="task-badge">
-      {{ studentAnnouncements.length }}
-    </span>
-  </div>
+    </div>
   </div>
 
   <!-- Announcements Section
@@ -185,8 +165,8 @@
     </ion-item>
   </ion-list>
 
-<!-- Decorative School Events Button (not clickable) -->
-<!-- <div *ngIf="activeSection === 'schoolEvents' && selectedChild" class="task-btn-wrapper" style="margin-bottom: 24px;">
+  <!-- Decorative School Events Button (not clickable) -->
+  <!-- <div *ngIf="activeSection === 'schoolEvents' && selectedChild" class="task-btn-wrapper" style="margin-bottom: 24px;">
   <ion-button expand="block" class="task-btn giant-btn" disabled>
     <span class="btn-content">
       <img src="assets/images/events.png" alt="School Events" class="task-img-giant" />
@@ -231,5 +211,5 @@
 
   <!-- Add bottom padding -->
   <div style="height: 80px;"></div>
-  
+
 </ion-content>

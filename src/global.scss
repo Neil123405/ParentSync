@@ -37,46 +37,46 @@
 @import "@ionic/angular/css/palettes/dark.system.css";
 
 /* Global footer spacing */
-.content-with-footer {
-  --padding-bottom: 80px;
-}
+// .content-with-footer {
+//   --padding-bottom: 80px;
+// }
 
 /* Ensure content doesn't get hidden behind fixed footer */
-ion-content {
-  background: #474747 !important;
-  margin-bottom: 60px;
-}
+// ion-content {
+//   background: #474747 !important;
+//   margin-bottom: 60px;
+// }
 
-ion-content, ion-content .inner-scroll, ion-content .scroll-content {
-  background: #20438a !important; /* or your preferred dark color */
-}
+// ion-content, ion-content .inner-scroll, ion-content .scroll-content {
+//   background: #20438a !important; /* or your preferred dark color */
+// }
 
 /* Global styles for the footer */
-.global-footer {
-  ion-tab-button.selected {
-    color: var(--ion-color-primary) !important;
+// .global-footer {
+//   ion-tab-button.selected {
+//     color: var(--ion-color-primary) !important;
 
-    ion-icon {
-      color: var(--ion-color-primary) !important;
-    }
-  }
-}
+//     ion-icon {
+//       color: var(--ion-color-primary) !important;
+//     }
+//   }
+// }
 
 /* Hide footer on login page */
-.login-page .global-footer {
-  display: none !important;
-}
+// .login-page .global-footer {
+//   display: none !important;
+// }
 
-body,
-ion-app,
-ion-content,
-ion-content .inner-scroll,
-ion-content .scroll-content {
-  background: #F4F5F9 !important;
-  --background: #F4F5F9 !important;
-  background-image: none !important;
-  color: #222 !important; // Optional: set default text color
-}
+// body,
+// ion-app,
+// ion-content,
+// ion-content .inner-scroll,
+// ion-content .scroll-content {
+//   background: #F4F5F9 !important;
+//   --background: #F4F5F9 !important;
+//   background-image: none !important;
+//   color: #222 !important; // Optional: set default text color
+// }
 
 :root {
   --consent-green: #43a047;
