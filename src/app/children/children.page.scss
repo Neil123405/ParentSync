@@ -33,6 +33,11 @@
   box-shadow: 0 6px 32px rgba(0, 0, 0, 0.10);
   position: relative;
   overflow: visible; // <-- Change this line!
+  transition: 
+    background 0.3s,
+    border-color 0.3s,
+    box-shadow 0.3s,
+    transform 0.3s;
 
   &.active {
     border-color: var(--ion-color-primary);
@@ -408,4 +413,35 @@ ion-header, ion-toolbar {
 ion-header, ion-toolbar {
   --background: #3fff38;
 
+}
+
+.student-card-horizontal.long-pressed {
+  // animation: longPressPulse 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  // box-shadow: 0 0 0 16px #3fff3844, 0 8px 32px rgba(0,0,0,0.18) !important;  
+  // transform: scale(1.08) !important;  
+  // border-color: #3fff38 !important;  
+  background: #e8f5e9 !important;  
+  transition: background 0.3s, box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+  z-index: 2;
+}
+
+@keyframes longPressPulse {
+  0% {
+    // box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    // transform: scale(1);
+    border-color: transparent;
+    background: white;
+  }
+  60% {
+    // box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    // transform: scale(1.12);
+    border-color: transparent;
+    background: #e8f5e9;
+  }
+  100% {
+    // box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    // transform: scale(1.08);
+    border-color: transparent;
+    background: #e8f5e9;
+  }
 }

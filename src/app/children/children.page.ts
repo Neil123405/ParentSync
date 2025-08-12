@@ -127,7 +127,7 @@ export class ChildrenPage implements OnInit {
     this.apiService.currentProfile$.subscribe(profile => {
       this.currentProfile = profile;
     });
-    
+
 
     // Load data including this.consentFormCounts
     if (this.currentProfile) {
@@ -439,8 +439,8 @@ export class ChildrenPage implements OnInit {
     });
     modal.onDidDismiss().then((result) => {
       if (result.data && result.data.student_id) {
-    this.addStudentById(result.data.student_id);
-  }
+        this.addStudentById(result.data.student_id);
+      }
     });
     await modal.present();
   }
@@ -452,43 +452,43 @@ export class ChildrenPage implements OnInit {
     }
     this.apiService.getStudentProfile(studentId).subscribe({
       next: async (profile) => {
-    const alert = await this.alertController.create({
-      header: 'Confirm Link',
-      message: `Are you sure you want to link this student to your account? ${profile.first_name} ${profile.last_name} (ID: ${profile.student_id})`,
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Yes',
-          handler: () => {
-            if (this.currentProfile && this.currentProfile.parent_id !== undefined) {
-              this.apiService.linkStudentToParent(this.currentProfile.parent_id, studentId).subscribe({
-                next: (response) => {
-                  if (response.success) {
-                    this.showToast('Student linked successfully!');
-                    this.loadData();
-                  } else {
-                    this.showToast(response.message || 'Failed to link student.');
-                  }
-                },
-                error: () => this.showToast('Failed to link student.')
-              });
-            } else {
-              this.showToast('Parent ID is missing.');
+        const alert = await this.alertController.create({
+          header: 'Confirm Link',
+          message: `Are you sure you want to link this student to your account? ${profile.first_name} ${profile.last_name} (ID: ${profile.student_id})`,
+          buttons: [
+            {
+              text: 'Cancel',
+              role: 'cancel'
+            },
+            {
+              text: 'Yes',
+              handler: () => {
+                if (this.currentProfile && this.currentProfile.parent_id !== undefined) {
+                  this.apiService.linkStudentToParent(this.currentProfile.parent_id, studentId).subscribe({
+                    next: (response) => {
+                      if (response.success) {
+                        this.showToast('Student linked successfully!');
+                        this.loadData();
+                      } else {
+                        this.showToast(response.message || 'Failed to link student.');
+                      }
+                    },
+                    error: () => this.showToast('Failed to link student.')
+                  });
+                } else {
+                  this.showToast('Parent ID is missing.');
+                }
+              }
             }
-          }
-        }
-      ]
-    });
+          ]
+        });
 
-    await alert.present();
-  },
-  error: () => {
-      this.showToast('Student not found.');
-    }
-  });
+        await alert.present();
+      },
+      error: () => {
+        this.showToast('Student not found.');
+      }
+    });
   }
 
   // async changeStudentPhoto(student: any) {
@@ -552,19 +552,32 @@ export class ChildrenPage implements OnInit {
     this.router.navigate(['/event-detail', event.event_id, event.student_id]);
   }
 
+  longPressedId: number | null = null;
+  animationTimer: any = null;
+
   startPress(event: Event, child: any) {
     // Only prevent default for mouse events, not touch events
     // event.preventDefault(); prevents default for browser's default behavior like text selection
     if (event instanceof MouseEvent) {
       event.preventDefault();
     }
+
+    this.animationTimer = setTimeout(() => {
+    this.longPressedId = child.student_id;
+  }, 100);
+
     this.pressTimer = setTimeout(() => {
+      // this.longPressedId = child.student_id; // Set the pressed student
       this.openChildOptions(event, child);
+      // Optionally, reset after a short delay if you want the animation to disappear
+      setTimeout(() => this.longPressedId = null, 800);
     }, 600); // 600ms for long press
   }
 
   endPress() {
     clearTimeout(this.pressTimer);
+    clearTimeout(this.animationTimer);
+    this.longPressedId = null; // Remove animation if press is released early
   }
 
   openConsentFormDetail(form: any) {

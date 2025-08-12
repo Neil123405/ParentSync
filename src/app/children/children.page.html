@@ -39,6 +39,7 @@
         *ngFor="let child of laravelChildren" 
         class="student-card-horizontal"
         [class.active]="selectedChild?.student_id === child.student_id"
+        [class.long-pressed]="longPressedId === child.student_id"
         (click)="selectChild(child)"
         (mousedown)="startPress($event, child)"
         (mouseup)="endPress()"
