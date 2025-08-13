@@ -56,8 +56,25 @@ export class DashboardMenuModalComponent implements OnInit {
   }
 
   logout() {
+const token = this.apiService.getFcmToken();
     this.close(); // Close the modal first
+
+  // Remove FCM token before logging out
+  if ((window as any).Capacitor?.isNativePlatform && token) {
+    this.apiService.removePushToken(token).subscribe({
+      next: () => {
+        this.apiService.logout();
+        this.router.navigateByUrl('/login', { replaceUrl: true });
+      },
+      error: () => {
+        // Even if removal fails, proceed with logout
+        this.apiService.logout();
+        this.router.navigateByUrl('/login', { replaceUrl: true });
+      }
+    });
+  } else {
     this.apiService.logout();
     this.router.navigateByUrl('/login', { replaceUrl: true });
+  }
   }
 }

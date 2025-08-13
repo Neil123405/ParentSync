@@ -46,17 +46,17 @@ h3 {
   font-weight: 500;
 }
 
-h4 {
-  margin: 8px 0;
-  color: var(--ion-color-primary);
-  font-weight: 500;
-}
+// h4 {
+//   margin: 8px 0;
+//   color: var(--ion-color-primary);
+//   font-weight: 500;
+// }
 
-h5 {
-  margin: 8px 0;
-  color: var(--ion-color-dark);
-  font-weight: 500;
-}
+// h5 {
+//   margin: 8px 0;
+//   color: var(--ion-color-dark);
+//   font-weight: 500;
+// }
 
 ion-tab-button.selected {
   color: var(--ion-color-primary);
@@ -110,11 +110,11 @@ ion-tab-bar {
 }
 
 .event-list-item {
-  margin-bottom: 0px;         // just a tiny gap
-  border-radius: 14px;         // rounded corners
-  overflow: hidden;            // ensures children respect border-radius
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04); // optional: subtle shadow for separation
-  --border-width: 0;
+  margin-bottom: 0px; // just a tiny gap
+  border-radius: 14px; // rounded corners
+  overflow: hidden; // ensures children respect border-radius
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); // optional: subtle shadow for separation
+  // --border-width: 0;
 }
 
 // Horizontal Students Layout
@@ -123,107 +123,107 @@ ion-tab-bar {
   margin-bottom: 16px;
 }
 
-.students-horizontal-container {
-  display: flex;
-  overflow-x: auto;
-  padding: 16px 0;
-  gap: 16px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
+// .students-horizontal-container {
+//   display: flex;
+//   overflow-x: auto;
+//   padding: 16px 0;
+//   gap: 16px;
+//   scrollbar-width: none;
+//   -ms-overflow-style: none;
+//   &::-webkit-scrollbar {
+//     display: none;
+//   }
+// }
 
-.student-card-horizontal {
-  min-width: 120px;
-  max-width: 120px;
-  background: white;
-  border-radius: 12px;
-  padding: 16px 8px;
-  border: 2px solid var(--ion-color-light);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+// .student-card-horizontal {
+//   min-width: 120px;
+//   max-width: 120px;
+//   background: white;
+//   border-radius: 12px;
+//   padding: 16px 8px;
+//   border: 2px solid var(--ion-color-light);
+//   cursor: pointer;
+//   transition: all 0.3s ease;
+//   text-align: center;
+//   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
+//   &:hover {
+//     transform: translateY(-2px);
+//     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+//   }
 
-  &.active {
-    border-color: var(--ion-color-primary);
-    background: var(--ion-color-primary-tint);
-    
-    .student-info h4 {
-      color: var(--ion-color-primary);
-    }
-  }
+//   &.active {
+//     border-color: var(--ion-color-primary);
+//     background: var(--ion-color-primary-tint);
 
-  .student-avatar {
-    margin-bottom: 8px;
-    ion-icon {
-      font-size: 40px;
-      color: var(--ion-color-medium);
-    }
-  }
+//     .student-info h4 {
+//       color: var(--ion-color-primary);
+//     }
+//   }
 
-  .student-info {
-    h4 {
-      margin: 2px 0;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--ion-color-dark);
-    }
-    p {
-      margin: 2px 0;
-      font-size: 12px;
-      color: var(--ion-color-medium);
-    }
-  }
-}
+//   .student-avatar {
+//     margin-bottom: 8px;
+//     ion-icon {
+//       font-size: 40px;
+//       color: var(--ion-color-medium);
+//     }
+//   }
+
+//   .student-info {
+//     h4 {
+//       margin: 2px 0;
+//       font-size: 14px;
+//       font-weight: 600;
+//       color: var(--ion-color-dark);
+//     }
+//     p {
+//       margin: 2px 0;
+//       font-size: 12px;
+//       color: var(--ion-color-medium);
+//     }
+//   }
+// }
 
 // Selected Child Section
-.selected-child-section {
-  border-top: 1px solid var(--ion-color-light);
-  padding-top: 16px;
+// .selected-child-section {
+//   border-top: 1px solid var(--ion-color-light);
+//   padding-top: 16px;
 
-  .action-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
+//   .action-buttons {
+//     display: flex;
+//     flex-direction: column;
+//     gap: 8px;
+//     margin-bottom: 20px;
 
-    ion-button {
-      margin: 0;
-      &.active-button {
-        --background: var(--ion-color-primary);
-        --color: white;
-      }
-    }
-  }
-}
+//     ion-button {
+//       margin: 0;
+//       &.active-button {
+//         --background: var(--ion-color-primary);
+//         --color: white;
+//       }
+//     }
+//   }
+// }
 
 // Content Sections
-.content-section {
-  margin-top: 20px;
-}
+// .content-section {
+//   margin-top: 20px;
+// }
 
-.consent-card {
-  margin-bottom: 12px;
-  h5 {
-    margin: 0 0 8px 0;
-    color: var(--ion-color-primary);
-  }
-  p {
-    margin: 4px 0;
-    line-height: 1.4;
-  }
-  ion-badge {
-    margin-top: 8px;
-  }
-}
+// .consent-card {
+//   margin-bottom: 12px;
+//   h5 {
+//     margin: 0 0 8px 0;
+//     color: var(--ion-color-primary);
+//   }
+//   p {
+//     margin: 4px 0;
+//     line-height: 1.4;
+//   }
+//   ion-badge {
+//     margin-top: 8px;
+//   }
+// }
 
 // .attendance-summary {
 //   margin-bottom: 16px;
@@ -231,7 +231,7 @@ ion-tab-bar {
 //     display: flex;
 //     justify-content: space-around;
 //     margin-top: 12px;
-    
+
 //     .stat-item {
 //       text-align: center;
 //       .stat-number {
@@ -255,7 +255,7 @@ ion-tab-bar {
 //     justify-content: space-between;
 //     align-items: center;
 //     margin-bottom: 8px;
-    
+
 //     .attendance-date {
 //       font-weight: 500;
 //       color: var(--ion-color-dark);
@@ -272,16 +272,16 @@ ion-tab-bar {
 // }
 
 .event-card-custom {
-  margin: 4px 0 !important;   // just a tiny gap between cards
+  margin: 4px 0; // just a tiny gap between cards
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  // cursor: pointer;
 
   h3 {
     font-size: 1.17em; // or 22px to match h3, adjust as needed
     margin: 0 0 8px 0;
-    color: #222 !important;
+    // color: #222 !important;
     font-weight: 500;
   }
 }
@@ -294,8 +294,12 @@ ion-tab-bar {
   display: block;
 }
 
-h2, h3, h4, h5, ion-label, .announcement-card h3, .event-card-custom h3 {
-  color: #222 !important;
+h2,
+h3,
+ion-label,
+.announcement-card h3,
+.event-card-custom h3 {
+  color: #222;
 }
 
 /* home.page.scss */
@@ -309,7 +313,7 @@ h2, h3, h4, h5, ion-label, .announcement-card h3, .event-card-custom h3 {
 .filter-card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   padding: 12px 16px;
   margin-bottom: 18px;
   display: flex;
@@ -317,8 +321,9 @@ h2, h3, h4, h5, ion-label, .announcement-card h3, .event-card-custom h3 {
   align-items: center;
   flex-wrap: wrap;
 }
+
 .filter-card ion-item {
-  --background: transparent;
+  // --background: transparent;
   --min-height: 36px;
   --padding-start: 0;
   --inner-padding-end: 0;
@@ -326,11 +331,13 @@ h2, h3, h4, h5, ion-label, .announcement-card h3, .event-card-custom h3 {
   border-radius: 8px;
   flex: 1 1 120px;
 }
+
 .filter-card ion-label {
   font-family: 'Exo', sans-serif;
   font-weight: 500;
   color: #222;
 }
+
 .filter-card ion-select,
 .filter-card ion-input {
   font-family: 'Exo', sans-serif;
@@ -340,58 +347,61 @@ h2, h3, h4, h5, ion-label, .announcement-card h3, .event-card-custom h3 {
   padding: 4px 8px;
 }
 
-.show-input-item {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1 1 100px;
-  --background: transparent;
-  --padding-start: 0;
-  --inner-padding-end: 0;
-  margin: 0;
-}
+// .show-input-item {
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   flex: 1 1 100px;
+//   --background: transparent;
+//   --padding-start: 0;
+//   --inner-padding-end: 0;
+//   margin: 0;
+// }
 
-.show-input-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
+// .show-input-container {
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   width: 100%;
+// }
 
 .centered-number-input {
-  text-align: center !important;
+  text-align: center;
   margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.show-label {
-  font-size: 1rem !important;
-  font-family: 'Exo', sans-serif !important;
-  font-weight: 500 !important;
-  color: #222 !important;
-  margin-bottom: 0;
-}
+// .show-label {
+//   font-size: 1rem !important;
+//   font-family: 'Exo', sans-serif !important;
+//   font-weight: 500 !important;
+//   color: #222 !important;
+//   margin-bottom: 0;
+// }
 
 .student-section {
-  background: #c6ffc6;
-}
-.sort-section {
-  background: #c6d8ff;
-}
-.show-section {
-  background: #e0e2e6;
+  --background: #c6ffc6;
 }
 
-ion-header, ion-toolbar {
+.sort-section {
+  --background: #c6d8ff;
+}
+
+.show-section {
+  --background: #e0e2e6;
+}
+
+ion-header,
+ion-toolbar {
   border-bottom-left-radius: 18px;
   border-bottom-right-radius: 18px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
 }
 
-ion-header, ion-toolbar {
+ion-header,
+ion-toolbar {
   --background: #3fff38;
-
 }

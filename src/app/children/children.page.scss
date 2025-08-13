@@ -2,7 +2,7 @@
 .students-horizontal-section {
   border-bottom: 1px solid var(--ion-color-light);
   margin-bottom: 16px;
-  padding-top: 64px; // Add enough space for the floating button
+  padding-top: 64px; 
 }
 
 .students-horizontal-container {
@@ -10,9 +10,9 @@
   overflow-x: auto;
   padding: 16px 0;
   gap: 16px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar { display: none; }
+  // scrollbar-width: none;
+  // -ms-overflow-style: none;
+  // &::-webkit-scrollbar { display: none; }
 }
 
 .student-card-horizontal {
@@ -27,29 +27,34 @@
   background: white;
   border-radius: 40px; // More rounded
   padding: 32px 12px 12px 12px;
-  border: 3px solid var(--ion-color-light);
+  // border: 3px solid var(--ion-color-light);
   text-align: center;
   transition: all 0.3s ease;
   box-shadow: 0 6px 32px rgba(0, 0, 0, 0.10);
-  position: relative;
-  overflow: visible; // <-- Change this line!
+  // position: relative;
+  // overflow: visible; // <-- Change this line!
+  // transition: 
+  //   // background 0.3s,
+  //   border-color 0.3s,
+  //   box-shadow 0.3s,
+  //   transform 0.3s;
 
   &.active {
-    border-color: var(--ion-color-primary);
-    background: var(--ion-color-primary-tint);
+    // border-color: var(--ion-color-primary);
+    background: lightgreen;
   }
 
   .student-avatar {
     width: 100%;
-    height: 68%; // Adjust as needed for your layout
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    position: relative;
-    margin-bottom: 0;
-    padding: 0;
-    background: none;
-    z-index: 1;
+    height: 68%; 
+    // display: flex;
+    // align-items: flex-start;
+    // justify-content: center;
+    // position: relative;
+    // margin-bottom: 0;
+    // padding: 0;
+    // background: none;
+    // z-index: 1;
   }
 
   .student-avatar img,
@@ -62,8 +67,8 @@
     border-radius: 38px 38px 28px 28px / 48px 48px 28px 28px;
     background: #fff;
     box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-    display: block;
-    margin: 0 auto;
+    // display: block;
+    // margin: 0 auto;
     border: 2px solid #fff; // Very thin border for a tiny gap
   }
 
@@ -408,4 +413,35 @@ ion-header, ion-toolbar {
 ion-header, ion-toolbar {
   --background: #3fff38;
 
+}
+
+.student-card-horizontal.long-pressed {
+  // animation: longPressPulse 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  // box-shadow: 0 0 0 16px #3fff3844, 0 8px 32px rgba(0,0,0,0.18) !important;  
+  // transform: scale(1.08) !important;  
+  // border-color: #3fff38 !important;  
+  background: #e8f5e9 !important;  
+  transition: background 0.3s, box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+  z-index: 2;
+}
+
+@keyframes longPressPulse {
+  0% {
+    // box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    // transform: scale(1);
+    border-color: transparent;
+    background: white;
+  }
+  60% {
+    // box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    // transform: scale(1.12);
+    border-color: transparent;
+    background: #e8f5e9;
+  }
+  100% {
+    // box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    // transform: scale(1.08);
+    border-color: transparent;
+    background: #e8f5e9;
+  }
 }

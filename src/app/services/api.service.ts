@@ -103,13 +103,13 @@ export class ApiService {
 
   logout(): void {
     // Remove FCM token from backend if on device
-    if ((window as any).Capacitor?.isNativePlatform && this.fcmToken) {
-      this.removePushToken(this.fcmToken).subscribe();
-      // {
-      //   next: () => console.log('FCM token removed on logout'),
-      //   error: (err) => console.error('Failed to remove FCM token on logout:', err)
-      // }
-    }
+    // if ((window as any).Capacitor?.isNativePlatform && this.fcmToken) {
+    //   this.removePushToken(this.fcmToken).subscribe();
+    //   // {
+    //   //   next: () => console.log('FCM token removed on logout'),
+    //   //   error: (err) => console.error('Failed to remove FCM token on logout:', err)
+    //   // }
+    // }
 
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
@@ -290,6 +290,10 @@ export class ApiService {
 
   setFcmToken(token: string) {
     this.fcmToken = token;
+  }
+
+   public getFcmToken(): string {
+    return this.fcmToken ?? '';
   }
 
   getAllUnsignedConsentFormsForParent(parentId: number): Observable<any> {
