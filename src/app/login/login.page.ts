@@ -36,6 +36,12 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     private router: Router
   ) { }
 
+  ionViewWillEnter() {
+    this.credentials = { username: '', password: '' };
+    // Optionally, also clear registration fields if needed:
+    // this.parentInfo = { first_name: '', last_name: '', email: '', contactNo: '' };
+  }
+
   // prevents keyboard from covering input fields
   ngAfterViewInit() {
     this.keyboardShowListener = Keyboard.addListener('keyboardWillShow', async () => {

@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'www',
   server: {
     cleartext: true,
-    androidScheme: 'http', // <--- Add this line
+    androidScheme: 'http', 
     hostname: 'localhost'
   },
 };
