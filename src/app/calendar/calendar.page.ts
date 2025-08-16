@@ -153,12 +153,13 @@ export class CalendarPage implements OnInit, ViewWillEnter {
     const localDate = `${year}-${month}-${date}`;
 
     // Pass both events and forms as navigation state
-    this.router.navigate(['/day-events', localDate], {
-      state: {
-        events: day.events || [],
-        forms: day.forms || []
-      }
-    });
+    this.router.navigate(['/day-events', localDate]);
+    // , {
+    //   state: {
+    //     events: day.events || [],
+    //     forms: day.forms || []
+    //   }
+    // }
   }
 
   refreshData() {

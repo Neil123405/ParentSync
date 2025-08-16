@@ -99,42 +99,52 @@ export class DayEventsPage implements OnInit {
     }
   }
 
+  // loadConsentFormsForDate(date: string) {
+  //   this.forms = [];
+  //   if (this.parentProfile) {
+  //     this.apiService.getParentChildren(this.parentProfile.parent_id).subscribe(childrenRes => {
+  //       const childrenArray = childrenRes.children || [];
+  //       const studentIds = childrenArray.map((child: any) => child.student_id);
+  //       let allForms: any[] = [];
+  //       let loaded = 0;
+  //       if (studentIds.length === 0) {
+  //         this.forms = [];
+  //         return;
+  //       }
+  //       studentIds.forEach((studentId: any) => {
+  //         this.apiService.getUnsignedConsentFormsForStudent(studentId).subscribe(res => {
+  //           if (res.forms) {
+  //             const dayForms = res.forms.filter((form: any) => {
+  //               const deadlineStr = form.deadline?.slice(0, 10);
+  //               return deadlineStr === date;
+  //             });
+  //             dayForms.forEach((form: any) => {
+  //               if (!form.student) {
+  //                 const studentObj = childrenArray.find((c: any) => c.student_id === studentId);
+  //                 if (studentObj) form.student = studentObj;
+  //               }
+  //             });
+  //             allForms.push(...dayForms);
+  //           }
+  //           loaded++;
+  //           if (loaded === studentIds.length) {
+  //             this.forms = allForms;
+  //           }
+  //         });
+  //       });
+  //     });
+  //   }
+  // }
+
   loadConsentFormsForDate(date: string) {
-    this.forms = [];
-    if (this.parentProfile) {
-      this.apiService.getParentChildren(this.parentProfile.parent_id).subscribe(childrenRes => {
-        const childrenArray = childrenRes.children || [];
-        const studentIds = childrenArray.map((child: any) => child.student_id);
-        let allForms: any[] = [];
-        let loaded = 0;
-        if (studentIds.length === 0) {
-          this.forms = [];
-          return;
-        }
-        studentIds.forEach((studentId: any) => {
-          this.apiService.getUnsignedConsentFormsForStudent(studentId).subscribe(res => {
-            if (res.forms) {
-              const dayForms = res.forms.filter((form: any) => {
-                const deadlineStr = form.deadline?.slice(0, 10);
-                return deadlineStr === date;
-              });
-              dayForms.forEach((form: any) => {
-                if (!form.student) {
-                  const studentObj = childrenArray.find((c: any) => c.student_id === studentId);
-                  if (studentObj) form.student = studentObj;
-                }
-              });
-              allForms.push(...dayForms);
-            }
-            loaded++;
-            if (loaded === studentIds.length) {
-              this.forms = allForms;
-            }
-          });
-        });
+  this.forms = [];
+  if (this.parentProfile) {
+    this.apiService.getAllUnsignedConsentFormsForParent(this.parentProfile.parent_id, date)
+      .subscribe(res => {
+        this.forms = res.forms || [];
       });
-    }
   }
+}
 
   openEventDetail(event: any) {
     this.router.navigate(['/event-detail', event.id ?? event.event_id, event.student_id]);

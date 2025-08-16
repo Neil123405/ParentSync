@@ -89,7 +89,7 @@
         </span>
       </ion-button>
       <span class="task-badge">
-        {{ consentForms.length }}
+        {{ consentFormCounts[selectedChild.student_id] || 0 }}
       </span>
     </div>
     <div class="task-btn-wrapper">
@@ -100,7 +100,7 @@
         </span>
       </ion-button>
       <span class="task-badge">
-        {{ studentEvents.length }}
+        {{ schoolEventCounts[selectedChild.student_id] || 0 }}
       </span>
     </div>
     <div class="task-btn-wrapper">
@@ -111,7 +111,7 @@
         </span>
       </ion-button>
       <span class="task-badge">
-        {{ studentAnnouncements.length }}
+        {{ announcementCounts[selectedChild.student_id] || 0 }}
       </span>
     </div>
   </div>

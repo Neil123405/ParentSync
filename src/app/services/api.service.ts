@@ -23,12 +23,12 @@ export interface ParentProfile {
   last_name: string;
   email: string;
   contactNo: string;
-  photo_url?: string; 
-  username?: string; 
+  photo_url?: string;
+  username?: string;
 }
 
 export interface AuthResponse {
-  token: string; 
+  token: string;
   user: User;
   profile?: ParentProfile;
   message?: string;
@@ -36,7 +36,7 @@ export interface AuthResponse {
 
 interface SignConsentResponse {
   success: boolean;
-  signatureImage?: string; 
+  signatureImage?: string;
 }
 
 @Injectable({
@@ -154,6 +154,30 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/parent/${parentId}/announcements`, { headers: this.getHeaders() });
   }
 
+  getParentEvents(parentId: number, date?: string): Observable<any> {
+    const options: any = { headers: this.getHeaders() };
+    if (date) {
+      options.params = { date };
+    }
+    return this.http.get(`${this.apiUrl}/parent/${parentId}/events`, options);
+  }
+
+  uploadParentPhoto(base64: string) {
+    return this.http.post(`${this.apiUrl}/parent/upload-photo`, { photo: base64 }, { headers: this.getHeaders() });
+  }
+
+  updateParentAccount(parentId: number, data: { first_name: string; last_name: string; email: string; contactNo: string }) {
+    return this.http.put(`${this.apiUrl}/parent/${parentId}/profile`, data, { headers: this.getHeaders() });
+  }
+
+  getAllUnsignedConsentFormsForParent(parentId: number, date?: string): Observable<any> {
+    let url = `${this.apiUrl}/parent/${parentId}/unsigned-consent-forms`;
+    if (date) {
+      url += `?date=${date}`;
+    }
+    return this.http.get<{ forms: any[] }>(url, { headers: this.getHeaders() });
+  }
+
   getStudentAnnouncements(studentId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/student/${studentId}/announcements`, { headers: this.getHeaders() });
   }
@@ -166,14 +190,6 @@ export class ApiService {
   // getParentEvents(parentId: number): Observable<any> {
   //   return this.http.get(`${this.apiUrl}/parent/${parentId}/events`, { headers: this.getHeaders() });
   // }
-
-  getParentEvents(parentId: number, date?: string): Observable<any> {
-    const options: any = { headers: this.getHeaders() };
-    if (date) {
-      options.params = { date };
-    }
-    return this.http.get(`${this.apiUrl}/parent/${parentId}/events`, options);
-  }
 
   getStudentEvents(studentId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/student/${studentId}/events`, { headers: this.getHeaders() });
@@ -189,9 +205,22 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/events/${eventId}`, { headers: this.getHeaders() });
   }
 
-  getAllEvents() {
-    return this.http.get<{ events: any[] }>(`${this.apiUrl}/events`, { headers: this.getHeaders() });
+  // Consent Forms
+  getConsentFormsForStudent(studentId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/consent-forms/student/${studentId}`, { headers: this.getHeaders() });
   }
+
+  getConsentFormDetail(formId: number, studentId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/consent-forms/${formId}/student/${studentId}`, { headers: this.getHeaders() });
+  }
+
+  getStudentProfile(studentId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/student/${studentId}/profile`, { headers: this.getHeaders() });
+  }
+
+  // getAllEvents() {
+  //   return this.http.get<{ events: any[] }>(`${this.apiUrl}/events`, { headers: this.getHeaders() });
+  // }
 
   // Attendance
   // getStudentAttendance(studentId: number): Observable<any> {
@@ -215,15 +244,6 @@ export class ApiService {
     });
   }
 
-  // Consent Forms
-  getConsentFormsForStudent(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/consent-forms/student/${studentId}`, { headers: this.getHeaders() });
-  }
-
-  getConsentFormDetail(formId: number, studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/consent-forms/${formId}/student/${studentId}`, { headers: this.getHeaders() });
-  }
-
   signConsentForm(formId: number, studentId: number, signatureData: string): Observable<SignConsentResponse> {
     return this.http.post<SignConsentResponse>(`${this.apiUrl}/consent-forms/${formId}/sign`, {
       student_id: studentId,
@@ -244,14 +264,6 @@ export class ApiService {
       { image: base64Image },
       { headers: this.getHeaders() }
     );
-  }
-
-  uploadParentPhoto(base64: string) {
-    return this.http.post(`${this.apiUrl}/parent/upload-photo`, { photo: base64 }, { headers: this.getHeaders() });
-  }
-
-  updateParentAccount(parentId: number, data: { first_name: string; last_name: string; email: string; contactNo: string }) {
-    return this.http.put(`${this.apiUrl}/parent/${parentId}/profile`, data, { headers: this.getHeaders() });
   }
 
   // getParentEventsByDate(parentId: number, date: string) {
@@ -292,19 +304,15 @@ export class ApiService {
     this.fcmToken = token;
   }
 
-   public getFcmToken(): string {
+  public getFcmToken(): string {
     return this.fcmToken ?? '';
   }
 
-  getAllUnsignedConsentFormsForParent(parentId: number): Observable<any> {
-    return this.http.get<{ forms: any[] }>(
-      `${this.apiUrl}/parent/${parentId}/unsigned-consent-forms`,
-      { headers: this.getHeaders() }
-    );
-  }
-
-  getStudentProfile(studentId: number): Observable<any> {
-  return this.http.get(`${this.apiUrl}/student/${studentId}/profile`, { headers: this.getHeaders() });
-}
+  // getAllUnsignedConsentFormsForParent(parentId: number, date?: string): Observable<any> {
+  //   return this.http.get<{ forms: any[] }>(
+  //     `${this.apiUrl}/parent/${parentId}/unsigned-consent-forms`,
+  //     { headers: this.getHeaders() }
+  //   );
+  // }
 
 }

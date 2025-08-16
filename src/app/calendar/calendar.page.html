@@ -39,12 +39,8 @@
         <div class="calendar-days-grid">
           <ng-container *ngFor="let week of calendarGrid">
             <div class="calendar-week">
-              <span
-                *ngFor="let day of week"
-                class="calendar-day"
-                [class.today]="isToday(day)"
-                [class.selected]="isSelected(day)"
-                [class.other-month]="!day?.inMonth"
+              <span *ngFor="let day of week" class="calendar-day" [class.today]="isToday(day)"
+                [class.selected]="isSelected(day)" [class.other-month]="!day?.inMonth"
                 [class.no-events]="!day?.events?.length && !day?.forms?.length"
                 (click)="(day?.events?.length || day?.forms?.length) ? dayClicked(day) : null">
                 {{ day?.date ? day.date.getDate() : '' }}
@@ -64,7 +60,7 @@
       Upcoming Events
     </ion-button>
     <ion-button [fill]="!showUpcomingEvents ? 'solid' : 'outline'" (click)="showUpcomingEvents = false"
-    class="consent-toggle-btn">
+      class="consent-toggle-btn">
       Upcoming Consent Forms
     </ion-button>
   </div>
@@ -84,10 +80,10 @@
                 {{ event.start | date:'mediumDate' }}
                 <span *ngIf="event.meta?.description">- {{ event.meta.description }}</span>
               </p>
-              
-    <p *ngIf="event.meta?.student?.first_name && event.meta?.student?.last_name">
-      <strong>Student:</strong> {{ event.meta.student.first_name }} {{ event.meta.student.last_name }}
-    </p>
+
+              <p *ngIf="event.meta?.student?.first_name && event.meta?.student?.last_name">
+                <strong>Student:</strong> {{ event.meta.student.first_name }} {{ event.meta.student.last_name }}
+              </p>
             </ion-label>
           </ion-item>
         </ion-list>

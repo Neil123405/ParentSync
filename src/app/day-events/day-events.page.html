@@ -73,8 +73,8 @@
           <ion-label style="font-size: 0.95rem;">
             <h2 style="font-size: 1rem;">{{ form.title }}</h2>
             <p style="font-size: 0.92rem;">{{ form.description }}</p>
-            <p *ngIf="form.student?.first_name && form.student?.last_name" style="font-size: 0.92rem;">
-              <strong>Student:</strong> {{ form.student.first_name }} {{ form.student.last_name }}
+            <p *ngIf="form.first_name && form.last_name" style="font-size: 0.92rem;">
+              <strong>Student:</strong> {{ form.first_name }} {{ form.last_name }}
             </p>
             <p *ngIf="form.deadline" style="font-size: 0.92rem;"><strong>Deadline:</strong> {{ form.deadline | date:'mediumDate' }}</p>
           </ion-label>
