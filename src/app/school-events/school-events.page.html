@@ -27,8 +27,10 @@
       <ion-item *ngFor="let event of events" class="event-card" (click)="openEventDetail(event)">
         <ion-label>
           <h2>{{ event.title }}</h2>
-          <p>{{ event.date }} - {{ event.location }}</p>
+          
+          <p><ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>{{ event.date }} - {{ event.location }}</p>
         </ion-label>
+        <ion-icon name="chevron-forward" slot="end"></ion-icon>
       </ion-item>
       <ion-item *ngIf="events.length === 0">
         <ion-label>No school events found.</ion-label>

@@ -82,12 +82,12 @@ export class HomePage implements OnInit {
         this.laravelChildren = response.children;
 
         // For each child, fetch the full profile (with full photo_url)
-        this.laravelChildren.forEach(child => {
-          this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
-            child.photo_url = profile.photo_url;
-            // ...update other fields if needed
-          });
-        });
+        // this.laravelChildren.forEach(child => {
+        //   this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
+        //     child.photo_url = profile.photo_url;
+        //     // ...update other fields if needed
+        //   });
+        // });
       }
     },
     error: (error) => {
@@ -101,6 +101,7 @@ export class HomePage implements OnInit {
   ionViewWillEnter() {
     // Refresh data every time Home is shown
     if (this.currentProfile) {
+      this.loadChildrenWithPhotos();
       this.loadAnnouncementsAndEvents();
     }
   }

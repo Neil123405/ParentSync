@@ -49,10 +49,15 @@
             <h2 style="font-size: 1rem;">{{ event.title }}</h2>
             <p style="font-size: 0.92rem;">{{ event.description }}</p>
             <p *ngIf="event.first_name && event.last_name" style="font-size: 0.92rem;">
+              <ion-icon name="person-circle-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
               <strong>Student:</strong> {{ event.first_name }} {{ event.last_name }}
             </p>
-            <p *ngIf="event.time" style="font-size: 0.92rem;"><strong>Time:</strong> {{ event.time }}</p>
-            <p *ngIf="event.location" style="font-size: 0.92rem;"><strong>Location:</strong> {{ event.location }}</p>
+            <p *ngIf="event.time" style="font-size: 0.92rem;">
+              <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+              <strong>Time:</strong> {{ event.time }}</p>
+            <p *ngIf="event.location" style="font-size: 0.92rem;">
+              <ion-icon name="location-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+              <strong>Location:</strong> {{ event.location }}</p>
           </ion-label>
         </ion-item>
         <ion-item *ngIf="events.length === 0">
@@ -73,10 +78,13 @@
           <ion-label style="font-size: 0.95rem;">
             <h2 style="font-size: 1rem;">{{ form.title }}</h2>
             <p style="font-size: 0.92rem;">{{ form.description }}</p>
-            <p *ngIf="form.student?.first_name && form.student?.last_name" style="font-size: 0.92rem;">
-              <strong>Student:</strong> {{ form.student.first_name }} {{ form.student.last_name }}
+            <p *ngIf="form.first_name && form.last_name" style="font-size: 0.92rem;">
+              <ion-icon name="person-circle-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+              <strong>Student:</strong> {{ form.first_name }} {{ form.last_name }}
             </p>
-            <p *ngIf="form.deadline" style="font-size: 0.92rem;"><strong>Deadline:</strong> {{ form.deadline | date:'mediumDate' }}</p>
+            <p *ngIf="form.deadline" style="font-size: 0.92rem;">
+              <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+              <strong>Deadline:</strong> {{ form.deadline | date:'mediumDate' }}</p>
           </ion-label>
         </ion-item>
         <ion-item *ngIf="forms.length === 0">

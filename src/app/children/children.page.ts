@@ -148,6 +148,12 @@ export class ChildrenPage implements OnInit {
     // });
   }
 
+  ionViewWillEnter() {
+    if (this.currentProfile) {
+      this.loadData();
+    }
+  }
+
   async loadData() {
     // console.log('loadData called');
     if (!this.currentProfile) {
@@ -163,35 +169,64 @@ export class ChildrenPage implements OnInit {
     try {
       // Load children
       // console.log('About to call getParentChildren with:', this.currentProfile.parent_id);
+
+      if (this.currentProfile?.parent_id) {
+        this.apiService.getAllUnsignedConsentFormsForParent(this.currentProfile.parent_id).subscribe(res => {
+          const forms = res.forms || [];
+          // Reset counts
+          this.consentFormCounts = {};
+          forms.forEach((form: any) => {
+            const sid = form.student_id;
+            this.consentFormCounts[sid] = (this.consentFormCounts[sid] || 0) + 1;
+          });
+        });
+        this.apiService.getParentEvents(this.currentProfile.parent_id).subscribe(res => {
+          const events = res.events || [];
+          this.schoolEventCounts = {};
+          events.forEach((event: any) => {
+            const sid = event.student_id;
+            this.schoolEventCounts[sid] = (this.schoolEventCounts[sid] || 0) + 1;
+          });
+        });
+        this.apiService.getParentAnnouncements(this.currentProfile.parent_id).subscribe(res => {
+          const announcements = res.announcements || [];
+          this.announcementCounts = {};
+          announcements.forEach((announcement: any) => {
+            const sid = announcement.student_id;
+            this.announcementCounts[sid] = (this.announcementCounts[sid] || 0) + 1;
+          });
+        });
+      }
       this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
         next: (response) => {
           // console.log('API response for children:', response);
+
           if (response.success) {
             this.laravelChildren = response.children;
             // console.log('laravelChildren set to:', this.laravelChildren);
-
             // Fetch counts for each child
-            this.laravelChildren.forEach(child => {
-              this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
-                this.consentFormCounts[child.student_id] = (res.forms || []).length;
+            // this.laravelChildren.forEach(child => {
+            //   // this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
+            //   //   this.consentFormCounts[child.student_id] = (res.forms || []).length;
 
-                this.consentForms = res.forms || [];
-              });
-              this.apiService.getStudentEvents(child.student_id).subscribe(res => {
-                this.schoolEventCounts[child.student_id] = (res.events || []).length;
-              });
-              // Fetch announcements count
-              this.apiService.getStudentAnnouncements(child.student_id).subscribe(res => {
-                this.announcementCounts[child.student_id] = (res.announcements || []).length;
-              });
-              this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
-                child.photo_url = profile.photo_url;
-                // ...update other fields if needed
-              });
-            });
-          } else {
-            // console.warn('API response did not have success=true:', response);
-          }
+            //   //   // this.consentForms = res.forms || [];
+            //   // });
+            //   // this.apiService.getStudentEvents(child.student_id).subscribe(res => {
+            //   //   this.schoolEventCounts[child.student_id] = (res.events || []).length;
+            //   // });
+            //   // Fetch announcements count
+            //   // this.apiService.getStudentAnnouncements(child.student_id).subscribe(res => {
+            //   //   this.announcementCounts[child.student_id] = (res.announcements || []).length;
+            //   // });
+            //   // this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
+            //   //   child.photo_url = profile.photo_url;
+            //   //   // ...update other fields if needed
+            //   // });
+            // });
+          } 
+          // else {
+          //   // console.warn('API response did not have success=true:', response);
+          // }
         },
         error: (error) => {
           // console.error('Error loading children:', error);
@@ -418,6 +453,7 @@ export class ChildrenPage implements OnInit {
   toggleTimeline(child: LaravelStudent) {
     const studentId = child.student_id;
     // Toggle only for selected child
+    // ! means the opposite of the current value, so if it's true, it becomes false and vice versa
     this.showTimeline[studentId] = !this.showTimeline[studentId];
 
     if (this.showTimeline[studentId]) {
@@ -563,8 +599,8 @@ export class ChildrenPage implements OnInit {
     }
 
     this.animationTimer = setTimeout(() => {
-    this.longPressedId = child.student_id;
-  }, 100);
+      this.longPressedId = child.student_id;
+    }, 100);
 
     this.pressTimer = setTimeout(() => {
       // this.longPressedId = child.student_id; // Set the pressed student

@@ -115,7 +115,8 @@
       <ion-card class="announcement-card" (click)="openAnnouncement(announcement)"
         style="flex: 1; cursor: pointer; display: flex; align-items: center;">
         <ion-card-content style="flex: 1;">
-          <h3>{{ announcement.title }}</h3>
+          
+          <h3><ion-icon name="megaphone-outline" style="font-size: 1.5rem; color: #3880ff; margin-right: 10px;"></ion-icon>{{ announcement.title }}</h3>
         </ion-card-content>
       </ion-card>
     </div>
@@ -175,9 +176,11 @@
               <ion-icon name="person-circle" style="font-size: 40px; color: #3880ff;"></ion-icon>
             </ng-template>
           </div>
+          <ion-icon name="calendar-outline" style="font-size: 1.4rem; color: #10dc60; margin-right: 8px;"></ion-icon>
           <h3 style="margin: 0;">{{ event.title }}</h3>
         </div>
         <div style="margin-right: 16px; color: #222; font-weight: 500;">
+          <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
           {{ event.date | date:'mediumDate' }}
         </div>
       </div>

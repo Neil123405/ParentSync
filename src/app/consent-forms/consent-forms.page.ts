@@ -19,7 +19,7 @@ export class ConsentFormsPage implements OnInit {
     private route: ActivatedRoute,
     private apiService: ApiService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.studentId = +this.route.snapshot.paramMap.get('studentId')!;
@@ -47,9 +47,9 @@ export class ConsentFormsPage implements OnInit {
   }
 
   doRefresh(event: any) {
-  this.ngOnInit(); // Replace with your actual data loading method
-  setTimeout(() => {
-    event.target.complete();
-  }, 1000); // Or call complete after data is actually loaded
-}
+    this.ngOnInit();
+    setTimeout(() => {
+      event.target.complete();
+    }, 1000); // Or call complete after data is actually loaded
+  }
 }

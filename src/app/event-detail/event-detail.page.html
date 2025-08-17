@@ -29,15 +29,22 @@
       <ion-card-header>
         <ion-card-title>{{ event.title }}</ion-card-title>
         <ion-card-subtitle>
+          <ion-icon name="calendar-outline" style="vertical-align: middle; margin-right: 6px; color: #10dc60;"></ion-icon>
           {{ event.date | date:'mediumDate' }}
           <span *ngIf="event.time">at {{ event.time }}</span>
         </ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
         <p>{{ event.description }}</p>
-        <p><strong>Location:</strong> {{ event.location }}</p>
-        <p *ngIf="event.cost"><strong>Cost:</strong> {{ event.cost | currency }}</p>
-        <p *ngIf="event.scope"><strong>Scope:</strong> {{ event.scope }}</p>
+        <p>
+          <ion-icon name="location-outline" style="vertical-align: middle; margin-right: 6px; color: #3880ff;"></ion-icon>
+          <strong>Location:</strong> {{ event.location }}</p>
+        <p *ngIf="event.cost">
+          <ion-icon name="cash-outline" style="vertical-align: middle; margin-right: 6px; color: #ffcc00;"></ion-icon>
+          <strong>Cost:</strong> {{ event.cost | currency }}</p>
+        <p *ngIf="event.scope">
+          <ion-icon name="people-outline" style="vertical-align: middle; margin-right: 6px; color: #4caf50;"></ion-icon>
+          <strong>Scope:</strong> {{ event.scope }}</p>
       </ion-card-content>
     </ion-card>
   </ion-content>

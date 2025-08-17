@@ -89,7 +89,7 @@
         </span>
       </ion-button>
       <span class="task-badge">
-        {{ consentForms.length }}
+        {{ consentFormCounts[selectedChild.student_id] || 0 }}
       </span>
     </div>
     <div class="task-btn-wrapper">
@@ -100,7 +100,7 @@
         </span>
       </ion-button>
       <span class="task-badge">
-        {{ studentEvents.length }}
+        {{ schoolEventCounts[selectedChild.student_id] || 0 }}
       </span>
     </div>
     <div class="task-btn-wrapper">
@@ -111,7 +111,7 @@
         </span>
       </ion-button>
       <span class="task-badge">
-        {{ studentAnnouncements.length }}
+        {{ announcementCounts[selectedChild.student_id] || 0 }}
       </span>
     </div>
   </div>
@@ -157,7 +157,7 @@
     <ion-item *ngFor="let form of signedConsentForms[selectedChild.student_id]" (click)="openConsentFormDetail(form)">
       <ion-label>
         <h3>{{ form.title }}</h3>
-        <p>Signed at: {{ form.signed_at | date:'medium' }}</p>
+        <p><ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>Signed at: {{ form.signed_at | date:'medium' }}</p>
       </ion-label>
     </ion-item>
     <ion-item *ngIf="signedConsentForms[selectedChild.student_id]?.length === 0">

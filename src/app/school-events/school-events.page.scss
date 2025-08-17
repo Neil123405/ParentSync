@@ -56,7 +56,7 @@
 }
 
 .events-background-box {
-  background: #f6f8ff;
+  background: #fff6f6;
   border-radius: 8px;
   padding: 32px 16px;   // Add horizontal padding (16px is typical)
   margin: 0px 20px 24px 20px;
@@ -73,7 +73,7 @@ ion-list {
   border-radius: 8px;
   margin-bottom: 18px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  border: 1.5px solid var(--ion-color-primary-tint, #d0e2ff);
+  // border: 1.5px solid var(--ion-color-primary-tint, #d0e2ff);
   transition: box-shadow 0.2s;
   /* Make the card fill the width */
   width: 100%;
