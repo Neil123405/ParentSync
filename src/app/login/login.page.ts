@@ -36,10 +36,23 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     private router: Router
   ) { }
 
+  ngOnInit() {
+    this.credentials = {
+      username: '',
+      password: ''
+    };
+    this.parentInfo = {
+      first_name: '',
+      last_name: '',
+      email: '',
+      contactNo: ''
+    };
+  }
+
   ionViewWillEnter() {
     this.credentials = { username: '', password: '' };
     // Optionally, also clear registration fields if needed:
-    // this.parentInfo = { first_name: '', last_name: '', email: '', contactNo: '' };
+    this.parentInfo = { first_name: '', last_name: '', email: '', contactNo: '' };
   }
 
   // prevents keyboard from covering input fields
@@ -174,9 +187,9 @@ export class LoginPage implements AfterViewInit, OnDestroy {
         // If there are validation errors, append them to the message
         if (error.error?.errors) {
           const details = Object.entries(error.error.errors)
-            .map(([field, messages]) => `${field}: ${(messages as string[]).join(', ')}`)
-            .join('<br>');
-          errorMessage += '\n' + details;
+            .map(([field, messages]) => `${field}: ${(messages as string[])}`)
+            .join(' | ');
+          errorMessage += ' ' + details;
         }
         this.showAlert('Registration Failed', errorMessage);
       }
