@@ -66,7 +66,7 @@
   </div>
 
   <!-- Upcoming Events List -->
-  <div *ngIf="showUpcomingEvents && upcomingEvents.length > 0" class="upcoming-reminders ion-margin-bottom">
+  <div [hidden]="!showUpcomingEvents || upcomingEvents.length === 0" class="upcoming-reminders ion-margin-bottom">
     <ion-card>
       <ion-card-header>
         <ion-card-title>Upcoming Events</ion-card-title>
@@ -74,14 +74,17 @@
       <ion-card-content>
         <ion-list>
           <ion-item *ngFor="let event of upcomingEvents" (click)="openEventDetail(event)" button detail>
+            <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
             <ion-label>
               <h3>{{ event.title }}</h3>
               <p>
+                <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
                 {{ event.start | date:'mediumDate' }}
                 <span *ngIf="event.meta?.description">- {{ event.meta.description }}</span>
               </p>
 
               <p *ngIf="event.meta?.student?.first_name && event.meta?.student?.last_name">
+                <ion-icon name="person-circle-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
                 <strong>Student:</strong> {{ event.meta.student.first_name }} {{ event.meta.student.last_name }}
               </p>
             </ion-label>
@@ -92,7 +95,7 @@
   </div>
 
   <!-- Upcoming Consent Forms List -->
-  <div *ngIf="!showUpcomingEvents && upcomingConsentForms.length > 0" class="upcoming-reminders ion-margin-bottom">
+  <div [hidden]="showUpcomingEvents || upcomingConsentForms.length === 0" class="upcoming-reminders ion-margin-bottom">
     <ion-card>
       <ion-card-header>
         <ion-card-title>Upcoming Consent Forms</ion-card-title>
@@ -100,13 +103,16 @@
       <ion-card-content>
         <ion-list>
           <ion-item *ngFor="let form of upcomingConsentForms" (click)="openConsentFormDetail(form)" button detail>
+            <ion-icon name="document-text-outline" slot="start" color="success"></ion-icon>
             <ion-label>
               <h3>{{ form.title }}</h3>
               <p>
+                <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
                 Deadline: {{ form.deadline | date:'mediumDate' }}
                 <span *ngIf="form.description">- {{ form.description }}</span>
               </p>
               <p *ngIf="form.student?.first_name && form.student?.last_name">
+                <ion-icon name="person-circle-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
                 <strong>Student:</strong> {{ form.student.first_name }} {{ form.student.last_name }}
               </p>
             </ion-label>

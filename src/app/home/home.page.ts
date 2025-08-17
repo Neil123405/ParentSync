@@ -101,6 +101,7 @@ export class HomePage implements OnInit {
   ionViewWillEnter() {
     // Refresh data every time Home is shown
     if (this.currentProfile) {
+      this.loadChildrenWithPhotos();
       this.loadAnnouncementsAndEvents();
     }
   }

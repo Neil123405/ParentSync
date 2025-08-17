@@ -51,20 +51,20 @@ export class CalendarPage implements OnInit, ViewWillEnter {
 
   ngOnInit() {
     // Only use navState if it contains BOTH month and year AND they are in a reasonable range
-    // const navState = window.history.state;
-    // if (
-    //   typeof navState.month === 'number' &&
-    //   typeof navState.year === 'number' &&
-    //   navState.month >= 0 && navState.month <= 11 &&
-    //   navState.year > 2000 && navState.year < 2100
-    // ) {
-    //   this.currentMonth = navState.month;
-    //   this.currentYear = navState.year;
-    // } else {
+    const navState = window.history.state;
+    if (
+      typeof navState.month === 'number' &&
+      typeof navState.year === 'number' &&
+      navState.month >= 0 && navState.month <= 11 &&
+      navState.year > 2000 && navState.year < 2100
+    ) {
+      this.currentMonth = navState.month;
+      this.currentYear = navState.year;
+    } else {
     const today = new Date();
     this.currentMonth = today.getMonth();
     this.currentYear = today.getFullYear();
-    // }
+    }
 
     const parentProfile = this.apiService.getCurrentProfile();
     if (parentProfile) {

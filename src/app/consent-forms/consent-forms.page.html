@@ -38,11 +38,15 @@
 
   <div class="consent-background-box">
     <ion-list>
-      <ion-item *ngFor="let form of filteredConsentForms" class="consent-card" (click)="openConsentForm(form)" [color]="form.signed ? 'success' : ''">
+      <ion-item *ngFor="let form of filteredConsentForms" class="consent-card" 
+      [ngClass]="{'signed-form': form.signed}"
+      [style.background]="form.signed ? '#f4ffd6' : '#fff'"
+      (click)="openConsentForm(form)">
         <ion-label>
-          <h2 [style.color]="form.signed ? 'green' : ''">{{ form.title }}</h2>
+          <h2 [style.color]="form.signed ? '#7a9c3a' : ''">{{ form.title }}</h2>
           <p>{{ form.description }}</p>
           <ion-note *ngIf="form.deadline">
+            <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
             <small>Deadline: {{ form.deadline | date:'mediumDate' }}</small>
           </ion-note>
           <ion-badge *ngIf="form.signed" color="success" style="margin-left:8px;">Signed</ion-badge>
