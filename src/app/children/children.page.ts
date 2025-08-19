@@ -527,6 +527,8 @@ export class ChildrenPage implements OnInit {
     });
   }
 
+  
+
   // async changeStudentPhoto(student: any) {
   //   const actionSheet = await this.actionSheetController.create({
   //     header: 'Change Photo',
