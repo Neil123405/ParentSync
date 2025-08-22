@@ -143,6 +143,18 @@ export class CalendarPage implements OnInit, ViewWillEnter {
     }
   }
 
+
+// * window.history.state
+// * year and month
+// * .getFullYear() .getMonth() .getDate()
+// * .subscribe(res => {})
+// * .map((res: any) => res.whatever)
+// * .map((res: any) => ({VERY TALL})
+// * meta and student
+
+// * .padStart(2, '0')
+
+
   dayClicked(day: any) {
     if (!day || !day.inMonth || !day.date) return;
 
@@ -215,6 +227,13 @@ export class CalendarPage implements OnInit, ViewWillEnter {
       this.currentYear === this.selectedDay.year
     );
   }
+
+  // * .push(either null or object)
+  // * .has
+  // * .filter ((res: any) => {} ) or .filter (res => {})
+  // * startOfDay(needs to be date, kung dili siya date kay type lang new Date(nya ang result sulod ani))
+  // * alert
+
 
   generateCalendar(linkedEventIds: Set<number>, consentForms: any[]) {
     const firstDay = new Date(this.currentYear, this.currentMonth, 1);
@@ -309,6 +328,9 @@ export class CalendarPage implements OnInit, ViewWillEnter {
     }
   }
 
+  // */ 1000 * 60 * 60 * 24 = algo from google
+  // * .sort((a, b) => a.start.getTime() - b.start.getTime());
+
   get upcomingEvents(): CalendarEvent[] {
     const now = startOfDay(new Date());
     const maxDaysAhead = 14; // Show events within the next 14 days
@@ -322,6 +344,8 @@ export class CalendarPage implements OnInit, ViewWillEnter {
       );
     }).sort((a, b) => a.start.getTime() - b.start.getTime());
   }
+
+  // * setTimeout(() => {parameter.target.complete()}, 1000)
 
   get upcomingConsentForms(): any[] {
     const now = startOfDay(new Date());

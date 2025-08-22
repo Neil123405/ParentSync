@@ -56,7 +56,6 @@ interface Announcement {
   title: string;
   content: string;
   date: string;
-  // add other fields as needed
 }
 
 @Component({
@@ -73,10 +72,8 @@ export class ChildrenPage implements OnInit {
   selectedChild: LaravelStudent | null = null;
 
   // Child-specific data
-  consentForms: ConsentForm[] = [];
-  // attendanceRecords: AttendanceRecord[] = [];
-  // attendanceSummary: any = null;
-  studentEvents: LaravelEvent[] = [];
+  // consentForms: ConsentForm[] = [];
+  // studentEvents: LaravelEvent[] = [];
 
   activeSection: string = '';
 
@@ -97,7 +94,7 @@ export class ChildrenPage implements OnInit {
 
   pressTimer: any = null;
 
-  studentAnnouncements: Announcement[] = [];
+  // studentAnnouncements: Announcement[] = [];
 
   constructor(
     private router: Router,
@@ -108,6 +105,8 @@ export class ChildrenPage implements OnInit {
     private modalController: ModalController,
     // private actionSheetController: ActionSheetController
   ) { }
+
+  // router.navigate(['])
 
   ngOnInit() {
     // Check authentication
@@ -153,6 +152,9 @@ export class ChildrenPage implements OnInit {
       this.loadData();
     }
   }
+
+// * loadingController.create({}), .present()
+// * .forEach((e: any) => {});
 
   async loadData() {
     // console.log('loadData called');
@@ -259,38 +261,38 @@ export class ChildrenPage implements OnInit {
     // +key converts string keys to numbers
     Object.keys(this.showTimeline).forEach(key => this.showTimeline[+key] = false);
     // Clear previous data
-    this.consentForms = [];
+    // this.consentForms = [];
     // this.attendanceRecords = [];
     // this.attendanceSummary = null;
-    this.studentEvents = [];
-    this.studentAnnouncements = [];
+    // this.studentEvents = [];
+    // this.studentAnnouncements = [];
   }
 
   showSection(section: string) {
     this.activeSection = section;
     if (!this.selectedChild) return;
 
-    if (section === 'tasks') {
-      this.loadConsentForms();      // <-- Load consent forms
-      this.loadStudentEvents();
-      this.loadStudentAnnouncements();   // <-- Load events
-    }
-    else if (section === 'timeline') {
+    // if (section === 'tasks') {
+    //   // this.loadConsentForms();      // <-- Load consent forms
+    //   // this.loadStudentEvents();
+    //   // this.loadStudentAnnouncements();   // <-- Load events
+    // }
+    if (section === 'timeline') {
       this.toggleTimeline(this.selectedChild);
     }
   }
 
-  loadConsentForms() {
-    if (!this.selectedChild) return;
-    this.apiService.getUnsignedConsentFormsForStudent(this.selectedChild.student_id).subscribe({
-      next: (response) => {
-        this.consentForms = response.forms || [];
-      },
-      error: (err) => {
-        this.consentForms = [];
-      }
-    });
-  }
+  // loadConsentForms() {
+  //   if (!this.selectedChild) return;
+  //   this.apiService.getUnsignedConsentFormsForStudent(this.selectedChild.student_id).subscribe({
+  //     next: (response) => {
+  //       this.consentForms = response.forms || [];
+  //     },
+  //     error: (err) => {
+  //       this.consentForms = [];
+  //     }
+  //   });
+  // }
 
   // async loadAttendance() {
   //   if (!this.selectedChild) return;
@@ -323,30 +325,30 @@ export class ChildrenPage implements OnInit {
   toggleSchoolEvents() {
     this.activeSection = 'tasks'; // Ensure the right section is active
     this.showSchoolEvents = !this.showSchoolEvents;
-    if (this.showSchoolEvents && this.selectedChild) {
-      this.loadStudentEvents();
-    }
+    // if (this.showSchoolEvents && this.selectedChild) {
+    //   this.loadStudentEvents();
+    // }
   }
 
-  async loadStudentEvents() {
-    if (!this.selectedChild) return;
-    this.apiService.getStudentEvents(this.selectedChild.student_id).subscribe({
-      next: (response) => {
-        if (response.success) {
-          // Attach student_id to each event
-          this.studentEvents = (response.events || []).map((e: any) => ({
-            ...e,
-            student_id: this.selectedChild ? this.selectedChild.student_id : null
-          }));
-        } else {
-          this.studentEvents = [];
-        }
-      },
-      error: () => {
-        this.studentEvents = [];
-      }
-    });
-  }
+  // async loadStudentEvents() {
+  //   if (!this.selectedChild) return;
+  //   this.apiService.getStudentEvents(this.selectedChild.student_id).subscribe({
+  //     next: (response) => {
+  //       if (response.success) {
+  //         // Attach student_id to each event
+  //         this.studentEvents = (response.events || []).map((e: any) => ({
+  //           ...e,
+  //           student_id: this.selectedChild ? this.selectedChild.student_id : null
+  //         }));
+  //       } else {
+  //         this.studentEvents = [];
+  //       }
+  //     },
+  //     error: () => {
+  //       this.studentEvents = [];
+  //     }
+  //   });
+  // }
 
   // getAttendanceColor(status: string): string {
   //   switch (status.toLowerCase()) {
@@ -626,19 +628,19 @@ export class ChildrenPage implements OnInit {
     }
   }
 
-  loadStudentAnnouncements() {
-    if (!this.selectedChild) return;
-    this.apiService.getStudentAnnouncements(this.selectedChild.student_id).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.studentAnnouncements = response.announcements || [];
-        } else {
-          this.studentAnnouncements = [];
-        }
-      },
-      error: () => {
-        this.studentAnnouncements = [];
-      }
-    });
-  }
+  // loadStudentAnnouncements() {
+  //   if (!this.selectedChild) return;
+  //   this.apiService.getStudentAnnouncements(this.selectedChild.student_id).subscribe({
+  //     next: (response) => {
+  //       if (response.success) {
+  //         this.studentAnnouncements = response.announcements || [];
+  //       } else {
+  //         this.studentAnnouncements = [];
+  //       }
+  //     },
+  //     error: () => {
+  //       this.studentAnnouncements = [];
+  //     }
+  //   });
+  // }
 }
