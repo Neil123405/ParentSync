@@ -26,6 +26,16 @@
   text-decoration: none;
 }
 
+.parent-sync-title {
+  color: white;
+  
+  font-size: 25px;
+}
+
+.announcements-title {
+  margin-bottom: 150px;
+}
+
 .error-message {
   color: var(--ion-color-danger);
   padding: 10px 0;
@@ -287,9 +297,9 @@ ion-tab-bar {
 }
 
 .event-student-photo {
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
+    width: 64px;
+  height: 64px;
+  border-radius: 12px;
   object-fit: cover;
   display: block;
 }
@@ -303,49 +313,49 @@ ion-label,
 }
 
 /* home.page.scss */
-.filter-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-  align-items: center;
-}
+// .filter-row {
+//   display: flex;
+//   gap: 8px;
+//   margin-bottom: 12px;
+//   align-items: center;
+// }
 
-.filter-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  padding: 12px 16px;
-  margin-bottom: 18px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-}
+// .filter-card {
+//   background: #fff;
+//   border-radius: 16px;
+//   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+//   padding: 12px 16px;
+//   margin-bottom: 18px;
+//   display: flex;
+//   gap: 12px;
+//   align-items: center;
+//   flex-wrap: wrap;
+// }
 
-.filter-card ion-item {
-  // --background: transparent;
-  --min-height: 36px;
-  --padding-start: 0;
-  --inner-padding-end: 0;
-  margin: 0 8px 0 0;
-  border-radius: 8px;
-  flex: 1 1 120px;
-}
+// .filter-card ion-item {
+//   // --background: transparent;
+//   --min-height: 36px;
+//   --padding-start: 0;
+//   --inner-padding-end: 0;
+//   margin: 0 8px 0 0;
+//   border-radius: 8px;
+//   flex: 1 1 120px;
+// }
 
-.filter-card ion-label {
-  font-family: 'Exo', sans-serif;
-  font-weight: 500;
-  color: #222;
-}
+// .filter-card ion-label {
+//   font-family: 'Exo', sans-serif;
+//   font-weight: 500;
+//   color: #222;
+// }
 
-.filter-card ion-select,
-.filter-card ion-input {
-  font-family: 'Exo', sans-serif;
-  font-weight: 100;
-  background: #f4f5f9;
-  border-radius: 8px;
-  padding: 4px 8px;
-}
+// .filter-card ion-select,
+// .filter-card ion-input {
+//   font-family: 'Exo', sans-serif;
+//   font-weight: 100;
+//   background: #f4f5f9;
+//   border-radius: 8px;
+//   padding: 4px 8px;
+// }
 
 // .show-input-item {
 //   display: flex;
@@ -403,5 +413,5 @@ ion-toolbar {
 
 ion-header,
 ion-toolbar {
-  --background: #3fff38;
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }

@@ -43,7 +43,7 @@ interface SignConsentResponse {
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = environment.apiUrl || 'http://192.168.1.12:8000/api';
+  private apiUrl = environment.apiUrl || 'http://192.168.1.5:8000/api';
 
   // User management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -231,10 +231,13 @@ export class ApiService {
   //   return this.http.get(`${this.apiUrl}/attendance/student/${studentId}/summary`, { headers: this.getHeaders() });
   // }
 
-  linkStudentToParent(parentId: number, studentId: number): Observable<any> {
+  linkStudentToParent(parentId: number, studentId: number, firstName: string, lastName: string, birthdate: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/parent/link-student`, {
       parent_id: parentId,
-      student_id: studentId
+    student_id: studentId,
+    first_name: firstName,
+    last_name: lastName,
+    birthdate: birthdate
     }, { headers: this.getHeaders() });
   }
 

@@ -18,6 +18,7 @@ export class AddStudentModalComponent {
   student: any = null;
   firstName: string = '';
   lastName: string = '';
+  bday: string = '';
   loading = false;
   error: string | null = null;
   constructor(private modalCtrl: ModalController, private apiService: ApiService) {}
@@ -43,7 +44,10 @@ export class AddStudentModalComponent {
 
   submit() {
   this.modalCtrl.dismiss({
-    student_id: this.studentId
+    student_id: this.studentId,
+    first_name: this.firstName,
+    last_name: this.lastName,
+    birthdate: this.bday
   });
 }
 }

@@ -10,7 +10,7 @@
   </ion-refresher>
 
   <!-- Announcements Filters -->
-  <!-- Unified Filters for both Announcements and Events -->
+  <!-- Unified Filters for both Announcements and Events
   <div class="filter-row filter-card">
     <ion-item class="student-section">
       <ion-label>Student</ion-label>
@@ -21,10 +21,10 @@
         </ion-select-option>
       </ion-select>
     </ion-item>
-  </div>
+  </div> -->
 
   <!-- Sort Filter (row 2) -->
-  <div class="filter-row filter-card">
+  <!-- <div class="filter-row filter-card">
     <ion-item class="sort-section">
       <ion-label>Sort</ion-label>
       <ion-select [(ngModel)]="feedSort" interface="popover">
@@ -32,16 +32,16 @@
         <ion-select-option value="oldest">Oldest</ion-select-option>
       </ion-select>
     </ion-item>
-  </div>
+  </div> -->
 
   <!-- Show Filter (row 3) -->
-  <div class="filter-row filter-card">
+  <!-- <div class="filter-row filter-card">
     <ion-item class="show-section">
       <ion-label>Show</ion-label>
       <ion-input type="number" [(ngModel)]="feedLimit" min="1" class="centered-number-input"
         style="width: 60px;"></ion-input>
     </ion-item>
-  </div>
+  </div> -->
 
   <!-- <div class="filter-row filter-card" style="display: flex; gap: 12px;">
   <ion-item style="flex: 1;">
@@ -95,28 +95,52 @@
   </ion-item>
 </div> -->
 
+<!-- Student photos for those with announcements -->
+<div style="display: flex; gap: 16px; justify-content: center; margin-bottom: 16px;">
+  <ng-container *ngFor="let student of studentsWithAnnouncements">
+    <ng-container *ngIf="student.photo_url && student.photo_url.startsWith('http'); else noPhoto">
+      <img [src]="student.photo_url"
+           alt="Student Photo"
+           style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 0 0 2px #e0e0e0; cursor: pointer;"
+           (click)="goToStudentAnnouncements(student.student_id)" />
+    </ng-container>
+    <ng-template #noPhoto>
+      <ion-icon name="person-circle"
+                style="font-size: 56px; color: #888; cursor: pointer;"
+                (click)="goToStudentAnnouncements(student.student_id)">
+      </ion-icon>
+    </ng-template>
+  </ng-container>
+</div>
+
   <h2>Announcements</h2>
   <!-- Announcements List -->
-  <ng-container *ngFor="let announcement of filteredAnnouncements">
+  <ng-container *ngFor="let group of groupedAnnouncements">
     <div style="display: flex; align-items: center; margin-bottom: 6px;">
       <!-- Student photo/icon OUTSIDE the card -->
-      <div style="margin-right: 16px; display: flex; align-items: center; justify-content: center;">
+      <div style="margin-right: 16px; display: flex; align-items: center; justify-content: center; position: relative; width: 48px; height: 48px;">
         <!-- gets the student by ID and checks if they have a photo URL -->
-        <ng-container
-          *ngIf="getStudentById(announcement.student_id)?.photo_url && getStudentById(announcement.student_id)?.photo_url.startsWith('http'); else noPhoto">
-          <img [src]="getStudentById(announcement.student_id)?.photo_url" alt="Student Photo"
-            style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 0 0 2px #e0e0e0;" />
+        <ng-container *ngFor="let studentId of group.studentIds.slice(0, 2); let i = index">
+        <ng-container *ngIf="getStudentById(studentId)?.photo_url && getStudentById(studentId)?.photo_url.startsWith('http'); else noPhoto">
+          <img [src]="getStudentById(studentId)?.photo_url" alt="Student Photo"
+          [style.left.px]="i * 16"
+        [style.zIndex]="i + 1"  
+          style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 0 0 2px #e0e0e0; position: absolute; top: 0;" />
         </ng-container>
         <ng-template #noPhoto>
-          <ion-icon name="person-circle" style="font-size: 48px; color: #888;"></ion-icon>
+          <ion-icon name="person-circle" 
+          [style.left.px]="i * 16"
+        [style.zIndex]="i + 1"
+        style="width: 48px; height: 48px; color: #888; position: absolute; top: 0;"></ion-icon>
         </ng-template>
+      </ng-container>
       </div>
       <!-- The announcement card -->
-      <ion-card class="announcement-card" (click)="openAnnouncement(announcement)"
+      <ion-card class="announcement-card" (click)="openAnnouncement(group.announcement)"
         style="flex: 1; cursor: pointer; display: flex; align-items: center;">
         <ion-card-content style="flex: 1;">
           
-          <h3><ion-icon name="megaphone-outline" style="font-size: 1.5rem; color: #3880ff; margin-right: 10px;"></ion-icon>{{ announcement.title }}</h3>
+          <h3><ion-icon name="megaphone-outline" style="font-size: 1.5rem; color: #3880ff; margin-right: 10px;"></ion-icon>{{ group.announcement.title }}</h3>
         </ion-card-content>
       </ion-card>
     </div>
@@ -159,6 +183,25 @@
     </div>
     </ion-item>
   </div> -->
+<div style="height: 48px;"></div>
+  
+<!-- Student photos for those with events -->
+<div style="display: flex; gap: 16px; justify-content: center; margin-bottom: 16px;">
+  <ng-container *ngFor="let student of studentsWithEvents">
+    <ng-container *ngIf="student.photo_url && student.photo_url.startsWith('http'); else noPhotoEvent">
+      <img [src]="student.photo_url"
+           alt="Student Photo"
+           style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 0 0 2px #e0e0e0; cursor: pointer;"
+           (click)="goToStudentEvents(student.student_id)" />
+    </ng-container>
+    <ng-template #noPhotoEvent>
+      <ion-icon name="person-circle"
+                style="font-size: 56px; color: #888; cursor: pointer;"
+                (click)="goToStudentEvents(student.student_id)">
+      </ion-icon>
+    </ng-template>
+  </ng-container>
+</div>
 
   <h2>What's Coming Up</h2>
   <!-- Events List -->
@@ -173,7 +216,7 @@
                 class="event-student-photo" />
             </ng-container>
             <ng-template #eventNoPhoto>
-              <ion-icon name="person-circle" style="font-size: 40px; color: #3880ff;"></ion-icon>
+              <ion-icon name="person-circle" style="font-size: 64px; color: #3880ff;"></ion-icon>
             </ng-template>
           </div>
           <ion-icon name="calendar-outline" style="font-size: 1.4rem; color: #10dc60; margin-right: 8px;"></ion-icon>
@@ -187,7 +230,7 @@
     </ion-card>
   </div>
   <ion-item *ngIf="filteredEvents.length === 0">
-    <ion-label>No events available.</ion-label>
+    <ion-label class="ion-text-center">No events available.</ion-label>
   </ion-item>
 
   <!-- Add bottom padding to prevent content overlap with footer -->

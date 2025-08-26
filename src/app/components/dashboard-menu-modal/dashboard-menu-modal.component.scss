@@ -9,10 +9,15 @@
   color: #fff !important;
 }
 :host ::ng-deep ion-content {
-  --background: linear-gradient(135deg, #e8f5e9 0%, #b2ffb2 25%, #3fff38 50%, #2ecc40 75%, #1db954 100%) !important;
+  // --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
   min-height: 100vh;
+}
+
+ion-toolbar {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #fff;
 }
 
 @keyframes gradient {

@@ -13,14 +13,18 @@
     <ion-label position="floating">Student ID</ion-label>
     <ion-input type="number" [(ngModel)]="studentId"></ion-input>
   </ion-item>
-  <!-- <ion-item>
+  <ion-item>
     <ion-label position="floating">First Name</ion-label>
-    <ion-input [(ngModel)]="firstName"></ion-input>
+    <ion-input type="text" [(ngModel)]="firstName"></ion-input>
   </ion-item>
-  <ion-item> || !firstName || !lastName
+  <ion-item>
     <ion-label position="floating">Last Name</ion-label>
-    <ion-input [(ngModel)]="lastName"></ion-input>
-  </ion-item> -->
+    <ion-input type="text" [(ngModel)]="lastName"></ion-input>
+  </ion-item>
+   <ion-item>
+    <ion-label position="floating">Birthday</ion-label>
+    <ion-input type="date" [(ngModel)]="bday"></ion-input>
+  </ion-item>
   <ion-button expand="block" color="primary"
     [disabled]="!studentId"
     (click)="submit()">Add Student</ion-button>

@@ -88,7 +88,7 @@ export class ChildrenPage implements OnInit {
   announcementCounts: { [studentId: number]: number } = {};
 
   showTasks = false;
-  showSchoolEvents = false; 
+  showSchoolEvents = false;
 
   pendingStudents: LaravelStudent[] = [];
 
@@ -153,8 +153,8 @@ export class ChildrenPage implements OnInit {
     }
   }
 
-// * loadingController.create({}), .present()
-// * .forEach((e: any) => {});
+  // * loadingController.create({}), .present()
+  // * .forEach((e: any) => {});
 
   async loadData() {
     // console.log('loadData called');
@@ -225,7 +225,7 @@ export class ChildrenPage implements OnInit {
             //   //   // ...update other fields if needed
             //   // });
             // });
-          } 
+          }
           // else {
           //   // console.warn('API response did not have success=true:', response);
           // }
@@ -477,13 +477,18 @@ export class ChildrenPage implements OnInit {
     });
     modal.onDidDismiss().then((result) => {
       if (result.data && result.data.student_id) {
-        this.addStudentById(result.data.student_id);
+        this.addStudentById(
+          result.data.student_id,
+          result.data.first_name,
+          result.data.last_name,
+          result.data.birthdate
+        );
       }
     });
     await modal.present();
   }
 
-  async addStudentById(studentId: number) {
+  async addStudentById(studentId: number, firstName: string, lastName: string, birthdate: string) {
     if (!studentId || !this.currentProfile) {
       this.showToast('Please enter a valid Student ID, First Name, and Last Name.');
       return;
@@ -492,7 +497,7 @@ export class ChildrenPage implements OnInit {
       next: async (profile) => {
         const alert = await this.alertController.create({
           header: 'Confirm Link',
-          message: `Are you sure you want to link this student to your account? ${profile.first_name} ${profile.last_name} (ID: ${profile.student_id})`,
+          message: `Are you sure you want to link this student to your account? (ID: ${profile.student_id})`,
           buttons: [
             {
               text: 'Cancel',
@@ -502,17 +507,19 @@ export class ChildrenPage implements OnInit {
               text: 'Yes',
               handler: () => {
                 if (this.currentProfile && this.currentProfile.parent_id !== undefined) {
-                  this.apiService.linkStudentToParent(this.currentProfile.parent_id, studentId).subscribe({
-                    next: (response) => {
-                      if (response.success) {
-                        this.showToast('Student linked successfully!');
-                        this.loadData();
-                      } else {
-                        this.showToast(response.message || 'Failed to link student.');
-                      }
-                    },
-                    error: () => this.showToast('Failed to link student.')
-                  });
+                  this.apiService.linkStudentToParent(this.currentProfile.parent_id, studentId, firstName,
+                    lastName,
+                    birthdate).subscribe({
+                      next: (response) => {
+                        if (response.success) {
+                          this.showToast('Student linked successfully!');
+                          this.loadData();
+                        } else {
+                          this.showToast(response.message);
+                        }
+                      },
+                      error: () => this.showToast('Failed to link student.')
+                    });
                 } else {
                   this.showToast('Parent ID is missing.');
                 }
@@ -529,7 +536,7 @@ export class ChildrenPage implements OnInit {
     });
   }
 
-  
+
 
   // async changeStudentPhoto(student: any) {
   //   const actionSheet = await this.actionSheetController.create({

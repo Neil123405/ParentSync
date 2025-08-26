@@ -28,9 +28,9 @@ export class HomePage implements OnInit {
   eventSort: string = 'latest';
   eventLimit: number = 5;
 
-  studentFilter: string = '';
-  feedSort: string = 'latest';
-  feedLimit: number = 5;
+  // studentFilter: string = '';
+  // feedSort: string = 'latest';
+  // feedLimit: number = 5;
 
   constructor(
     private apiService: ApiService,
@@ -190,44 +190,83 @@ export class HomePage implements OnInit {
   //* already read!
   get filteredAnnouncements() {
     let list = this.laravelAnnouncements;
-    if (this.studentFilter) {
-      list = list.filter(a => a.student_id == this.studentFilter);
-    }
-    // a and b are announcement objects
-    // the top is just a filter, this one is the sort (important)
-    // sort function negative means a comes first, positive means b comes first, it is FIXED RULE OF JAVASCRIPT
-    list = [...list].sort((a, b) => {
-      if (this.feedSort === 'latest') {
-        // a.created_at = '2024-01-01'
-        // b.created_at = '2025-01-01'
-        // For latest:
-        // new Date(b).getTime() - new Date(a).getTime() → positive → b first (newest first)
+    // if (this.studentFilter) {
+    //   list = list.filter(a => a.student_id == this.studentFilter);
+    // }
+    // // a and b are announcement objects
+    // // the top is just a filter, this one is the sort (important)
+    // // sort function negative means a comes first, positive means b comes first, it is FIXED RULE OF JAVASCRIPT
+    // list = [...list].sort((a, b) => {
+    //   if (this.feedSort === 'latest') {
+    //     // a.created_at = '2024-01-01'
+    //     // b.created_at = '2025-01-01'
+    //     // For latest:
+    //     // new Date(b).getTime() - new Date(a).getTime() → positive → b first (newest first)
 
-        // For oldest:
-        // new Date(a).getTime() - new Date(b).getTime() → negative → a first (oldest first)
-        // algorithm by google https://stackoverflow.com/questions/10123953/how-to-sort-an-object-array-by-date-property
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      } else {
-        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-      }
-    });
-    return list.slice(0, this.feedLimit);
+    //     // For oldest:
+    //     // new Date(a).getTime() - new Date(b).getTime() → negative → a first (oldest first)
+    //     // algorithm by google https://stackoverflow.com/questions/10123953/how-to-sort-an-object-array-by-date-property
+    //     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    //   } else {
+    //     return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    //   }
+    // });
+    // return list.slice(0, this.feedLimit);
+    return list;
   }
 
   // Filtered Events
   //* already read! same as announcements
   get filteredEvents() {
     let list = this.laravelEvents;
-    if (this.studentFilter) {
-      list = list.filter(e => e.student_id == this.studentFilter);
-    }
-    list = [...list].sort((a, b) => {
-      if (this.feedSort === 'latest') {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      } else {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-      }
-    });
-    return list.slice(0, this.feedLimit);
+    // if (this.studentFilter) {
+    //   list = list.filter(e => e.student_id == this.studentFilter);
+    // }
+    // list = [...list].sort((a, b) => {
+    //   if (this.feedSort === 'latest') {
+    //     return new Date(b.date).getTime() - new Date(a.date).getTime();
+    //   } else {
+    //     return new Date(a.date).getTime() - new Date(b.date).getTime();
+    //   }
+    // });
+    // return list.slice(0, this.feedLimit);
+    return list;
   }
+
+  // Add this getter to your HomePage class
+get studentsWithAnnouncements() {
+  const studentIds = new Set(this.filteredAnnouncements.map(a => a.student_id));
+  return this.laravelChildren.filter(child => studentIds.has(child.student_id));
+}
+
+goToStudentAnnouncements(studentId: number) {
+    this.router.navigate(['/student-announcements', studentId]);
+  }
+
+  get studentsWithEvents() {
+  const studentIds = new Set(this.filteredEvents.map(e => e.student_id));
+  return this.laravelChildren.filter(child => studentIds.has(child.student_id));
+}
+
+goToStudentEvents(studentId: number) {
+  this.router.navigate(['/school-events', studentId]);
+}
+
+get groupedAnnouncements() {
+  const groups: { [key: string]: { announcement: any, studentIds: number[] } } = {};
+
+  for (const ann of this.filteredAnnouncements) {
+    const key = ann.announcement_id;
+
+    if (!groups[key]) {
+      groups[key] = {
+        announcement: ann,
+        studentIds: []
+      };
+    }
+    groups[key].studentIds.push(ann.student_id);
+  }
+
+  return Object.values(groups);
+}
 }
