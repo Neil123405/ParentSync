@@ -14,12 +14,10 @@ export class AppComponent {
 
    ngOnInit() {
     PushNotifications.addListener('pushNotificationReceived', async (notification: PushNotificationSchema) => {
-      // Use Capacitor Haptics for iOS/Android
       Haptics.impact({ style: ImpactStyle.Heavy });
 
-      // Use Vibrate API for longer vibration (Android only)
       if ('vibrate' in navigator) {
-        navigator.vibrate(800); // vibrate for 800ms (adjust as needed)
+        navigator.vibrate(800);
       }
 
       // Show a simple toast for the announcement

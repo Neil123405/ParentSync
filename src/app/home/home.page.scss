@@ -281,6 +281,18 @@ ion-tab-bar {
 //   }
 // }
 
+.student-photo-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 18px;
+  padding: 16px 0;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 12px 0 rgba(102, 126, 234, 0.10);
+}
+
 .event-card-custom {
   margin: 4px 0; // just a tiny gap between cards
   border-radius: 16px;

@@ -56,7 +56,7 @@ export class HomePage implements OnInit {
       this.currentProfile = profile;
       if (this.currentProfile) {
         this.loadAnnouncementsAndEvents();
-        this.loadChildrenWithPhotos(); 
+        this.loadChildrenWithPhotos();
       }
     });
 
@@ -64,7 +64,7 @@ export class HomePage implements OnInit {
     this.apiService.profileUpdated$.subscribe(() => {
       if (this.currentProfile) {
         this.loadAnnouncementsAndEvents();
-        this.loadChildrenWithPhotos(); 
+        this.loadChildrenWithPhotos();
       }
     });
     // if (this.currentProfile) {
@@ -76,25 +76,25 @@ export class HomePage implements OnInit {
     if (!this.currentProfile) {
       return;
     }
-     this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
-    next: (response) => {
-      if (response.success) {
-        this.laravelChildren = response.children;
+    this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.laravelChildren = response.children;
 
-        // For each child, fetch the full profile (with full photo_url)
-        // this.laravelChildren.forEach(child => {
-        //   this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
-        //     child.photo_url = profile.photo_url;
-        //     // ...update other fields if needed
-        //   });
-        // });
+          // For each child, fetch the full profile (with full photo_url)
+          // this.laravelChildren.forEach(child => {
+          //   this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
+          //     child.photo_url = profile.photo_url;
+          //     // ...update other fields if needed
+          //   });
+          // });
+        }
+      },
+      error: (error) => {
+        // handle error if needed
       }
-    },
-    error: (error) => {
-      // handle error if needed
-    }
-  });
-    
+    });
+
   }
 
   //* already read!
@@ -212,6 +212,9 @@ export class HomePage implements OnInit {
     //   }
     // });
     // return list.slice(0, this.feedLimit);
+    list = [...list].sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
     return list;
   }
 
@@ -230,43 +233,48 @@ export class HomePage implements OnInit {
     //   }
     // });
     // return list.slice(0, this.feedLimit);
+    list = [...list].sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
     return list;
   }
 
   // Add this getter to your HomePage class
-get studentsWithAnnouncements() {
-  const studentIds = new Set(this.filteredAnnouncements.map(a => a.student_id));
-  return this.laravelChildren.filter(child => studentIds.has(child.student_id));
-}
+  get studentsWithAnnouncements() {
+    const studentIds = new Set(this.filteredAnnouncements.map(a => a.student_id));
+    return this.laravelChildren.filter(child => studentIds.has(child.student_id));
+  }
 
-goToStudentAnnouncements(studentId: number) {
+  goToStudentAnnouncements(studentId: number) {
     this.router.navigate(['/student-announcements', studentId]);
   }
 
   get studentsWithEvents() {
-  const studentIds = new Set(this.filteredEvents.map(e => e.student_id));
-  return this.laravelChildren.filter(child => studentIds.has(child.student_id));
-}
-
-goToStudentEvents(studentId: number) {
-  this.router.navigate(['/school-events', studentId]);
-}
-
-get groupedAnnouncements() {
-  const groups: { [key: string]: { announcement: any, studentIds: number[] } } = {};
-
-  for (const ann of this.filteredAnnouncements) {
-    const key = ann.announcement_id;
-
-    if (!groups[key]) {
-      groups[key] = {
-        announcement: ann,
-        studentIds: []
-      };
-    }
-    groups[key].studentIds.push(ann.student_id);
+    const studentIds = new Set(this.filteredEvents.map(e => e.student_id));
+    return this.laravelChildren.filter(child => studentIds.has(child.student_id));
   }
 
-  return Object.values(groups);
-}
+  goToStudentEvents(studentId: number) {
+    this.router.navigate(['/school-events', studentId]);
+  }
+
+  get groupedAnnouncements() {
+    const groups: { [key: string]: { announcement: any, studentIds: number[] } } = {};
+
+    for (const ann of this.filteredAnnouncements) {
+      const key = ann.announcement_id;
+
+      if (!groups[key]) {
+        groups[key] = {
+          announcement: ann,
+          studentIds: []
+        };
+      }
+      groups[key].studentIds.push(ann.student_id);
+    }
+
+    return Object.values(groups).sort((a, b) => {
+      return new Date(b.announcement.created_at).getTime() - new Date(a.announcement.created_at).getTime();
+    });
+  }
 }
