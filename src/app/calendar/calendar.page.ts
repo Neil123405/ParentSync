@@ -9,6 +9,10 @@ import { startOfDay } from 'date-fns';
 
 import { ApiService } from '../services/api.service';
 
+// calendar.page.ts
+import { LOCAL_CONFIG } from '../config.local';
+const ABSTRACT_API_KEY = LOCAL_CONFIG.ABSTRACT_API_KEY;
+
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.page.html',
@@ -38,6 +42,8 @@ export class CalendarPage implements OnInit, ViewWillEnter {
   loadedConsentForms: any[] = [];
 
   showUpcomingEvents: boolean = true;
+  timezoneName: string = '';
+  localDate: Date = new Date();
 
   constructor(
     private router: Router,
@@ -49,7 +55,12 @@ export class CalendarPage implements OnInit, ViewWillEnter {
     this.ngOnInit();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.setLocalDateByTimezone();
+    // Now use this.localDate for your calendar logic
+    this.currentYear = this.localDate.getFullYear();
+    this.currentMonth = this.localDate.getMonth();
+
     // Only use navState if it contains BOTH month and year AND they are in a reasonable range
     const navState = window.history.state;
     if (
@@ -143,16 +154,55 @@ export class CalendarPage implements OnInit, ViewWillEnter {
     }
   }
 
+  async setLocalDateByTimezone() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
 
-// * window.history.state
-// * year and month
-// * .getFullYear() .getMonth() .getDate()
-// * .subscribe(res => {})
-// * .map((res: any) => res.whatever)
-// * .map((res: any) => ({VERY TALL})
-// * meta and student
+        // Get city and country using Nominatim
+        const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+        const geoData = await geoRes.json();
+        const city = geoData.address.city || geoData.address.town || geoData.address.village || "";
+        const country = geoData.address.country || "";
+        const location = `${city}, ${country}`.trim();
 
-// * .padStart(2, '0')
+        // Fetch timezone and local time from Abstract API
+        const TIMEZONE_URL = `https://timezone.abstractapi.com/v1/current_time/?api_key=${ABSTRACT_API_KEY}&location=${encodeURIComponent(location)}`;
+        const timeRes = await fetch(TIMEZONE_URL);
+        const timeData = await timeRes.json();
+        this.timezoneName = timeData.timezone_name;
+        this.localDate = new Date(timeData.datetime);
+
+      }, async (error) => {
+        // Fallback: use a default location
+        const defaultLocation = "Oxford, United Kingdom";
+        const TIMEZONE_URL = `https://timezone.abstractapi.com/v1/current_time/?api_key=${ABSTRACT_API_KEY}&location=${encodeURIComponent(defaultLocation)}`;
+        const timeRes = await fetch(TIMEZONE_URL);
+        const timeData = await timeRes.json();
+        this.timezoneName = timeData.timezone_name;
+        this.localDate = new Date(timeData.datetime);
+      });
+    } else {
+      // Geolocation not supported, fallback
+      const defaultLocation = "Oxford, United Kingdom";
+      const TIMEZONE_URL = `https://timezone.abstractapi.com/v1/current_time/?api_key=${ABSTRACT_API_KEY}&location=${encodeURIComponent(defaultLocation)}`;
+      const timeRes = await fetch(TIMEZONE_URL);
+      const timeData = await timeRes.json();
+      this.timezoneName = timeData.timezone_name;
+      this.localDate = new Date(timeData.datetime);
+    }
+  }
+
+  // * window.history.state
+  // * year and month
+  // * .getFullYear() .getMonth() .getDate()
+  // * .subscribe(res => {})
+  // * .map((res: any) => res.whatever)
+  // * .map((res: any) => ({VERY TALL})
+  // * meta and student
+
+  // * .padStart(2, '0')
 
 
   dayClicked(day: any) {
