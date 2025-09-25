@@ -397,6 +397,16 @@ ion-button.consent-toggle-btn[fill="solid"] {
 //   text-transform: uppercase; /* Make the text uppercase */
 // }
 
+.smiling-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 40px;
+  text-align: center;
+  height: 300px;
+  border-bottom-left-radius: 100px; /* Adjust for the curve */
+  border-bottom-right-radius: 100px; /* Adjust for the curve */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow for depth */
+}
 
 
 

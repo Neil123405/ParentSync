@@ -9,6 +9,8 @@ import { startOfDay } from 'date-fns';
 
 import { ApiService } from '../services/api.service';
 
+import { ChangeDetectorRef } from '@angular/core';
+
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -19,7 +21,7 @@ import { FullCalendarComponent } from '@fullcalendar/angular'; // Import FullCal
 
 // calendar.page.ts
 import { LOCAL_CONFIG } from '../config.local';
-const ABSTRACT_API_KEY = LOCAL_CONFIG.ABSTRACT_API_KEY;
+// const ABSTRACT_API_KEY = LOCAL_CONFIG.ABSTRACT_API_KEY;
 // dayGridMonth,timeGridWeek,timeGridDay, today
 @Component({
   selector: 'app-calendar',
@@ -29,25 +31,26 @@ const ABSTRACT_API_KEY = LOCAL_CONFIG.ABSTRACT_API_KEY;
 })
 export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   @ViewChild('calendar') calendarComponent!: FullCalendarComponent; // Reference to FullCalendar
-  calendarOptions: CalendarOptions = {
-    initialView: 'dayGridMonth', // Default view (month view)
-    plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin], // Plugins for different views and interactions
-    headerToolbar: {
-      left: '',
-      center: 'title',
-      right: '',
-    },
-    // footerToolbar: {   // Custom button in the footer
-    //   center: 'today',      // Navigation buttons in the footer
-    // },
-    events: [], // Events will be dynamically loaded
-    editable: true, // Allow drag-and-drop
-    eventClick: this.handleEventClick.bind(this), // Handle event clicks
-    dateClick: this.handleDateClick.bind(this), // Handle date clicks
-    eventContent: this.renderEventContent.bind(this), // Custom rendering for events
-  };
+  // calendarOptions: CalendarOptions = {
+  //   initialView: 'dayGridMonth', // Default view (month view)
+  //   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin], // Plugins for different views and interactions
+  //   headerToolbar: {
+  //     left: '',
+  //     center: 'title',
+  //     right: '',
+  //   },
+  //   // footerToolbar: {   // Custom button in the footer
+  //   //   center: 'today',      // Navigation buttons in the footer
+  //   // },
+  //   events: [], // Events will be dynamically loaded
+  //   editable: true, // Allow drag-and-drop
+  //   eventClick: this.handleEventClick.bind(this), // Handle event clicks
+  //   dateClick: this.handleDateClick.bind(this), // Handle date clicks
+  //   eventContent: this.renderEventContent.bind(this), // Custom rendering for events
+  // };
 
-  
+
+
   handleEventClick(info: any) {
     alert(`Event: ${info.event.title}`);
     console.log(info.event);
@@ -92,37 +95,40 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     private router: Router,
     private apiService: ApiService,
     private gestureCtrl: GestureController,
+    private cdr: ChangeDetectorRef // Add ChangeDetectorRef
   ) { }
 
-ngAfterViewInit() {
-  const calendarElement = document.querySelector('full-calendar'); // FullCalendar root element
-  if (calendarElement) {
-    console.log('Calendar element:', calendarElement);
-    this.gesture = this.gestureCtrl.create({
-      el: calendarElement, // Attach directly to the calendar element
-      gestureName: 'swipe',
-      threshold: 15, // Minimum movement to detect a swipe
-      onEnd: (ev) => this.handleSwipe(ev), // Use onEnd for swipe detection
-    });
-    this.gesture.enable(true);
-  } else {
-    console.error('FullCalendar element not found');
+  ngAfterViewInit() {
+    const calendarElement = document.querySelector('full-calendar'); // FullCalendar root element
+    if (calendarElement) {
+      console.log('Calendar element:', calendarElement);
+      this.gesture = this.gestureCtrl.create({
+        el: calendarElement, // Attach directly to the calendar element
+        gestureName: 'swipe',
+        threshold: 15, // Minimum movement to detect a swipe
+        onEnd: (ev) => this.handleSwipe(ev), // Use onEnd for swipe detection
+      });
+      this.gesture.enable(true);
+    } else {
+      console.error('FullCalendar element not found');
+    }
   }
-}
 
- handleSwipe(ev: any) {
-  const calendarElement = document.querySelector('full-calendar');
-  console.log('Swipe detected:', ev); // Debugging log
-  if (ev.deltaX > 50) {
-    calendarElement?.classList.add('swipe-right');
-    setTimeout(() => calendarElement?.classList.remove('swipe-right'), 300);
-    this.goToPrevious();
-  } else if (ev.deltaX < -50) {
-    calendarElement?.classList.add('swipe-left');
-    setTimeout(() => calendarElement?.classList.remove('swipe-left'), 300);
-    this.goToNext();
+  handleSwipe(ev: any) {
+    const calendarElement = document.querySelector('full-calendar');
+    console.log('Swipe detected:', ev); // Debugging log
+    if (ev.deltaX > 50) {
+      calendarElement?.classList.add('swipe-right');
+      setTimeout(() => calendarElement?.classList.remove('swipe-right'), 300);
+      this.goToPrevious();
+    } else if (ev.deltaX < -50) {
+      calendarElement?.classList.add('swipe-left');
+      setTimeout(() => calendarElement?.classList.remove('swipe-left'), 300);
+      this.goToNext();
+    }
   }
-}
+
+
 
 
 
@@ -130,6 +136,7 @@ ngAfterViewInit() {
     const calendarApi = this.calendarComponent.getApi(); // Use the FullCalendar API
     if (calendarApi) {
       calendarApi.prev(); // Navigate to the previous view
+      // this.updateCurrentMonthCounts(); // Update counts immediately after navigation
     }
   }
 
@@ -137,6 +144,7 @@ ngAfterViewInit() {
     const calendarApi = this.calendarComponent.getApi(); // Use the FullCalendar API
     if (calendarApi) {
       calendarApi.next(); // Navigate to the next view
+      // this.updateCurrentMonthCounts(); // Update counts immediately after navigation
     }
   }
 
@@ -147,7 +155,8 @@ ngAfterViewInit() {
 
   async ngOnInit() {
     // await this.setLocalDateByTimezone();
-    this.loadEventsAndConsentForms();
+    await this.loadEventsAndConsentForms();
+    await this.updateCurrentMonthCounts();
     // Now use this.localDate for your calendar logic
     // this.currentYear = this.localDate.getFullYear();
     // this.currentMonth = this.localDate.getMonth();
@@ -245,6 +254,43 @@ ngAfterViewInit() {
     // }
   }
 
+  currentMonth: string = '';
+  consentFormCount: number = 0;
+  eventCount: number = 0;
+
+  updateCurrentMonthCounts() {
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1); // Start of the month
+    const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0); // End of the month
+
+    console.log('Updating counts for:', currentMonthStart, 'to', currentMonthEnd);
+
+    const normalizeDate = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    // Filter Consent Forms and Events for the current month
+    this.consentFormCount = (this.loadedConsentForms || []).filter((form: any) => {
+      const deadline = normalizeDate(new Date(form.deadline));
+      console.log('Consent Form Deadline:', deadline);
+      return deadline >= currentMonthStart && deadline <= currentMonthEnd;
+    }).length;
+
+    this.eventCount = (this._calendarEvents || []).filter((event: any) => {
+      const eventDate = normalizeDate(new Date(event.start)); // Use `start` instead of `date`
+      console.log('Event Date:', eventDate);
+      return eventDate >= currentMonthStart && eventDate <= currentMonthEnd;
+    }).length;
+
+
+    console.log('Consent Form Count:', this.consentFormCount);
+    console.log('Event Count:', this.eventCount);
+    // Update the current month name
+    // this.currentMonth = now.toLocaleString('default', { month: 'long', year: 'numeric' });
+  }
+
+
+
+
+
 
 
   // async setLocalDateByTimezone() {
@@ -291,6 +337,62 @@ ngAfterViewInit() {
   //   }
   // }
 
+
+
+  calendarOptions: CalendarOptions = {
+    initialView: 'dayGridMonth', // Default view (month view)
+    plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin], // Plugins for different views and interactions
+    headerToolbar: {
+      left: '',
+      center: 'title',
+      right: '',
+    },
+    events: [], // Events will be dynamically loaded
+    editable: true, // Allow drag-and-drop
+    eventClick: this.handleEventClick.bind(this), // Handle event clicks
+    dateClick: this.handleDateClick.bind(this), // Handle date clicks
+    eventContent: this.renderEventContent.bind(this), // Custom rendering for events
+
+    // Add the datesSet callback here
+    datesSet: (arg) => {
+  console.log('datesSet triggered:', arg); // Debugging log
+
+  // Use the center date of the calendar view to determine the current month
+  const centerDate = new Date(arg.view.currentStart); // Center date of the visible range
+  console.log('Center Date:', centerDate);
+
+  // Update the current month name
+  this.currentMonth = centerDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+  // Normalize dates for filtering
+  const normalizeDate = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+  // Filter Consent Forms and Events for the current month
+  this.consentFormCount = (this.loadedConsentForms || []).filter((form: any) => {
+    const deadline = normalizeDate(new Date(form.deadline));
+    return (
+      deadline.getFullYear() === centerDate.getFullYear() &&
+      deadline.getMonth() === centerDate.getMonth()
+    );
+  }).length;
+
+  this.eventCount = (this._calendarEvents || []).filter((event: any) => {
+    const eventDate = normalizeDate(new Date(event.start));
+    return (
+      eventDate.getFullYear() === centerDate.getFullYear() &&
+      eventDate.getMonth() === centerDate.getMonth()
+    );
+  }).length;
+
+  console.log('Updated counts:', {
+    currentMonth: this.currentMonth,
+    consentFormCount: this.consentFormCount,
+    eventCount: this.eventCount,
+  });
+
+  this.cdr.detectChanges(); // Trigger change detection
+},
+  };
 
 
 
@@ -355,6 +457,9 @@ ngAfterViewInit() {
 
             // Combine events and consent forms
             this.calendarOptions.events = [...events, ...consentForms];
+            console.log('Loaded Consent Forms:', this.loadedConsentForms);
+            console.log('Loaded Events:', this._calendarEvents);
+            this.updateCurrentMonthCounts();
           });
         });
       });

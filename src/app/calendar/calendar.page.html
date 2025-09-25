@@ -25,7 +25,16 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <!-- <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center;">
-  </div> -->
+  </div> --> <div class="smiling-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center; height: 300px;">
+    <h1 style="font-size: 2.5rem; margin: 0;">Welcome to Your Calendar</h1>
+  <p style="font-size: 1.2rem; margin: 10px 0;">Manage your events and consent forms easily</p>
+  <p style="font-size: 1.2rem; margin: 10px 0;">
+    <strong>{{ currentMonth }}</strong>
+  </p>
+  <p style="font-size: 1.2rem; margin: 10px 0;">
+    Consent Forms: <strong>{{ consentFormCount }}</strong> | Events: <strong>{{ eventCount }}</strong>
+  </p>
+  </div>
     <ion-card-content>
       <!-- FullCalendar Component -->
       <full-calendar [options]="calendarOptions" #calendar></full-calendar>
