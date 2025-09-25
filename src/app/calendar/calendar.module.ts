@@ -14,6 +14,9 @@ import { CalendarModule } from 'angular-calendar';
 import { DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
+import { FullCalendarModule } from '@fullcalendar/angular';
+
+
 
 @NgModule({
   imports: [
@@ -22,6 +25,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
     IonicModule,
     CalendarPageRoutingModule,
     SharedModule, // <-- Add this
+    FullCalendarModule,
     CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
   ],
   declarations: [CalendarPage]

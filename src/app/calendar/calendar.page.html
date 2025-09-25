@@ -13,11 +13,24 @@
 </ion-header> -->
 // *ngFor
 
-<ion-content [fullscreen]="true" class="ion-padding">
+<!-- <ion-header>
+  <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; text-align: center;">
+    <h2 style="margin: 0;">Current Location: {{ currentLocation }}</h2>
+    <p style="margin: 0;">Date Today: {{ localDate | date:'fullDate' }}</p>
+  </div>
+</ion-header> -->
+
+<ion-content [fullscreen]="true" style="--padding-top: 0; --padding-bottom: 0;">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-card>
+  <!-- <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center;">
+  </div> -->
+    <ion-card-content>
+      <!-- FullCalendar Component -->
+      <full-calendar [options]="calendarOptions" #calendar></full-calendar>
+    </ion-card-content>
+  <!-- <ion-card>
     <ion-card-header style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
       <ion-card-title style="color: white">School Calendar</ion-card-title>
     </ion-card-header>
@@ -53,7 +66,7 @@
         </div>
       </div>
     </ion-card-content>
-  </ion-card>
+  </ion-card> -->
 
   <!-- Toggle Buttons -->
   <div class="ion-margin-bottom" style="display: flex; gap: 8px; justify-content: center;">

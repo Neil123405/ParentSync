@@ -8,10 +8,13 @@ import { DayEventsPageRoutingModule } from './day-events-routing.module';
 
 import { DayEventsPage } from './day-events.page';
 
+import { FullCalendarModule } from '@fullcalendar/angular';
+
 import { WeekCalendarComponent } from '../components/week-calendar/week-calendar.component';
 
 @NgModule({
   imports: [
+    FullCalendarModule,
     CommonModule,
     FormsModule,
     IonicModule,

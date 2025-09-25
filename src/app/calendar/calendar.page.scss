@@ -337,3 +337,66 @@ ion-button.consent-toggle-btn[fill="solid"] {
     font-size: 0.9rem;
   }
 }
+
+
+/* Remove borders between day cells */
+:host ::ng-deep .fc-daygrid-day {
+  border: none !important; 
+}
+
+// /* Hide the grid completely */
+// :host ::ng-deep .fc-daygrid-day-frame {
+//   background: none !important;
+//   visibility: hidden !important;
+// }
+
+
+:host ::ng-deep .fc-scrollgrid {
+  border: none !important;
+}
+
+:host ::ng-deep .fc-scrollgrid td:last-of-type {
+  border: none !important;
+}
+
+:host ::ng-deep .fc-col-header-cell {
+  border: none !important;
+}
+
+/* filepath: c:\Users\et cetera\Desktop\Ionic\ParentSync\src\app\calendar\calendar.page.scss */
+
+/* Remove the border beside "Saturday" in the header row */
+:host ::ng-deep .fc-scrollgrid-sync-inner .fc-col-header-cell:last-of-type {
+  border-right: none !important;
+}
+
+/* Remove the border beside "Saturday" in the day grid */
+:host ::ng-deep .fc-daygrid-day:last-of-type {
+  border-right: none !important;
+}
+
+/* Remove borders in the theme standard grid */
+:host ::ng-deep .fc-theme-standard td,
+:host ::ng-deep .fc-theme-standard th {
+  border: none !important;
+}
+
+// /* Style the FullCalendar title */
+// :host ::ng-deep .fc-toolbar-title {
+//   font-size: 1.8rem;
+//   font-weight: ultra thin;
+//   color: #1976d2; /* Blue color */
+//   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add a shadow */
+//   background: linear-gradient(90deg, #2196f3, #4caf50); /* Gradient background */
+//   // -webkit-background-clip: text;
+//   -webkit-text-fill-color: transparent; /* Make the gradient apply to text */
+//   padding: 8px 16px;
+//   border-radius: 8px;
+//   display: inline-block;
+//   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+//   text-transform: uppercase; /* Make the text uppercase */
+// }
+
+
+
+

@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/calendar" (click)="goBackToCalendar()"></ion-back-button>
     </ion-buttons>
-    <ion-title style="color: white">Day Details</ion-title>
+    <ion-title style="color: white">Week View</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -18,7 +18,7 @@
   </ion-header>
 
   <!-- Week Calendar Navigation (arrows only, centered, small text) -->
-  <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px; gap: 18px;">
+  <!-- <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px; gap: 18px;">
     <ion-button fill="clear" shape="round" size="small" (click)="previousWeek()" style="font-size: 1.7rem;">
       <ion-icon name="chevron-back-outline"></ion-icon>
     </ion-button>
@@ -28,23 +28,24 @@
     <ion-button fill="clear" shape="round" size="small" (click)="nextWeek()" style="font-size: 1.7rem;">
       <ion-icon name="chevron-forward-outline"></ion-icon>
     </ion-button>
-  </div>
+  </div> -->
 
   <!-- Week Calendar -->
-  <app-week-calendar
+  <!-- <app-week-calendar
     [selectedDate]="date"
     [weekDays]="weekDays"
     (dayClick)="onWeekDayClick($event)">
-  </app-week-calendar>
+  </app-week-calendar> -->
 
+  <full-calendar #fc [options]="calendarOptions"></full-calendar>
   <!-- Events List -->
   <ion-card>
     <ion-card-header>
-      <ion-card-title style="font-size: 1.05rem;">Events</ion-card-title>
+      <ion-card-title style="font-size: 1.05rem;">Events for {{ selectedDay | date:'MMM d, yyyy' }}</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-list>
-        <ion-item *ngFor="let event of events" (click)="openEventDetail(event)">
+        <ion-item *ngFor="let event of filteredEvents" (click)="openEventDetail(event)">
           <ion-label style="font-size: 0.95rem;">
             <h2 style="font-size: 1rem;">{{ event.title }}</h2>
             <p style="font-size: 0.92rem;">{{ event.description }}</p>
@@ -60,7 +61,7 @@
               <strong>Location:</strong> {{ event.location }}</p>
           </ion-label>
         </ion-item>
-        <ion-item *ngIf="events.length === 0">
+        <ion-item *ngIf="filteredEvents.length === 0">
           <ion-label style="font-size: 0.95rem;">No events for this day.</ion-label>
         </ion-item>
       </ion-list>
@@ -74,7 +75,7 @@
     </ion-card-header>
     <ion-card-content>
       <ion-list>
-        <ion-item *ngFor="let form of forms" (click)="openConsentFormDetail(form)">
+        <ion-item *ngFor="let form of filteredForms" (click)="openConsentFormDetail(form)">
           <ion-label style="font-size: 0.95rem;">
             <h2 style="font-size: 1rem;">{{ form.title }}</h2>
             <p style="font-size: 0.92rem;">{{ form.description }}</p>
@@ -87,7 +88,7 @@
               <strong>Deadline:</strong> {{ form.deadline | date:'mediumDate' }}</p>
           </ion-label>
         </ion-item>
-        <ion-item *ngIf="forms.length === 0">
+        <ion-item *ngIf="filteredForms.length === 0">
           <ion-label style="font-size: 0.95rem;">No consent forms for this day.</ion-label>
         </ion-item>
       </ion-list>

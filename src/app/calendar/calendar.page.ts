@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 
 import { Router } from '@angular/router';
 import { CalendarEvent } from 'angular-calendar';
@@ -9,46 +9,136 @@ import { startOfDay } from 'date-fns';
 
 import { ApiService } from '../services/api.service';
 
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import { CalendarOptions } from '@fullcalendar/core';
+import { GestureController, Gesture } from '@ionic/angular';
+import { ViewChild } from '@angular/core';
+import { FullCalendarComponent } from '@fullcalendar/angular'; // Import FullCalendarComponent
+
 // calendar.page.ts
 import { LOCAL_CONFIG } from '../config.local';
 const ABSTRACT_API_KEY = LOCAL_CONFIG.ABSTRACT_API_KEY;
-
+// dayGridMonth,timeGridWeek,timeGridDay, today
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.page.html',
   styleUrls: ['./calendar.page.scss'],
   standalone: false,
 })
-export class CalendarPage implements OnInit, ViewWillEnter {
-  viewDate: Date = new Date();
+export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
+  @ViewChild('calendar') calendarComponent!: FullCalendarComponent; // Reference to FullCalendar
+  calendarOptions: CalendarOptions = {
+    initialView: 'dayGridMonth', // Default view (month view)
+    plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin], // Plugins for different views and interactions
+    headerToolbar: {
+      left: '',
+      center: 'title',
+      right: '',
+    },
+    // footerToolbar: {   // Custom button in the footer
+    //   center: 'today',      // Navigation buttons in the footer
+    // },
+    events: [], // Events will be dynamically loaded
+    editable: true, // Allow drag-and-drop
+    eventClick: this.handleEventClick.bind(this), // Handle event clicks
+    dateClick: this.handleDateClick.bind(this), // Handle date clicks
+    eventContent: this.renderEventContent.bind(this), // Custom rendering for events
+  };
+
+  
+  handleEventClick(info: any) {
+    alert(`Event: ${info.event.title}`);
+    console.log(info.event);
+  }
+
+  // Handle date clicks
+  handleDateClick(info: any) {
+    alert(`Date clicked: ${info.dateStr}`);
+    const clickedDate = info.dateStr; // Format: YYYY-MM-DD
+    this.router.navigate(['/day-events', clickedDate]);
+    // console.log(info.dateStr);
+  }
+  // viewDate: Date = new Date();
 
   private _calendarEvents: CalendarEvent[] = [];
   get calendarEvents(): CalendarEvent[] {
     return this._calendarEvents;
   }
 
-  weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-  monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
+  // weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  // monthNames = [
+  //   'January', 'February', 'March', 'April', 'May', 'June',
+  //   'July', 'August', 'September', 'October', 'November', 'December'
+  // ];
 
   linkedStudentIds: number[] = [];
   linkedEventIds: Set<number> = new Set<number>();
-  currentYear: number = new Date().getFullYear();
-  currentMonth: number = new Date().getMonth();
-  selectedDay: { year: number, month: number, date: number } | null = null;
-  calendarGrid: any[][] = [];
+  // currentYear: number = new Date().getFullYear();
+  // currentMonth: number = new Date().getMonth();
+  // selectedDay: { year: number, month: number, date: number } | null = null;
+  // calendarGrid: any[][] = [];
   loadedConsentForms: any[] = [];
 
   showUpcomingEvents: boolean = true;
   timezoneName: string = '';
   localDate: Date = new Date();
 
+  currentLocation: string = 'Fetching location...';
+  private gesture?: Gesture;
+
   constructor(
     private router: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private gestureCtrl: GestureController,
   ) { }
+
+ngAfterViewInit() {
+  const calendarElement = document.querySelector('full-calendar'); // FullCalendar root element
+  if (calendarElement) {
+    console.log('Calendar element:', calendarElement);
+    this.gesture = this.gestureCtrl.create({
+      el: calendarElement, // Attach directly to the calendar element
+      gestureName: 'swipe',
+      threshold: 15, // Minimum movement to detect a swipe
+      onEnd: (ev) => this.handleSwipe(ev), // Use onEnd for swipe detection
+    });
+    this.gesture.enable(true);
+  } else {
+    console.error('FullCalendar element not found');
+  }
+}
+
+ handleSwipe(ev: any) {
+  const calendarElement = document.querySelector('full-calendar');
+  console.log('Swipe detected:', ev); // Debugging log
+  if (ev.deltaX > 50) {
+    calendarElement?.classList.add('swipe-right');
+    setTimeout(() => calendarElement?.classList.remove('swipe-right'), 300);
+    this.goToPrevious();
+  } else if (ev.deltaX < -50) {
+    calendarElement?.classList.add('swipe-left');
+    setTimeout(() => calendarElement?.classList.remove('swipe-left'), 300);
+    this.goToNext();
+  }
+}
+
+
+
+  goToPrevious() {
+    const calendarApi = this.calendarComponent.getApi(); // Use the FullCalendar API
+    if (calendarApi) {
+      calendarApi.prev(); // Navigate to the previous view
+    }
+  }
+
+  goToNext() {
+    const calendarApi = this.calendarComponent.getApi(); // Use the FullCalendar API
+    if (calendarApi) {
+      calendarApi.next(); // Navigate to the next view
+    }
+  }
 
   // This will run every time the page is shown (not just on first load)
   ionViewWillEnter() {
@@ -56,49 +146,186 @@ export class CalendarPage implements OnInit, ViewWillEnter {
   }
 
   async ngOnInit() {
-    await this.setLocalDateByTimezone();
+    // await this.setLocalDateByTimezone();
+    this.loadEventsAndConsentForms();
     // Now use this.localDate for your calendar logic
-    this.currentYear = this.localDate.getFullYear();
-    this.currentMonth = this.localDate.getMonth();
+    // this.currentYear = this.localDate.getFullYear();
+    // this.currentMonth = this.localDate.getMonth();
 
-    // Only use navState if it contains BOTH month and year AND they are in a reasonable range
-    const navState = window.history.state;
-    if (
-      typeof navState.month === 'number' &&
-      typeof navState.year === 'number' &&
-      navState.month >= 0 && navState.month <= 11 &&
-      navState.year > 2000 && navState.year < 2100
-    ) {
-      this.currentMonth = navState.month;
-      this.currentYear = navState.year;
-    } else {
-    const today = new Date();
-    this.currentMonth = today.getMonth();
-    this.currentYear = today.getFullYear();
-    }
+    // // Only use navState if it contains BOTH month and year AND they are in a reasonable range
+    // const navState = window.history.state;
+    // if (
+    //   typeof navState.month === 'number' &&
+    //   typeof navState.year === 'number' &&
+    //   navState.month >= 0 && navState.month <= 11 &&
+    //   navState.year > 2000 && navState.year < 2100
+    // ) {
+    //   this.currentMonth = navState.month;
+    //   this.currentYear = navState.year;
+    // } else {
+    // const today = new Date();
+    // this.currentMonth = today.getMonth();
+    // this.currentYear = today.getFullYear();
+    // }
 
+    // const parentProfile = this.apiService.getCurrentProfile();
+    // if (parentProfile) {
+    //   this.apiService.getParentChildren(parentProfile.parent_id).subscribe(childrenRes => {
+    //     const childrenArray = childrenRes.children || [];
+    //     this.linkedStudentIds = childrenArray.map((child: any) => child.student_id);
+
+    //     // let allForms: any[] = [];
+    //     // let loaded = 0;
+    //     if (this.linkedStudentIds.length === 0) {
+    //       this.loadedConsentForms = [];
+    //       this.generateCalendar(this.linkedEventIds, []);
+    //       return;
+    //     }
+    //     // Fetch all events
+    //     this.apiService.getParentEvents(parentProfile.parent_id).subscribe(res => {
+    //       this._calendarEvents = (res.events || []).map((event: any) => ({
+    //         ...event,
+    //         start: new Date(event.date),
+    //         title: event.title,
+    //         id: event.id ?? event.event_id,
+    //         student_id: event.student_id,
+    //         meta: {
+    //           student_id: event.student_id, description: event.description,
+    //           student: {
+    //             first_name: event.first_name,
+    //             last_name: event.last_name
+    //           }
+    //         }
+    //       }));
+
+    //       // Fetch event participants for this parent
+    //       // this.apiService.getParentEventParticipants(parentProfile.parent_id).subscribe(epRes => {
+    //       //   const eventParticipants = epRes.eventParticipants || [];
+    //       // this.linkedEventIds = new Set(eventParticipants.map((ep: any) => ep.event_id));
+    //       this.linkedEventIds = new Set(this._calendarEvents.map((ev: any) => ev.id));
+    //     });
+    //     // Fetch consent forms for all linked students
+    //     // this.linkedStudentIds.forEach(studentId => {
+    //     //   this.apiService.getUnsignedConsentFormsForStudent(studentId).subscribe(res => {
+    //     //     if (res.forms) {
+    //     //       const formsWithStudent = res.forms.map((form: any) => ({
+    //     //         ...form,
+    //     //         student_id: studentId,
+    //     //         student: (childrenArray || []).find((c: any) => c.student_id === studentId)
+    //     //       }));
+    //     //       allForms.push(...formsWithStudent);
+    //     //     }
+    //     //     loaded++;
+    //     //     if (loaded === this.linkedStudentIds.length) {
+    //     //       this.loadedConsentForms = allForms;
+    //     //       this.generateCalendar(this.linkedEventIds, this.loadedConsentForms);
+    //     //     }
+    //     //   });
+    //     // });
+    //     // });
+
+    //     this.apiService.getAllUnsignedConsentFormsForParent(parentProfile.parent_id).subscribe(res => {
+    //       if (res.forms) {
+    //         this.loadedConsentForms = res.forms.map((form: any) => ({
+    //           ...form,
+    //           student_id: form.student_id,
+    //           student: {
+    //             first_name: form.first_name,
+    //             last_name: form.last_name,
+    //             student_id: form.student_id
+    //           }
+    //         }));
+    //         this.generateCalendar(this.linkedEventIds, this.loadedConsentForms);
+    //       } else {
+    //         this.loadedConsentForms = [];
+    //         this.generateCalendar(this.linkedEventIds, []);
+    //       }
+    //     });
+    //   });
+    // }
+  }
+
+
+
+  // async setLocalDateByTimezone() {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(async (position) => {
+  //       const lat = position.coords.latitude;
+  //       const lon = position.coords.longitude;
+
+  //       // Get city and country using Nominatim
+  //       const geoRes = await fetch(`http://192.168.1.8:3000/reverse-geocode?lat=${lat}&lon=${lon}`);
+  //       const geoData = await geoRes.json();
+  //       const city = geoData.address.city || geoData.address.town || geoData.address.village || "";
+  //       const country = geoData.address.country || "";
+  //       const location = `${city}, ${country}`.trim();
+
+  //       this.currentLocation = location;
+  //       // Fetch timezone and local time from Abstract API
+  //       const TIMEZONE_URL = `https://timezone.abstractapi.com/v1/current_time/?api_key=${ABSTRACT_API_KEY}&location=${encodeURIComponent(location)}`;
+  //       const timeRes = await fetch(TIMEZONE_URL);
+  //       const timeData = await timeRes.json();
+  //       this.timezoneName = timeData.timezone_name;
+  //       this.localDate = new Date(timeData.datetime);
+
+  //     }, async (error) => {
+  //       // Fallback: use a default location
+
+  //       this.currentLocation = 'Oxford, United Kingdom'; // Fallback location
+  //       const defaultLocation = "Oxford, United Kingdom";
+  //       const TIMEZONE_URL = `https://timezone.abstractapi.com/v1/current_time/?api_key=${ABSTRACT_API_KEY}&location=${encodeURIComponent(defaultLocation)}`;
+  //       const timeRes = await fetch(TIMEZONE_URL);
+  //       const timeData = await timeRes.json();
+  //       this.timezoneName = timeData.timezone_name;
+  //       this.localDate = new Date(timeData.datetime);
+  //     });
+  //   } else {
+  //     // Geolocation not supported, fallback
+  //     this.currentLocation = 'Oxford, United Kingdom'; // Fallback location
+  //     const defaultLocation = "Oxford, United Kingdom";
+  //     const TIMEZONE_URL = `https://timezone.abstractapi.com/v1/current_time/?api_key=${ABSTRACT_API_KEY}&location=${encodeURIComponent(defaultLocation)}`;
+  //     const timeRes = await fetch(TIMEZONE_URL);
+  //     const timeData = await timeRes.json();
+  //     this.timezoneName = timeData.timezone_name;
+  //     this.localDate = new Date(timeData.datetime);
+  //   }
+  // }
+
+
+
+
+  loadEventsAndConsentForms() {
     const parentProfile = this.apiService.getCurrentProfile();
     if (parentProfile) {
-      this.apiService.getParentChildren(parentProfile.parent_id).subscribe(childrenRes => {
+      // Fetch children linked to the parent
+      this.apiService.getParentChildren(parentProfile.parent_id).subscribe((childrenRes) => {
         const childrenArray = childrenRes.children || [];
         this.linkedStudentIds = childrenArray.map((child: any) => child.student_id);
 
-        // let allForms: any[] = [];
-        // let loaded = 0;
+        // If no linked students, clear consent forms and events
         if (this.linkedStudentIds.length === 0) {
           this.loadedConsentForms = [];
-          this.generateCalendar(this.linkedEventIds, []);
+          this.calendarOptions.events = []; // Clear calendar events
           return;
         }
-        // Fetch all events
-        this.apiService.getParentEvents(parentProfile.parent_id).subscribe(res => {
-          this._calendarEvents = (res.events || []).map((event: any) => ({
+
+        // Fetch events
+        this.apiService.getParentEvents(parentProfile.parent_id).subscribe((res) => {
+
+          const events = (res.events || []).map((event: any) => ({
             ...event,
-            start: new Date(event.date),
-            title: event.title,
+            title: event.title, // Event title
+            start: new Date(event.date), // Event date
             id: event.id ?? event.event_id,
             student_id: event.student_id,
-            meta: {
+            extendedProps: {
+              type: 'event', // Custom property to differentiate events
+              description: event.description,
+              student: {
+                first_name: event.first_name,
+                last_name: event.last_name,
+              },
+            }, meta: {
               student_id: event.student_id, description: event.description,
               student: {
                 first_name: event.first_name,
@@ -106,92 +333,50 @@ export class CalendarPage implements OnInit, ViewWillEnter {
               }
             }
           }));
-
-          // Fetch event participants for this parent
-          // this.apiService.getParentEventParticipants(parentProfile.parent_id).subscribe(epRes => {
-          //   const eventParticipants = epRes.eventParticipants || [];
-          // this.linkedEventIds = new Set(eventParticipants.map((ep: any) => ep.event_id));
-          this.linkedEventIds = new Set(this._calendarEvents.map((ev: any) => ev.id));
-        });
-        // Fetch consent forms for all linked students
-        // this.linkedStudentIds.forEach(studentId => {
-        //   this.apiService.getUnsignedConsentFormsForStudent(studentId).subscribe(res => {
-        //     if (res.forms) {
-        //       const formsWithStudent = res.forms.map((form: any) => ({
-        //         ...form,
-        //         student_id: studentId,
-        //         student: (childrenArray || []).find((c: any) => c.student_id === studentId)
-        //       }));
-        //       allForms.push(...formsWithStudent);
-        //     }
-        //     loaded++;
-        //     if (loaded === this.linkedStudentIds.length) {
-        //       this.loadedConsentForms = allForms;
-        //       this.generateCalendar(this.linkedEventIds, this.loadedConsentForms);
-        //     }
-        //   });
-        // });
-        // });
-
-        this.apiService.getAllUnsignedConsentFormsForParent(parentProfile.parent_id).subscribe(res => {
-          if (res.forms) {
-            this.loadedConsentForms = res.forms.map((form: any) => ({
+          this._calendarEvents = events;
+          this.linkedEventIds = new Set(events.map((ev: any) => ev.id));
+          // Fetch consent forms
+          this.apiService.getAllUnsignedConsentFormsForParent(parentProfile.parent_id).subscribe((res) => {
+            this.loadedConsentForms = res.forms || [];
+            const consentForms = (res.forms || []).map((form: any) => ({
               ...form,
               student_id: form.student_id,
-              student: {
-                first_name: form.first_name,
-                last_name: form.last_name,
-                student_id: form.student_id
-              }
+              title: 'Consent Form: ' + form.title, // Consent form title
+              start: new Date(form.deadline), // Consent form deadline
+              extendedProps: {
+                type: 'consentForm', // Custom property for consent forms
+                student: {
+                  first_name: form.first_name,
+                  last_name: form.last_name,
+                  student_id: form.student_id
+                },
+              },
             }));
-            this.generateCalendar(this.linkedEventIds, this.loadedConsentForms);
-          } else {
-            this.loadedConsentForms = [];
-            this.generateCalendar(this.linkedEventIds, []);
-          }
+
+            // Combine events and consent forms
+            this.calendarOptions.events = [...events, ...consentForms];
+          });
         });
       });
     }
   }
 
-  async setLocalDateByTimezone() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
+  renderEventContent(eventInfo: any) {
+    const { type } = eventInfo.event.extendedProps;
 
-        // Get city and country using Nominatim
-        const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-        const geoData = await geoRes.json();
-        const city = geoData.address.city || geoData.address.town || geoData.address.village || "";
-        const country = geoData.address.country || "";
-        const location = `${city}, ${country}`.trim();
+    const dot = document.createElement('div');
+    dot.style.width = '8px';
+    dot.style.height = '8px';
+    dot.style.borderRadius = '50%';
+    dot.style.margin = '0 auto';
 
-        // Fetch timezone and local time from Abstract API
-        const TIMEZONE_URL = `https://timezone.abstractapi.com/v1/current_time/?api_key=${ABSTRACT_API_KEY}&location=${encodeURIComponent(location)}`;
-        const timeRes = await fetch(TIMEZONE_URL);
-        const timeData = await timeRes.json();
-        this.timezoneName = timeData.timezone_name;
-        this.localDate = new Date(timeData.datetime);
-
-      }, async (error) => {
-        // Fallback: use a default location
-        const defaultLocation = "Oxford, United Kingdom";
-        const TIMEZONE_URL = `https://timezone.abstractapi.com/v1/current_time/?api_key=${ABSTRACT_API_KEY}&location=${encodeURIComponent(defaultLocation)}`;
-        const timeRes = await fetch(TIMEZONE_URL);
-        const timeData = await timeRes.json();
-        this.timezoneName = timeData.timezone_name;
-        this.localDate = new Date(timeData.datetime);
-      });
-    } else {
-      // Geolocation not supported, fallback
-      const defaultLocation = "Oxford, United Kingdom";
-      const TIMEZONE_URL = `https://timezone.abstractapi.com/v1/current_time/?api_key=${ABSTRACT_API_KEY}&location=${encodeURIComponent(defaultLocation)}`;
-      const timeRes = await fetch(TIMEZONE_URL);
-      const timeData = await timeRes.json();
-      this.timezoneName = timeData.timezone_name;
-      this.localDate = new Date(timeData.datetime);
+    if (type === 'event') {
+      dot.style.backgroundColor = 'blue'; // Blue dot for events
+    } else if (type === 'consentForm') {
+      dot.style.backgroundColor = 'green'; // Green dot for consent forms
     }
+
+    return { domNodes: [dot] };
   }
 
   // * window.history.state
@@ -205,78 +390,78 @@ export class CalendarPage implements OnInit, ViewWillEnter {
   // * .padStart(2, '0')
 
 
-  dayClicked(day: any) {
-    if (!day || !day.inMonth || !day.date) return;
+  // dayClicked(day: any) {
+  //   if (!day || !day.inMonth || !day.date) return;
 
-    // Format date as YYYY-MM-DD
-    const year = day.date.getFullYear();
-    const month = String(day.date.getMonth() + 1).padStart(2, '0');
-    const date = String(day.date.getDate()).padStart(2, '0');
-    const localDate = `${year}-${month}-${date}`;
+  //   // Format date as YYYY-MM-DD
+  //   const year = day.date.getFullYear();
+  //   const month = String(day.date.getMonth() + 1).padStart(2, '0');
+  //   const date = String(day.date.getDate()).padStart(2, '0');
+  //   const localDate = `${year}-${month}-${date}`;
 
-    // Pass both events and forms as navigation state
-    this.router.navigate(['/day-events', localDate]);
-    // , {
-    //   state: {
-    //     events: day.events || [],
-    //     forms: day.forms || []
-    //   }
-    // }
-  }
+  //   // Pass both events and forms as navigation state
+  //   this.router.navigate(['/day-events', localDate]);
+  //   // , {
+  //   //   state: {
+  //   //     events: day.events || [],
+  //   //     forms: day.forms || []
+  //   //   }
+  //   // }
+  // }
 
   refreshData() {
     this.ngOnInit();
   }
 
-  logout() {
-    // Your logout logic here
-  }
+  // logout() {
+  //   // Your logout logic here
+  // }
 
-  nextMonth() {
-    this.currentMonth++;
-    if (this.currentMonth > 11) {
-      this.currentMonth = 0;
-      this.currentYear++;
-    }
-    this.generateCalendar(this.linkedEventIds, this.loadedConsentForms);
-  }
+  // nextMonth() {
+  //   this.currentMonth++;
+  //   if (this.currentMonth > 11) {
+  //     this.currentMonth = 0;
+  //     this.currentYear++;
+  //   }
+  //   this.generateCalendar(this.linkedEventIds, this.loadedConsentForms);
+  // }
 
-  previousMonth() {
-    this.currentMonth--;
-    if (this.currentMonth < 0) {
-      this.currentMonth = 11;
-      this.currentYear--;
-    }
-    this.generateCalendar(this.linkedEventIds, this.loadedConsentForms);
-  }
+  // previousMonth() {
+  //   this.currentMonth--;
+  //   if (this.currentMonth < 0) {
+  //     this.currentMonth = 11;
+  //     this.currentYear--;
+  //   }
+  //   this.generateCalendar(this.linkedEventIds, this.loadedConsentForms);
+  // }
 
-  selectDay(day: any) {
-    if (!day || !day.inMonth) return;
-    this.selectedDay = {
-      year: this.currentYear,
-      month: this.currentMonth,
-      date: day.date
-    };
-  }
+  // selectDay(day: any) {
+  //   if (!day || !day.inMonth) return;
+  //   this.selectedDay = {
+  //     year: this.currentYear,
+  //     month: this.currentMonth,
+  //     date: day.date
+  //   };
+  // }
 
-  isToday(day: any): boolean {
-    if (!day || !day.inMonth || !day.date) return false;
-    const today = new Date();
-    return (
-      day.date.getDate() === today.getDate() &&
-      day.date.getMonth() === today.getMonth() &&
-      day.date.getFullYear() === today.getFullYear()
-    );
-  }
+  // isToday(day: any): boolean {
+  //   if (!day || !day.inMonth || !day.date) return false;
+  //   const today = new Date();
+  //   return (
+  //     day.date.getDate() === today.getDate() &&
+  //     day.date.getMonth() === today.getMonth() &&
+  //     day.date.getFullYear() === today.getFullYear()
+  //   );
+  // }
 
-  isSelected(day: any): boolean {
-    if (!day || !day.inMonth || !this.selectedDay) return false;
-    return (
-      day.date === this.selectedDay.date &&
-      this.currentMonth === this.selectedDay.month &&
-      this.currentYear === this.selectedDay.year
-    );
-  }
+  // isSelected(day: any): boolean {
+  //   if (!day || !day.inMonth || !this.selectedDay) return false;
+  //   return (
+  //     day.date === this.selectedDay.date &&
+  //     this.currentMonth === this.selectedDay.month &&
+  //     this.currentYear === this.selectedDay.year
+  //   );
+  // }
 
   // * .push(either null or object)
   // * .has
@@ -285,61 +470,61 @@ export class CalendarPage implements OnInit, ViewWillEnter {
   // * alert
 
 
-  generateCalendar(linkedEventIds: Set<number>, consentForms: any[]) {
-    const firstDay = new Date(this.currentYear, this.currentMonth, 1);
-    const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
-    const weeks: any[][] = [];
-    let week: any[] = [];
+  // generateCalendar(linkedEventIds: Set<number>, consentForms: any[]) {
+  //   const firstDay = new Date(this.currentYear, this.currentMonth, 1);
+  //   const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+  //   const weeks: any[][] = [];
+  //   let week: any[] = [];
 
-    // returns null for days before the first day of the month similar to a real calendar
-    for (let i = 0; i < firstDay.getDay(); i++) {
-      week.push(null);
-    }
+  //   // returns null for days before the first day of the month similar to a real calendar
+  //   for (let i = 0; i < firstDay.getDay(); i++) {
+  //     week.push(null);
+  //   }
 
-    for (let d = 1; d <= lastDay.getDate(); d++) {
-      const dayDate = new Date(this.currentYear, this.currentMonth, d);
+  //   for (let d = 1; d <= lastDay.getDate(); d++) {
+  //     const dayDate = new Date(this.currentYear, this.currentMonth, d);
 
-      // Events for this day
-      const dayEvents = this.calendarEvents.filter(ev => {
-        const evDate = startOfDay(ev.start);
-        return (
-          evDate.getFullYear() === dayDate.getFullYear() &&
-          evDate.getMonth() === dayDate.getMonth() &&
-          evDate.getDate() === dayDate.getDate() &&
-          typeof ev.id === 'number' && linkedEventIds.has(ev.id)
-        );
-      });
+  //     // Events for this day
+  //     const dayEvents = this.calendarEvents.filter(ev => {
+  //       const evDate = startOfDay(ev.start);
+  //       return (
+  //         evDate.getFullYear() === dayDate.getFullYear() &&
+  //         evDate.getMonth() === dayDate.getMonth() &&
+  //         evDate.getDate() === dayDate.getDate() &&
+  //         typeof ev.id === 'number' && linkedEventIds.has(ev.id)
+  //       );
+  //     });
 
-      // Consent forms for this day (by deadline)
-      // Consent forms is passed as an argument to this function and converted to Date objects
-      // returns true if the form's deadline matches the day and false otherwise
-      const dayForms = consentForms.filter(form => {
-        const deadlineDate = startOfDay(new Date(form.deadline));
-        return (
-          deadlineDate.getFullYear() === dayDate.getFullYear() &&
-          deadlineDate.getMonth() === dayDate.getMonth() &&
-          deadlineDate.getDate() === dayDate.getDate()
-        );
-      });
+  //     // Consent forms for this day (by deadline)
+  //     // Consent forms is passed as an argument to this function and converted to Date objects
+  //     // returns true if the form's deadline matches the day and false otherwise
+  //     const dayForms = consentForms.filter(form => {
+  //       const deadlineDate = startOfDay(new Date(form.deadline));
+  //       return (
+  //         deadlineDate.getFullYear() === dayDate.getFullYear() &&
+  //         deadlineDate.getMonth() === dayDate.getMonth() &&
+  //         deadlineDate.getDate() === dayDate.getDate()
+  //       );
+  //     });
 
-      // week is a placeholder for the current week being generated
-      week.push({ date: dayDate, inMonth: true, events: dayEvents, forms: dayForms });
-      if (week.length === 7) {
-        weeks.push(week);
-        week = [];
-      }
-    }
+  //     // week is a placeholder for the current week being generated
+  //     week.push({ date: dayDate, inMonth: true, events: dayEvents, forms: dayForms });
+  //     if (week.length === 7) {
+  //       weeks.push(week);
+  //       week = [];
+  //     }
+  //   }
 
-    // Fill the last week with nulls if it has less than 7 days
-    if (week.length) {
-      while (week.length < 7) {
-        week.push(null);
-      }
-      weeks.push(week);
-    }
+  //   // Fill the last week with nulls if it has less than 7 days
+  //   if (week.length) {
+  //     while (week.length < 7) {
+  //       week.push(null);
+  //     }
+  //     weeks.push(week);
+  //   }
 
-    this.calendarGrid = weeks;
-  }
+  //   this.calendarGrid = weeks;
+  // }
 
   openEventDetail(event: any) {
     // Try to get studentId from multiple possible locations
