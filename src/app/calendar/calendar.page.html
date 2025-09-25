@@ -25,20 +25,51 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <!-- <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center;">
-  </div> --> <div class="smiling-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center; height: 300px;">
-    <h1 style="font-size: 2.5rem; margin: 0;">Welcome to Your Calendar</h1>
-  <p style="font-size: 1.2rem; margin: 10px 0;">Manage your events and consent forms easily</p>
-  <p style="font-size: 1.2rem; margin: 10px 0;">
-    <strong>{{ currentMonth }}</strong>
-  </p>
-  <p style="font-size: 1.2rem; margin: 10px 0;">
-    Consent Forms: <strong>{{ consentFormCount }}</strong> | Events: <strong>{{ eventCount }}</strong>
-  </p>
+  </div> -->
+  <div class="smiling-header"
+    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center; height: 220px;">
+    <div style="display: flex; justify-content: center; align-items: center; gap: 32px; margin: 30px 0;">
+      <!-- Event Count Indicator (Blue) -->
+      <span class="indicator event-indicator" style="
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        background: #0054e9;
+        border-radius: 50%;
+        font-size: 3rem;
+        font-weight: bold;
+        line-height: 100px;
+      " title="Events This Month">
+        {{ eventCount }}
+      </span>
+      <!-- Consent Form Count Indicator (Green) -->
+      <span class="indicator consent-indicator" style="
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        background: #43a047;
+        border-radius: 50%;
+        font-size: 3rem;
+        font-weight: bold;
+        line-height: 100px;
+      " title="Consent Forms This Month">
+        {{ consentFormCount }}
+      </span>
+    </div>
+    <div style="display: flex; justify-content: center; gap: 32px;">
+      <span style="font-size: 1.8rem; 
+        font-family: 'Segoe UI', Arial, sans-serif;
+        
+        font-weight: bold;">Events</span>
+      <span style="font-size: 1.8rem; 
+        font-family: 'Segoe UI', Arial, sans-serif; 
+        font-weight: bold;">Forms</span>
+    </div>
   </div>
-    <ion-card-content>
-      <!-- FullCalendar Component -->
-      <full-calendar [options]="calendarOptions" #calendar></full-calendar>
-    </ion-card-content>
+  <ion-card-content>
+    <!-- FullCalendar Component -->
+    <full-calendar [options]="calendarOptions" #calendar></full-calendar>
+  </ion-card-content>
   <!-- <ion-card>
     <ion-card-header style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
       <ion-card-title style="color: white">School Calendar</ion-card-title>
