@@ -74,10 +74,15 @@ export class AccountMenuModalComponent implements OnInit {
       if (image && image.base64String && this.parent) {
         this.apiService.uploadParentPhoto(image.base64String).subscribe({
           next: (res) => {
-            this.parent!.photo_url = (res as any).photo_url;
-            this.showToast('Photo updated!');
-          },
-          error: () => this.showToast('Upload error.')
+          this.parent!.photo_url = (res as any).photo_url;
+          // Update local storage and BehaviorSubject
+          this.apiService.setCurrentUser(
+            this.apiService.getCurrentUser()!,
+            this.parent!
+          );
+          this.showToast('Photo updated!');
+        },
+        error: () => this.showToast('Upload error.')
         });
       }
     } catch (err) {

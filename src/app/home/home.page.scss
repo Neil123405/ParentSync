@@ -28,7 +28,7 @@
 
 .parent-sync-title {
   color: white;
-  
+
   font-size: 25px;
 }
 
@@ -94,6 +94,96 @@ ion-tab-bar {
     margin-top: 12px;
     text-align: right;
   }
+
+  flex: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 18px;
+  // min-height: 200px;
+  flex-direction: row;
+}
+
+.school-card {
+  background: linear-gradient(135deg,
+      #FFD700 0%,
+      #FFED4E 25%,
+      #FFD700 50%,
+      #FFA500 75%,
+      #FF8C00 100%);
+  border-left: 5px solid #B8860B;
+  box-shadow: 0 8px 16px rgba(255, 215, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  color: #8B4513;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 70%);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+  }
+}
+
+.school-card h3 {
+  color: #8B4513;
+  position: relative;
+  z-index: 1;
+}
+
+.section-card {
+  background: linear-gradient(135deg,
+      #E5E5E5 0%,
+      #F5F5F5 25%,
+      #E5E5E5 50%,
+      #C0C0C0 75%,
+      #A9A9A9 100%);
+  border-left: 5px solid #708090;
+  box-shadow: 0 8px 16px rgba(192, 192, 192, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  color: #2F4F4F;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.4) 50%,
+        transparent 70%);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.section-card h3 {
+  color: #2F4F4F;
+  position: relative;
+  z-index: 1;
 }
 
 .event-card {
@@ -133,154 +223,6 @@ ion-tab-bar {
   margin-bottom: 16px;
 }
 
-// .students-horizontal-container {
-//   display: flex;
-//   overflow-x: auto;
-//   padding: 16px 0;
-//   gap: 16px;
-//   scrollbar-width: none;
-//   -ms-overflow-style: none;
-//   &::-webkit-scrollbar {
-//     display: none;
-//   }
-// }
-
-// .student-card-horizontal {
-//   min-width: 120px;
-//   max-width: 120px;
-//   background: white;
-//   border-radius: 12px;
-//   padding: 16px 8px;
-//   border: 2px solid var(--ion-color-light);
-//   cursor: pointer;
-//   transition: all 0.3s ease;
-//   text-align: center;
-//   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-//   &:hover {
-//     transform: translateY(-2px);
-//     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-//   }
-
-//   &.active {
-//     border-color: var(--ion-color-primary);
-//     background: var(--ion-color-primary-tint);
-
-//     .student-info h4 {
-//       color: var(--ion-color-primary);
-//     }
-//   }
-
-//   .student-avatar {
-//     margin-bottom: 8px;
-//     ion-icon {
-//       font-size: 40px;
-//       color: var(--ion-color-medium);
-//     }
-//   }
-
-//   .student-info {
-//     h4 {
-//       margin: 2px 0;
-//       font-size: 14px;
-//       font-weight: 600;
-//       color: var(--ion-color-dark);
-//     }
-//     p {
-//       margin: 2px 0;
-//       font-size: 12px;
-//       color: var(--ion-color-medium);
-//     }
-//   }
-// }
-
-// Selected Child Section
-// .selected-child-section {
-//   border-top: 1px solid var(--ion-color-light);
-//   padding-top: 16px;
-
-//   .action-buttons {
-//     display: flex;
-//     flex-direction: column;
-//     gap: 8px;
-//     margin-bottom: 20px;
-
-//     ion-button {
-//       margin: 0;
-//       &.active-button {
-//         --background: var(--ion-color-primary);
-//         --color: white;
-//       }
-//     }
-//   }
-// }
-
-// Content Sections
-// .content-section {
-//   margin-top: 20px;
-// }
-
-// .consent-card {
-//   margin-bottom: 12px;
-//   h5 {
-//     margin: 0 0 8px 0;
-//     color: var(--ion-color-primary);
-//   }
-//   p {
-//     margin: 4px 0;
-//     line-height: 1.4;
-//   }
-//   ion-badge {
-//     margin-top: 8px;
-//   }
-// }
-
-// .attendance-summary {
-//   margin-bottom: 16px;
-//   .summary-stats {
-//     display: flex;
-//     justify-content: space-around;
-//     margin-top: 12px;
-
-//     .stat-item {
-//       text-align: center;
-//       .stat-number {
-//         display: block;
-//         font-size: 24px;
-//         font-weight: bold;
-//         color: var(--ion-color-primary);
-//       }
-//       .stat-label {
-//         font-size: 12px;
-//         color: var(--ion-color-medium);
-//       }
-//     }
-//   }
-// }
-
-// .attendance-card {
-//   margin-bottom: 8px;
-//   .attendance-info {
-//     display: flex;
-//     justify-content: space-between;
-//     align-items: center;
-//     margin-bottom: 8px;
-
-//     .attendance-date {
-//       font-weight: 500;
-//       color: var(--ion-color-dark);
-//     }
-//     .attendance-status {
-//       font-size: 12px;
-//     }
-//   }
-//   p {
-//     margin: 4px 0;
-//     font-size: 14px;
-//     color: var(--ion-color-medium);
-//   }
-// }
-
 .student-photo-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 18px;
@@ -291,6 +233,31 @@ ion-tab-bar {
   justify-content: center;
   align-items: center;
   box-shadow: 0 2px 12px 0 rgba(102, 126, 234, 0.10);
+}
+
+.tab-button-group {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 16px;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-weight: 600;
+  padding: 8px 0;
+  border-bottom: 3px solid transparent;
+  transition: border-color 0.2s, color 0.2s;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  color: #ffd700;
+  border-bottom: 3px solid #ffd700;
 }
 
 .event-card-custom {
@@ -309,7 +276,7 @@ ion-tab-bar {
 }
 
 .event-student-photo {
-    width: 64px;
+  width: 64px;
   height: 64px;
   border-radius: 12px;
   object-fit: cover;
@@ -324,69 +291,6 @@ ion-label,
   color: #222;
 }
 
-/* home.page.scss */
-// .filter-row {
-//   display: flex;
-//   gap: 8px;
-//   margin-bottom: 12px;
-//   align-items: center;
-// }
-
-// .filter-card {
-//   background: #fff;
-//   border-radius: 16px;
-//   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-//   padding: 12px 16px;
-//   margin-bottom: 18px;
-//   display: flex;
-//   gap: 12px;
-//   align-items: center;
-//   flex-wrap: wrap;
-// }
-
-// .filter-card ion-item {
-//   // --background: transparent;
-//   --min-height: 36px;
-//   --padding-start: 0;
-//   --inner-padding-end: 0;
-//   margin: 0 8px 0 0;
-//   border-radius: 8px;
-//   flex: 1 1 120px;
-// }
-
-// .filter-card ion-label {
-//   font-family: 'Exo', sans-serif;
-//   font-weight: 500;
-//   color: #222;
-// }
-
-// .filter-card ion-select,
-// .filter-card ion-input {
-//   font-family: 'Exo', sans-serif;
-//   font-weight: 100;
-//   background: #f4f5f9;
-//   border-radius: 8px;
-//   padding: 4px 8px;
-// }
-
-// .show-input-item {
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   flex: 1 1 100px;
-//   --background: transparent;
-//   --padding-start: 0;
-//   --inner-padding-end: 0;
-//   margin: 0;
-// }
-
-// .show-input-container {
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   width: 100%;
-// }
-
 .centered-number-input {
   text-align: center;
   margin: 0 auto;
@@ -394,14 +298,6 @@ ion-label,
   justify-content: center;
   align-items: center;
 }
-
-// .show-label {
-//   font-size: 1rem !important;
-//   font-family: 'Exo', sans-serif !important;
-//   font-weight: 500 !important;
-//   color: #222 !important;
-//   margin-bottom: 0;
-// }
 
 .student-section {
   --background: #c6ffc6;
@@ -426,4 +322,322 @@ ion-toolbar {
 ion-header,
 ion-toolbar {
   --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.header-footer {
+  width: 100%;
+  margin-top: 20px;
+  /* Slight overlap, adjust as needed */
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  /* Stack children vertically */
+  position: static;
+  /* Remove absolute positioning */
+}
+
+.tab-button-group {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 16px;
+  /* Push the button group down */
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-weight: 600;
+  padding: 8px 0;
+  border-bottom: 3px solid transparent;
+  transition: border-color 0.2s, color 0.2s;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  color: #ffd700;
+  border-bottom: 3px solid #ffd700;
+}
+
+.smiling-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: start;
+  /* Push children to the bottom */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 24px 0 0 0;
+  text-align: center;
+  min-height: 140px;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.user-photo {
+  // Ensures the image fills the circle
+  margin-bottom: 8px;
+}
+
+.parent-photo-topright {
+  position: relative;
+}
+
+.header-top-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  margin-left: 10px;
+  padding-right: 100px;
+}
+
+.user-photo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 0;
+}
+
+.default-photo {
+  font-size: 40px;
+  color: #888;
+  background: #fff;
+  border-radius: 50%;
+  border: 3px solid #fff;
+}
+
+.header-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.welcome-message {
+  font-size: 0.95rem;
+  color: white;
+  font-weight: 500;
+  margin: 0;
+}
+
+.student-photo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px #e0e0e0;
+  cursor: pointer;
+}
+
+.default-photo {
+  font-size: 56px;
+  color: #888;
+  background: #fff;
+  border-radius: 50%;
+  border: 3px solid #fff;
+}
+
+.student-photos {
+  margin-right: 16px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+  width: auto;
+  height: auto;
+  flex-direction: column;
+  align-items: center;
+}
+
+.photo-wrapper-column {
+  display: flex;
+  justify-content: center;
+}
+
+.student-photo-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0 !important;
+  margin: 0 0 0 0 !important;
+  /* Overlap photos */
+  flex-direction: column;
+}
+
+.student-photo-overlap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px #e0e0e0;
+}
+
+.student-no-photo {
+  width: 48px;
+  height: 48px;
+  color: #888;
+  background: #fff;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px #e0e0e0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-ion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-info {
+  display: flex;
+  align-items: center;
+}
+
+.student-photo-card {
+  margin: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.card-date {
+  margin-right: 16px;
+  color: #222;
+  font-weight: 500;
+}
+
+.event-card-custom.school-card {
+  background: linear-gradient(135deg,
+      #FFD700 0%,
+      #FFED4E 25%,
+      #FFD700 50%,
+      #FFA500 75%,
+      #FF8C00 100%);
+  border-left: 5px solid #B8860B;
+  box-shadow: 0 8px 16px rgba(255, 215, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  color: #8B4513;
+  position: relative;
+  overflow: hidden;
+}
+
+.event-card-custom.school-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 70%);
+  transform: rotate(45deg);
+  animation: shine 3s infinite;
+}
+
+.event-card-custom.section-card {
+  background: linear-gradient(135deg,
+      #E5E5E5 0%,
+      #F5F5F5 25%,
+      #E5E5E5 50%,
+      #C0C0C0 75%,
+      #A9A9A9 100%);
+  border-left: 5px solid #708090;
+  box-shadow: 0 8px 16px rgba(192, 192, 192, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  color: #2F4F4F;
+  position: relative;
+  overflow: hidden;
+}
+
+.event-card-custom.section-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 70%);
+  transform: rotate(45deg);
+  animation: shine 3s infinite;
+}
+
+.header-circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.25;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.circle-1 {
+  width: 80px;
+  height: 80px;
+  background: #ff9800;
+  top: 10px;
+  left: -30px;
+}
+
+.circle-2 {
+  width: 120px;
+  height: 120px;
+  background: #ffd700;
+  bottom: -40px;
+  right: 20px;
+}
+
+.circle-3 {
+  width: 160px;
+  height: 160px;
+  background: #c6ed3a;
+  top: 40px;
+  right: -20px;
+}
+
+.circle-4 {
+  width: 150px;
+  height: 150px;
+  background: #e1ff00;
+  bottom: 10px;
+  left: 30px;
+}
+
+.circle-5 {
+  width: 120px;
+  height: 120px;
+  background: #ffd700;
+  top: -40px;
+  right: 100px;
+}
+
+/* filepath: c:\Users\et cetera\Desktop\Ionic\ParentSync\src\app\home\home.page.scss */
+
+/* Make cards clickable */
+.clickable {
+  transition: transform 0.01s ease, box-shadow 0.2s ease;
+}
+
+.clickable:active {
+  transform: scale(0.98); /* Slight shrink effect on click */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Reduce shadow */
 }

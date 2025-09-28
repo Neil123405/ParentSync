@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PushNotifications, PushNotificationSchema } from '@capacitor/push-notifications';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
-import { ToastController } from '@ionic/angular';
+import { ToastController, ModalController, MenuController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { ApiService, ParentProfile } from './services/api.service';
+import { AccountMenuModalComponent } from './components/account-menu-modal/account-menu-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -9,10 +12,18 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['app.component.scss'],
   standalone: false,
 })
-export class AppComponent {
-  constructor(private toastController: ToastController) {}
+export class AppComponent implements OnInit {
+  parent: ParentProfile | null = null;
+  constructor(
+    private toastController: ToastController,
+    private modalCtrl: ModalController,
+    private menu: MenuController,
+    private apiService: ApiService,
+    private router: Router  
+  ) { }
 
-   ngOnInit() {
+  ngOnInit() {
+    this.parent = this.apiService.getCurrentProfile();
     PushNotifications.addListener('pushNotificationReceived', async (notification: PushNotificationSchema) => {
       Haptics.impact({ style: ImpactStyle.Heavy });
 
@@ -31,5 +42,46 @@ export class AppComponent {
       });
       toast.present();
     });
+  }
+
+  async openProfileSettings() {
+    const modal = await this.modalCtrl.create({
+      component: AccountMenuModalComponent,
+      cssClass: 'account-menu-modal'
+    });
+    await modal.present();
+    await modal.onDidDismiss();
+    this.parent = this.apiService.getCurrentProfile();
+  }
+
+  async openUpcomingEvents() {
+    await this.menu.close('accountMenu');
+    this.router.navigate(['/all-events']);
+  }
+
+  async openPendingForms() {
+    await this.menu.close('accountMenu');
+    this.router.navigate(['/all-forms']);
+  }
+
+  logout() {
+    const token = this.apiService.getFcmToken();
+    this.menu.close('accountMenu');
+
+    if ((window as any).Capacitor?.isNativePlatform && token) {
+      this.apiService.removePushToken(token).subscribe({
+        next: () => {
+          this.apiService.logout();
+          this.router.navigateByUrl('/login', { replaceUrl: true });
+        },
+        error: () => {
+          this.apiService.logout();
+          this.router.navigateByUrl('/login', { replaceUrl: true });
+        }
+      });
+    } else {
+      this.apiService.logout();
+      this.router.navigateByUrl('/login', { replaceUrl: true });
+    }
   }
 }

@@ -6,6 +6,8 @@ import { ModalController } from '@ionic/angular';
 
 import { filter } from 'rxjs/operators';
 
+import { MenuController } from '@ionic/angular';
+
 import { DashboardMenuModalComponent } from '../dashboard-menu-modal/dashboard-menu-modal.component';
 
 @Component({
@@ -22,7 +24,8 @@ export class GlobalFooterComponent implements OnInit {
   constructor(
     private router: Router,
     private modalController: ModalController,
-  ) {}
+    private menu: MenuController
+  ) { }
 
   ngOnInit() {
     // Set initial route and footer visibility, showing footer on all routes except '/login'
@@ -38,6 +41,14 @@ export class GlobalFooterComponent implements OnInit {
       });
   }
 
+  openAccountMenu(event: Event) {
+    this.menu.open('accountMenu');
+  }
+
+  closeAccountMenu() {
+    this.menu.close('accountMenu');
+  }
+
   navigateTo(route: string) {
     this.router.navigate([route]);
   }
@@ -46,15 +57,15 @@ export class GlobalFooterComponent implements OnInit {
     return this.currentRoute === route;
   }
 
-  async openAccountMenu(ev: Event) {
-    ev.stopPropagation();
-    const modal = await this.modalController.create({
-      component: DashboardMenuModalComponent,
-      cssClass: 'dashboard-menu-modal'
-    });
-    await modal.present();
-    await modal.onDidDismiss();
-    // You need to get a reference to HomePage and call loadAnnouncementsAndEvents()
-    // Or, use an event or shared service to notify HomePage to reload
-  }
+  // async openAccountMenu(ev: Event) {
+  //   ev.stopPropagation();
+  //   const modal = await this.modalController.create({
+  //     component: DashboardMenuModalComponent,
+  //     cssClass: 'dashboard-menu-modal'
+  //   });
+  //   await modal.present();
+  //   await modal.onDidDismiss();
+  //   // You need to get a reference to HomePage and call loadAnnouncementsAndEvents()
+  //   // Or, use an event or shared service to notify HomePage to reload
+  // }
 }

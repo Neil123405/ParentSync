@@ -41,6 +41,9 @@ export class HomePage implements OnInit {
     // console.log('HomePage constructor');
   }
 
+   parent: ParentProfile | null = null;
+  userPhotoUrl: string = '';
+
   //* already read!
   ngOnInit() {
     // Subscribe to user and profile changes
@@ -67,6 +70,10 @@ export class HomePage implements OnInit {
         this.loadChildrenWithPhotos();
       }
     });
+
+    const profile = this.apiService.getCurrentProfile();
+    console.log('Profile data:', profile); // Debugging log
+    this.parent = profile ? (profile as ParentProfile) : null;
     // if (this.currentProfile) {
     //   this.loadAnnouncementsAndEvents();
     // }
@@ -277,4 +284,20 @@ export class HomePage implements OnInit {
       return new Date(b.announcement.created_at).getTime() - new Date(a.announcement.created_at).getTime();
     });
   }
+
+  activeTab: string = 'announcements';
+
+  // ...existing code...
+showAnnouncementInfo() {
+  alert('This button shows information about announcements.');
+}
+
+showEventsInfo() {
+  alert('This button shows information about events.');
+}
+
+setTab(tab: string) {
+    this.activeTab = tab;
+  }
+// ...existing code...
 }

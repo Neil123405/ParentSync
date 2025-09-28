@@ -1,0 +1,11 @@
+/* filepath: c:\Users\et cetera\Desktop\Ionic\ParentSync\src\app\app.component.scss */
+#main-content {
+  height: 100%; /* Ensure the main content takes up the full height */
+  display: flex;
+  flex-direction: column;
+}
+
+ion-router-outlet {
+  flex: 1; /* Make the router outlet fill the remaining space */
+  height: 100%; /* Ensure it takes up the full height */
+}

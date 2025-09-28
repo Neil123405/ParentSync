@@ -1,4 +1,45 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
-  <app-global-footer></app-global-footer>
+  <ion-menu side="end" menuId="accountMenu" contentId="main-content" type="overlay" swipeGesture="false">
+    <ion-header>
+      <ion-toolbar style="--background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <ion-title>Account</ion-title>
+        <ion-buttons slot="end">
+          <ion-menu-toggle menu="accountMenu">
+            <ion-button menuClose>
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-menu-toggle>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <!-- menu content (profile, links, logout) -->
+      <div style="display:flex; align-items:center; margin-bottom:16px;">
+        <div (click)="openProfileSettings()" style="cursor:pointer;">
+          <ng-container *ngIf="parent?.photo_url; else noPhoto">
+            <img [src]="parent?.photo_url" alt="Parent Photo"
+              style="width:64px;height:64px;border-radius:50%;object-fit:cover;" />
+          </ng-container>
+          <ng-template #noPhoto>
+            <ion-icon name="person-circle" style="font-size:64px;color:#888;"></ion-icon>
+          </ng-template>
+        </div>
+        <div style="margin-left:12px;">
+          <h3 style="margin:0;">{{ parent?.first_name }} {{ parent?.last_name }}</h3>
+          <p style="margin:0; font-size:0.9rem; color:#666;">{{ parent?.email }}</p>
+        </div>
+      </div>
+
+      <ion-list>
+        <ion-item button (click)="logout()">Logout</ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <!-- main app content MUST have this id -->
+  <div id="main-content">
+    <ion-router-outlet></ion-router-outlet>
+    <app-global-footer></app-global-footer>
+  </div>
 </ion-app>
