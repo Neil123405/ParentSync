@@ -14,37 +14,28 @@
 // *ngFor
 
 <ion-header>
- <div class="smiling-header"
-    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center; height: 210px;">
-    <div style="display: flex; justify-content: center; align-items: center; gap: 32px; margin: 30px 0;">
+  <div class="smiling-header"
+    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center; height: 120px;">
+    <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin: 10px 0;">
       <!-- Event Count Indicator (Blue) -->
-      <span class="indicator event-indicator" style="
-        display: inline-block;
-        width: 100px;
-        height: 100px;
-        background: #0054e9;
-        border-radius: 50%;
-        font-size: 3rem;
-        font-weight: bold;
-        line-height: 100px;
-      " title="Events This Month">
+      <span class="indicator event-indicator" title="Events This Month">
         {{ eventCount }}
       </span>
       <!-- Consent Form Count Indicator (Green) -->
       <span class="indicator consent-indicator" style="
         display: inline-block;
-        width: 100px;
-        height: 100px;
+        width: 80px;
+        height: 80px;
         background: #43a047;
         border-radius: 50%;
-        font-size: 3rem;
+        font-size: 2rem;
         font-weight: bold;
-        line-height: 100px;
+        line-height: 80px;
       " title="Consent Forms This Month">
         {{ consentFormCount }}
       </span>
     </div>
-    <div style="display: flex; justify-content: center; gap: 32px;">
+    <div style="display: flex; justify-content: center; gap: 20px; margin-top: -10px;;">
       <span style="font-size: 1.8rem; 
         font-family: 'Segoe UI', Arial, sans-serif;
         
@@ -62,7 +53,7 @@
   </ion-refresher>
   <!-- <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center;">
   </div> -->
-  <ion-card-content style="margin-top: 250px;">
+  <ion-card-content style="margin-top: 150px;">
     <!-- FullCalendar Component -->
     <full-calendar [options]="calendarOptions" #calendar></full-calendar>
   </ion-card-content>

@@ -100,8 +100,10 @@ ion-tab-bar {
   display: flex;
   align-items: center;
   border-radius: 18px;
-  // min-height: 200px;
+  min-height: 200px;
   flex-direction: row;
+  height: auto;
+
 }
 
 .school-card {
@@ -392,10 +394,10 @@ ion-toolbar {
 .header-top-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
   margin-bottom: 12px;
   margin-left: 10px;
-  padding-right: 100px;
 }
 
 .user-photo {
@@ -405,6 +407,12 @@ ion-toolbar {
   object-fit: cover;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
   margin-bottom: 0;
+}
+
+.parent-photo-topright {
+  flex-shrink: 0;
+  /* Prevent the photo from shrinking */
+  margin-left: 130px;
 }
 
 .default-photo {
@@ -638,6 +646,24 @@ ion-toolbar {
 }
 
 .clickable:active {
-  transform: scale(0.98); /* Slight shrink effect on click */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Reduce shadow */
+  transform: scale(0.98);
+  /* Slight shrink effect on click */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  /* Reduce shadow */
 }
+
+.announcement-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.announcement-title {
+  margin: 0; /* Remove default margins */
+  padding: 0; /* Remove default padding */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  display: flex;
+  flex-direction: column; /* Stack content vertically */
+  height: 100%; /* Ensure it takes up the full height of the parent */
+}     

@@ -6,7 +6,7 @@
         <ion-buttons slot="end">
           <ion-menu-toggle menu="accountMenu">
             <ion-button menuClose>
-              <ion-icon name="close"></ion-icon>
+              <ion-icon name="arrow-back"></ion-icon>
             </ion-button>
           </ion-menu-toggle>
         </ion-buttons>
@@ -16,7 +16,7 @@
     <ion-content class="ion-padding">
       <!-- menu content (profile, links, logout) -->
       <div style="display:flex; align-items:center; margin-bottom:16px;">
-        <div (click)="openProfileSettings()" style="cursor:pointer;">
+        <div (click)="openProfileSettings()" style="flex-shrink: 0;">
           <ng-container *ngIf="parent?.photo_url; else noPhoto">
             <img [src]="parent?.photo_url" alt="Parent Photo"
               style="width:64px;height:64px;border-radius:50%;object-fit:cover;" />
