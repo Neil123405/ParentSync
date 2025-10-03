@@ -96,71 +96,140 @@
   </ion-card> -->
 
   <!-- Toggle Buttons -->
-  <div class="ion-margin-bottom" style="display: flex; gap: 8px; justify-content: center;">
-    <ion-button [fill]="showUpcomingEvents ? 'solid' : 'outline'" (click)="showUpcomingEvents = true">
-      Upcoming Events
-    </ion-button>
-    <ion-button [fill]="!showUpcomingEvents ? 'solid' : 'outline'" (click)="showUpcomingEvents = false"
-      class="consent-toggle-btn">
-      Upcoming Consent Forms
-    </ion-button>
+  <!-- Modern Tab Switcher -->
+  <div class="modern-tab-switcher">
+    <div class="tab-slider-container">
+      <div class="tab-background-slider" [style.transform]="'translateX(' + (showUpcomingEvents ? '0%' : '100%') + ')'">
+      </div>
+
+      <button class="modern-tab-button" [class.active]="showUpcomingEvents" (click)="showUpcomingEvents = true">
+        <ion-icon name="calendar" class="tab-icon"></ion-icon>
+        <span class="tab-text">Events</span>
+      </button>
+
+      <button class="modern-tab-button" [class.active]="!showUpcomingEvents" (click)="showUpcomingEvents = false">
+        <ion-icon name="document-text" class="tab-icon"></ion-icon>
+        <span class="tab-text">Forms</span>
+      </button>
+    </div>
   </div>
 
-  <!-- Upcoming Events List -->
-  <div [hidden]="!showUpcomingEvents || upcomingEvents.length === 0" class="upcoming-reminders ion-margin-bottom">
-    <ion-card>
-      <ion-card-header style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-        <ion-card-title style="color: white">Upcoming Events</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-list>
-          <ion-item *ngFor="let event of upcomingEvents" (click)="openEventDetail(event)" button detail>
-            <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
-            <ion-label>
-              <h3>{{ event.title }}</h3>
-              <p>
-                <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-                {{ event.start | date:'mediumDate' }}
-                <span *ngIf="event.meta?.description">- {{ event.meta.description }}</span>
-              </p>
+  <!-- Modern Content Cards -->
+  <div class="modern-content-wrapper">
+    <!-- Upcoming Events Card -->
+    <div class="modern-card-container" [class.active]="showUpcomingEvents" [class.hidden]="!showUpcomingEvents">
 
-              <p *ngIf="event.meta?.student?.first_name && event.meta?.student?.last_name">
-                <ion-icon name="person-circle-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-                <strong>Student:</strong> {{ event.meta.student.first_name }} {{ event.meta.student.last_name }}
-              </p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-card-content>
-    </ion-card>
-  </div>
+      <div class="modern-card events-card">
+        <div class="card-header">
+          <div class="header-icon-wrapper events-theme">
+            <ion-icon name="calendar" class="header-icon"></ion-icon>
+          </div>
+          <div class="header-content">
+            <h2 class="card-title">Upcoming Events</h2>
+            <p class="card-subtitle">{{ upcomingEvents.length }} event{{ upcomingEvents.length !== 1 ? 's' : '' }}
+              scheduled</p>
+          </div>
+        </div>
 
-  <!-- Upcoming Consent Forms List -->
-  <div [hidden]="showUpcomingEvents || upcomingConsentForms.length === 0" class="upcoming-reminders ion-margin-bottom">
-    <ion-card>
-      <ion-card-header style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-        <ion-card-title style="color: white">Upcoming Consent Forms</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-list>
-          <ion-item *ngFor="let form of upcomingConsentForms" (click)="openConsentFormDetail(form)" button detail>
-            <ion-icon name="document-text-outline" slot="start" color="success"></ion-icon>
-            <ion-label>
-              <h3>{{ form.title }}</h3>
-              <p>
-                <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-                Deadline: {{ form.deadline | date:'mediumDate' }}
-                <span *ngIf="form.description">- {{ form.description }}</span>
-              </p>
-              <p *ngIf="form.student?.first_name && form.student?.last_name">
-                <ion-icon name="person-circle-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-                <strong>Student:</strong> {{ form.student.first_name }} {{ form.student.last_name }}
-              </p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-card-content>
-    </ion-card>
+        <div class="card-body" *ngIf="upcomingEvents.length > 0; else noEventsTemplate">
+          <div class="event-item" *ngFor="let event of upcomingEvents; let i = index" (click)="openEventDetail(event)"
+            [style.animation-delay]="i * 100 + 'ms'">
+
+            <div class="event-date-badge">
+              <span class="date-day">{{ event.start | date:'dd' }}</span>
+              <span class="date-month">{{ event.start | date:'MMM' }}</span>
+            </div>
+
+            <div class="event-content">
+              <h3 class="event-title">{{ event.title }}</h3>
+              <div class="event-details">
+                <div class="event-time">
+                  <ion-icon name="time-outline" class="detail-icon"></ion-icon>
+                  <span>{{ event.start | date:'EEEE, MMMM d' }}</span>
+                </div>
+                <div class="event-description" *ngIf="event.meta?.description">
+                  <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
+                  <span>{{ event.meta.description }}</span>
+                </div>
+                <div class="event-student" *ngIf="event.meta?.student?.first_name">
+                  <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
+                  <span>{{ event.meta.student.first_name }} {{ event.meta.student.last_name }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="event-arrow">
+              <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noEventsTemplate>
+          <div class="empty-state">
+            <ion-icon name="calendar-clear-outline" class="empty-icon"></ion-icon>
+            <h3 class="empty-title">No Upcoming Events</h3>
+            <p class="empty-subtitle">Your calendar is clear for now</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Upcoming Consent Forms Card -->
+    <div class="modern-card-container" [class.active]="!showUpcomingEvents" [class.hidden]="showUpcomingEvents">
+
+      <div class="modern-card forms-card">
+        <div class="card-header">
+          <div class="header-icon-wrapper forms-theme">
+            <ion-icon name="document-text" class="header-icon"></ion-icon>
+          </div>
+          <div class="header-content">
+            <h2 class="card-title">Consent Forms</h2>
+            <p class="card-subtitle">{{ upcomingConsentForms.length }} form{{ upcomingConsentForms.length !== 1 ? 's' :
+              '' }} pending</p>
+          </div>
+        </div>
+
+        <div class="card-body" *ngIf="upcomingConsentForms.length > 0; else noFormsTemplate">
+          <div class="form-item" *ngFor="let form of upcomingConsentForms; let i = index"
+            (click)="openConsentFormDetail(form)" [style.animation-delay]="i * 100 + 'ms'">
+
+            <div class="form-priority-badge">
+              <ion-icon name="alert-circle" class="priority-icon"></ion-icon>
+            </div>
+
+            <div class="form-content">
+              <h3 class="form-title">{{ form.title }}</h3>
+              <div class="form-details">
+                <div class="form-deadline">
+                  <ion-icon name="time-outline" class="detail-icon"></ion-icon>
+                  <span>Deadline: {{ form.deadline | date:'EEEE, MMMM d' }}</span>
+                </div>
+                <div class="form-description" *ngIf="form.description">
+                  <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
+                  <span>{{ form.description }}</span>
+                </div>
+                <div class="form-student" *ngIf="form.student?.first_name">
+                  <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
+                  <span>{{ form.student.first_name }} {{ form.student.last_name }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-arrow">
+              <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noFormsTemplate>
+          <div class="empty-state">
+            <ion-icon name="document-text-outline" class="empty-icon"></ion-icon>
+            <h3 class="empty-title">No Pending Forms</h3>
+            <p class="empty-subtitle">All consent forms are up to date</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
   </div>
-  <div style="height: 80px;"></div>
+   <div class="content-bottom-spacer"></div>
 </ion-content>

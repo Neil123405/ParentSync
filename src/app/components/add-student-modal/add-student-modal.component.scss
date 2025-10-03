@@ -1,0 +1,23 @@
+/* filepath: c:\Users\et cetera\Desktop\Ionic\ParentSync\src\app\components\add-student-modal\add-student-modal.component.scss */
+
+// Global styles for better form appearance
+:host {
+  --ion-color-primary: #667eea;
+}
+
+// Hover effects for field containers
+ion-content .field-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
+  border-color: #667eea !important;
+}
+
+// Focus effects
+ion-input.has-focus {
+  --color: #2c3e50 !important;
+}
+
+// Button hover effects
+ion-button:not(.button-disabled):hover {
+  transform: translateY(-1px);
+}

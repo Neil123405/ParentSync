@@ -1,31 +1,250 @@
 <ion-header>
-  <ion-toolbar style="--background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
-    <ion-title style="color: white">Add Student</ion-title>
+  <ion-toolbar style="--background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <ion-title style="color: white; font-weight: 600;">
+      <ion-icon name="person-add-outline" style="margin-right: 8px; vertical-align: middle;"></ion-icon>
+      Add Student
+    </ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="dismiss()">
-        <ion-icon name="close"></ion-icon>
+      <ion-button (click)="dismiss()" fill="clear" style="color: white;">
+        <ion-icon name="close" size="large"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content class="ion-padding">
-  <ion-item>
-    <ion-label position="floating">Student ID</ion-label>
-    <ion-input type="number" [(ngModel)]="studentId"></ion-input>
-  </ion-item>
-  <ion-item>
-    <ion-label position="floating">First Name</ion-label>
-    <ion-input type="text" [(ngModel)]="firstName"></ion-input>
-  </ion-item>
-  <ion-item>
-    <ion-label position="floating">Last Name</ion-label>
-    <ion-input type="text" [(ngModel)]="lastName"></ion-input>
-  </ion-item>
-   <ion-item>
-    <ion-label position="floating">Birthday</ion-label>
-    <ion-input type="date" [(ngModel)]="bday"></ion-input>
-  </ion-item>
-  <ion-button expand="block" color="primary"
-    [disabled]="!studentId"
-    (click)="submit()">Add Student</ion-button>
+
+<ion-content class="ion-padding" style="--background: #f8f9fa;">
+  <!-- Form Container -->
+  <div style="max-width: 400px; margin: 20px auto; padding: 0 16px;">
+    
+    <!-- Form Header Card -->
+    <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); 
+                border-radius: 20px; 
+                padding: 30px 20px; 
+                text-align: center; 
+                margin-bottom: 25px;
+                border: 2px solid rgba(102, 126, 234, 0.2);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);">
+      <ion-icon name="school-outline" 
+                style="font-size: 4rem; 
+                       color: #667eea; 
+                       display: block; 
+                       margin-bottom: 15px;"></ion-icon>
+      <h2 style="font-size: 1.6rem; 
+                 font-weight: 700; 
+                 color: #2c3e50; 
+                 margin: 0 0 8px 0; 
+                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        Student Registration
+      </h2>
+      <p style="font-size: 0.95rem; 
+                color: #7f8c8d; 
+                margin: 0; 
+                font-style: italic;">
+        Fill in the details to add a new student
+      </p>
+    </div>
+
+    <!-- Form Fields -->
+    <div style="margin-bottom: 30px;">
+      
+      <!-- Student ID Field -->
+      <div style="background: white; 
+                  border-radius: 16px; 
+                  margin-bottom: 20px; 
+                  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+                  border: 2px solid #e9ecef;
+                  transition: all 0.3s ease;
+                  overflow: hidden;">
+        <ion-item lines="none" style="--padding-start: 20px; 
+                                     --padding-end: 20px; 
+                                     --padding-top: 20px; 
+                                     --padding-bottom: 20px;
+                                     --background: transparent;">
+          <div style="width: 100%;">
+            <div style="display: flex; 
+                       align-items: center; 
+                       margin-bottom: 12px;">
+              <ion-icon name="id-card-outline" 
+                        style="font-size: 1.3rem; 
+                               color: #667eea; 
+                               margin-right: 10px;"></ion-icon>
+              <span style="font-weight: 600; 
+                          color: #2c3e50; 
+                          font-size: 0.95rem;">
+                Student ID *
+              </span>
+            </div>
+            <ion-input type="number" 
+                       [(ngModel)]="studentId" 
+                       placeholder="Enter student ID"
+                       style="--padding-start: 0; 
+                              --padding-top: 8px; 
+                              --padding-bottom: 8px; 
+                              font-size: 1.1rem;
+                              font-weight: 500;
+                              --placeholder-color: #95a5a6;">
+            </ion-input>
+          </div>
+        </ion-item>
+      </div>
+
+      <!-- First Name Field -->
+      <div style="background: white; 
+                  border-radius: 16px; 
+                  margin-bottom: 20px; 
+                  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+                  border: 2px solid #e9ecef;
+                  transition: all 0.3s ease;
+                  overflow: hidden;">
+        <ion-item lines="none" style="--padding-start: 20px; 
+                                     --padding-end: 20px; 
+                                     --padding-top: 20px; 
+                                     --padding-bottom: 20px;
+                                     --background: transparent;">
+          <div style="width: 100%;">
+            <div style="display: flex; 
+                       align-items: center; 
+                       margin-bottom: 12px;">
+              <ion-icon name="person-outline" 
+                        style="font-size: 1.3rem; 
+                               color: #667eea; 
+                               margin-right: 10px;"></ion-icon>
+              <span style="font-weight: 600; 
+                          color: #2c3e50; 
+                          font-size: 0.95rem;">
+                First Name *
+              </span>
+            </div>
+            <ion-input type="text" 
+                       [(ngModel)]="firstName" 
+                       placeholder="Enter first name"
+                       style="--padding-start: 0; 
+                              --padding-top: 8px; 
+                              --padding-bottom: 8px; 
+                              font-size: 1.1rem;
+                              font-weight: 500;
+                              --placeholder-color: #95a5a6;">
+            </ion-input>
+          </div>
+        </ion-item>
+      </div>
+
+      <!-- Last Name Field -->
+      <div style="background: white; 
+                  border-radius: 16px; 
+                  margin-bottom: 20px; 
+                  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+                  border: 2px solid #e9ecef;
+                  transition: all 0.3s ease;
+                  overflow: hidden;">
+        <ion-item lines="none" style="--padding-start: 20px; 
+                                     --padding-end: 20px; 
+                                     --padding-top: 20px; 
+                                     --padding-bottom: 20px;
+                                     --background: transparent;">
+          <div style="width: 100%;">
+            <div style="display: flex; 
+                       align-items: center; 
+                       margin-bottom: 12px;">
+              <ion-icon name="person-outline" 
+                        style="font-size: 1.3rem; 
+                               color: #667eea; 
+                               margin-right: 10px;"></ion-icon>
+              <span style="font-weight: 600; 
+                          color: #2c3e50; 
+                          font-size: 0.95rem;">
+                Last Name *
+              </span>
+            </div>
+            <ion-input type="text" 
+                       [(ngModel)]="lastName" 
+                       placeholder="Enter last name"
+                       style="--padding-start: 0; 
+                              --padding-top: 8px; 
+                              --padding-bottom: 8px; 
+                              font-size: 1.1rem;
+                              font-weight: 500;
+                              --placeholder-color: #95a5a6;">
+            </ion-input>
+          </div>
+        </ion-item>
+      </div>
+
+      <!-- Birthday Field -->
+      <div style="background: white; 
+                  border-radius: 16px; 
+                  margin-bottom: 20px; 
+                  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+                  border: 2px solid #e9ecef;
+                  transition: all 0.3s ease;
+                  overflow: hidden;">
+        <ion-item lines="none" style="--padding-start: 20px; 
+                                     --padding-end: 20px; 
+                                     --padding-top: 20px; 
+                                     --padding-bottom: 20px;
+                                     --background: transparent;">
+          <div style="width: 100%;">
+            <div style="display: flex; 
+                       align-items: center; 
+                       margin-bottom: 12px;">
+              <ion-icon name="calendar-outline" 
+                        style="font-size: 1.3rem; 
+                               color: #667eea; 
+                               margin-right: 10px;"></ion-icon>
+              <span style="font-weight: 600; 
+                          color: #2c3e50; 
+                          font-size: 0.95rem;">
+                Birthday
+              </span>
+            </div>
+            <ion-input type="date" 
+                       [(ngModel)]="bday"
+                       style="--padding-start: 0; 
+                              --padding-top: 8px; 
+                              --padding-bottom: 8px; 
+                              font-size: 1.1rem;
+                              font-weight: 500;">
+            </ion-input>
+          </div>
+        </ion-item>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 35px;">
+      <!-- Submit Button -->
+      <ion-button expand="block" 
+                  [disabled]="!studentId || !firstName || !lastName"
+                  (click)="submit()"
+                  style="--background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                         --border-radius: 16px;
+                         height: 55px;
+                         font-weight: 600;
+                         font-size: 1.1rem;
+                         text-transform: none;
+                         margin-bottom: 15px;
+                         box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+                         letter-spacing: 0.5px;">
+        <ion-icon name="checkmark-circle-outline" slot="start" style="font-size: 1.3rem;"></ion-icon>
+        Add Student
+      </ion-button>
+      
+      <!-- Cancel Button -->
+      <ion-button expand="block" 
+                  fill="outline" 
+                  color="medium"
+                  (click)="dismiss()"
+                  style="--border-radius: 16px;
+                         height: 50px;
+                         font-weight: 500;
+                         font-size: 1rem;
+                         text-transform: none;
+                         --border-width: 2px;
+                         --border-color: #bdc3c7;
+                         --color: #7f8c8d;">
+        <ion-icon name="close-circle-outline" slot="start" style="font-size: 1.2rem;"></ion-icon>
+        Cancel
+      </ion-button>
+    </div>
+  </div>
 </ion-content>

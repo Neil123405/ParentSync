@@ -1,31 +1,61 @@
-<ion-header>
-  <div class="smiling-header">
-    <div class="header-top-row">
-      <div class="header-circle circle-1"></div>
-      <div class="header-circle circle-2"></div>
-      <div class="header-circle circle-3"></div>
-      <div class="header-circle circle-4"></div>
-      <div class="header-circle circle-5"></div>
-      <h1 class="welcome-message"><span style="font-size: 2rem; font-weight: bold;">Welcome</span> <br />{{
-        parent?.first_name || 'User' }}!</h1>
-      <div class="parent-photo-topright">
-        <ng-container *ngIf="parent?.photo_url; else noPhoto">
-          <img [src]="parent?.photo_url" alt="Parent Photo" class="user-photo" />
-        </ng-container>
-        <ng-template #noPhoto>
-          <ion-icon name="person-circle" class="default-photo"></ion-icon>
-        </ng-template>
+<ion-header class="ion-no-border">
+  <div class="modern-header">
+    <!-- Background gradient overlay -->
+    <div class="header-gradient"></div>
+
+    <!-- Header content -->
+    <div class="header-content">
+      <!-- Top section with greeting and profile -->
+      <div class="header-top">
+        <div class="greeting-section">
+          <p class="greeting-text">Welcome back</p>
+          <h1 class="user-name">{{ parent?.first_name || 'User' }}!</h1>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-avatar">
+            <ng-container *ngIf="parent?.photo_url; else noPhoto">
+              <img [src]="parent?.photo_url" alt="Profile" class="profile-image" />
+            </ng-container>
+            <ng-template #noPhoto>
+              <div class="profile-placeholder">
+                <ion-icon name="person"></ion-icon>
+              </div>
+            </ng-template>
+            <div class="status-indicator"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab navigation -->
+      <div class="tab-navigation">
+        <div class="tab-container">
+          <button class="modern-tab" [class.active]="activeTab === 'announcements'" (click)="setTab('announcements')">
+            <div class="tab-content">
+              <ion-icon name="megaphone-outline" class="tab-icon"></ion-icon>
+              <span class="tab-label">Announcements</span>
+            </div>
+          </button>
+
+          <button class="modern-tab" [class.active]="activeTab === 'events'" (click)="setTab('events')">
+            <div class="tab-content">
+              <ion-icon name="calendar-outline" class="tab-icon"></ion-icon>
+              <span class="tab-label">Events</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Active tab indicator -->
+        <div class="tab-indicator" [style.transform]="'translateX(' + (activeTab === 'events' ? '100%' : '0%') + ')'">
+        </div>
       </div>
     </div>
-    <div class="header-footer">
-      <div class="tab-button-group">
-        <button class="tab-btn" [class.active]="activeTab === 'announcements'" (click)="setTab('announcements')">
-          Announcements
-        </button>
-        <button class="tab-btn" [class.active]="activeTab === 'events'" (click)="setTab('events')">
-          Events
-        </button>
-      </div>
+
+    <!-- Decorative elements -->
+    <div class="header-decoration">
+      <div class="deco-circle deco-1"></div>
+      <div class="deco-circle deco-2"></div>
+      <div class="deco-circle deco-3"></div>
     </div>
   </div>
 </ion-header>
@@ -33,13 +63,14 @@
 
 
 <ion-content [fullscreen]="true" class="ion-padding content-with-footer">
-  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
+  <div class="transparent-content">
+    <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
 
-  <div *ngIf="activeTab === 'announcements'">
-    <!-- Announcements content goes here -->
-    <!-- <div class="student-photo-header">
+    <div *ngIf="activeTab === 'announcements'">
+      <!-- Announcements content goes here -->
+      <!-- <div class="student-photo-header">
       <ng-container *ngFor="let student of studentsWithAnnouncements">
         <ng-container *ngIf="student.photo_url && student.photo_url.startsWith('http'); else noPhoto">
           <img [src]="student.photo_url" alt="Student Photo" class="student-photo"
@@ -52,62 +83,82 @@
       </ng-container>
     </div> -->
 
-    <!-- Announcements List -->
-    <ng-container *ngFor="let group of groupedAnnouncements" class="announcement-card-custom">
-      <div style="margin-bottom: 6px;">
-        <!-- Student photo/icon OUTSIDE the card -->
+      <!-- Announcements List -->
+      <!-- Announcements List -->
+      <ng-container *ngFor="let group of groupedAnnouncements">
+        <div class="announcement-wrapper">
+          <ion-card class="announcement-card clickable" [ngClass]="{
+        'school-card': group.announcement.scope === 'school', 
+        'section-card': group.announcement.scope === 'section'
+      }" (click)="openAnnouncement(group.announcement)">
 
-        <!-- The announcement card -->
-        <ion-card class="announcement-card clickable"
-          [ngClass]="{'school-card': group.announcement.scope === 'school', 'section-card': group.announcement.scope === 'section'}"
-          (click)="openAnnouncement(group.announcement)">
-          <ion-card-content
-            style="flex: 1; display: flex; flex-direction: row; justify-content: flex-start; align-items: center;">
-            <div class="student-photos">
-              <!-- gets the student by ID and checks if they have a photo URL -->
-              <ng-container *ngFor="let studentId of group.studentIds.slice(0, 3); let i = index"
-                class="student-photo-card">
-                <div class="photo-wrapper-column">
-                  <ng-container
-                    *ngIf="getStudentById(studentId)?.photo_url && getStudentById(studentId)?.photo_url.startsWith('http'); else noPhoto">
-                    <img [src]="getStudentById(studentId)?.photo_url" alt="Student Photo"
-                      class="student-photo-overlap" />
-                  </ng-container>
-                  <ng-template #noPhoto>
-                    <ion-icon name="person-circle" class="student-no-photo"></ion-icon>
-                  </ng-template>
+            <ion-card-content class="announcement-card-content">
+              <!-- Student Photos Column -->
+              <div class="student-photos-column">
+                <ng-container *ngFor="let studentId of group.studentIds.slice(0, 3); let i = index">
+                  <div class="student-avatar">
+                    <ng-container
+                      *ngIf="getStudentById(studentId)?.photo_url && getStudentById(studentId)?.photo_url.startsWith('http'); else noPhoto">
+                      <img [src]="getStudentById(studentId)?.photo_url" alt="Student Photo" class="student-photo" />
+                    </ng-container>
+                    <ng-template #noPhoto>
+                      <div class="student-placeholder">
+                        <ion-icon name="person"></ion-icon>
+                      </div>
+                    </ng-template>
+                  </div>
+                </ng-container>
+
+                <!-- Show +N indicator if more than 3 students -->
+                <div *ngIf="group.studentIds.length > 3" class="more-students">
+                  +{{ group.studentIds.length - 3 }}
                 </div>
-              </ng-container>
-            </div>
-            <div class="announcement-content">
-              <h3 class="announcement-title">
-                <ion-icon name="megaphone-outline" style="font-size: 1.5rem; color: #3880ff; margin-right: 10px;">
-                </ion-icon>
-                <span style="font-size: 1.4rem; font-weight: normal; font-style: italic;">
-                  {{ group.announcement.title }}
-                </span>
-                <br />
-                <ion-icon name="people-outline" style="font-size: 1.5rem; color: #666; margin-right: 10px;"></ion-icon>
-                <span style="color: #fff;">
-                  scope: {{ group.announcement.scope }}
-                </span>
-              </h3>
-            </div>
-          </ion-card-content>
-        </ion-card>
+              </div>
+
+              <!-- Announcement Content -->
+              <div class="announcement-details">
+                <div class="announcement-header">
+                  <ion-icon name="megaphone" class="announcement-icon"></ion-icon>
+                  <h3 class="announcement-title">{{ group.announcement.title }}</h3>
+                </div>
+
+                <div class="announcement-meta">
+                  <div class="meta-item">
+                    <ion-icon name="people-outline" class="meta-icon"></ion-icon>
+                    <span class="meta-text">{{ group.announcement.scope === 'school' ? 'School-wide' : 'Section'
+                      }}</span>
+                  </div>
+
+                  <div class="meta-item" *ngIf="group.announcement.date">
+                    <ion-icon name="calendar-outline" class="meta-icon"></ion-icon>
+                    <span class="meta-text">{{ group.announcement.date | date:'MMM d, y' }}</span>
+                  </div>
+                </div>
+
+                <!-- Preview of announcement content (optional) -->
+                <p class="announcement-preview" *ngIf="group.announcement.content">
+                  {{ group.announcement.content | slice:0:100 }}{{ group.announcement.content.length > 100 ? '...' : ''
+                  }}
+                </p>
+              </div>
+
+              <!-- Arrow indicator -->
+              <div class="card-arrow">
+                <ion-icon name="chevron-forward-outline"></ion-icon>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </ng-container>
+
+      <div *ngIf="filteredAnnouncements.length === 0" class="empty-state">
+        <ion-icon name="megaphone-outline" class="empty-icon"></ion-icon>
+        <p class="empty-text">No announcements available</p>
       </div>
-    </ng-container>
-
-    <ion-item *ngIf="filteredAnnouncements.length === 0">
-      <ion-label class="ion-text-center">
-        No announcements available.
-      </ion-label>
-    </ion-item>
-
-  </div>
-  <div *ngIf="activeTab === 'events'">
-    <!-- Events content goes here -->
-    <!-- <div class="student-photo-header">
+    </div>
+      <div *ngIf="activeTab === 'events'">
+        <!-- Events content goes here -->
+        <!-- <div class="student-photo-header">
       <ng-container *ngFor="let student of studentsWithEvents">
         <ng-container *ngIf="student.photo_url && student.photo_url.startsWith('http'); else noPhotoEvent">
           <img [src]="student.photo_url" alt="Student Photo"
@@ -125,65 +176,67 @@
       </ng-container>
     </div> -->
 
-    <!-- Events List -->
-    <div *ngFor="let event of filteredEvents" class="event-list-item">
-      <ion-card (click)="openEventDetail(event)" class="event-card-custom clickable"
-        [ngClass]="{'school-card': event.scope === 'school','section-card': event.scope === 'class'}">
+        <!-- Events List -->
+        <div *ngFor="let event of filteredEvents" class="event-list-item">
+          <ion-card (click)="openEventDetail(event)" class="event-card-custom clickable"
+            [ngClass]="{'school-card': event.scope === 'school','section-card': event.scope === 'class'}">
 
-        <ion-card-content class="card-ion">
+            <ion-card-content class="card-ion">
 
-          <div class="student-photo-card">
-            <ng-container *ngIf="event.studentIds?.length; else singleStudent">
-              <ng-container *ngFor="let studentId of event.studentIds.slice(0, 3)">
-                <div class="student-photo-card">
-                  <ng-container
-                    *ngIf="getStudentById(studentId)?.photo_url && getStudentById(studentId)?.photo_url.startsWith('http'); else noPhotoEvent">
-                    <img [src]="getStudentById(studentId)?.photo_url" alt="Student Photo"
-                      class="student-photo-overlap" />
-                  </ng-container>
-                  <ng-template #noPhotoEvent>
-                    <ion-icon name="person-circle" class="student-no-photo"></ion-icon>
-                  </ng-template>
-                </div>
-              </ng-container>
-            </ng-container>
-            <ng-template #singleStudent>
               <div class="student-photo-card">
-                <ng-container
-                  *ngIf="getStudentById(event.student_id)?.photo_url && getStudentById(event.student_id)?.photo_url.startsWith('http'); else noPhotoEventSingle">
-                  <img [src]="getStudentById(event.student_id)?.photo_url" alt="Student Photo"
-                    class="student-photo-overlap" />
+                <ng-container *ngIf="event.studentIds?.length; else singleStudent">
+                  <ng-container *ngFor="let studentId of event.studentIds.slice(0, 3)">
+                    <div class="student-photo-card">
+                      <ng-container
+                        *ngIf="getStudentById(studentId)?.photo_url && getStudentById(studentId)?.photo_url.startsWith('http'); else noPhotoEvent">
+                        <img [src]="getStudentById(studentId)?.photo_url" alt="Student Photo"
+                          class="student-photo-overlap" />
+                      </ng-container>
+                      <ng-template #noPhotoEvent>
+                        <ion-icon name="person-circle" class="student-no-photo"></ion-icon>
+                      </ng-template>
+                    </div>
+                  </ng-container>
                 </ng-container>
-                <ng-template #noPhotoEventSingle>
-                  <ion-icon name="person-circle" class="student-no-photo"></ion-icon>
+                <ng-template #singleStudent>
+                  <div class="student-photo-card">
+                    <ng-container
+                      *ngIf="getStudentById(event.student_id)?.photo_url && getStudentById(event.student_id)?.photo_url.startsWith('http'); else noPhotoEventSingle">
+                      <img [src]="getStudentById(event.student_id)?.photo_url" alt="Student Photo"
+                        class="student-photo-overlap" />
+                    </ng-container>
+                    <ng-template #noPhotoEventSingle>
+                      <ion-icon name="person-circle" class="student-no-photo"></ion-icon>
+                    </ng-template>
+                  </div>
                 </ng-template>
               </div>
-            </ng-template>
-          </div>
 
-          <div style="flex: 1;">
-            <h3
-              style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
-              <ion-icon name="calendar-outline"
-                style="font-size: 1.5rem; color: #10dc60; margin-right: 10px;"></ion-icon>
-              {{ event.title }}
-              <br />
-              <ion-icon name="people-outline" style="font-size: 1.5rem; color: #666; margin-right: 10px;"></ion-icon>
-              scope: {{ event.scope }}
-            </h3>
-            <div class="card-date" style="margin-top: 8px;">
-              <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-              {{ event.date | date:'mediumDate' }}
-            </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
+              <div style="flex: 1;">
+                <h3
+                  style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                  <ion-icon name="calendar-outline"
+                    style="font-size: 1.5rem; color: #10dc60; margin-right: 10px;"></ion-icon>
+                  {{ event.title }}
+                  <br />
+                  <ion-icon name="people-outline"
+                    style="font-size: 1.5rem; color: #666; margin-right: 10px;"></ion-icon>
+                  scope: {{ event.scope }}
+                </h3>
+                <div class="card-date" style="margin-top: 8px;">
+                  <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+                  {{ event.date | date:'mediumDate' }}
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </div>
+        <ion-item *ngIf="filteredEvents.length === 0">
+          <ion-label class="ion-text-center">No events available.</ion-label>
+        </ion-item>
+
+      </div>
+
+      <div style="height: 48px;"></div>
     </div>
-    <ion-item *ngIf="filteredEvents.length === 0">
-      <ion-label class="ion-text-center">No events available.</ion-label>
-    </ion-item>
-
-  </div>
-
-  <div style="height: 48px;"></div>
 </ion-content>

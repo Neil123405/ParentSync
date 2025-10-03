@@ -94,6 +94,11 @@ export class ChildrenPage implements OnInit {
 
   pressTimer: any = null;
 
+
+  centerCardIndex: number = 0;
+  isPanning: boolean = false;
+  panStartX: number = 0;
+  currentPanX: number = 0;
   // studentAnnouncements: Announcement[] = [];
 
   constructor(
@@ -133,6 +138,12 @@ export class ChildrenPage implements OnInit {
       this.loadData();
     }
 
+    setTimeout(() => {
+      if (this.laravelChildren.length > 0) {
+        this.centerCard(0);
+      }
+    }, 100);
+
     // Listen for signed consent forms signed
     //* already read!
     // this.apiService.consentFormSigned$.subscribe(({ formId, studentId }) => {
@@ -156,6 +167,7 @@ export class ChildrenPage implements OnInit {
   // * loadingController.create({}), .present()
   // * .forEach((e: any) => {});
 
+
   async loadData() {
     // console.log('loadData called');
     if (!this.currentProfile) {
@@ -175,6 +187,7 @@ export class ChildrenPage implements OnInit {
       if (this.currentProfile?.parent_id) {
         this.apiService.getAllUnsignedConsentFormsForParent(this.currentProfile.parent_id).subscribe(res => {
           const forms = res.forms || [];
+          
           // Reset counts
           this.consentFormCounts = {};
           forms.forEach((form: any) => {
@@ -184,6 +197,7 @@ export class ChildrenPage implements OnInit {
         });
         this.apiService.getParentEvents(this.currentProfile.parent_id).subscribe(res => {
           const events = res.events || [];
+          
           this.schoolEventCounts = {};
           events.forEach((event: any) => {
             const sid = event.student_id;
@@ -192,6 +206,7 @@ export class ChildrenPage implements OnInit {
         });
         this.apiService.getParentAnnouncements(this.currentProfile.parent_id).subscribe(res => {
           const announcements = res.announcements || [];
+          
           this.announcementCounts = {};
           announcements.forEach((announcement: any) => {
             const sid = announcement.student_id;
@@ -650,4 +665,111 @@ export class ChildrenPage implements OnInit {
   //     }
   //   });
   // }
+
+
+  selectChildAndCenter(child: any, index: number) {
+    this.selectChild(child);
+    this.centerCard(index);
+  }
+
+  centerCard(index: number) {
+    if (index >= 0 && index < this.laravelChildren.length) {
+      this.centerCardIndex = index;
+
+      // Auto-select the centered child
+      if (this.laravelChildren[index]) {
+        this.selectedChild = this.laravelChildren[index];
+        this.activeSection = ''; // Reset active section when changing cards
+      }
+    }
+  }
+
+  goToCard(index: number) {
+    if (this.laravelChildren[index]) {
+      this.centerCard(index);
+    }
+  }
+
+  goToNextCard() {
+    if (this.centerCardIndex < this.laravelChildren.length - 1) {
+      this.centerCard(this.centerCardIndex + 1);
+    }
+  }
+
+  goToPrevCard() {
+    if (this.centerCardIndex > 0) {
+      this.centerCard(this.centerCardIndex - 1);
+    }
+  }
+
+  getCardTransform(index: number): string {
+    const diff = index - this.centerCardIndex;
+
+    if (diff === 0) {
+      // Center card
+      return 'translate(-50%, -50%) scale(1) rotateY(0deg)';
+    } else if (diff < 0) {
+      // Left cards
+      const distance = Math.abs(diff);
+      const translateX = -50 - (distance * 120);
+      const scale = Math.max(0.6, 1 - (distance * 0.2));
+      const rotateY = Math.min(75, 45 + (distance * 15));
+      const opacity = Math.max(0.1, 1 - (distance * 0.4));
+
+      return `translate(${translateX}%, -50%) scale(${scale}) rotateY(${rotateY}deg)`;
+    } else {
+      // Right cards
+      const distance = diff;
+      const translateX = -50 + (distance * 120);
+      const scale = Math.max(0.6, 1 - (distance * 0.2));
+      const rotateY = Math.max(-75, -45 - (distance * 15));
+      const opacity = Math.max(0.1, 1 - (distance * 0.4));
+
+      return `translate(${translateX}%, -50%) scale(${scale}) rotateY(${rotateY}deg)`;
+    }
+  }
+
+  // Pan gesture handlers
+  onPan(event: any) {
+    if (!this.isPanning) {
+      this.isPanning = true;
+      this.panStartX = event.center.x;
+    }
+
+    this.currentPanX = event.deltaX;
+
+    // Optional: Add real-time pan feedback here
+    // You can modify card positions during pan for smoother UX
+  }
+
+  onPanEnd(event: any) {
+    if (!this.isPanning) return;
+
+    this.isPanning = false;
+    const threshold = 50; // Minimum distance to trigger navigation
+
+    if (Math.abs(event.deltaX) > threshold) {
+      if (event.deltaX > 0) {
+        // Panned right - go to previous card
+        this.goToPrevCard();
+      } else {
+        // Panned left - go to next card
+        this.goToNextCard();
+      }
+    }
+
+    this.currentPanX = 0;
+  }
+
+  onSwipe(event: any) {
+    const threshold = 50;
+
+    if (Math.abs(event.deltaX) > threshold) {
+      if (event.deltaX > 0) {
+        this.goToPrevCard();
+      } else {
+        this.goToNextCard();
+      }
+    }
+  }
 }

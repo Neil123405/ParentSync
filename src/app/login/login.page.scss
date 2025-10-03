@@ -1,66 +1,144 @@
-:host {
-  ion-content {
-    --background: none;
-    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
-  }
+// ...existing code...
 
-  @keyframes gradient {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-  .login-container {
-    max-width: 500px;
-    margin: auto;
-    padding-top: 20px;
-  }
-
-  ion-card {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
+/* Page base */
+.login-background {
+  --background: #ffffff;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
 }
 
-.login-container {
+/* Wave header */
+.wave-header {
+  position: relative;
+  height: 34vh;
+  min-height: 220px;
+  padding: 24px 28px 0;
+  color: #ffffff;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; // Don't center vertically
-  min-height: 130vh;           // Make it taller than the viewport
-  padding-top: 40px;           // Add some space at the top
-  padding-bottom: 40px;        // Add some space at the bottom
-  position: relative;
-  z-index: 1; /* Make sure content is above the background */
+  justify-content: flex-end;
+
+  background: radial-gradient(1200px 600px at -10% -20%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 50%),
+              linear-gradient(135deg, #2d67c0 0%, #2c82c6 40%, #2aa2c8 100%);
+  border-bottom-left-radius: 45% 35%;
+
+  /* right cut-out bubble */
+  &::after {
+    content: "";
+    position: absolute;
+    right: -70px;
+    top: 20px;
+    width: 220px;
+    height: 220px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: -12px 16px 24px rgba(0,0,0,0.05); /* subtle depth like screenshot */
+  }
+
+  h2 {
+    margin: 0 0 2px 0;
+    font-weight: 500;
+    opacity: 0.95;
+    letter-spacing: 0.2px;
+  }
+
+  h1 {
+    margin: 0 0 16px 0;
+    font-size: 40px;
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+  }
 }
 
-ion-card {
-  width: 100%;
-  max-width: 400px;
-  background: #fff;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-  border-radius: 18px;
+/* Shared form styling for login and registration */
+.login-form,
+.registration-form {
+  max-width: 360px;
+  margin: 18px auto 40px;
+  padding: 0 20px; /* keeps it centered on small screens */
+
+  .input-container {
+    margin-bottom: 18px;
+
+    label {
+      display: block;
+      margin: 0 10px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #a6a9b0; /* light gray like the mock */
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    ion-item {
+      --background: #ffffff;
+      --inner-padding-end: 0;
+      --padding-start: 14px;
+      --padding-end: 12px;
+      --min-height: 48px;
+
+      border: 1.6px solid #d6e4ef;      /* soft outline */
+      border-radius: 22px;               /* pill */
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: border-color .2s ease, box-shadow .2s ease;
+
+      /* focus state to match accent outline */
+      &:focus-within {
+        border-color: #2aa2c8;
+        box-shadow: 0 6px 14px rgba(42,162,200,0.18);
+      }
+
+      ion-input {
+        font-size: 15px;
+        color: #1f2a37;
+        --placeholder-color: #8ea3b5;
+        --placeholder-opacity: 1;
+      }
+
+      ion-icon {
+        color: #8ea3b5;
+        font-size: 20px;
+        opacity: .85;
+        margin-right: 6px;
+      }
+    }
+  }
+
+  .login-button {
+    --background: linear-gradient(90deg, #2d67c0 0%, #2aa2c8 100%);
+    --background-activated: linear-gradient(90deg, #265aa8 0%, #2293b6 100%);
+    --border-radius: 22px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    --box-shadow: 0 8px 18px rgba(45,103,192,0.28);
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: none;
+    letter-spacing: .2px;
+    width: 200px;            /* similar width to mock */
+    margin: 18px auto 0;     /* centered */
+  }
+
+  .register-link {
+    text-align: center;
+    margin-top: 22px;
+    color: #6b7280;
+    font-size: 14px;
+
+    span {
+      color: #2d67c0;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  }
 }
 
-ion-item {
-  margin-bottom: 16px;
-}
-
-ion-button {
-  --border-radius: 8px;
-}
-
-.error-message {
-  color: var(--ion-color-danger);
-  font-size: 14px;
-  margin-top: 8px;
+/* Ensure ion-item native part stays clean */
+ion-item::part(native) {
+  padding: 0;
+  background: transparent;
+  border-radius: 22px;
 }

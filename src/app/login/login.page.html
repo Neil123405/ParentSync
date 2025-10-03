@@ -1,93 +1,97 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar>
     <ion-title>ParentSync</ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
-<ion-content [fullscreen]="true" class="ion-padding login-background">
-  <div class="login-container">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>{{ isRegistering ? 'Create Account' : 'Welcome Back' }}</ion-card-title>
-        <ion-card-subtitle>{{ isRegistering ? 'Sign up for ParentSync' : 'Sign in to your account' }}</ion-card-subtitle>
-      </ion-card-header>
-      
-      <ion-card-content>
-        <!-- Login Fields -->
-        <ion-item>
-          <ion-label position="floating">Username</ion-label>
-          <ion-input 
-            type="text" 
-            [(ngModel)]="credentials.username"
-            required>
-          </ion-input>
-        </ion-item>
-        
-        <ion-item>
-          <ion-label position="floating">Password</ion-label>
-          <ion-input 
-            type="password" 
-            [(ngModel)]="credentials.password"
-            required>
-          </ion-input>
-        </ion-item>
+<ion-content [fullscreen]="true" class="login-background">
+  <!-- Wave Header -->
+  <div class="wave-header">
+    <h2>{{ isRegistering ? 'Join Us,' : 'Welcome Back,' }}</h2>
+    <h1>{{ isRegistering ? 'Sign Up!' : 'Log In!' }}</h1>
+  </div>
 
-        <!-- Additional Registration Fields -->
-        <div *ngIf="isRegistering">
-          <ion-item>
-            <ion-label position="floating">First Name</ion-label>
-            <ion-input 
-              type="text" 
-              [(ngModel)]="parentInfo.first_name"
-              required>
-            </ion-input>
-          </ion-item>
+  <!-- Login Form -->
+  <div class="login-form" *ngIf="!isRegistering">
+    <!-- Email Address -->
+    <div class="input-container">
+      <label>EMAIL ADDRESS</label>
+      <ion-item lines="none">
+        <ion-input type="email" [(ngModel)]="credentials.username" required placeholder="your.email@example.com"></ion-input>
+      </ion-item>
+    </div>
 
-          <ion-item>
-            <ion-label position="floating">Last Name</ion-label>
-            <ion-input 
-              type="text" 
-              [(ngModel)]="parentInfo.last_name"
-              required>
-            </ion-input>
-          </ion-item>
+    <!-- Password -->
+    <div class="input-container">
+      <label>PASSWORD</label>
+      <ion-item lines="none">
+        <ion-input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required></ion-input>
+        <ion-icon slot="end" [name]="showPassword ? 'eye-outline' : 'eye-off-outline'" (click)="showPassword = !showPassword"></ion-icon>
+      </ion-item>
+    </div>
 
-          <ion-item>
-            <ion-label position="floating">Email Address</ion-label>
-            <ion-input 
-              type="email" 
-              [(ngModel)]="parentInfo.email"
-              required>
-            </ion-input>
-          </ion-item>
+    <!-- Login Button -->
+    <ion-button expand="block" class="login-button" (click)="login()" [disabled]="!isLoginValid()">
+      Log In
+    </ion-button>
 
-          <ion-item>
-            <ion-label position="floating">Contact Number</ion-label>
-            <ion-input 
-              type="tel" 
-              [(ngModel)]="parentInfo.contactNo"
-              placeholder="09XXXXXXXXX"
-              required>
-            </ion-input>
-          </ion-item>
-        </div>
-        
-        <ion-button 
-          expand="block" 
-          (click)="isRegistering ? register() : login()" 
-          [disabled]="isRegistering ? !isRegistrationValid() : !isLoginValid()"
-          class="ion-margin-top">
-          {{ isRegistering ? 'Create Account' : 'Login' }}
-        </ion-button>
-        
-        <ion-button 
-          expand="block" 
-          fill="clear" 
-          (click)="toggleMode()"
-          class="ion-margin-top">
-          {{ isRegistering ? 'Already have an account? Login' : 'Need an account? Register' }}
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
+    <!-- Registration Link -->
+    <div class="register-link">
+      <span (click)="toggleMode()">Need an account? Register</span>
+    </div>
+  </div>
+
+  <!-- Registration Form -->
+  <div class="registration-form" *ngIf="isRegistering">
+    <!-- First Name -->
+    <div class="input-container">
+      <label>FIRST NAME</label>
+      <ion-item lines="none">
+        <ion-input type="text" [(ngModel)]="parentInfo.first_name" required placeholder="Enter your first name"></ion-input>
+      </ion-item>
+    </div>
+
+    <!-- Last Name -->
+    <div class="input-container">
+      <label>LAST NAME</label>
+      <ion-item lines="none">
+        <ion-input type="text" [(ngModel)]="parentInfo.last_name" required placeholder="Enter your last name"></ion-input>
+      </ion-item>
+    </div>
+
+    <!-- Email Address -->
+    <div class="input-container">
+      <label>EMAIL ADDRESS</label>
+      <ion-item lines="none">
+        <ion-input type="email" [(ngModel)]="parentInfo.email" required placeholder="your.email@example.com"></ion-input>
+      </ion-item>
+    </div>
+
+    <!-- Contact Number -->
+    <div class="input-container">
+      <label>CONTACT NUMBER</label>
+      <ion-item lines="none">
+        <ion-input type="tel" [(ngModel)]="parentInfo.contactNo" required placeholder="09XXXXXXXXX"></ion-input>
+      </ion-item>
+    </div>
+
+    <!-- Password -->
+    <div class="input-container">
+      <label>PASSWORD</label>
+      <ion-item lines="none">
+        <ion-input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required></ion-input>
+        <ion-icon slot="end" [name]="showPassword ? 'eye-outline' : 'eye-off-outline'" (click)="showPassword = !showPassword"></ion-icon>
+      </ion-item>
+    </div>
+
+    <!-- Register Button -->
+    <ion-button expand="block" class="login-button" (click)="register()" [disabled]="!isRegistrationValid()">
+      Sign Up
+    </ion-button>
+
+    <!-- Login Link -->
+    <div class="register-link">
+      <span (click)="toggleMode()">Already have an account? Log In</span>
+    </div>
   </div>
 </ion-content>

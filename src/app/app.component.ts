@@ -44,6 +44,11 @@ export class AppComponent implements OnInit {
     });
   }
 
+   onMenuOpen() {
+    this.parent = this.apiService.getCurrentProfile();
+  }
+
+
   async openProfileSettings() {
     const modal = await this.modalCtrl.create({
       component: AccountMenuModalComponent,

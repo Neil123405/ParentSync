@@ -11,89 +11,124 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">day-events</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <!-- Week Calendar Navigation (arrows only, centered, small text) -->
-  <!-- <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px; gap: 18px;">
-    <ion-button fill="clear" shape="round" size="small" (click)="previousWeek()" style="font-size: 1.7rem;">
-      <ion-icon name="chevron-back-outline"></ion-icon>
-    </ion-button>
-    <span style="font-weight: 600; font-size: 0.95rem; white-space: nowrap;">
-      {{ weekDays[0] | date:'MMM d' }} - {{ weekDays[6] | date:'MMM d, yyyy' }}
-    </span>
-    <ion-button fill="clear" shape="round" size="small" (click)="nextWeek()" style="font-size: 1.7rem;">
-      <ion-icon name="chevron-forward-outline"></ion-icon>
-    </ion-button>
-  </div> -->
-
-  <!-- Week Calendar -->
-  <!-- <app-week-calendar
-    [selectedDate]="date"
-    [weekDays]="weekDays"
-    (dayClick)="onWeekDayClick($event)">
-  </app-week-calendar> -->
 
   <full-calendar #fc [options]="calendarOptions"></full-calendar>
-  <!-- Events List -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title style="font-size: 1.05rem;">Events for {{ selectedDay | date:'MMM d, yyyy' }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let event of filteredEvents" (click)="openEventDetail(event)">
-          <ion-label style="font-size: 0.95rem;">
-            <h2 style="font-size: 1rem;">{{ event.title }}</h2>
-            <p style="font-size: 0.92rem;">{{ event.description }}</p>
-            <p *ngIf="event.first_name && event.last_name" style="font-size: 0.92rem;">
-              <ion-icon name="person-circle-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-              <strong>Student:</strong> {{ event.first_name }} {{ event.last_name }}
-            </p>
-            <p *ngIf="event.time" style="font-size: 0.92rem;">
-              <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-              <strong>Time:</strong> {{ event.time }}</p>
-            <p *ngIf="event.location" style="font-size: 0.92rem;">
-              <ion-icon name="location-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-              <strong>Location:</strong> {{ event.location }}</p>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="filteredEvents.length === 0">
-          <ion-label style="font-size: 0.95rem;">No events for this day.</ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
 
-  <!-- Consent Forms List -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title style="font-size: 1.05rem;">Consent Forms</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let form of filteredForms" (click)="openConsentFormDetail(form)">
-          <ion-label style="font-size: 0.95rem;">
-            <h2 style="font-size: 1rem;">{{ form.title }}</h2>
-            <p style="font-size: 0.92rem;">{{ form.description }}</p>
-            <p *ngIf="form.first_name && form.last_name" style="font-size: 0.92rem;">
-              <ion-icon name="person-circle-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-              <strong>Student:</strong> {{ form.first_name }} {{ form.last_name }}
-            </p>
-            <p *ngIf="form.deadline" style="font-size: 0.92rem;">
-              <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-              <strong>Deadline:</strong> {{ form.deadline | date:'mediumDate' }}</p>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="filteredForms.length === 0">
-          <ion-label style="font-size: 0.95rem;">No consent forms for this day.</ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
-  <!-- Add this at the very end of your ion-content in day-events.page.html -->
-<div style="height: 80px;"></div>
+  <!-- Modern Events Card -->
+  <div class="modern-card events-card">
+    <div class="card-header">
+      <div class="header-icon-wrapper events-theme">
+        <ion-icon name="calendar" class="header-icon"></ion-icon>
+      </div>
+      <div class="header-content">
+        <h2 class="card-title">Events for {{ selectedDay | date:'MMM d, yyyy' }}</h2>
+        <p class="card-subtitle">{{ filteredEvents.length }} event{{ filteredEvents.length !== 1 ? 's' : '' }} scheduled</p>
+      </div>
+    </div>
+
+    <div class="card-body" *ngIf="filteredEvents.length > 0; else noEventsTemplate">
+      <div class="event-item" 
+           *ngFor="let event of filteredEvents; let i = index" 
+           (click)="openEventDetail(event)"
+           [style.animation-delay]="i * 100 + 'ms'">
+        
+        <div class="event-date-badge">
+          <span class="date-day">{{ event.start ? (event.start | date:'dd') : (event.date | date:'dd') }}</span>
+          <span class="date-month">{{ event.start ? (event.start | date:'MMM') : (event.date | date:'MMM') }}</span>
+        </div>
+        
+        <div class="event-content">
+          <h3 class="event-title">{{ event.title }}</h3>
+          <div class="event-details">
+            <div class="event-time" *ngIf="event.time">
+              <ion-icon name="time-outline" class="detail-icon"></ion-icon>
+              <span>{{ event.time }}</span>
+            </div>
+            <div class="event-description" *ngIf="event.description">
+              <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
+              <span>{{ event.description }}</span>
+            </div>
+            <div class="event-student" *ngIf="event.first_name && event.last_name">
+              <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
+              <span>{{ event.first_name }} {{ event.last_name }}</span>
+            </div>
+            <div class="event-student" *ngIf="event.location">
+              <ion-icon name="location-outline" class="detail-icon"></ion-icon>
+              <span>{{ event.location }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="event-arrow">
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noEventsTemplate>
+      <div class="empty-state">
+        <ion-icon name="calendar-clear-outline" class="empty-icon"></ion-icon>
+        <h3 class="empty-title">No Events Today</h3>
+        <p class="empty-subtitle">Your calendar is clear for this day</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Modern Consent Forms Card -->
+  <div class="modern-card forms-card">
+    <div class="card-header">
+      <div class="header-icon-wrapper forms-theme">
+        <ion-icon name="document-text" class="header-icon"></ion-icon>
+      </div>
+      <div class="header-content">
+        <h2 class="card-title">Consent Forms</h2>
+        <p class="card-subtitle">{{ filteredForms.length }} form{{ filteredForms.length !== 1 ? 's' : '' }} pending</p>
+      </div>
+    </div>
+
+    <div class="card-body" *ngIf="filteredForms.length > 0; else noFormsTemplate">
+      <div class="form-item" 
+           *ngFor="let form of filteredForms; let i = index" 
+           (click)="openConsentFormDetail(form)"
+           [style.animation-delay]="i * 100 + 'ms'">
+        
+        <div class="form-priority-badge">
+          <ion-icon name="alert-circle" class="priority-icon"></ion-icon>
+        </div>
+        
+        <div class="form-content">
+          <h3 class="form-title">{{ form.title }}</h3>
+          <div class="form-details">
+            <div class="form-deadline" *ngIf="form.deadline">
+              <ion-icon name="time-outline" class="detail-icon"></ion-icon>
+              <span>Deadline: {{ form.deadline | date:'mediumDate' }}</span>
+            </div>
+            <div class="form-description" *ngIf="form.description">
+              <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
+              <span>{{ form.description }}</span>
+            </div>
+            <div class="form-student" *ngIf="form.first_name && form.last_name">
+              <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
+              <span>{{ form.first_name }} {{ form.last_name }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-arrow">
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noFormsTemplate>
+      <div class="empty-state">
+        <ion-icon name="document-text-outline" class="empty-icon"></ion-icon>
+        <h3 class="empty-title">No Pending Forms</h3>
+        <p class="empty-subtitle">All consent forms are up to date</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Dynamic bottom spacing -->
+  <div style="height: 60px;"></div>
 </ion-content>

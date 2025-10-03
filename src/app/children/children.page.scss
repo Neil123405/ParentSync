@@ -2,7 +2,8 @@
 .students-horizontal-section {
   border-bottom: 1px solid var(--ion-color-light);
   margin-bottom: 16px;
-  padding-top: 64px; 
+  padding-top: 34px; 
+  overflow: hidden;
 }
 
 .students-horizontal-container {
@@ -450,3 +451,701 @@ ion-header, ion-toolbar {
     background: #e8f5e9;
   }
 }
+
+
+
+.students-carousel-container {
+  position: relative;
+  width: 100%;
+  height: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.students-carousel-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 420px;
+  overflow: hidden;
+  // scroll-behavior: smooth;
+  padding: 20px 0;
+  position: relative;
+  perspective: 1200px;
+  
+  // Hide scrollbar but keep functionality
+  // scrollbar-width: none;
+  // -ms-overflow-style: none;
+  // &::-webkit-scrollbar { 
+  //   display: none; 
+  // }
+}
+
+.student-card-carousel {
+  min-width: 180px;
+  width: 180px;
+  height: 360px;
+  margin: 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: white;
+  border-radius: 20px;
+  padding: 32px 16px 16px 16px; // Increased padding for better proportions
+  text-align: center;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: none;
+  border: 1px solid #e0e0e0; // Added subtle border instead of shadow
+  position: absolute;
+  transform-origin: center center;
+  transform: scale(0.8) translateX(0) rotateY(45deg);
+  opacity: 1;
+  filter: blur(0);
+  z-index: 10;
+    left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1) rotateY(0deg);
+  
+ &.left {
+    transform: translate(-180%, -50%) scale(0.8) rotateY(45deg);
+    opacity: 0.5;
+    filter: blur(2px);
+    z-index: 1;
+    pointer-events: auto;
+
+    // Stack multiple left cards
+    &:nth-child(1) { transform: translate(-180%, -50%) scale(0.8) rotateY(45deg); }
+    &:nth-child(2) { transform: translate(-240%, -50%) scale(0.7) rotateY(60deg); opacity: 0.3; }
+    &:nth-child(3) { transform: translate(-300%, -50%) scale(0.6) rotateY(75deg); opacity: 0.1; }
+  }
+
+    // Right cards
+  &.right {
+    transform: translate(80%, -50%) scale(0.8) rotateY(-45deg);
+    opacity: 0.5;
+    filter: blur(2px);
+    z-index: 1;
+    pointer-events: auto;
+    
+    // Stack multiple right cards
+    &:nth-child(1) { transform: translate(80%, -50%) scale(0.8) rotateY(-45deg); }
+    &:nth-child(2) { transform: translate(140%, -50%) scale(0.7) rotateY(-60deg); opacity: 0.3; }
+    &:nth-child(3) { transform: translate(200%, -50%) scale(0.6) rotateY(-75deg); opacity: 0.1; }
+  }
+
+  // Side cards (partially visible)
+  // &:not(.center) {
+  //   transform: scale(0.85);
+  //   opacity: 0.6;
+  //   filter: blur(1px);
+  //   pointer-events: auto;
+  //   cursor: pointer;
+  // }
+  
+  // Center card (fully visible and prominent)
+  &.center {
+    transform: scale(1) translateX(0) rotateY(0deg);
+    opacity: 1;
+    filter: blur(0);
+    box-shadow: none;
+    border: 2px solid #667eea; // Enhanced border for center card
+    z-index: 10;
+    width: 240px;
+    height: 400px;
+    border-radius: 24px;
+    padding: 40px 20px 20px 20px; // Increased padding for center card
+  }
+  
+  &.active {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border: 2px solid #4caf50;
+  }
+  
+  &.long-pressed {
+    background: #e8f5e9 !important;
+    transform: scale(0.95);
+    transition: all 0.2s ease;
+  }
+
+  .student-avatar {
+    width: 100%;
+    height: 65%;
+    transition: all 0.5s ease;
+  }
+
+  .student-avatar img,
+  .student-avatar ion-icon {
+    width: 98%;
+    height: 98%;
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: none;
+    border: 1px solid #fff;
+    transition: all 0.5s ease;
+  }
+  
+  // Enhanced styling for center card
+  &.center .student-avatar img,
+  &.center .student-avatar ion-icon {
+    border-radius: 20px;
+    border: 2px solid #e0e0e0; // Enhanced border for center card
+    box-shadow: none;
+  }
+
+  .student-info {
+    flex: 1 1 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease;
+    margin-top: 12px; // Add some spacing from avatar
+
+    h4 {
+      margin: 2px 0 0 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+      width: 100%;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: font-size 0.5s ease;
+    }
+
+    p {
+      margin: 2px 0 0 0;
+      font-size: 0.9rem;
+      color: var(--ion-color-medium);
+      font-weight: 500;
+      width: 100%;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: font-size 0.5s ease;
+    }
+  }
+  
+  // Enhanced text for center card
+  &.center .student-info h4 {
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+  
+  &.center .student-info p {
+    font-size: 1.2rem;
+  }
+
+  .student-badge {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    background: #3fff38 !important;
+    color: #222 !important;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    z-index: 11;
+    padding: 0;
+    box-shadow: none;
+    pointer-events: none;
+    transition: all 0.5s ease;
+  }
+  
+  // Enhanced badge for center card
+  &.center .student-badge {
+    min-width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
+    top: -19px; // Adjusted for larger center card
+    right: -19px;
+    box-shadow: none;
+  }
+}
+
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 20;
+  box-shadow: none;
+  
+  &:hover:not(:disabled) {
+    background: #f5f5f5;
+    border-color: #ccc;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: none;
+  }
+  
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  
+  &.nav-arrow-left {
+    left: 20px;
+  }
+  
+  &.nav-arrow-right {
+    right: 20px;
+  }
+}
+
+// Carousel indicators
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  height: 20px;
+}
+
+.indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ion-color-light);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &.active {
+    background: var(--ion-color-primary);
+    transform: scale(1.3);
+    box-shadow: none;
+  }
+  
+  &:hover {
+    background: var(--ion-color-medium);
+    transform: scale(1.2);
+  }
+}
+
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 20;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  
+  &:hover:not(:disabled) {
+    background: #f5f5f5;
+    border-color: #ccc;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  
+  &.nav-arrow-left {
+    left: 20px;
+  }
+  
+  &.nav-arrow-right {
+    right: 20px;
+  }
+}
+
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  height: 25px;
+}
+
+.indicator-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ddd;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &.active {
+    background: var(--ion-color-primary);
+    transform: scale(1.4);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+  }
+  
+  &:hover {
+    background: var(--ion-color-medium);
+    transform: scale(1.2);
+  }
+}
+
+
+// Update responsive design for taller cards
+@media (max-width: 768px) {
+  .student-card-carousel {
+    width: 140px;
+    height: 280px; // Increased height for mobile
+    
+    &.center {
+      width: 180px;
+      height: 320px; // Increased height for mobile center card
+    }
+    
+    &.left {
+      transform: translate(-160%, -50%) scale(0.7) rotateY(45deg);
+    }
+    
+    &.right {
+      transform: translate(60%, -50%) scale(0.7) rotateY(-45deg);
+    }
+  }
+  
+  .students-carousel-container {
+    height: 380px; // Adjusted for mobile
+  }
+  
+  .students-carousel-wrapper {
+    height: 350px; // Adjusted for mobile
+  }
+  
+  .nav-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    
+    &.nav-arrow-left {
+      left: 10px;
+    }
+    
+    &.nav-arrow-right {
+      right: 10px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .student-card-carousel {
+    width: 120px;
+    height: 240px; // Increased height for small mobile
+    
+    &.center {
+      width: 160px;
+      height: 280px; // Increased height for small mobile center card
+    }
+    
+    &.left, &.right {
+      transform: scale(0.6) translateX(-60px) rotateY(45deg);
+    }
+    
+    &.right {
+      transform: scale(0.6) translateX(60px) rotateY(-45deg);
+    }
+  }
+  
+  .students-carousel-container {
+    height: 340px; // Adjusted for small mobile
+  }
+  
+  .students-carousel-wrapper {
+    height: 310px; // Adjusted for small mobile
+  }
+}
+
+// ... rest of existing styles ...
+
+// Tasks section - Card-based design
+.tasks-section {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.task-card {
+  position: relative;
+  border-radius: 20px;
+  padding: 20px;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+  
+  // Color variants
+  &.task-card-blue {
+    background: linear-gradient(135deg, #5b9bd5 0%, #4a8bc2 100%);
+    color: white;
+  }
+  
+  &.task-card-pink {
+    background: linear-gradient(135deg, #f06292 0%, #ec407a 100%);
+    color: white;
+  }
+  
+  &.task-card-purple {
+    background: linear-gradient(135deg, #9575cd 0%, #7e57c2 100%);
+    color: white;
+  }
+  
+  &.task-card-orange {
+    background: linear-gradient(135deg, #ff9f5a 0%, #ff8533 100%);
+    color: white;
+  }
+  
+  &.task-card-green {
+    background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%);
+    color: white;
+  }
+}
+
+.task-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.task-icon-wrapper {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  
+  .task-icon {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+  }
+}
+
+.task-badge-top {
+  position: absolute;
+  top: -8px;
+  right: 40px;
+  background: white;
+  color: #333;
+  min-width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.task-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: white;
+  letter-spacing: 0.3px;
+  text-align: center;
+}
+
+.task-menu {
+  font-size: 24px;
+  color: white;
+  opacity: 0.8;
+  
+  ion-icon {
+    font-size: 24px;
+  }
+}
+
+.task-card-body {
+  flex: 1;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.task-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: white;
+  letter-spacing: 0.3px;
+  text-align: center;
+}
+
+.task-subtitle {
+  font-size: 14px;
+  margin: 0 0 16px 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+}
+
+.task-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    
+    .stat-number {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      display: block;
+      line-height: 1.2;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 2px;
+      text-transform: lowercase;
+    }
+  }
+}
+
+.task-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  
+  .ranking-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+  }
+  
+  .ranking-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .tasks-section {
+    padding: 12px;
+    gap: 16px;
+  }
+  
+  .task-card {
+    min-height: 160px;
+    padding: 16px;
+  }
+  
+  .task-icon-wrapper {
+    width: 100px;
+    height: 100px;
+    
+    .task-icon {
+      width: 70px;
+      height: 70px;
+    }
+  }
+  
+  .task-title {
+    font-size: 18px;
+  }
+  
+  .task-subtitle {
+    font-size: 13px;
+  }
+  
+  .task-stats .stat-item .stat-number {
+    font-size: 18px;
+  }
+}
+
+.task-preview {
+  .preview-item {
+    margin-bottom: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .preview-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      line-height: 1.3;
+    }
+    
+    .preview-date {
+      margin: 2px 0 0 0;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 400;
+    }
+  }
+  
+  .no-data {
+    margin: 8px 0 0 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+    text-align: center;
+  }
+}
+
+// Remove old task button styles (keep for reference or remove completely)
+// .task-btn, .task-btn-wrapper, .giant-btn, etc. can be removed if no longer needed

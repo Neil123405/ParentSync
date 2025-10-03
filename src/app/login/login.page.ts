@@ -36,6 +36,10 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     private router: Router
   ) { }
 
+  showPassword = false;
+  rememberMe = false;
+
+
   ngOnInit() {
     this.credentials = {
       username: '',

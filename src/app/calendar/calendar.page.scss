@@ -466,3 +466,500 @@ ion-header {
 }
 
 
+
+
+/* filepath: c:\Users\et cetera\Desktop\Ionic\ParentSync\src\app\calendar\calendar.page.scss */
+
+// Modern Tab Switcher
+.modern-tab-switcher {
+  margin: 20px 16px;
+  padding: 0;
+}
+
+.tab-slider-container {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 4px;
+  display: flex;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.tab-background-slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+.modern-tab-button {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 16px 20px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  .tab-icon {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.3s ease;
+  }
+
+  .tab-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+  }
+
+  &.active {
+    .tab-icon,
+    .tab-text {
+      color: white;
+    }
+
+    .tab-icon {
+      transform: scale(1.1);
+    }
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// Modern Content Wrapper
+.modern-content-wrapper {
+  position: relative;
+  margin: 0 16px;
+  min-height: auto; // Remove fixed height
+  margin-bottom: 20px;
+}
+
+.modern-card-container {
+  position: relative;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  margin-bottom: 20px; // Add margin for proper spacing
+
+  &.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  &.hidden {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+    position: absolute; // Only hide with absolute positioning
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+.modern-card {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+// Card Header
+.card-header {
+  padding: 24px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.header-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+
+  &.events-theme {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  &.forms-theme {
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+  }
+
+  .header-icon {
+    font-size: 1.5rem;
+    color: white;
+  }
+}
+
+.header-content {
+  flex: 1;
+
+  .card-title {
+    margin: 0 0 4px 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2c3e50;
+    letter-spacing: -0.3px;
+  }
+
+  .card-subtitle {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    font-weight: 500;
+  }
+}
+
+// Card Body
+.card-body {
+  padding: 8px 0;
+}
+
+// Event Items
+.event-item,
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: slideInUp 0.6s ease forwards;
+  opacity: 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: rgba(102, 126, 234, 0.02);
+    transform: translateX(4px);
+  }
+
+  &:active {
+    transform: scale(0.98) translateX(4px);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Event Date Badge
+.event-date-badge {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+
+  .date-day {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+  }
+
+  .date-month {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// Form Priority Badge
+.form-priority-badge {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  box-shadow: 0 4px 16px rgba(78, 205, 196, 0.2);
+
+  .priority-icon {
+    font-size: 1.5rem;
+    color: white;
+  }
+}
+
+// Content Sections
+.event-content,
+.form-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.event-title,
+.form-title {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  line-height: 1.3;
+}
+
+.event-details,
+.form-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.event-time,
+.event-description,
+.event-student,
+.form-deadline,
+.form-description,
+.form-student {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+
+  .detail-icon {
+    font-size: 0.9rem;
+    color: #bdc3c7;
+    flex-shrink: 0;
+  }
+
+  span {
+    line-height: 1.4;
+  }
+}
+
+// Arrow Icons
+.event-arrow,
+.form-arrow {
+  margin-left: 12px;
+
+  .arrow-icon {
+    font-size: 1.1rem;
+    color: #bdc3c7;
+    transition: all 0.3s ease;
+  }
+}
+
+.event-item:hover .arrow-icon,
+.form-item:hover .arrow-icon {
+  color: #667eea;
+  transform: translateX(4px);
+}
+
+// Empty States
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: #ecf0f1;
+    margin-bottom: 16px;
+  }
+
+  .empty-title {
+    margin: 0 0 8px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #7f8c8d;
+  }
+
+  .empty-subtitle {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #bdc3c7;
+  }
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+  .modern-tab-switcher {
+    margin: 16px 12px;
+  }
+
+  .modern-content-wrapper {
+    margin: 0 12px;
+  }
+
+  .card-header {
+    padding: 20px;
+    gap: 12px;
+
+    .header-icon-wrapper {
+      width: 48px;
+      height: 48px;
+
+      .header-icon {
+        font-size: 1.3rem;
+      }
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+    }
+  }
+
+  .event-item,
+  .form-item {
+    padding: 16px 20px;
+  }
+
+  .event-date-badge,
+  .form-priority-badge {
+    width: 52px;
+    height: 52px;
+    margin-right: 12px;
+  }
+
+  .event-title,
+  .form-title {
+    font-size: 1rem;
+  }
+
+  .modern-tab-button {
+    padding: 14px 16px;
+
+    .tab-text {
+      font-size: 0.9rem;
+    }
+
+    .tab-icon {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// Additional calendar-themed touches
+.events-card {
+  border-top: 4px solid #667eea;
+}
+
+.forms-card {
+  border-top: 4px solid #4ecdc4;
+}
+
+// Smooth transitions for better UX
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+// ... rest of existing styles ...
+
+full-calendar {
+  display: block;
+  min-height: 400px;
+  max-height: 80vh; // Limit calendar height to 80% of viewport
+  overflow: auto;
+}
+
+// Ensure proper layout flow
+.modern-card {
+  margin-bottom: 0; // Remove any bottom margin from cards
+}
+
+// Tab switcher responsive adjustments
+.modern-tab-switcher {
+  margin: 20px 16px;
+  padding: 0;
+  position: sticky;
+  top: 20px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+// Responsive adjustments for different screen sizes
+@media (max-width: 768px) {
+  .modern-content-wrapper {
+    margin: 0 12px;
+  }
+  
+  .content-bottom-spacer {
+    height: 40px;
+  }
+  
+  full-calendar {
+    max-height: 70vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-content-wrapper {
+    margin: 0 8px;
+  }
+  
+  .content-bottom-spacer {
+    height: 30px;
+  }
+  
+  full-calendar {
+    max-height: 60vh;
+    min-height: 300px;
+  }
+}
+
+// Ensure content flows properly on very tall screens
+@media (min-height: 800px) {
+  .content-bottom-spacer {
+    height: 80px;
+  }
+}
+
+// Handle very short screens
+@media (max-height: 600px) {
+  .content-bottom-spacer {
+    height: 20px;
+  }
+  
+  full-calendar {
+    min-height: 250px;
+    max-height: 50vh;
+  }
+}

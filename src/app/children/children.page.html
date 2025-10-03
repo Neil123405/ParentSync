@@ -1,6 +1,8 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title class="children-title">Children</ion-title>
+    <ion-title class="children-title">
+      <ion-icon name="people-outline" style="font-size: 1.5rem; margin-right: 8px; vertical-align: middle;"></ion-icon>
+      Children</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -33,35 +35,60 @@
   <!-- Horizontal Students Section -->
   <!-- List of Children -->
   <div class="students-horizontal-section ion-padding-top">
-    <div class="students-horizontal-container">
-      <!-- there are a lot of children, so with class.active we can highlight the selected child -->
-      <div *ngFor="let child of laravelChildren" class="student-card-horizontal"
-        [class.active]="selectedChild?.student_id === child.student_id"
-        [class.long-pressed]="longPressedId === child.student_id" (click)="selectChild(child)"
-        (mousedown)="startPress($event, child)" (mouseup)="endPress()" (mouseleave)="endPress()"
-        (touchstart)="startPress($event, child)" (touchend)="endPress()" style="position: relative;">
-        <!-- Badge at top right -->
-        <span class="student-badge">
-          {{
-          (consentFormCounts[child.student_id] || 0) +
-          (schoolEventCounts[child.student_id] || 0) +
-          (announcementCounts[child.student_id] || 0)
-          }}
-        </span>
-        <div class="student-avatar">
-          <ng-container *ngIf="child.photo_url && child.photo_url.startsWith('http'); else childNoPhoto">
-            <img [src]="child?.photo_url" alt="Student Photo" />
-          </ng-container>
-          <ng-template #childNoPhoto>
-            <ion-icon name="person-circle"></ion-icon>
-          </ng-template>
-        </div>
-        <div class="student-info">
-          <h4>{{ child.first_name }}</h4>
-          <h4>{{ child.last_name }}</h4>
-          <p>Grade {{ child.grade_level }}</p>
+    <div class="students-carousel-container">
+      <!-- Navigation arrows -->
+      <button class="nav-arrow nav-arrow-left" [disabled]="centerCardIndex === 0" (click)="goToPrevCard()">
+        <ion-icon name="chevron-back"></ion-icon>
+      </button>
+
+      <button class="nav-arrow nav-arrow-right" [disabled]="centerCardIndex === laravelChildren.length - 1"
+        (click)="goToNextCard()">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </button>
+
+      <div class="students-carousel-wrapper" #carouselWrapper (pan)="onPan($event)" (panend)="onPanEnd($event)"
+        (swipe)="onSwipe($event)">
+
+        <!-- there are a lot of children, so with class.active we can highlight the selected child -->
+        <div *ngFor="let child of laravelChildren; let i = index" class="student-card-carousel"
+          [class.active]="selectedChild?.student_id === child.student_id" [class.center]="centerCardIndex === i"
+          [class.left]="i < centerCardIndex" [class.right]="i > centerCardIndex"
+          [class.long-pressed]="longPressedId === child.student_id" (click)="selectChildAndCenter(child, i)"
+          (mousedown)="startPress($event, child)" (mouseup)="endPress()" (mouseleave)="endPress()"
+          (touchstart)="startPress($event, child)" (touchend)="endPress()" [style.transform]="getCardTransform(i)"
+          style="position: absolute;">
+
+          <!-- Badge at top right -->
+          <span class="student-badge">
+            {{
+            (consentFormCounts[child.student_id] || 0) +
+            (schoolEventCounts[child.student_id] || 0) +
+            (announcementCounts[child.student_id] || 0)
+            }}
+          </span>
+
+          <div class="student-avatar">
+            <ng-container *ngIf="child.photo_url && child.photo_url.startsWith('http'); else childNoPhoto">
+              <img [src]="child?.photo_url" alt="Student Photo" />
+            </ng-container>
+            <ng-template #childNoPhoto>
+              <ion-icon name="person-circle"></ion-icon>
+            </ng-template>
+          </div>
+
+          <div class="student-info">
+            <h4>{{ child.first_name }}</h4>
+            <h4>{{ child.last_name }}</h4>
+            <p>Grade {{ child.grade_level }}</p>
+          </div>
         </div>
       </div>
+
+      <!-- Navigation indicators -->
+      <!-- <div class="carousel-indicators" *ngIf="laravelChildren.length > 1">
+        <span *ngFor="let child of laravelChildren; let i = index" class="indicator-dot"
+          [class.active]="centerCardIndex === i" (click)="goToCard(i)"></span>
+      </div> -->
     </div>
   </div>
 
@@ -80,41 +107,130 @@
   </div>
 
   <!-- Consent Forms and School Events Buttons under Tasks -->
-  <div *ngIf="activeSection === 'tasks' && selectedChild" class="ion-padding tasks-buttons">
-    <div class="task-btn-wrapper">
-      <ion-button expand="block" class="task-btn giant-btn" (click)="goToConsentForms(selectedChild)">
-        <span class="btn-content">
-          <img src="assets/images/consent.png" alt="Consent Forms" class="task-img-giant" />
-          <span class="btn-label">Consent Forms</span>
-        </span>
-      </ion-button>
-      <span class="task-badge">
+  <!-- Replace the existing tasks-buttons div (lines 110-144) with: -->
+
+<!-- Consent Forms and School Events Buttons under Tasks -->
+<div *ngIf="activeSection === 'tasks' && selectedChild" class="tasks-section">
+  <div class="task-card task-card-blue" (click)="goToConsentForms(selectedChild)">
+    <div class="task-card-header">
+      <div class="task-icon-wrapper">
+        <img src="assets/images/consent.png" alt="Consent Forms" class="task-icon" />
+      </div>
+      <div class="task-badge-top">
         {{ consentFormCounts[selectedChild.student_id] || 0 }}
-      </span>
+      </div>
     </div>
-    <div class="task-btn-wrapper">
-      <ion-button expand="block" class="task-btn giant-btn" (click)="goToSchoolEvents(selectedChild)">
-        <span class="btn-content">
-          <img src="assets/images/events.png" alt="School Events" class="task-img-giant" />
-          <span class="btn-label">School Events</span>
-        </span>
-      </ion-button>
-      <span class="task-badge">
+    <div class="task-card-body">
+      <h3 class="task-title">Consent Forms</h3>
+    </div>
+    
+    <!-- <div class="task-card-body">
+      <h3 class="task-title">Consent Forms</h3>
+      <p class="task-subtitle">Pending documents</p>
+      
+      <div class="task-stats">
+        <div class="stat-item">
+          <span class="stat-number">{{ consentFormCounts[selectedChild.student_id] || 0 }}</span>
+          <span class="stat-label">pending</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">--</span>
+          <span class="stat-label">signed</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">--</span>
+          <span class="stat-label">total</span>
+        </div>
+      </div>
+    </div> -->
+    
+    <!-- <div class="task-card-footer">
+      <span class="ranking-label">Priority</span>
+      <span class="ranking-number">High</span>
+    </div> -->
+  </div>
+
+  <div class="task-card task-card-pink" (click)="goToSchoolEvents(selectedChild)">
+    <div class="task-card-header">
+      <div class="task-icon-wrapper">
+        <img src="assets/images/events.png" alt="School Events" class="task-icon" />
+      </div>
+      <div class="task-badge-top">
         {{ schoolEventCounts[selectedChild.student_id] || 0 }}
-      </span>
+      </div>
     </div>
-    <div class="task-btn-wrapper">
-      <ion-button expand="block" class="task-btn giant-btn" (click)="goToStudentAnnouncements(selectedChild)">
-        <span class="btn-content">
-          <img src="assets/images/announcements.png" alt="Announcements" class="task-img-giant" />
-          <span class="btn-label">Announcements</span>
-        </span>
-      </ion-button>
-      <span class="task-badge">
+     <div class="task-card-body">
+      <h3 class="task-title">Events</h3>
+    </div>
+    
+    <!-- <div class="task-card-body">
+      <h3 class="task-title">School Events</h3>
+      <p class="task-subtitle">Upcoming activities</p>
+      
+      <div class="task-stats">
+        <div class="stat-item">
+          <span class="stat-number">{{ schoolEventCounts[selectedChild.student_id] || 0 }}</span>
+          <span class="stat-label">upcoming</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">--</span>
+          <span class="stat-label">attended</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">--</span>
+          <span class="stat-label">total</span>
+        </div>
+      </div>
+    </div> -->
+    
+    <!-- <div class="task-card-footer">
+      <span class="ranking-label">Priority</span>
+      <span class="ranking-number">Medium</span>
+    </div> -->
+  </div>
+
+  <div class="task-card task-card-purple" (click)="goToStudentAnnouncements(selectedChild)">
+    <div class="task-card-header">
+      <div class="task-icon-wrapper">
+        <img src="assets/images/announcements.png" alt="Announcements" class="task-icon" />
+      </div>
+      <div class="task-badge-top">
         {{ announcementCounts[selectedChild.student_id] || 0 }}
-      </span>
+      </div>
+    </div>
+    
+    <!-- <div class="task-card-body">
+      <h3 class="task-title">Announcements</h3>
+      <p class="task-subtitle">Recent updates</p>
+      
+      <div class="task-stats">
+        <div class="stat-item">
+          <span class="stat-number">{{ announcementCounts[selectedChild.student_id] || 0 }}</span>
+          <span class="stat-label">unread</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">--</span>
+          <span class="stat-label">read</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">--</span>
+          <span class="stat-label">total</span>
+        </div>
+      </div>
+    </div> -->
+    
+    <!-- <div class="task-card-footer">
+      <span class="ranking-label">Priority</span>
+      <span class="ranking-number">Low</span>
+    </div> -->
+    <div class="task-card-body">
+      <h3 class="task-title">Announcements</h3>
     </div>
   </div>
+</div>
+
+<!-- Consent Forms Section -->
+
 
   <!-- Announcements Section
 <div *ngIf="activeSection === 'announcements' && selectedChild" class="ion-padding">
@@ -157,7 +273,8 @@
     <ion-item *ngFor="let form of signedConsentForms[selectedChild.student_id]" (click)="openConsentFormDetail(form)">
       <ion-label>
         <h3>{{ form.title }}</h3>
-        <p><ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>Signed at: {{ form.signed_at | date:'medium' }}</p>
+        <p><ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>Signed at: {{
+          form.signed_at | date:'medium' }}</p>
       </ion-label>
     </ion-item>
     <ion-item *ngIf="signedConsentForms[selectedChild.student_id]?.length === 0">
