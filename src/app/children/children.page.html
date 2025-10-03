@@ -109,22 +109,29 @@
   <!-- Consent Forms and School Events Buttons under Tasks -->
   <!-- Replace the existing tasks-buttons div (lines 110-144) with: -->
 
-<!-- Consent Forms and School Events Buttons under Tasks -->
-<div *ngIf="activeSection === 'tasks' && selectedChild" class="tasks-section">
-  <div class="task-card task-card-blue" (click)="goToConsentForms(selectedChild)">
-    <div class="task-card-header">
-      <div class="task-icon-wrapper">
-        <img src="assets/images/consent.png" alt="Consent Forms" class="task-icon" />
+  <!-- Consent Forms and School Events Buttons under Tasks -->
+  <div *ngIf="activeSection === 'tasks' && selectedChild" class="tasks-section">
+    <div class="task-card task-card-blue" (click)="goToConsentForms(selectedChild)">
+      <div class="task-card-header">
+        <div class="task-icon-wrapper">
+          <img src="assets/images/consent.png" alt="Consent Forms" class="task-icon" />
+        </div>
+        <div class="task-badge-top">
+          {{ consentFormCounts[selectedChild.student_id] || 0 }}
+        </div>
       </div>
-      <div class="task-badge-top">
-        {{ consentFormCounts[selectedChild.student_id] || 0 }}
+      <div class="task-card-body">
+        <h3 class="task-title">Consent Forms</h3>
+        <div class="task-preview">
+          <div *ngFor="let form of upcomingConsentForms.slice(0, 3); let i = index" class="preview-item">
+            <p class="preview-title">{{ form.title }}</p>
+            <p class="preview-date">Due: {{ form.deadline | date:'MMM d' }}</p>
+          </div>
+          <p *ngIf="upcomingConsentForms.length === 0" class="no-data">No upcoming forms</p>
+        </div>
       </div>
-    </div>
-    <div class="task-card-body">
-      <h3 class="task-title">Consent Forms</h3>
-    </div>
-    
-    <!-- <div class="task-card-body">
+
+      <!-- <div class="task-card-body">
       <h3 class="task-title">Consent Forms</h3>
       <p class="task-subtitle">Pending documents</p>
       
@@ -143,63 +150,45 @@
         </div>
       </div>
     </div> -->
-    
-    <!-- <div class="task-card-footer">
+
+      <!-- <div class="task-card-footer">
       <span class="ranking-label">Priority</span>
       <span class="ranking-number">High</span>
     </div> -->
-  </div>
+    </div>
 
-  <div class="task-card task-card-pink" (click)="goToSchoolEvents(selectedChild)">
-    <div class="task-card-header">
-      <div class="task-icon-wrapper">
-        <img src="assets/images/events.png" alt="School Events" class="task-icon" />
+    <div class="task-card task-card-pink" (click)="goToSchoolEvents(selectedChild)">
+      <div class="task-card-header">
+        <div class="task-icon-wrapper">
+          <img src="assets/images/events.png" alt="School Events" class="task-icon" />
+        </div>
+        <div class="task-badge-top">
+          {{ schoolEventCounts[selectedChild.student_id] || 0 }}
+        </div>
       </div>
-      <div class="task-badge-top">
-        {{ schoolEventCounts[selectedChild.student_id] || 0 }}
+      <div class="task-card-body">
+        <h3 class="task-title">Events</h3>
+        <div class="task-preview">
+          <div *ngFor="let event of upcomingEvents.slice(0, 3); let i = index" class="preview-item">
+            <p class="preview-title">{{ event.title }}</p>
+            <p class="preview-date">Date: {{ event.date | date:'MMM d' }}</p>
+          </div>
+          <p *ngIf="upcomingEvents.length === 0" class="no-data">No upcoming events</p>
+        </div>
       </div>
     </div>
-     <div class="task-card-body">
-      <h3 class="task-title">Events</h3>
-    </div>
-    
-    <!-- <div class="task-card-body">
-      <h3 class="task-title">School Events</h3>
-      <p class="task-subtitle">Upcoming activities</p>
-      
-      <div class="task-stats">
-        <div class="stat-item">
-          <span class="stat-number">{{ schoolEventCounts[selectedChild.student_id] || 0 }}</span>
-          <span class="stat-label">upcoming</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">--</span>
-          <span class="stat-label">attended</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">--</span>
-          <span class="stat-label">total</span>
-        </div>
-      </div>
-    </div> -->
-    
-    <!-- <div class="task-card-footer">
-      <span class="ranking-label">Priority</span>
-      <span class="ranking-number">Medium</span>
-    </div> -->
-  </div>
 
-  <div class="task-card task-card-purple" (click)="goToStudentAnnouncements(selectedChild)">
-    <div class="task-card-header">
-      <div class="task-icon-wrapper">
-        <img src="assets/images/announcements.png" alt="Announcements" class="task-icon" />
+    <div class="task-card task-card-purple" (click)="goToStudentAnnouncements(selectedChild)">
+      <div class="task-card-header">
+        <div class="task-icon-wrapper">
+          <img src="assets/images/announcements.png" alt="Announcements" class="task-icon" />
+        </div>
+        <div class="task-badge-top">
+          {{ announcementCounts[selectedChild.student_id] || 0 }}
+        </div>
       </div>
-      <div class="task-badge-top">
-        {{ announcementCounts[selectedChild.student_id] || 0 }}
-      </div>
-    </div>
-    
-    <!-- <div class="task-card-body">
+
+      <!-- <div class="task-card-body">
       <h3 class="task-title">Announcements</h3>
       <p class="task-subtitle">Recent updates</p>
       
@@ -218,18 +207,25 @@
         </div>
       </div>
     </div> -->
-    
-    <!-- <div class="task-card-footer">
+
+      <!-- <div class="task-card-footer">
       <span class="ranking-label">Priority</span>
       <span class="ranking-number">Low</span>
     </div> -->
-    <div class="task-card-body">
-      <h3 class="task-title">Announcements</h3>
+      <div class="task-card-body">
+        <h3 class="task-title">Announcements</h3>
+        <div class="task-preview">
+          <div *ngFor="let announcement of recentAnnouncements.slice(0, 3); let i = index" class="preview-item">
+            <p class="preview-title">{{ announcement.title }}</p>
+            <p class="preview-date">{{ announcement.created_at | date:'MMM d' }}</p>
+          </div>
+          <p *ngIf="recentAnnouncements.length === 0" class="no-data">No recent announcements</p>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Consent Forms Section -->
+  <!-- Consent Forms Section -->
 
 
   <!-- Announcements Section

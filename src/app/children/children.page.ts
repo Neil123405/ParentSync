@@ -83,9 +83,13 @@ export class ChildrenPage implements OnInit {
   showTimeline: { [studentId: number]: boolean } = {};
   signedConsentForms: { [studentId: number]: any[] } = {};
 
-  consentFormCounts: { [studentId: number]: number } = {};
-  schoolEventCounts: { [studentId: number]: number } = {};
-  announcementCounts: { [studentId: number]: number } = {};
+  consentFormCountsTwo: { [studentId: number]: any } = {};
+  consentFormCounts: { [studentId: number]: any } = {};
+  schoolEventCounts: { [studentId: number]: any } = {};
+  announcementCounts: { [studentId: number]: any } = {};
+  schoolEventCountsTwo: { [studentId: number]: any } = {};
+  announcementCountsTwo: { [studentId: number]: any } = {};
+
 
   showTasks = false;
   showSchoolEvents = false;
@@ -168,6 +172,18 @@ export class ChildrenPage implements OnInit {
   // * .forEach((e: any) => {});
 
 
+  upcomingConsentForms: any[] = [];
+  upcomingEvents: any[] = [];
+  recentAnnouncements: any[] = [];
+
+  updateSelectedChildData() {
+    if (this.selectedChild) {
+      this.upcomingConsentForms = this.consentFormCountsTwo[this.selectedChild.student_id] || [];
+      this.upcomingEvents = this.schoolEventCountsTwo[this.selectedChild.student_id] || [];
+      this.recentAnnouncements = this.announcementCountsTwo[this.selectedChild.student_id] || [];
+    }
+  }
+
   async loadData() {
     // console.log('loadData called');
     if (!this.currentProfile) {
@@ -187,31 +203,60 @@ export class ChildrenPage implements OnInit {
       if (this.currentProfile?.parent_id) {
         this.apiService.getAllUnsignedConsentFormsForParent(this.currentProfile.parent_id).subscribe(res => {
           const forms = res.forms || [];
-          
+          const today = new Date();
           // Reset counts
           this.consentFormCounts = {};
+          this.consentFormCountsTwo = {};
           forms.forEach((form: any) => {
+            const deadline = new Date(form.deadline);
+            const diffDays = (deadline.getTime() - today.getTime()) / (1000 * 3600 * 24);
+            if (diffDays >= 0 && diffDays <= 5) {
+              const sidTwo = form.student_id;
+              if (!this.consentFormCountsTwo[sidTwo]) this.consentFormCountsTwo[sidTwo] = [];
+              this.consentFormCountsTwo[sidTwo].push(form);
+            }
             const sid = form.student_id;
+
             this.consentFormCounts[sid] = (this.consentFormCounts[sid] || 0) + 1;
           });
+          if (this.selectedChild) this.updateSelectedChildData();
         });
         this.apiService.getParentEvents(this.currentProfile.parent_id).subscribe(res => {
           const events = res.events || [];
-          
+          const today = new Date();
           this.schoolEventCounts = {};
+          this.schoolEventCountsTwo = {};
           events.forEach((event: any) => {
+            const eventDate = new Date(event.date);
+            const diffDays = (eventDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
+            if (diffDays >= 0 && diffDays <= 10) {
+              const sidTwo = event.student_id;
+              if (!this.schoolEventCountsTwo[sidTwo]) this.schoolEventCountsTwo[sidTwo] = [];
+              this.schoolEventCountsTwo[sidTwo].push(event);
+            }
             const sid = event.student_id;
             this.schoolEventCounts[sid] = (this.schoolEventCounts[sid] || 0) + 1;
           });
+          if (this.selectedChild) this.updateSelectedChildData();
         });
         this.apiService.getParentAnnouncements(this.currentProfile.parent_id).subscribe(res => {
           const announcements = res.announcements || [];
-          
+          const today = new Date();
+          const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());  // Date only, no time
           this.announcementCounts = {};
+          this.announcementCountsTwo = {};  // For filtered data
           announcements.forEach((announcement: any) => {
+            const date = new Date(announcement.created_at);
+            const announcementDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());  // Date only, no time
+            if (announcementDate.getTime() === todayDate.getTime()) {  // Only today's announcements
+              const sidTwo = announcement.student_id;
+              if (!this.announcementCountsTwo[sidTwo]) this.announcementCountsTwo[sidTwo] = [];
+              this.announcementCountsTwo[sidTwo].push(announcement);
+            }
             const sid = announcement.student_id;
             this.announcementCounts[sid] = (this.announcementCounts[sid] || 0) + 1;
           });
+          if (this.selectedChild) this.updateSelectedChildData();
         });
       }
       this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
@@ -668,8 +713,11 @@ export class ChildrenPage implements OnInit {
 
 
   selectChildAndCenter(child: any, index: number) {
-    this.selectChild(child);
-    this.centerCard(index);
+    // this.selectChild(child);
+    // this.centerCard(index);
+    this.selectedChild = child;
+    this.centerCardIndex = index;
+    this.updateSelectedChildData(); // Refresh filtered data for the selected child
   }
 
   centerCard(index: number) {
@@ -686,19 +734,24 @@ export class ChildrenPage implements OnInit {
 
   goToCard(index: number) {
     if (this.laravelChildren[index]) {
-      this.centerCard(index);
+      const child = this.laravelChildren[index];
+      this.selectChildAndCenter(child, index);
     }
   }
 
   goToNextCard() {
-    if (this.centerCardIndex < this.laravelChildren.length - 1) {
-      this.centerCard(this.centerCardIndex + 1);
+    const nextIndex = this.centerCardIndex + 1;
+    if (nextIndex < this.laravelChildren.length) {
+      const nextChild = this.laravelChildren[nextIndex];
+      this.selectChildAndCenter(nextChild, nextIndex);
     }
   }
 
   goToPrevCard() {
-    if (this.centerCardIndex > 0) {
-      this.centerCard(this.centerCardIndex - 1);
+    const prevIndex = this.centerCardIndex - 1;
+    if (prevIndex >= 0) {
+      const prevChild = this.laravelChildren[prevIndex];
+      this.selectChildAndCenter(prevChild, prevIndex);
     }
   }
 
