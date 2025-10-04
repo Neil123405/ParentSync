@@ -1,39 +1,79 @@
 <ion-app>
-  <ion-menu side="end" menuId="accountMenu" contentId="main-content" type="overlay" swipeGesture="false" (ionWillOpen)="onMenuOpen()">
+<ion-menu side="end" menuId="accountMenu" contentId="main-content" type="overlay" swipeGesture="false" (ionWillOpen)="onMenuOpen()">
     <ion-header>
-      <ion-toolbar style="--background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-        <ion-title>Account</ion-title>
+      <ion-toolbar class="menu-toolbar">
+        <ion-title class="menu-title">Account Menu</ion-title>
         <ion-buttons slot="end">
           <ion-menu-toggle menu="accountMenu">
-            <ion-button menuClose>
-              <ion-icon name="arrow-back"></ion-icon>
+            <ion-button class="close-menu-btn" menuClose>
+              <ion-icon name="close"></ion-icon>
             </ion-button>
           </ion-menu-toggle>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content class="ion-padding">
-      <!-- menu content (profile, links, logout) -->
-      <div style="display:flex; align-items:center; margin-bottom:16px;">
-        <div (click)="openProfileSettings()" style="flex-shrink: 0;">
-          <ng-container *ngIf="parent?.photo_url; else noPhoto">
-            <img [src]="parent?.photo_url" alt="Parent Photo"
-              style="width:64px;height:64px;border-radius:50%;object-fit:cover;" />
-          </ng-container>
-          <ng-template #noPhoto>
-            <ion-icon name="person-circle" style="font-size:64px;color:#888;"></ion-icon>
-          </ng-template>
+    <ion-content class="menu-content">
+      <!-- Profile Header Section -->
+      <div class="profile-header">
+        <div class="profile-background">
+          <div class="deco-circle deco-1"></div>
+          <div class="deco-circle deco-2"></div>
         </div>
-        <div style="margin-left:12px;">
-          <h3 style="margin:0;">{{ parent?.first_name }} {{ parent?.last_name }}</h3>
-          <p style="margin:0; font-size:0.9rem; color:#666;">{{ parent?.email }}</p>
+        
+        <div class="profile-content">
+          <div class="profile-avatar-container" (click)="openProfileSettings()">
+            <div class="avatar-wrapper">
+              <ng-container *ngIf="parent?.photo_url; else noPhoto">
+                <img [src]="parent?.photo_url" alt="Parent Photo" class="profile-avatar" />
+              </ng-container>
+              <ng-template #noPhoto>
+                <div class="avatar-placeholder">
+                  <ion-icon name="person" class="placeholder-icon"></ion-icon>
+                </div>
+              </ng-template>
+            </div>
+            <div class="edit-badge">
+              <ion-icon name="create" class="edit-icon"></ion-icon>
+            </div>
+          </div>
+          
+          <div class="profile-info">
+            <h3 class="profile-name">{{ parent?.first_name }} {{ parent?.last_name }}</h3>
+            <p class="profile-email">{{ parent?.email }}</p>
+            <div class="profile-status">
+              <ion-icon name="checkmark-circle" class="status-icon"></ion-icon>
+              <span>Active Parent</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <ion-list>
-        <ion-item button (click)="logout()">Logout</ion-item>
-      </ion-list>
+      <!-- Menu Items -->
+      <div class="menu-items">
+        <div class="menu-item" (click)="openProfileSettings()">
+          <div class="menu-icon-wrapper profile-theme">
+            <ion-icon name="person" class="menu-icon"></ion-icon>
+          </div>
+          <div class="menu-item-content">
+            <span class="menu-item-title">Profile Settings</span>
+            <span class="menu-item-subtitle">Edit your personal information</span>
+          </div>
+          <ion-icon name="chevron-forward" class="menu-arrow"></ion-icon>
+        </div>
+
+        <div class="menu-divider"></div>
+
+        <div class="menu-item logout-item" (click)="logout()">
+          <div class="menu-icon-wrapper logout-theme">
+            <ion-icon name="log-out" class="menu-icon"></ion-icon>
+          </div>
+          <div class="menu-item-content">
+            <span class="menu-item-title">Logout</span>
+            <span class="menu-item-subtitle">Sign out of your account</span>
+          </div>
+        </div>
+      </div>
     </ion-content>
   </ion-menu>
 

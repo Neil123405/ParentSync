@@ -14,35 +14,46 @@
 // *ngFor
 
 <ion-header>
-  <div class="smiling-header"
-    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center; height: 120px;">
-    <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin: 10px 0;">
-      <!-- Event Count Indicator (Blue) -->
-      <span class="indicator event-indicator" title="Events This Month">
-        {{ eventCount }}
-      </span>
-      <!-- Consent Form Count Indicator (Green) -->
-      <span class="indicator consent-indicator" style="
-        display: inline-block;
-        width: 80px;
-        height: 80px;
-        background: #43a047;
-        border-radius: 50%;
-        font-size: 2rem;
-        font-weight: bold;
-        line-height: 80px;
-      " title="Consent Forms This Month">
-        {{ consentFormCount }}
-      </span>
+  <div class="enhanced-calendar-header">
+    <!-- Background Gradient -->
+    <div class="header-gradient"></div>
+    
+    <!-- Decorative Elements -->
+    <div class="header-decoration">
+      <div class="deco-circle deco-1"></div>
+      <div class="deco-circle deco-2"></div>
+      <div class="deco-circle deco-3"></div>
     </div>
-    <div style="display: flex; justify-content: center; gap: 20px; margin-top: -10px;;">
-      <span style="font-size: 1.8rem; 
-        font-family: 'Segoe UI', Arial, sans-serif;
+    
+    <!-- Header Content -->
+    <div class="header-content">
+      <div class="month-display">
+        <h1 class="current-month">{{ currentMonth }}</h1>
+      </div>
+      
+      <div class="stats-row">
+        <!-- Event Count Indicator -->
+        <div class="stat-card event-stat">
+          <div class="stat-icon-wrapper">
+            <ion-icon name="calendar" class="stat-icon"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{ eventCount }}</span>
+            <span class="stat-label">Events</span>
+          </div>
+        </div>
         
-        font-weight: bold;">Events</span>
-      <span style="font-size: 1.8rem; 
-        font-family: 'Segoe UI', Arial, sans-serif; 
-        font-weight: bold;">Forms</span>
+        <!-- Consent Form Count Indicator -->
+        <div class="stat-card form-stat">
+          <div class="stat-icon-wrapper">
+            <ion-icon name="document-text" class="stat-icon"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{ consentFormCount }}</span>
+            <span class="stat-label">Forms</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </ion-header>

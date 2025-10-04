@@ -142,6 +142,28 @@ ion-header, ion-toolbar {
   margin: 2px !important;
 }
 
+// Style for event-class (blue, similar to event-stat in calendar.page)
+:host ::ng-deep .event-class {
+  background: blue !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2) !important;
+  font-weight: 500 !important;
+  font-size: 0.85rem !important;
+}
+
+// Style for consent-form-class (green, similar to form-stat in calendar.page)
+:host ::ng-deep .consent-form-class {
+  background: green !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(102, 187, 106, 0.2) !important;
+  font-weight: 500 !important;
+  font-size: 0.85rem !important;
+}
+
 // Content Styling
 ion-content {
   --background: #f6f8ff;

@@ -1,9 +1,9 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/children"></ion-back-button>
+      <ion-back-button defaultHref="/children" color="light"></ion-back-button>
     </ion-buttons>
-    <ion-title style="color: white">Announcements</ion-title>
+    <ion-title class="header-title">Announcements</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -12,27 +12,55 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <!-- Decorative Announcements Button (not clickable) -->
-  <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
+  <!-- <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
     <ion-button expand="block" class="task-btn giant-btn">
       <span class="btn-content">
         <img src="assets/images/announcements.png" alt="Announcements" class="task-img-giant" />
         <span class="btn-label">Announcements</span>
       </span>
     </ion-button>
+  </div> -->
+
+  <div class="page-header">
+    <div class="header-icon-wrapper announcements-theme">
+      <ion-icon name="megaphone" class="header-icon"></ion-icon>
+    </div>
+    <h1 class="page-title">Announcements</h1>
+    <p class="page-subtitle">Important updates from school</p>
   </div>
 
-  <div class="events-background-box">
-    <ion-list>
-      <ion-item *ngFor="let announcement of announcements" class="event-card" (click)="openAnnouncementDetail(announcement)">
-        <ion-label>
-          <h2>{{ announcement.title }}</h2>
-          <p>{{ announcement.content }}</p>
-          <p style="font-size: 0.9em; color: #888;">{{ announcement.date | date:'mediumDate' }}</p>
-        </ion-label>
-      </ion-item>
-      <ion-item *ngIf="announcements.length === 0">
-        <ion-label>No announcements found.</ion-label>
-      </ion-item>
-    </ion-list>
+  <div class="content-wrapper">
+    <div class="announcement-list-item" *ngFor="let announcement of announcements" (click)="openAnnouncementDetail(announcement)">
+      <div class="date-badge announcements-badge">
+        <span class="date-day">{{ announcement.created_at | date:'d' }}</span>
+        <span class="date-month">{{ announcement.created_at | date:'MMM' }}</span>
+      </div>
+      
+      <div class="announcement-avatar">
+        <ion-icon name="megaphone-outline"></ion-icon>
+      </div>
+      
+      <div class="announcement-info">
+        <h3 class="announcement-title">{{ announcement.title }}</h3>
+        <p class="announcement-preview">{{ announcement.content | slice:0:60 }}{{ announcement.content.length > 60 ? '...' : '' }}</p>
+        <p class="announcement-time">
+          <ion-icon name="time-outline"></ion-icon>
+          {{ announcement.created_at | date:'mediumDate' }}
+        </p>
+      </div>
+      
+      <div class="announcement-actions">
+        <button class="action-btn read-btn" (click)="openAnnouncementDetail(announcement); $event.stopPropagation()">
+          Read
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="announcements.length === 0">
+      <ion-icon name="megaphone-outline" class="empty-icon"></ion-icon>
+      <h3 class="empty-title">No Announcements</h3>
+      <p class="empty-subtitle">You're all caught up!</p>
+    </div>
   </div>
 </ion-content>

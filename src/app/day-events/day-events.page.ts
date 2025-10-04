@@ -119,6 +119,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
           return {
             title: ev.title,
             start: startDate,
+            className: 'event-class', // Add custom class for events
             extendedProps: { type: 'event', description: ev.description, student: { first_name: ev.first_name, last_name: ev.last_name }, raw: ev }
           }
         });
@@ -130,6 +131,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
           title: 'Consent Form: ' + f.title,
           start: new Date(f.deadline),
           allDay: true,
+          className: 'consent-form-class', // Add custom class for consent forms
           extendedProps: { type: 'consentForm', student: { first_name: f.first_name, last_name: f.last_name }, raw: f }
         }));
 

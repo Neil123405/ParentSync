@@ -1,8 +1,15 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title class="children-title">
-      <ion-icon name="people-outline" style="font-size: 1.5rem; margin-right: 8px; vertical-align: middle;"></ion-icon>
-      Children</ion-title>
+<ion-header class="modern-header">
+  <ion-toolbar class="header-toolbar">
+    <div class="header-content">
+      <div class="header-icon-wrapper">
+        <ion-icon name="people" class="header-icon"></ion-icon>
+      </div>
+      <div class="header-text">
+        <h1 class="header-title">My Children</h1>
+        <p class="header-subtitle">Manage your children's activities</p>
+      </div>
+    </div>
+    <div class="header-decoration"></div>
   </ion-toolbar>
 </ion-header>
 
@@ -124,12 +131,26 @@
         <h3 class="task-title">Consent Forms</h3>
         <div class="task-preview">
           <div *ngFor="let form of upcomingConsentForms.slice(0, 3); let i = index" class="preview-item">
+            <div class="preview-header">
+            <ion-icon name="document-text-outline" class="preview-icon"></ion-icon>
             <p class="preview-title">{{ form.title }}</p>
-            <p class="preview-date">Due: {{ form.deadline | date:'MMM d' }}</p>
           </div>
-          <p *ngIf="upcomingConsentForms.length === 0" class="no-data">No upcoming forms</p>
+          <div class="preview-meta">
+            <span class="meta-chip">Section: {{ form.section_name }}</span>
+            <span class="meta-chip">Subject: {{ form.subject_name }}</span>
+            <span class="meta-chip">Teacher: {{ form.first_name }} {{ form.last_name }}</span>
+            <span class="meta-chip deadline">Due: {{ form.deadline | date:'MMM d' }}</span>
+          </div>
+          </div>
+          <p *ngIf="upcomingConsentForms.length === 0" class="no-data">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          All caught up!
+        </p>
         </div>
       </div>
+      <div class="task-card-footer">
+      <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
+    </div>
 
       <!-- <div class="task-card-body">
       <h3 class="task-title">Consent Forms</h3>
@@ -169,24 +190,39 @@
       <div class="task-card-body">
         <h3 class="task-title">Events</h3>
         <div class="task-preview">
-          <div *ngFor="let event of upcomingEvents.slice(0, 3); let i = index" class="preview-item">
+          <div *ngFor="let event of upcomingEvents.slice(0, 2); let i = index" class="preview-item">
+          <div class="preview-header">
+            <ion-icon name="calendar-outline" class="preview-icon"></ion-icon>
             <p class="preview-title">{{ event.title }}</p>
-            <p class="preview-date">Date: {{ event.date | date:'MMM d' }}</p>
           </div>
-          <p *ngIf="upcomingEvents.length === 0" class="no-data">No upcoming events</p>
+          <div class="preview-meta">
+            <span class="meta-chip">Section: {{ event.section_name }}</span>
+            <span class="meta-chip">Subject: {{ event.subject_name }}</span>
+            <span class="meta-chip">Teacher: {{ event.first_name }} {{ event.last_name }}</span>
+            <span class="meta-chip date">Date: {{ event.date | date:'MMM d' }}</span>
+          </div>
+        </div>
+          <p *ngIf="upcomingEvents.length === 0" class="no-data">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          No upcoming events
+        </p>
         </div>
       </div>
+
+       <div class="task-card-footer">
+      <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
+    </div>
     </div>
 
     <div class="task-card task-card-purple" (click)="goToStudentAnnouncements(selectedChild)">
-      <div class="task-card-header">
-        <div class="task-icon-wrapper">
-          <img src="assets/images/announcements.png" alt="Announcements" class="task-icon" />
-        </div>
-        <div class="task-badge-top">
-          {{ announcementCounts[selectedChild.student_id] || 0 }}
-        </div>
+    <div class="task-card-header">
+      <div class="task-icon-wrapper">
+        <img src="assets/images/announcements.png" alt="Announcements" class="task-icon" />
       </div>
+      <div class="task-badge-top">
+        {{ announcementCounts[selectedChild.student_id] || 0 }}
+      </div>
+    </div>
 
       <!-- <div class="task-card-body">
       <h3 class="task-title">Announcements</h3>
@@ -213,15 +249,30 @@
       <span class="ranking-number">Low</span>
     </div> -->
       <div class="task-card-body">
-        <h3 class="task-title">Announcements</h3>
-        <div class="task-preview">
-          <div *ngFor="let announcement of recentAnnouncements.slice(0, 3); let i = index" class="preview-item">
+      <h3 class="task-title">Announcements</h3>
+      <div class="task-preview">
+        <div *ngFor="let announcement of recentAnnouncements.slice(0, 2); let i = index" class="preview-item">
+          <div class="preview-header">
+            <ion-icon name="megaphone-outline" class="preview-icon"></ion-icon>
             <p class="preview-title">{{ announcement.title }}</p>
-            <p class="preview-date">{{ announcement.created_at | date:'MMM d' }}</p>
           </div>
-          <p *ngIf="recentAnnouncements.length === 0" class="no-data">No recent announcements</p>
+          <div class="preview-meta">
+            <span class="meta-chip">Section: {{ announcement.section_name }}</span>
+            <span class="meta-chip">Subject: {{ announcement.subject_name }}</span>
+            <span class="meta-chip">Teacher: {{ announcement.first_name }} {{ announcement.last_name }}</span>
+            <span class="meta-chip date">Created on: {{ announcement.created_at | date:'MMM d' }}</span>
+          </div>
         </div>
+        <p *ngIf="recentAnnouncements.length === 0" class="no-data">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          No new announcements
+        </p>
       </div>
+    </div>
+    
+    <div class="task-card-footer">
+      <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
+    </div>
     </div>
   </div>
 

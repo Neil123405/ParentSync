@@ -1,9 +1,9 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/children"></ion-back-button>
+      <ion-back-button defaultHref="/children" color="light"></ion-back-button>
     </ion-buttons>
-    <ion-title style="color: white">Consent Forms</ion-title>
+    <ion-title class="header-title">Consent Form</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -12,18 +12,28 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <!-- Decorative Consent Forms Button (not clickable) -->
-  <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
+  <!-- <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
     <ion-button expand="block" class="task-btn giant-btn">
       <span class="btn-content">
         <img src="assets/images/consent.png" alt="Consent Forms" class="task-img-giant" />
         <span class="btn-label">Consent Forms</span>
       </span>
     </ion-button>
-  </div>
+  </div> -->
 
   <!-- Filter Buttons -->
-  <div style="display: flex; justify-content: center; margin-bottom: 16px;">
-    <ion-segment [(ngModel)]="filter">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-icon-wrapper forms-theme">
+      <ion-icon name="document-text" class="header-icon"></ion-icon>
+    </div>
+    <h1 class="page-title">Consent Forms</h1>
+    <p class="page-subtitle">Review and sign required documents</p>
+  </div>
+
+  <!-- Filter Segment -->
+  <div class="filter-container">
+    <ion-segment [(ngModel)]="filter" mode="ios" class="modern-segment">
       <ion-segment-button value="all" (click)="setFilter('all')">
         <ion-label>All</ion-label>
       </ion-segment-button>
@@ -36,26 +46,52 @@
     </ion-segment>
   </div>
 
-  <div class="consent-background-box">
-    <ion-list>
-      <ion-item *ngFor="let form of filteredConsentForms" class="consent-card" 
-      [ngClass]="{'signed-form': form.signed}"
-      [style.background]="form.signed ? '#f4ffd6' : '#fff'"
+  <!-- Consent Forms List -->
+  <div class="content-wrapper">
+    <div class="form-list-item" *ngFor="let form of filteredConsentForms" [class.signed-item]="form.signed"
       (click)="openConsentForm(form)">
-        <ion-label>
-          <h2 [style.color]="form.signed ? '#7a9c3a' : ''">{{ form.title }}</h2>
-          <p>{{ form.description }}</p>
-          <ion-note *ngIf="form.deadline">
-            <ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-            <small>Deadline: {{ form.deadline | date:'mediumDate' }}</small>
-          </ion-note>
-          <ion-badge *ngIf="form.signed" color="success" style="margin-left:8px;">Signed</ion-badge>
-        </ion-label>
-        <ion-icon name="chevron-forward" slot="end"></ion-icon>
-      </ion-item>
-      <ion-item *ngIf="filteredConsentForms.length === 0">
-        <ion-label>No consent forms found.</ion-label>
-      </ion-item>
-    </ion-list>
+
+      <div class="date-badge forms-badge" [class.signed-badge]="form.signed">
+        <span class="date-day">{{ form.created_at | date:'d' }}</span>
+        <span class="date-month">{{ form.created_at | date:'MMM' }}</span>
+      </div>
+
+      <div class="form-avatar" [class.signed-avatar]="form.signed">
+        <ion-icon [name]="form.signed ? 'checkmark-circle' : 'document-text-outline'"></ion-icon>
+      </div>
+
+      <div class="form-info">
+        <h3 class="form-title">{{ form.title }}</h3>
+        <p class="form-description">{{ form.description }}</p>
+        <div class="form-meta">
+          <span class="meta-item">
+            <ion-icon name="time-outline"></ion-icon>
+            Deadline: {{ form.deadline | date:'mediumDate' }}
+          </span>
+          <ion-badge *ngIf="form.signed" color="success" class="status-badge">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            Signed
+          </ion-badge>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="action-btn" [class.sign-btn]="!form.signed" [class.view-btn]="form.signed"
+          (click)="openConsentForm(form); $event.stopPropagation()">
+          {{ form.signed ? 'View' : 'Sign' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredConsentForms.length === 0">
+      <ion-icon name="document-text-outline" class="empty-icon"></ion-icon>
+      <h3 class="empty-title">No Consent Forms</h3>
+      <p class="empty-subtitle">
+        {{ filter === 'signed' ? 'No signed forms yet' :
+        filter === 'unsigned' ? 'All forms have been signed!' :
+        'No consent forms available' }}
+      </p>
+    </div>
   </div>
 </ion-content>

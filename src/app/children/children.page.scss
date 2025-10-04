@@ -904,16 +904,28 @@ ion-header, ion-toolbar {
   position: relative;
   border-radius: 20px;
   padding: 20px;
-  min-height: 160px;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+  }
   
   &:active {
     transform: scale(0.98);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
   
   // Color variants
@@ -949,11 +961,12 @@ ion-header, ion-toolbar {
   align-items: flex-start;
   margin-bottom: 16px;
   position: relative;
+  z-index: 1;
 }
 
 .task-icon-wrapper {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.2);
   display: flex;
@@ -961,29 +974,32 @@ ion-header, ion-toolbar {
   justify-content: center;
   backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.3);
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   
   .task-icon {
     width: 70px;
     height: 70px;
     object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
   }
 }
 
 .task-badge-top {
   position: absolute;
-  top: -8px;
-  right: 40px;
+  top: -4px;
+  right: 8px;
   background: white;
   color: #333;
-  min-width: 48px;
-  height: 48px;
-  border-radius: 14px;
+  min-width: 36px;
+  height: 36px;
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.5);
 }
 
 .task-title {
@@ -1007,19 +1023,19 @@ ion-header, ion-toolbar {
 
 .task-card-body {
   flex: 1;
-  margin-bottom: 12px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 .task-title {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   color: white;
-  letter-spacing: 0.3px;
-  text-align: center;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .task-subtitle {
@@ -1059,10 +1075,19 @@ ion-header, ion-toolbar {
 
 .task-card-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
+  margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 1;
+  
+  .chevron-icon {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.8);
+    animation: bounce-right 1.5s ease-in-out infinite;
+  }
   
   .ranking-label {
     font-size: 13px;
@@ -1113,13 +1138,23 @@ ion-header, ion-toolbar {
 }
 
 .task-preview {
+  flex: 1;
   .preview-item {
-    margin-bottom: 8px;
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(4px);
+    }
     
     &:last-child {
-      border-bottom: none;
+      margin-bottom: 0;
     }
     
     .preview-title {
@@ -1137,15 +1172,275 @@ ion-header, ion-toolbar {
       font-weight: 400;
     }
   }
+
+  .preview-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .preview-icon {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.9);
+    flex-shrink: 0;
+  }
+
+  .preview-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    line-height: 1.3;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .preview-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    
+    &.deadline {
+      background: rgba(255, 87, 34, 0.3);
+      border-color: rgba(255, 87, 34, 0.4);
+    }
+    
+    &.date {
+      background: rgba(33, 150, 243, 0.3);
+      border-color: rgba(33, 150, 243, 0.4);
+    }
+  }
+
   
   .no-data {
-    margin: 8px 0 0 0;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
     font-style: italic;
     text-align: center;
+    
+    ion-icon {
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.6);
+    }
   }
 }
 
+@media (max-width: 480px) {
+  .task-card {
+    padding: 16px;
+    min-height: 180px;
+  }
+  
+  .task-icon-wrapper {
+    width: 70px;
+    height: 70px;
+    
+    .task-icon {
+      width: 45px;
+      height: 45px;
+    }
+  }
+  
+  .task-title {
+    font-size: 20px;
+  }
+  
+  .preview-title {
+    font-size: 14px;
+  }
+  
+  .meta-chip {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+}
+
+// Modern Header Styles
+.modern-header {
+  --background: transparent;
+  
+  ion-toolbar {
+    --background: transparent;
+    --border-width: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    --min-height: 120px;
+  }
+}
+
+.header-toolbar {
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px 16px;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.448);
+    border-radius: 50%;
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 150px;
+    height: 150px;
+    background: rgba(255, 255, 255, 0.318);
+    border-radius: 50%;
+    animation: float 8s ease-in-out infinite reverse;
+  }
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.header-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  
+  .header-icon {
+    font-size: 32px;
+    color: white;
+    animation: pulse 2s ease-in-out infinite;
+  }
+}
+
+.header-text {
+  flex: 1;
+}
+
+.header-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  animation: slideInLeft 0.5s ease-out;
+}
+
+.header-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.3px;
+  animation: slideInLeft 0.6s ease-out;
+}
+
+.header-decoration {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.3) 0%, 
+    rgba(255, 255, 255, 0.6) 50%, 
+    rgba(255, 255, 255, 0.3) 100%);
+  z-index: 3;
+}
+
+// Animations
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 480px) {
+  .header-toolbar {
+    --min-height: 120px;
+    padding: 16px 12px;
+  }
+  
+  .header-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    
+    .header-icon {
+      font-size: 28px;
+    }
+  }
+  
+  .header-title {
+    font-size: 24px;
+  }
+  
+  .header-subtitle {
+    font-size: 13px;
+  }
+}
+
+// ...existing styles...
 // Remove old task button styles (keep for reference or remove completely)
 // .task-btn, .task-btn-wrapper, .giant-btn, etc. can be removed if no longer needed

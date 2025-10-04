@@ -344,7 +344,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin], // Plugins for different views and interactions
     headerToolbar: {
       left: '',
-      center: 'title',
+      center: '',
       right: '',
     },
     events: [], // Events will be dynamically loaded

@@ -1327,3 +1327,28 @@ ion-header.ios {
 }
 
 // Remove old styles (if they exist
+
+// Event Cards (Same as Announcements)
+.event-card-custom {
+  @extend .announcement-card;
+}
+
+// School Event Card Styling
+.event-card-custom.school-card {
+  @extend .school-card;
+}
+
+// Section Event Card Styling
+.event-card-custom.section-card {
+  @extend .section-card;
+}
+
+// Class Event Card Styling
+.event-card-custom.class-card {
+  @extend .class-card;
+}
+
+// Empty State for Events
+.empty-state {
+  @extend .empty-state;
+}

@@ -1,40 +1,96 @@
-<ion-header>
-  <ion-toolbar style="--background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
-    <ion-title style="color: white">Student Details</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="modal-toolbar">
+    <ion-title class="modal-title">Student Details</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="close()">
+      <ion-button class="close-btn" (click)="close()">
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div class="selected-child-section ion-padding">
-    <div style="display: flex; align-items: center; gap: 16px;">
-      <div style="margin: 8px 0;">
-        <ng-container *ngIf="child.photo_url && child.photo_url.startsWith('http'); else noPhoto">
-          <img [src]="child.photo_url"
-               alt="Student Photo"
-               style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover;" />
-        </ng-container>
-        <ng-template #noPhoto>
-          <ion-icon name="person-circle" style="font-size: 64px; color: #888;"></ion-icon>
-        </ng-template>
+  <div class="student-profile-header">
+    <div class="profile-background">
+      <div class="deco-circle deco-1"></div>
+      <div class="deco-circle deco-2"></div>
+      <div class="deco-circle deco-3"></div>
+    </div>
+    
+    <div class="profile-content">
+      <div class="student-avatar-container">
+        <div class="avatar-wrapper">
+          <ng-container *ngIf="child.photo_url && child.photo_url.startsWith('http'); else noPhoto">
+            <img [src]="child.photo_url"
+                 alt="Student Photo"
+                 class="student-avatar" />
+          </ng-container>
+          <ng-template #noPhoto>
+            <div class="avatar-placeholder">
+              <ion-icon name="person" class="placeholder-icon"></ion-icon>
+            </div>
+          </ng-template>
+        </div>
+        <div class="avatar-badge">
+          <ion-icon name="school" class="badge-icon"></ion-icon>
+        </div>
       </div>
-      <div>
-        <h3>{{ child.first_name }} {{ child.last_name }}</h3>
-        <p>Grade {{ child.grade_level }} - {{ child.section_name }}</p>
+      
+      <div class="student-info">
+        <h2 class="student-name">{{ child.first_name }} {{ child.last_name }}</h2>
+        <div class="student-details">
+          <div class="detail-item">
+            <ion-icon name="library" class="detail-icon"></ion-icon>
+            <span>Grade {{ child.grade_level }}</span>
+          </div>
+          <div class="detail-item">
+            <ion-icon name="people" class="detail-icon"></ion-icon>
+            <span>{{ child.section_name }}</span>
+          </div>
+        </div>
       </div>
     </div>
-    <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 12px;">
-      <ion-button expand="block" color="primary" (click)="changeStudentPhoto(child)">
-        <ion-icon name="camera" slot="start"></ion-icon>
-        Change Photo
-      </ion-button>
-      <ion-button expand="block" color="danger" (click)="unlinkStudent(child)">
-        <ion-icon name="unlink" slot="start"></ion-icon>
-        Unlink Student
-      </ion-button>
+  </div>
+
+  <!-- Action Cards -->
+  <div class="action-cards-container">
+    <div class="action-card photo-card" (click)="changeStudentPhoto(child)">
+      <div class="card-icon-wrapper photo-theme">
+        <ion-icon name="camera" class="card-icon"></ion-icon>
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">Update Photo</h3>
+        <p class="card-description">Change student profile picture</p>
+      </div>
+      <div class="card-arrow">
+        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+      </div>
+    </div>
+
+    <div class="action-card unlink-card" (click)="unlinkStudent(child)">
+      <div class="card-icon-wrapper unlink-theme">
+        <ion-icon name="unlink" class="card-icon"></ion-icon>
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">Unlink Student</h3>
+        <p class="card-description">Remove student from your account</p>
+      </div>
+      <div class="card-arrow">
+        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Additional Info Card (Optional) -->
+    <div class="info-card">
+      <div class="info-header">
+        <ion-icon name="information-circle" class="info-icon"></ion-icon>
+        <span class="info-title">Student Information</span>
+      </div>
+      <div class="info-content">
+        <div class="info-row">
+          <span class="info-label">Student ID:</span>
+          <span class="info-value">{{ child.student_id || 'N/A' }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </ion-content>

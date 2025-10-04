@@ -205,11 +205,13 @@ export class ChildrenPage implements OnInit {
           const forms = res.forms || [];
           const today = new Date();
           // Reset counts
+          const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());  // Date only, no time
           this.consentFormCounts = {};
           this.consentFormCountsTwo = {};
           forms.forEach((form: any) => {
             const deadline = new Date(form.deadline);
-            const diffDays = (deadline.getTime() - today.getTime()) / (1000 * 3600 * 24);
+            const deadlineDate = new Date(deadline.getFullYear(), deadline.getMonth(), deadline.getDate());  // Date only, no time
+            const diffDays = (deadlineDate.getTime() - todayDate.getTime()) / (1000 * 3600 * 24);
             if (diffDays >= 0 && diffDays <= 5) {
               const sidTwo = form.student_id;
               if (!this.consentFormCountsTwo[sidTwo]) this.consentFormCountsTwo[sidTwo] = [];

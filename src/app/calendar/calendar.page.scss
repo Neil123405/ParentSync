@@ -606,7 +606,7 @@ ion-header {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 
   &.events-theme {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
   }
 
   &.forms-theme {
@@ -684,7 +684,7 @@ ion-header {
 .event-date-badge {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -876,11 +876,12 @@ ion-header {
 
 // Additional calendar-themed touches
 .events-card {
-  border-top: 4px solid #667eea;
+  border-top: 4px solid blue;
+
 }
 
 .forms-card {
-  border-top: 4px solid #4ecdc4;
+  border-top: 4px solid green;
 }
 
 // Smooth transitions for better UX
@@ -963,3 +964,318 @@ full-calendar {
     max-height: 50vh;
   }
 }
+
+// Enhanced Calendar Header
+.enhanced-calendar-header {
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 32px 20px 24px 20px;
+  overflow: hidden;
+  min-height: 180px;
+}
+
+.header-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+  z-index: 1;
+}
+
+.header-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.deco-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.951);
+  
+  &.deco-1 {
+    width: 200px;
+    height: 200px;
+    top: -20px;
+    right: -30px;
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  &.deco-2 {
+    width: 150px;
+    height: 150px;
+    bottom: -20px;
+    left: -30px;
+    animation: float 8s ease-in-out infinite reverse;
+  }
+  
+  &.deco-3 {
+    width: 100px;
+    height: 100px;
+    top: 50%;
+    left: 20%;
+    animation: float 7s ease-in-out infinite;
+    opacity: 0.5;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+    opacity: 0.15;
+  }
+}
+
+.header-content {
+  position: relative;
+  z-index: 3;
+}
+
+.month-display {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.current-month {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
+  animation: slideInDown 0.6s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stats-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.event-stat {
+  animation: pulse-blue 2s infinite;
+  
+  .stat-icon-wrapper {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    // box-shadow: 0 0 20px rgba(102, 187, 106, 0.5); /* Glow effect */
+  }
+}
+
+.form-stat {
+  animation: pulse-green 2s infinite;
+  
+  .stat-icon-wrapper {
+    background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
+  }
+}
+
+
+/* Event-specific styles */
+// .event-stat .stat-label {
+//   color: white; /* Default text color */
+//   mix-blend-mode: difference; /* Dynamically adjusts text color based on background */
+// }
+
+/* Form-specific styles */
+// .form-stat .stat-label {
+//   color: white; /* Default text color */
+//   mix-blend-mode: difference; /* Dynamically adjusts text color based on background */
+// }
+@keyframes pulse-blue {
+  0%, 100% {
+    box-shadow: 0 8px 24px rgb(255, 255, 255), 0 0 20px rgb(0, 140, 255);
+  }
+  50% {
+    box-shadow: 0 8px 32px rgb(47, 0, 255), 0 0 40px rgb(0, 140, 255);
+  }
+}
+
+@keyframes pulse-green {
+  0%, 100% {
+    box-shadow: 0 8px 24px rgb(255, 255, 255), 0 0 20px rgb(0, 255, 13);
+  }
+  50% {
+    box-shadow: 0 8px 32px rgba(69, 255, 1, 0.885), 0 0 40px rgba(0, 255, 13, 0.6);
+  }
+  
+}
+
+/* Graceful glowing animation for Events (Blue to White) */
+/* Graceful glowing animation for Events (Blue to White) */
+@keyframes glowingBlue {
+  0% {
+    background: linear-gradient(135deg, #2196F3, #1976D2); /* Deep Blue */
+    box-shadow: 0 0 20px rgba(33, 150, 243, 0.5);
+    --text-color: white; /* Text is white when the background is blue */
+  }
+  50% {
+    background: linear-gradient(135deg, #E3F2FD, #FFFFFF); /* Light Blue to White */
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
+    --text-color: #2196F3; /* Text turns blue when the background is white */
+  }
+  100% {
+    background: linear-gradient(135deg, #2196F3, #1976D2); /* Back to Deep Blue */
+    box-shadow: 0 0 20px rgba(33, 150, 243, 0.5);
+    --text-color: white; /* Text is white when the background is blue */
+  }
+}
+
+/* Graceful glowing animation for Forms (Green to White) */
+@keyframes glowingGreen {
+  0% {
+    background: linear-gradient(135deg, #66BB6A, #43A047); /* Deep Green */
+    box-shadow: 0 0 20px rgba(102, 187, 106, 0.5);
+    --text-color: white; /* Text is white when the background is green */
+  }
+  50% {
+    background: linear-gradient(135deg, #E8F5E9, #FFFFFF); /* Light Green to White */
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
+    --text-color: #66BB6A; /* Text turns green when the background is white */
+  }
+  100% {
+    background: linear-gradient(135deg, #66BB6A, #43A047); /* Back to Deep Green */
+    box-shadow: 0 0 20px rgba(102, 187, 106, 0.5);
+    --text-color: white; /* Text is white when the background is green */
+  }
+}
+
+.stat-card {
+  flex: 1;
+  max-width: 160px;
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+
+  --original-color: white; /* Default fallback */
+  --text-color: var(--original-color);
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.event-stat {
+  --original-color: #2196F3; /* Blue */
+  animation: glowingBlue 6s infinite ease-in-out;
+  color: var(--text-color); /* Dynamically set text color */
+}
+
+/* Form-specific styles */
+.form-stat {
+  --original-color: #66BB6A; /* Green */
+  animation: glowingGreen 6s infinite ease-in-out;
+  color: var(--text-color); /* Dynamically set text color */
+}
+
+
+.stat-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+
+  .stat-icon {
+    font-size: 1.5rem;
+    color: white;
+  }
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-color); /* Use the dynamic text color */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease; /* Smooth transition for color changes */
+}
+
+// Responsive adjustments
+@media (max-width: 480px) {
+  .enhanced-calendar-header {
+    padding: 24px 16px 20px 16px;
+    min-height: 160px;
+  }
+  
+  .current-month {
+    font-size: 1.6rem;
+  }
+  
+  
+  .stat-icon-wrapper {
+    width: 42px;
+    height: 42px;
+    
+    .stat-icon {
+      font-size: 1.3rem;
+    }
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .stat-label {
+    font-size: 0.75rem;
+  }
+}
+
+// ...existing styles...

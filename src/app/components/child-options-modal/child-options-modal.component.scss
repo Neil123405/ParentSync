@@ -1,0 +1,425 @@
+ion-header {
+  box-shadow: none !important;
+}
+
+.modal-toolbar {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --color: white;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+}
+
+.modal-title {
+  color: white;
+  font-weight: 700;
+  font-size: 1.3rem;
+  position: relative;
+  z-index: 2;
+}
+
+.close-btn {
+  --color: white;
+  --background: rgba(255, 255, 255, 0.2);
+  --border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  position: relative;
+  z-index: 2;
+
+  ion-icon {
+    font-size: 1.3rem;
+  }
+}
+
+ion-content {
+  --background: #f5f7fa;
+}
+
+// Student Profile Header
+.student-profile-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 32px 24px 48px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.deco-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  
+  &.deco-1 {
+    width: 150px;
+    height: 150px;
+    top: -30px;
+    right: -30px;
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  &.deco-2 {
+    width: 100px;
+    height: 100px;
+    bottom: -20px;
+    left: -20px;
+    animation: float 8s ease-in-out infinite reverse;
+  }
+  
+  &.deco-3 {
+    width: 80px;
+    height: 80px;
+    top: 60%;
+    left: 30%;
+    animation: float 7s ease-in-out infinite;
+    opacity: 0.5;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.08;
+  }
+  50% {
+    transform: translateY(-15px) scale(1.1);
+    opacity: 0.12;
+  }
+}
+
+.profile-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.student-avatar-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.avatar-wrapper {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: white;
+  padding: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.student-avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .placeholder-icon {
+    font-size: 3rem;
+    color: #2196F3;
+  }
+}
+
+.avatar-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #4CAF50, #388E3C);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  .badge-icon {
+    font-size: 1rem;
+    color: white;
+  }
+}
+
+.student-info {
+  color: white;
+}
+
+.student-name {
+  margin: 0 0 12px 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.student-details {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+
+  .detail-icon {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+  }
+}
+
+// Action Cards
+.action-cards-container {
+  padding: 24px 16px;
+  padding-bottom: 32px;
+}
+
+.action-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    transition: width 0.3s ease;
+  }
+
+  &.photo-card::before {
+    background: linear-gradient(135deg, #2196F3, #1976D2);
+  }
+
+  &.unlink-card::before {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:hover::before {
+    width: 6px;
+  }
+}
+
+.card-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &.photo-theme {
+    background: linear-gradient(135deg, #2196F3, #1976D2);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+  }
+
+  &.unlink-theme {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+  }
+
+  .card-icon {
+    font-size: 1.5rem;
+    color: white;
+  }
+}
+
+.card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-title {
+  margin: 0 0 4px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.card-description {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  line-height: 1.4;
+}
+
+.card-arrow {
+  margin-left: 8px;
+
+  .arrow-icon {
+    font-size: 1.2rem;
+    color: #bdc3c7;
+    transition: all 0.3s ease;
+  }
+}
+
+.action-card:hover .arrow-icon {
+  color: #667eea;
+  transform: translateX(4px);
+}
+
+// Info Card
+.info-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid #667eea;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  .info-icon {
+    font-size: 1.3rem;
+    color: #667eea;
+  }
+
+  .info-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.info-label {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 0.9rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+  .student-profile-header {
+    padding: 24px 16px 36px 16px;
+  }
+
+  .student-name {
+    font-size: 1.4rem;
+  }
+
+  .detail-item {
+    padding: 6px 10px;
+
+    span {
+      font-size: 0.85rem;
+    }
+  }
+
+  .action-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .card-icon-wrapper {
+    width: 48px;
+    height: 48px;
+
+    .card-icon {
+      font-size: 1.3rem;
+    }
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .card-description {
+    font-size: 0.85rem;
+  }
+}
