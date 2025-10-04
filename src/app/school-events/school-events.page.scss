@@ -139,6 +139,71 @@ ion-content {
   }
 }
 
+// ...existing code...
+
+.event-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.event-title {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-meta,
+.event-time {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  ion-icon {
+    font-size: 1rem;
+    color: #bdc3c7;
+  }
+}
+
+.event-details {
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.event-teacher,
+.event-subject-section {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  ion-icon {
+    font-size: 1rem;
+    color: #bdc3c7;
+  }
+}
+
+.event-teacher {
+  font-weight: 500;
+  color: #34495e; /* Slightly darker for emphasis */
+}
+
+.event-subject-section {
+  font-style: italic;
+}
+
+// ...existing code...
+
 @keyframes float {
   0%, 100% {
     transform: translateY(0) scale(1);

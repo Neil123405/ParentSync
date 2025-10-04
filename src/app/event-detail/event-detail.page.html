@@ -1,54 +1,110 @@
-<ion-header>
-  <ion-toolbar>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="detail-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-back-button defaultHref="/home" color="light"></ion-back-button>
     </ion-buttons>
-    <ion-title style="color: white">Event Details</ion-title>
+    <ion-title class="header-title">Event Details</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <!-- Decorative School Events Button (not clickable) -->
-  <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
+  <!-- <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
     <ion-button expand="block" class="task-btn giant-btn">
       <span class="btn-content">
         <img src="assets/images/events.png" alt="School Events" class="task-img-giant" />
         <span class="btn-label">School Event</span>
       </span>
     </ion-button>
+  </div> -->
+
+
+
+  <div class="page-header event-header" *ngIf="!loading && event">
+    <div class="header-background">
+      <div class="deco-circle deco-1"></div>
+      <div class="deco-circle deco-2"></div>
+      <div class="deco-circle deco-3"></div>
+    </div>
+
+    <div class="header-content">
+      <div class="header-icon-wrapper">
+        <ion-icon name="calendar" class="header-icon"></ion-icon>
+      </div>
+      <h1 class="page-title">{{ event.title }}</h1>
+      <p class="page-subtitle">
+        <ion-icon name="calendar-outline"></ion-icon>
+        {{ event.date | date:'fullDate' }}
+        <span *ngIf="event.time">at {{ event.time }}</span>
+      </p>
+    </div>
   </div>
 
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">event-detail</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="content-wrapper" *ngIf="!loading && event">
+    <div class="detail-card">
+      <div class="card-header">
+        <h2 class="event-title">Event Information</h2>
+        <div class="event-meta">
+          <div class="meta-item">
+            <ion-icon name="location"></ion-icon>
+            <span>{{ event.location }}</span>
+          </div>
+          <div class="meta-item" *ngIf="event.time">
+            <ion-icon name="time"></ion-icon>
+            <span>{{ event.time }}</span>
+          </div>
+        </div>
+      </div>
 
-  <ion-content *ngIf="!loading && event">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>{{ event.title }}</ion-card-title>
-        <ion-card-subtitle>
-          <ion-icon name="calendar-outline" style="vertical-align: middle; margin-right: 6px; color: #10dc60;"></ion-icon>
-          {{ event.date | date:'mediumDate' }}
-          <span *ngIf="event.time">at {{ event.time }}</span>
-        </ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <p>{{ event.description }}</p>
-        <p>
-          <ion-icon name="location-outline" style="vertical-align: middle; margin-right: 6px; color: #3880ff;"></ion-icon>
-          <strong>Location:</strong> {{ event.location }}</p>
-        <p *ngIf="event.cost">
-          <ion-icon name="cash-outline" style="vertical-align: middle; margin-right: 6px; color: #ffcc00;"></ion-icon>
-          <strong>Cost:</strong> {{ event.cost | currency }}</p>
-        <p *ngIf="event.scope">
-          <ion-icon name="people-outline" style="vertical-align: middle; margin-right: 6px; color: #4caf50;"></ion-icon>
-          <strong>Scope:</strong> {{ event.scope }}</p>
-      </ion-card-content>
-    </ion-card>
-  </ion-content>
-  <ion-content *ngIf="loading">
+      <div class="card-divider"></div>
+
+      <div class="card-body">
+        <h3 class="section-title">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          Description
+        </h3>
+        <p class="event-description">{{ event.description }}</p>
+      </div>
+
+      <div class="card-divider" *ngIf="event.cost || event.scope"></div>
+
+      <div class="card-body additional-info" *ngIf="event.cost || event.scope">
+        <h3 class="section-title">
+          <ion-icon name="list-outline"></ion-icon>
+          Additional Details
+        </h3>
+
+        <div class="info-grid">
+          <div class="info-item" *ngIf="event.cost">
+            <div class="info-icon-wrapper cost">
+              <ion-icon name="cash"></ion-icon>
+            </div>
+            <div class="info-content">
+              <span class="info-label">Cost</span>
+              <span class="info-value">{{ event.cost | currency }}</span>
+            </div>
+          </div>
+
+          <div class="info-item" *ngIf="event.scope">
+            <div class="info-icon-wrapper scope">
+              <ion-icon name="people"></ion-icon>
+            </div>
+            <div class="info-content">
+              <span class="info-label">Scope</span>
+              <span class="info-value">{{ event.scope }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Loading event details...</p>
+  </div>
+  <!-- <ion-content *ngIf="loading">
     <ion-spinner></ion-spinner>
-  </ion-content>
+  </ion-content> -->
 </ion-content>

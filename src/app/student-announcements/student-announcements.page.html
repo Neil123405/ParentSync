@@ -43,10 +43,16 @@
       <div class="announcement-info">
         <h3 class="announcement-title">{{ announcement.title }}</h3>
         <p class="announcement-preview">{{ announcement.content | slice:0:60 }}{{ announcement.content.length > 60 ? '...' : '' }}</p>
-        <p class="announcement-time">
-          <ion-icon name="time-outline"></ion-icon>
-          {{ announcement.created_at | date:'mediumDate' }}
-        </p>
+        <div class="announcement-meta">
+          <p class="announcement-teacher">
+            <ion-icon name="person-outline"></ion-icon>
+            Posted by {{ (announcement.first_name && announcement.last_name) ? (announcement.first_name + ' ' + announcement.last_name) : 'Admin' }}
+          </p>
+          <p class="announcement-details" *ngIf="announcement.subject_name || announcement.section_name">
+            <ion-icon name="school-outline"></ion-icon>
+            {{ announcement.subject_name }} | {{ announcement.section_name }}
+          </p>
+        </div>
       </div>
       
       <div class="announcement-actions">

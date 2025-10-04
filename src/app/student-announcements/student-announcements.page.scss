@@ -285,6 +285,37 @@ ion-content {
   line-height: 1.4;
 }
 
+.announcement-meta {
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.announcement-teacher,
+.announcement-details {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  ion-icon {
+    font-size: 1rem;
+    color: #bdc3c7;
+  }
+}
+
+.announcement-teacher {
+  font-weight: 500;
+  color: #34495e; /* Slightly darker for emphasis */
+}
+
+.announcement-details {
+  font-style: italic;
+}
+
 .announcement-time {
   margin: 4px 0 0 0;
   font-size: 0.85rem;

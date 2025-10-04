@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 import { ActivatedRoute } from '@angular/router';
 
@@ -19,6 +19,7 @@ export class ConsentFormDetailPage implements OnInit {
   alreadySigned = false;
   signatureImage: string | null = null;
 
+  
   signaturePadOptions: Object = {
     minWidth: 1,
     canvasWidth: 300,

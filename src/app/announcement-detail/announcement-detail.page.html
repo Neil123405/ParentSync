@@ -1,36 +1,69 @@
-<ion-header>
-  <ion-toolbar>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="detail-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/children"></ion-back-button>
+      <ion-back-button defaultHref="/children" color="light"></ion-back-button>
     </ion-buttons>
-    <ion-title style="color: white">Announcement Detail</ion-title>
+    <ion-title class="header-title">Announcement</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <!-- Decorative Announcements Button (not clickable) -->
-  <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
+  <!-- <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
     <ion-button expand="block" class="task-btn giant-btn">
       <span class="btn-content">
         <img src="assets/images/announcements.png" alt="Announcements" class="task-img-giant" />
         <span class="btn-label">Announcement</span>
       </span>
     </ion-button>
+  </div> -->
+
+    <div class="page-header announcement-header">
+    <div class="header-background">
+      <div class="deco-circle deco-1"></div>
+      <div class="deco-circle deco-2"></div>
+      <div class="deco-circle deco-3"></div>
+    </div>
+    
+    <div class="header-content">
+      <div class="header-icon-wrapper">
+        <ion-icon name="megaphone" class="header-icon"></ion-icon>
+      </div>
+      <h1 class="page-title">Announcement</h1>
+    </div>
   </div>
 
-  <ng-container *ngIf="announcement">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>{{ announcement.title }}</ion-card-title>
-        <ion-card-subtitle>
-          <ion-icon name="calendar-outline" style="vertical-align: middle; margin-right: 6px; color: #10dc60;"></ion-icon>
-          {{ announcement.created_at | date:'medium' }}
-        </ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <p>{{ announcement.content }}</p>
-      </ion-card-content>
-    </ion-card>
-  </ng-container>
-  <ion-label *ngIf="!announcement">Loading...</ion-label>
+  <div class="content-wrapper" *ngIf="announcement">
+    <div class="detail-card">
+      <div class="card-header">
+        <h2 class="announcement-title">{{ announcement.title }}</h2>
+        <div class="announcement-meta">
+          <div class="meta-item">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>{{ announcement.created_at | date:'mediumDate' }}</span>
+          </div>
+          <div class="meta-item">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>{{ announcement.created_at | date:'shortTime' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="card-body">
+        <h3 class="section-title">
+          <ion-icon name="document-text-outline"></ion-icon>
+          Message
+        </h3>
+        <p class="announcement-content">{{ announcement.content }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="!announcement">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Loading announcement...</p>
+  </div>
 </ion-content>

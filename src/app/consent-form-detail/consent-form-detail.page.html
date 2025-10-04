@@ -1,43 +1,98 @@
-<ion-header>
-  <ion-toolbar>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="detail-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/children"></ion-back-button>
+      <ion-back-button defaultHref="/children" color="light"></ion-back-button>
     </ion-buttons>
-    <ion-title style="color: white">Consent Form</ion-title>
+    <ion-title class="header-title">Consent Form</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content *ngIf="form">
   <!-- Decorative Consent Forms Button (not clickable) -->
-  <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
+  <!-- <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
     <ion-button expand="block" class="task-btn giant-btn">
       <span class="btn-content">
         <img src="assets/images/consent.png" alt="Consent Forms" class="task-img-giant" />
         <span class="btn-label">Consent Form</span>
       </span>
     </ion-button>
+  </div> -->
+
+
+  <div class="page-header form-header">
+    <div class="header-background">
+      <div class="deco-circle deco-1"></div>
+      <div class="deco-circle deco-2"></div>
+      <div class="deco-circle deco-3"></div>
+    </div>
+    
+    <div class="header-content">
+      <div class="header-icon-wrapper">
+        <ion-icon name="document-text" class="header-icon"></ion-icon>
+      </div>
+      <h1 class="page-title">{{ form.title }}</h1>
+      <p class="page-subtitle">
+        <ion-icon name="time-outline"></ion-icon>
+        Deadline: {{ form.deadline | date:'mediumDate' }}
+      </p>
+    </div>
   </div>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>{{ form.title }}</ion-card-title>
-      <ion-card-subtitle><ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>Deadline: {{ form.deadline | date }}</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <p>{{ form.description }}</p>
 
-      <div *ngIf="!alreadySigned">
-        <app-signature-pad (signature)="submitSignature($event)"></app-signature-pad>
-      </div>
-      <div *ngIf="alreadySigned">
-        <div *ngIf="signatureImage; else alreadySignedText">
-          <p>Your Signature:</p>
-          <img [src]="signatureImage" alt="Signature" style="border:1px solid #ccc; border-radius:8px; background:#fff; max-width:100%; height:auto;" />
+  <div class="content-wrapper">
+    <div class="detail-card">
+      <div class="card-header">
+        <h2 class="form-title">Form Information</h2>
+        <div class="form-meta">
+          <div class="meta-item">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>Due: {{ form.deadline | date:'fullDate' }}</span>
+          </div>
+          <div class="status-badge" [class.signed]="alreadySigned">
+            <ion-icon [name]="alreadySigned ? 'checkmark-circle' : 'time'"></ion-icon>
+            <span>{{ alreadySigned ? 'Signed' : 'Pending' }}</span>
+          </div>
         </div>
-        <ng-template #alreadySignedText>
-          <ion-label color="success">Already Signed</ion-label>
-        </ng-template>
       </div>
-    </ion-card-content>
-  </ion-card>
+
+      <div class="card-divider"></div>
+
+      <div class="card-body">
+        <h3 class="section-title">
+          <ion-icon name="document-text-outline"></ion-icon>
+          Description
+        </h3>
+        <p class="form-description">{{ form.description }}</p>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="card-body signature-section">
+        <h3 class="section-title">
+          <ion-icon name="create-outline"></ion-icon>
+          Signature
+        </h3>
+
+        <div *ngIf="!alreadySigned" class="signature-container">
+          <p class="signature-instruction">Please sign below to approve this consent form</p>
+          <app-signature-pad #signaturePad (signature)="submitSignature($event)"></app-signature-pad>
+        </div>
+
+        <div *ngIf="alreadySigned" class="signed-container">
+          <div class="success-badge">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>Form Successfully Signed</span>
+          </div>
+          
+          <div *ngIf="signatureImage" class="signature-preview">
+            <p class="preview-label">Your Signature:</p>
+            <img [src]="signatureImage" alt="Signature" class="signature-image" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="height: 70px;">
+
+  </div>
 </ion-content>

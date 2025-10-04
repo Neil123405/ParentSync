@@ -43,7 +43,15 @@ export class ConsentFormsPage implements OnInit {
   }
 
   openConsentForm(form: any) {
+    console.log('Div clicked - navigating to form:', form.form_id, 'studentId:', this.studentId);
     this.router.navigate(['/consent-form-detail', form.form_id, this.studentId]);
+  }
+
+  onActionButtonClick(form: any, event: Event) {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    console.log('Button clicked - navigating (handler) ->', form?.form_id);
+    this.openConsentForm(form);
   }
 
   doRefresh(event: any) {

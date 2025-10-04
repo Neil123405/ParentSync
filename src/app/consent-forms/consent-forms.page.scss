@@ -150,6 +150,42 @@ ion-content {
   }
 }
 
+// ...existing code...
+
+.form-meta {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+
+  ion-icon {
+    font-size: 1rem;
+    color: #bdc3c7;
+  }
+}
+
+
+
+.teacher-item {
+  font-weight: 500;
+  color: #34495e; /* Slightly darker for emphasis */
+}
+
+.details-item {
+  font-style: italic;
+}
+
+// ...existing code...
+
 @keyframes float {
   0%, 100% {
     transform: translateY(0) scale(1);

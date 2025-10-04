@@ -47,6 +47,16 @@
           <ion-icon name="location-outline"></ion-icon>
           {{ event.location }}
         </p>
+        <div class="event-details">
+    <p class="event-teacher">
+      <ion-icon name="person-outline"></ion-icon>
+      Organized by {{ (event.first_name && event.last_name) ? (event.first_name + ' ' + event.last_name) : 'Admin' }}
+    </p>
+    <p class="event-subject-section" *ngIf="event.subject_name || event.section_name">
+      <ion-icon name="school-outline"></ion-icon>
+      {{ event.subject_name }} | {{ event.section_name }}
+    </p>
+  </div>
         <p class="event-time">
           <ion-icon name="time-outline"></ion-icon>
           {{ event.time || 'All Day' }}

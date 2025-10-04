@@ -112,7 +112,7 @@ button:active,
 .global-footer-container::before {
   content: '';
   position: absolute;
-  top: -15px; /* Adjust height for the curve */
+  // top: -15px; /* Adjust height for the curve */
   left: 0;
   right: 0;
   height: 80px; /* Height of the curve */

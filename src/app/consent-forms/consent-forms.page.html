@@ -68,16 +68,24 @@
             <ion-icon name="time-outline"></ion-icon>
             Deadline: {{ form.deadline | date:'mediumDate' }}
           </span>
+          <span class="meta-item teacher-item">
+            <ion-icon name="person-outline"></ion-icon>
+            Posted by {{ (form.first_name && form.last_name) ? (form.first_name + ' ' + form.last_name) : 'Admin' }}
+          </span>
+          <span class="meta-item details-item" *ngIf="form.subject_name || form.section_name">
+            <ion-icon name="school-outline"></ion-icon>
+            {{ form.subject_name }} | {{ form.section_name }}
+          </span>
           <ion-badge *ngIf="form.signed" color="success" class="status-badge">
             <ion-icon name="checkmark-circle"></ion-icon>
             Signed
-          </ion-badge>
+          </ion-badge>  
         </div>
       </div>
 
       <div class="form-actions">
-        <button class="action-btn" [class.sign-btn]="!form.signed" [class.view-btn]="form.signed"
-          (click)="openConsentForm(form); $event.stopPropagation()">
+        <button type="button" class="action-btn" [class.sign-btn]="!form.signed" [class.view-btn]="form.signed"
+          (click)="onActionButtonClick(form, $event)">
           {{ form.signed ? 'View' : 'Sign' }}
         </button>
       </div>
