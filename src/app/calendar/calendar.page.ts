@@ -18,6 +18,7 @@ import { CalendarOptions } from '@fullcalendar/core';
 import { GestureController, Gesture } from '@ionic/angular';
 import { ViewChild } from '@angular/core';
 import { FullCalendarComponent } from '@fullcalendar/angular'; // Import FullCalendarComponent
+import { Storage } from '@ionic/storage-angular';
 
 // calendar.page.ts
 import { LOCAL_CONFIG } from '../config.local';
@@ -48,6 +49,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   //   dateClick: this.handleDateClick.bind(this), // Handle date clicks
   //   eventContent: this.renderEventContent.bind(this), // Custom rendering for events
   // };
+  private _storage: Storage | null = null;
 
 
 
@@ -88,6 +90,11 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   timezoneName: string = '';
   localDate: Date = new Date();
 
+  
+  currentMonth: string = '';
+  consentFormCount: number = 0;
+  eventCount: number = 0;
+
   currentLocation: string = 'Fetching location...';
   private gesture?: Gesture;
 
@@ -95,7 +102,8 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     private router: Router,
     private apiService: ApiService,
     private gestureCtrl: GestureController,
-    private cdr: ChangeDetectorRef // Add ChangeDetectorRef
+    private cdr: ChangeDetectorRef, // Add ChangeDetectorRef
+    private storage: Storage,
   ) { }
 
   ngAfterViewInit() {
@@ -150,10 +158,27 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
 
   // This will run every time the page is shown (not just on first load)
   ionViewWillEnter() {
-    this.ngOnInit();
+   this.loadEventsAndConsentForms();
   }
 
   async ngOnInit() {
+    this._storage = await this.storage.create();
+    const cachedConsentFormCount = await this.storage.get('consentFormCount');
+    const cachedEventCount = await this.storage.get('eventCount');
+
+    console.log('Cached Consent Form Count:', cachedConsentFormCount);
+  console.log('Cached Event Count:', cachedEventCount);
+  console.log('Cached Event Count:', this.consentFormCount);
+
+    if (cachedConsentFormCount !== null && cachedConsentFormCount !== undefined) {
+      console.log('Using cached consent form count');
+      this.consentFormCount = cachedConsentFormCount;
+    }
+
+    if (cachedEventCount !== null && cachedEventCount !== undefined) {
+      console.log('Using cached event count');
+      this.eventCount = cachedEventCount;
+    }
     // await this.setLocalDateByTimezone();
     await this.loadEventsAndConsentForms();
     await this.updateCurrentMonthCounts();
@@ -254,11 +279,8 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     // }
   }
 
-  currentMonth: string = '';
-  consentFormCount: number = 0;
-  eventCount: number = 0;
 
-  updateCurrentMonthCounts() {
+  async updateCurrentMonthCounts() {
     const now = new Date();
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1); // Start of the month
     const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0); // End of the month
@@ -267,6 +289,9 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
 
     const normalizeDate = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
+
+    console.log('Loaded Consent Forms:', this.loadedConsentForms);
+  console.log('Calendar Events:', this._calendarEvents);
     // Filter Consent Forms and Events for the current month
     this.consentFormCount = (this.loadedConsentForms || []).filter((form: any) => {
       const deadline = normalizeDate(new Date(form.deadline));
@@ -283,6 +308,8 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
 
     console.log('Consent Form Count:', this.consentFormCount);
     console.log('Event Count:', this.eventCount);
+    await this.storage.set('consentFormCount', this.consentFormCount);
+    await this.storage.set('eventCount', this.eventCount);
     // Update the current month name
     // this.currentMonth = now.toLocaleString('default', { month: 'long', year: 'numeric' });
   }
@@ -355,50 +382,63 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
 
     // Add the datesSet callback here
     datesSet: (arg) => {
-  console.log('datesSet triggered:', arg); // Debugging log
+      console.log('datesSet triggered:', arg); // Debugging log
 
-  // Use the center date of the calendar view to determine the current month
-  const centerDate = new Date(arg.view.currentStart); // Center date of the visible range
-  console.log('Center Date:', centerDate);
+      // Use the center date of the calendar view to determine the current month
+      const centerDate = new Date(arg.view.currentStart); // Center date of the visible range
+      console.log('Center Date:', centerDate);
 
-  // Update the current month name
-  this.currentMonth = centerDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+      // Update the current month name
+      this.currentMonth = centerDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
-  // Normalize dates for filtering
-  const normalizeDate = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      // Normalize dates for filtering
+      const normalizeDate = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-  // Filter Consent Forms and Events for the current month
-  this.consentFormCount = (this.loadedConsentForms || []).filter((form: any) => {
-    const deadline = normalizeDate(new Date(form.deadline));
-    return (
-      deadline.getFullYear() === centerDate.getFullYear() &&
-      deadline.getMonth() === centerDate.getMonth()
-    );
-  }).length;
+      // Filter Consent Forms and Events for the current month
+      this.consentFormCount = (this.loadedConsentForms || []).filter((form: any) => {
+        const deadline = normalizeDate(new Date(form.deadline));
+        return (
+          deadline.getFullYear() === centerDate.getFullYear() &&
+          deadline.getMonth() === centerDate.getMonth()
+        );
+      }).length;
 
-  this.eventCount = (this._calendarEvents || []).filter((event: any) => {
-    const eventDate = normalizeDate(new Date(event.start));
-    return (
-      eventDate.getFullYear() === centerDate.getFullYear() &&
-      eventDate.getMonth() === centerDate.getMonth()
-    );
-  }).length;
+      this.eventCount = (this._calendarEvents || []).filter((event: any) => {
+        const eventDate = normalizeDate(new Date(event.start));
+        return (
+          eventDate.getFullYear() === centerDate.getFullYear() &&
+          eventDate.getMonth() === centerDate.getMonth()
+        );
+      }).length;
 
-  console.log('Updated counts:', {
-    currentMonth: this.currentMonth,
-    consentFormCount: this.consentFormCount,
-    eventCount: this.eventCount,
-  });
+      console.log('Updated counts:', {
+        currentMonth: this.currentMonth,
+        consentFormCount: this.consentFormCount,
+        eventCount: this.eventCount,
+      });
 
-  this.cdr.detectChanges(); // Trigger change detection
-},
+      this.cdr.detectChanges(); // Trigger change detection
+    },
   };
 
 
 
-  loadEventsAndConsentForms() {
+  async loadEventsAndConsentForms() {
     const parentProfile = this.apiService.getCurrentProfile();
     if (parentProfile) {
+
+      const cachedEvents = await this.storage.get('calendarEvents');
+      if (cachedEvents) {
+      console.log('Using cached calendar events');
+      this.calendarOptions.events = cachedEvents;
+
+      // Assign cached events to _calendarEvents and loadedConsentForms
+      this._calendarEvents = cachedEvents.filter((event: any) => event.extendedProps.type === 'event');
+      this.loadedConsentForms = cachedEvents.filter((event: any) => event.extendedProps.type === 'consentForm');
+
+      console.log('Loaded Events from Cache:', this._calendarEvents);
+      console.log('Loaded Consent Forms from Cache:', this.loadedConsentForms);
+    }
       // Fetch children linked to the parent
       this.apiService.getParentChildren(parentProfile.parent_id).subscribe((childrenRes) => {
         const childrenArray = childrenRes.children || [];
@@ -456,7 +496,11 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
             }));
 
             // Combine events and consent forms
-            this.calendarOptions.events = [...events, ...consentForms];
+            const combinedEvents = [...events, ...consentForms];
+            this.calendarOptions.events = combinedEvents;
+
+            // Cache the combined events
+            this.storage.set('calendarEvents', combinedEvents);
             console.log('Loaded Consent Forms:', this.loadedConsentForms);
             console.log('Loaded Events:', this._calendarEvents);
             this.updateCurrentMonthCounts();
@@ -464,6 +508,11 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
         });
       });
     }
+  }
+
+  async clearCalendarCache() {
+    await this.storage.remove('calendarEvents');
+    console.log('Calendar events cache cleared');
   }
 
   renderEventContent(eventInfo: any) {
@@ -700,6 +749,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
 
   doRefresh(event: any) {
     // Reload your data here (call ngOnInit or your data-loading logic)
+    this.clearCalendarCache(); // Clear the cache
     this.ngOnInit();
 
     // Complete the refresher after data is loaded

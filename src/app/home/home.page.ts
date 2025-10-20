@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 
 import { ApiService, User, ParentProfile } from '../services/api.service';
 
+import { Storage } from '@ionic/storage-angular';
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -29,6 +31,7 @@ export class HomePage implements OnInit {
   constructor(
     private apiService: ApiService,
     private router: Router,
+    private storage: Storage,
   ) {
 
   }
@@ -37,6 +40,7 @@ export class HomePage implements OnInit {
   userPhotoUrl: string = '';
 
   ngOnInit() {
+    this.storage.create(); // Ensure storage is ready
     this.apiService.currentUser$.subscribe(user => {
       this.currentUser = user;
       if (!this.currentUser) {
@@ -63,21 +67,32 @@ export class HomePage implements OnInit {
     this.parent = profile ? (profile as ParentProfile) : null;
   }
 
-  loadChildrenWithPhotos() {
+  async loadChildrenWithPhotos() {
     if (!this.currentProfile) {
       return;
+    } 
+
+    // Check if cached children data exists
+    const cachedChildren = await this.storage.get('cachedChildrenWithPhotos');
+    if (cachedChildren) {
+      console.log('Using cached children with photos', cachedChildren);
+      this.laravelChildren = cachedChildren;
     }
+
+    // Fetch fresh children data from the API
     this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
-      next: (response) => {
+      next: async (response) => {
         if (response.success) {
-          this.laravelChildren = response.children;
+          this.laravelChildren = response.children || [];
+          // Cache the children data
+          await this.storage.set('cachedChildrenWithPhotos', this.laravelChildren);
+          console.log('Cached children with photos:', this.laravelChildren);
         }
       },
       error: (error) => {
-
-      }
+        console.error('Error fetching children with photos:', error);
+      },
     });
-
   }
 
   ionViewWillEnter() {
@@ -87,26 +102,56 @@ export class HomePage implements OnInit {
     }
   }
 
-  loadAnnouncementsAndEvents() {
+  async loadAnnouncementsAndEvents() {
     if (!this.currentProfile) return;
 
+    const cachedAnnouncements = await this.storage.get('cachedAnnouncements');
+    const cachedEvents = await this.storage.get('cachedEvents');
+
+    if (cachedAnnouncements) {
+      console.log('Using cached announcements');
+      this.laravelAnnouncements = cachedAnnouncements;
+    }
+
+    if (cachedEvents) {
+      console.log('Using cached events');
+      this.laravelEvents = cachedEvents;
+    }
+
     this.apiService.getParentAnnouncements(this.currentProfile.parent_id).subscribe({
-      next: (response) => {
+      next: async (response) => {
         this.laravelAnnouncements = response.announcements || [];
-      }
+        // Cache the announcements
+        await this.storage.set('cachedAnnouncements', this.laravelAnnouncements);
+        console.log('Cached announcements:', this.laravelAnnouncements);
+      },
+      error: (error) => {
+        console.error('Error fetching announcements:', error);
+      },
     });
 
     this.apiService.getParentEvents(this.currentProfile.parent_id).subscribe({
-      next: (response) => {
+      next: async (response) => {
         this.laravelEvents = response.events || [];
+        // Cache the events
+        await this.storage.set('cachedEvents', this.laravelEvents);
+        console.log('Cached events:', this.laravelEvents);
       },
       error: (error) => {
-        console.error('Error fetching events:', error); // Debugging log
-      }
+        console.error('Error fetching events:', error);
+      },
     });
   }
 
+  async clearAnnouncementsAndEventsCache() {
+    await this.storage.remove('cachedChildrenWithPhotos');
+    await this.storage.remove('cachedAnnouncements');
+    await this.storage.remove('cachedEvents');
+    console.log('Announcements and events cache cleared');
+  }
+
   async refreshData(event?: any) {
+    await this.clearAnnouncementsAndEventsCache(); // Clear the cache
     await this.loadAnnouncementsAndEvents();
     await this.loadChildrenWithPhotos();
     if (event) {
