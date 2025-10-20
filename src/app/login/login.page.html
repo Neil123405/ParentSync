@@ -7,7 +7,7 @@
 <ion-content [fullscreen]="true" class="login-background">
   <!-- Wave Header -->
   <div class="wave-header">
-    <h2>{{ isRegistering ? 'Join Us,' : 'Welcome Back,' }}</h2>
+    <h2>{{ isRegistering ? 'Join Us,' : 'Welcome!,' }}</h2>
     <h1>{{ isRegistering ? 'Sign Up!' : 'Log In!' }}</h1>
   </div>
 
@@ -15,9 +15,9 @@
   <div class="login-form" *ngIf="!isRegistering">
     <!-- Email Address -->
     <div class="input-container">
-      <label>EMAIL ADDRESS</label>
+      <label>Username</label>
       <ion-item lines="none">
-        <ion-input type="email" [(ngModel)]="credentials.username" required placeholder="your.email@example.com"></ion-input>
+        <ion-input type="text" [(ngModel)]="credentials.username" required placeholder="John Doe"></ion-input>
       </ion-item>
     </div>
 

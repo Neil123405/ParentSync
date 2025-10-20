@@ -11,6 +11,7 @@ import { LoadingController, ToastController, ModalController } from '@ionic/angu
 import { ApiService, User, ParentProfile } from '../services/api.service';
 import { AddStudentModalComponent } from '../components/add-student-modal/add-student-modal.component';
 import { ChildOptionsModalComponent } from '../components/child-options-modal/child-options-modal.component';
+import { Storage } from '@ionic/storage-angular';
 
 interface LaravelStudent {
   student_id: number;
@@ -104,6 +105,8 @@ export class ChildrenPage implements OnInit {
   panStartX: number = 0;
   currentPanX: number = 0;
   // studentAnnouncements: Announcement[] = [];
+  isLoading: boolean = true; // Add loading state
+  private _storage: Storage | null = null;
 
   constructor(
     private router: Router,
@@ -112,13 +115,16 @@ export class ChildrenPage implements OnInit {
     private apiService: ApiService,
     private toastController: ToastController,
     private modalController: ModalController,
+    private storage: Storage,
     // private actionSheetController: ActionSheetController
+
   ) { }
 
   // router.navigate(['])
 
-  ngOnInit() {
+  async ngOnInit() {
     // Check authentication
+    this._storage = await this.storage.create();
     this.currentUser = this.apiService.getCurrentUser();
     this.currentProfile = this.apiService.getCurrentProfile();
 
@@ -177,11 +183,42 @@ export class ChildrenPage implements OnInit {
   recentAnnouncements: any[] = [];
 
   updateSelectedChildData() {
-    if (this.selectedChild) {
+    console.log('Selected Child:', this.selectedChild);
+
+    if (this.selectedChild && this.selectedChild.student_id) {
       this.upcomingConsentForms = this.consentFormCountsTwo[this.selectedChild.student_id] || [];
       this.upcomingEvents = this.schoolEventCountsTwo[this.selectedChild.student_id] || [];
       this.recentAnnouncements = this.announcementCountsTwo[this.selectedChild.student_id] || [];
+    } else {
+      console.warn('Selected child or student_id is invalid');
+      this.upcomingConsentForms = [];
+      this.upcomingEvents = [];
+      this.recentAnnouncements = [];
     }
+  }
+
+  processData<T extends { deadline: string; student_id: number; date: string; created_at: string }>(
+    items: T[],
+    filterCondition: (item: T) => boolean,
+    groupByKey: (item: T) => string | number
+  ): { grouped: { [key: string]: T[] }, counts: { [key: string]: number } } {
+    const grouped: { [key: string]: T[] } = {};
+    const counts: { [key: string]: number } = {};
+
+    items.forEach(item => {
+      const key = groupByKey(item);
+      if (filterCondition(item)) {
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(item);
+      }
+      counts[key] = (counts[key] || 0) + 1;
+    });
+
+    return { grouped, counts };
+  }
+
+  async clearCache() {
+    await this._storage?.remove('laravelChildren');
   }
 
   async loadData() {
@@ -190,129 +227,232 @@ export class ChildrenPage implements OnInit {
       // console.log('No currentProfile, returning');
       return;
     }
+    console.log('loadData started, isLoading:', this.isLoading); // Should log true initially
 
-    const loading = await this.loadingController.create({
-      message: 'Loading children...',
-    });
-    await loading.present();
+    this.isLoading = true; // Set loading state to true
+    // const loading = await this.loadingController.create({
+    //   message: 'Loading children...',
+    // });
+    // await loading.present();
 
     try {
       // Load children
+      const parentId = this.currentProfile.parent_id;
       // console.log('About to call getParentChildren with:', this.currentProfile.parent_id);
 
-      if (this.currentProfile?.parent_id) {
-        this.apiService.getAllUnsignedConsentFormsForParent(this.currentProfile.parent_id).subscribe(res => {
-          const forms = res.forms || [];
-          const today = new Date();
-          // Reset counts
-          const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());  // Date only, no time
-          this.consentFormCounts = {};
-          this.consentFormCountsTwo = {};
-          forms.forEach((form: any) => {
-            const deadline = new Date(form.deadline);
-            const deadlineDate = new Date(deadline.getFullYear(), deadline.getMonth(), deadline.getDate());  // Date only, no time
-            const diffDays = (deadlineDate.getTime() - todayDate.getTime()) / (1000 * 3600 * 24);
-            if (diffDays >= 0 && diffDays <= 5) {
-              const sidTwo = form.student_id;
-              if (!this.consentFormCountsTwo[sidTwo]) this.consentFormCountsTwo[sidTwo] = [];
-              this.consentFormCountsTwo[sidTwo].push(form);
-            }
-            const sid = form.student_id;
+      const cachedChildren = await this._storage?.get('laravelChildren');
+      const cachedConsentCounts = await this._storage?.get('consentFormCounts');
+      const cachedConsentCountsTwo = await this._storage?.get('consentFormCountsTwo');
+      const cachedEventCounts = await this._storage?.get('schoolEventCounts');
+      const cachedAnnouncementCounts = await this._storage?.get('announcementCounts');
+      const cachedEventCountsTwo = await this._storage?.get('schoolEventCountsTwo');
+      const cachedAnnouncementCountsTwo = await this._storage?.get('announcementCountsTwo');
+      // if (cachedData) {
+      //   console.log('Using cached data');
+      //   this.laravelChildren = cachedData;
+      //   // this.isLoading = false;
+      //   // return;
+      // } else {
+      //   const childrenRes = await this.apiService.getParentChildren(parentId).toPromise();
+      //   if (childrenRes.success) {
+      //     this.laravelChildren = childrenRes.children || [];
+      //     // Cache the data
+      //     await this._storage?.set('laravelChildren', this.laravelChildren);
+      //   }
+      // }
 
-            this.consentFormCounts[sid] = (this.consentFormCounts[sid] || 0) + 1;
-          });
-          if (this.selectedChild) this.updateSelectedChildData();
-        });
-        this.apiService.getParentEvents(this.currentProfile.parent_id).subscribe(res => {
-          const events = res.events || [];
-          const today = new Date();
-          this.schoolEventCounts = {};
-          this.schoolEventCountsTwo = {};
-          events.forEach((event: any) => {
-            const eventDate = new Date(event.date);
-            const diffDays = (eventDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
-            if (diffDays >= 0 && diffDays <= 10) {
-              const sidTwo = event.student_id;
-              if (!this.schoolEventCountsTwo[sidTwo]) this.schoolEventCountsTwo[sidTwo] = [];
-              this.schoolEventCountsTwo[sidTwo].push(event);
-            }
-            const sid = event.student_id;
-            this.schoolEventCounts[sid] = (this.schoolEventCounts[sid] || 0) + 1;
-          });
-          if (this.selectedChild) this.updateSelectedChildData();
-        });
-        this.apiService.getParentAnnouncements(this.currentProfile.parent_id).subscribe(res => {
-          const announcements = res.announcements || [];
-          const today = new Date();
-          const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());  // Date only, no time
-          this.announcementCounts = {};
-          this.announcementCountsTwo = {};  // For filtered data
-          announcements.forEach((announcement: any) => {
-            const date = new Date(announcement.created_at);
-            const announcementDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());  // Date only, no time
-            if (announcementDate.getTime() === todayDate.getTime()) {  // Only today's announcements
-              const sidTwo = announcement.student_id;
-              if (!this.announcementCountsTwo[sidTwo]) this.announcementCountsTwo[sidTwo] = [];
-              this.announcementCountsTwo[sidTwo].push(announcement);
-            }
-            const sid = announcement.student_id;
-            this.announcementCounts[sid] = (this.announcementCounts[sid] || 0) + 1;
-          });
-          if (this.selectedChild) this.updateSelectedChildData();
-        });
+      // Use cached data if available
+      if (cachedChildren) {
+        console.log('Using cached children data');
+        this.laravelChildren = cachedChildren;
       }
-      this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
-        next: (response) => {
-          // console.log('API response for children:', response);
+      if (cachedConsentCounts) {
+        console.log('Using cached consent form counts');
+        this.consentFormCounts = cachedConsentCounts;
+        this.consentFormCountsTwo = cachedConsentCountsTwo;
+      }
+      if (cachedEventCounts) {
+        console.log('Using cached school event counts');
+        this.schoolEventCounts = cachedEventCounts;
+        this.schoolEventCountsTwo = cachedEventCountsTwo;
+      }
+      if (cachedAnnouncementCounts) {
+        console.log('Using cached announcement counts');
+        this.announcementCounts = cachedAnnouncementCounts;
+        this.announcementCountsTwo = cachedAnnouncementCountsTwo;
+      }
+      if (!cachedChildren || !cachedConsentCounts || !cachedEventCounts || !cachedAnnouncementCounts) {
+        const [childrenRes, eventsRes, announcementsRes, consentFormsRes, pendingStudentsRes] = await Promise.all([
+          this.apiService.getParentChildren(parentId).toPromise(),
+          this.apiService.getParentEvents(parentId).toPromise(),
+          this.apiService.getParentAnnouncements(parentId).toPromise(),
+          this.apiService.getAllUnsignedConsentFormsForParent(parentId).toPromise(),
+          this.apiService.getPendingChildren(parentId).toPromise(),
+        ]);
 
-          if (response.success) {
-            this.laravelChildren = response.children;
-            // console.log('laravelChildren set to:', this.laravelChildren);
-            // Fetch counts for each child
-            // this.laravelChildren.forEach(child => {
-            //   // this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
-            //   //   this.consentFormCounts[child.student_id] = (res.forms || []).length;
 
-            //   //   // this.consentForms = res.forms || [];
-            //   // });
-            //   // this.apiService.getStudentEvents(child.student_id).subscribe(res => {
-            //   //   this.schoolEventCounts[child.student_id] = (res.events || []).length;
-            //   // });
-            //   // Fetch announcements count
-            //   // this.apiService.getStudentAnnouncements(child.student_id).subscribe(res => {
-            //   //   this.announcementCounts[child.student_id] = (res.announcements || []).length;
-            //   // });
-            //   // this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
-            //   //   child.photo_url = profile.photo_url;
-            //   //   // ...update other fields if needed
-            //   // });
-            // });
-          }
-          // else {
-          //   // console.warn('API response did not have success=true:', response);
-          // }
-        },
-        error: (error) => {
-          // console.error('Error loading children:', error);
+        if (childrenRes.success) {
+          this.laravelChildren = childrenRes.children || [];
+          await this._storage?.set('laravelChildren', this.laravelChildren);
         }
-      });
+        // if (this.currentProfile?.parent_id) {
+        //   this.apiService.getAllUnsignedConsentFormsForParent(this.currentProfile.parent_id).subscribe(res => {
+        //     const forms = res.forms || [];
+        const today = new Date();
+        // Reset counts
+        const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());  // Date only, no time
+        const { grouped: consentFormGrouped, counts: consentFormCounts } = this.processData(
+          consentFormsRes.forms,
+          form => {
+            const deadlineDate = new Date(new Date(form.deadline).toDateString());
+            const diffDays = (deadlineDate.getTime() - todayDate.getTime()) / (1000 * 3600 * 24);
+            return diffDays >= 0 && diffDays <= 5;
+          },
+          form => form.student_id
+        );
+        this.consentFormCounts = consentFormCounts;
+        await this._storage?.set('consentFormCounts', this.consentFormCounts);
+        this.consentFormCountsTwo = consentFormGrouped;
+        await this._storage?.set('consentFormCountsTwo', this.consentFormCountsTwo);
+        // consentFormsRes.forms.forEach((form: any) => {
+        //   const deadline = new Date(form.deadline);
+        //   const deadlineDate = new Date(deadline.getFullYear(), deadline.getMonth(), deadline.getDate());  // Date only, no time
+        //   const diffDays = (deadlineDate.getTime() - todayDate.getTime()) / (1000 * 3600 * 24);
+        //   if (diffDays >= 0 && diffDays <= 5) {
+        //     const sidTwo = form.student_id;
+        //     if (!this.consentFormCountsTwo[sidTwo]) this.consentFormCountsTwo[sidTwo] = [];
+        //     this.consentFormCountsTwo[sidTwo].push(form);
+        //   }
+        //   const sid = form.student_id;
 
-      // Load pending students
-      this.apiService.getPendingChildren(this.currentProfile.parent_id).subscribe({
-        next: (res) => {
-          this.pendingStudents = res.pending || [];
-        },
-        error: () => {
-          this.pendingStudents = [];
-        }
-      });
+        //   this.consentFormCounts[sid] = (this.consentFormCounts[sid] || 0) + 1;
+        // });
+        // if (this.selectedChild) this.updateSelectedChildData();
+        // });
+        // this.apiService.getParentEvents(this.currentProfile.parent_id).subscribe(res => {
+        // const events = res.events || [];
+        // const today = new Date();
+        const { grouped: eventGrouped, counts: eventCounts } = this.processData(
+          eventsRes.events,
+          event => {
+            const eventDate = new Date(event.date);
+            const diffDays = (eventDate.getTime() - todayDate.getTime()) / (1000 * 3600 * 24);
+            return diffDays >= 0 && diffDays <= 10;
+          },
+          event => event.student_id
+        );
+        this.schoolEventCountsTwo = eventGrouped;
+        this.schoolEventCounts = eventCounts;
+        await this._storage?.set('schoolEventCounts', this.schoolEventCounts);
+        await this._storage?.set('schoolEventCountsTwo', this.schoolEventCountsTwo);
+        // eventsRes.events.forEach((event: any) => {
+        //   const eventDate = new Date(event.date);
+        //   const diffDays = (eventDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
+        //   if (diffDays >= 0 && diffDays <= 10) {
+        //     const sidTwo = event.student_id;
+        //     if (!this.schoolEventCountsTwo[sidTwo]) this.schoolEventCountsTwo[sidTwo] = [];
+        //     this.schoolEventCountsTwo[sidTwo].push(event);
+        //   }
+        //   const sid = event.student_id;
+        //   this.schoolEventCounts[sid] = (this.schoolEventCounts[sid] || 0) + 1;
+        // });
+        // if (this.selectedChild) this.updateSelectedChildData();
+        // });
+        // this.apiService.getParentAnnouncements(this.currentProfile.parent_id).subscribe(res => {
+        // const announcements = res.announcements || [];
+        // const today = new Date();
+        // const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());  // Date only, no time
+        const { grouped: announcementGrouped, counts: announcementCounts } = this.processData(
+          announcementsRes.announcements,
+          announcement => {
+            const announcementDate = new Date(new Date(announcement.created_at).toDateString());
+            return announcementDate.getTime() === todayDate.getTime();
+          },
+          announcement => announcement.student_id
+        );
+        this.announcementCountsTwo = announcementGrouped;
+        this.announcementCounts = announcementCounts;
+        await this._storage?.set('announcementCounts', this.announcementCounts);
+        await this._storage?.set('announcementCountsTwo', this.announcementCountsTwo);
+        // announcementsRes.announcements.forEach((announcement: any) => {
+        //   const date = new Date(announcement.created_at);
+        //   const announcementDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());  // Date only, no time
+        //   if (announcementDate.getTime() === todayDate.getTime()) {  // Only today's announcements
+        //     const sidTwo = announcement.student_id;
+        //     if (!this.announcementCountsTwo[sidTwo]) this.announcementCountsTwo[sidTwo] = [];
+        //     this.announcementCountsTwo[sidTwo].push(announcement);
+        //   }
+        //   const sid = announcement.student_id;
+        //   this.announcementCounts[sid] = (this.announcementCounts[sid] || 0) + 1;
+        // });
+        // if (this.selectedChild) this.updateSelectedChildData();
+        // });
+        // }
+        // this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
+        //   next: (response) => {
+        //     // console.log('API response for children:', response);
 
-      await loading.dismiss();
+        //     if (response.success) {
+        //       this.laravelChildren = response.children;
+        //       // console.log('laravelChildren set to:', this.laravelChildren);
+        //       // Fetch counts for each child
+        //       // this.laravelChildren.forEach(child => {
+        //       //   // this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
+        //       //   //   this.consentFormCounts[child.student_id] = (res.forms || []).length;
+
+        //       //   //   // this.consentForms = res.forms || [];
+        //       //   // });
+        //       //   // this.apiService.getStudentEvents(child.student_id).subscribe(res => {
+        //       //   //   this.schoolEventCounts[child.student_id] = (res.events || []).length;
+        //       //   // });
+        //       //   // Fetch announcements count
+        //       //   // this.apiService.getStudentAnnouncements(child.student_id).subscribe(res => {
+        //       //   //   this.announcementCounts[child.student_id] = (res.announcements || []).length;
+        //       //   // });
+        //       //   // this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
+        //       //   //   child.photo_url = profile.photo_url;
+        //       //   //   // ...update other fields if needed
+        //       //   // });
+        //       // });
+        //     }
+        //     // else {
+        //     //   // console.warn('API response did not have success=true:', response);
+        //     // }
+        //   },
+        //   error: (error) => {
+        //     // console.error('Error loading children:', error);
+        //   }
+        // });
+
+        // Load pending students
+        // this.apiService.getPendingChildren(this.currentProfile.parent_id).subscribe({
+        //   next: (res) => {
+        //     this.pendingStudents = res.pending || [];
+        //   },
+        //   error: () => {
+        //     this.pendingStudents = [];
+        //   }
+        // });
+
+        // Process pending students data
+        this.pendingStudents = pendingStudentsRes.pending || [];
+      }
+      // Update selected child data
+      if (this.selectedChild) this.updateSelectedChildData();
+      this.isLoading = false; // Set loading state to true
+      // await loading.dismiss();
     } catch (error) {
-      await loading.dismiss();
+      this.isLoading = false; // Set loading state to true
+      // await loading.dismiss();
       // console.error('Error loading data:', error);
     }
   }
+
+  async clearAllCache() {
+    await this._storage?.clear();
+    console.log('All cache cleared');
+  }
+
 
   selectChild(child: LaravelStudent) {
     this.selectedChild = child;
@@ -321,13 +461,25 @@ export class ChildrenPage implements OnInit {
     // Optionally reset timeline dropdown of all children when you click a child, think of it as closing all timelines for all children
     // so that only the selected child's timeline is open
     // +key converts string keys to numbers
-    Object.keys(this.showTimeline).forEach(key => this.showTimeline[+key] = false);
+    // Object.keys(this.showTimeline).forEach(key => this.showTimeline[+key] = false);
     // Clear previous data
     // this.consentForms = [];
     // this.attendanceRecords = [];
     // this.attendanceSummary = null;
     // this.studentEvents = [];
     // this.studentAnnouncements = [];
+    this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
+      this.upcomingConsentForms = res.forms || [];
+    });
+
+    this.apiService.getStudentEvents(child.student_id).subscribe(res => {
+      this.upcomingEvents = res.events || [];
+    });
+
+    this.apiService.getStudentAnnouncements(child.student_id).subscribe(res => {
+      this.recentAnnouncements = res.announcements || [];
+    });
+    console.log('Upcoming Consent Forms:', this.upcomingConsentForms);
   }
 
   showSection(section: string) {
@@ -451,6 +603,7 @@ export class ChildrenPage implements OnInit {
   }
 
   async refreshData(event?: any) {
+    await this.clearCache();
     await this.loadData();
     if (event) {
       event.target.complete();
@@ -572,9 +725,10 @@ export class ChildrenPage implements OnInit {
                   this.apiService.linkStudentToParent(this.currentProfile.parent_id, studentId, firstName,
                     lastName,
                     birthdate).subscribe({
-                      next: (response) => {
+                      next: async (response) => {
                         if (response.success) {
                           this.showToast('Student linked successfully!');
+                          await this.clearCache();
                           this.loadData();
                         } else {
                           this.showToast(response.message);
@@ -719,7 +873,12 @@ export class ChildrenPage implements OnInit {
     // this.centerCard(index);
     this.selectedChild = child;
     this.centerCardIndex = index;
-    this.updateSelectedChildData(); // Refresh filtered data for the selected child
+    // Ensure selectedChild is valid before updating data
+    if (this.selectedChild) {
+      this.updateSelectedChildData();
+    } else {
+      console.error('Selected child is null or invalid');
+    }
   }
 
   centerCard(index: number) {

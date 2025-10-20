@@ -11,6 +11,8 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
 
+import { IonicStorageModule } from '@ionic/storage-angular'; // Import Ionic Storage
+
 
 
 
@@ -26,6 +28,7 @@ import { SharedModule } from './shared/shared.module';
     HttpClientModule,
     FormsModule,
     SharedModule,
+    IonicStorageModule.forRoot() // Initialize Ionic Storage
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
