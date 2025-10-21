@@ -150,15 +150,15 @@ export class ChildrenPage implements OnInit {
       // Automatically select the first child if available
       const lastSelectedChild = await this.storage.get('lastSelectedChild');
       console.log('Last selected child from storage:', lastSelectedChild);
-    if (lastSelectedChild) {
-      const index = this.laravelChildren.findIndex(child => child.student_id === lastSelectedChild.student_id);
-      if (index !== -1) {
-        this.selectChildAndCenter(this.laravelChildren[index], index);
+      if (lastSelectedChild) {
+        const index = this.laravelChildren.findIndex(child => child.student_id === lastSelectedChild.student_id);
+        if (index !== -1) {
+          this.selectChildAndCenter(this.laravelChildren[index], index);
+        }
       }
-    } 
-    // else if (this.laravelChildren.length > 0) {
-    //   this.selectChildAndCenter(this.laravelChildren[0], 0);
-    // }
+      // else if (this.laravelChildren.length > 0) {
+      //   this.selectChildAndCenter(this.laravelChildren[0], 0);
+      // }
     }
 
     setTimeout(() => {
@@ -181,29 +181,29 @@ export class ChildrenPage implements OnInit {
     // });
   }
 
- ionViewWillEnter() {
-  if (this.currentProfile) {
-    this.loadData().then(async () => {
-      // Check if selectedChild is already set
-      if (!this.selectedChild && this.laravelChildren.length > 0) {
-        // Try to restore the last selected child from storage
-        const lastSelectedChild = await this.storage.get('lastSelectedChild');
-        console.log('Last selected child in ionViewWillEnter:', lastSelectedChild);
+  ionViewWillEnter() {
+    if (this.currentProfile) {
+      this.loadData().then(async () => {
+        // Check if selectedChild is already set
+        if (!this.selectedChild && this.laravelChildren.length > 0) {
+          // Try to restore the last selected child from storage
+          const lastSelectedChild = await this.storage.get('lastSelectedChild');
+          console.log('Last selected child in ionViewWillEnter:', lastSelectedChild);
 
-        if (lastSelectedChild) {
-          const index = this.laravelChildren.findIndex(child => child.student_id === lastSelectedChild.student_id);
-          if (index !== -1) {
-            this.selectChildAndCenter(this.laravelChildren[index], index);
-            return; // Exit the method after restoring the last selected child
+          if (lastSelectedChild) {
+            const index = this.laravelChildren.findIndex(child => child.student_id === lastSelectedChild.student_id);
+            if (index !== -1) {
+              this.selectChildAndCenter(this.laravelChildren[index], index);
+              return; // Exit the method after restoring the last selected child
+            }
           }
-        }
 
-        // If no last selected child is found, select the first child
-        this.selectChildAndCenter(this.laravelChildren[0], 0);
-      }
-    });
+          // If no last selected child is found, select the first child
+          this.selectChildAndCenter(this.laravelChildren[0], 0);
+        }
+      });
+    }
   }
-}
 
   // * loadingController.create({}), .present()
   // * .forEach((e: any) => {});
