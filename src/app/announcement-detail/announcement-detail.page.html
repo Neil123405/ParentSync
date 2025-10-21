@@ -1,13 +1,13 @@
 <ion-header class="ion-no-border">
   <ion-toolbar class="detail-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/children" color="light"></ion-back-button>
+      <ion-back-button defaultHref="/home" color="light"></ion-back-button>
     </ion-buttons>
     <ion-title class="header-title">Announcement</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content [fullscreen]="true">
   <!-- Decorative Announcements Button (not clickable) -->
   <!-- <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
     <ion-button expand="block" class="task-btn giant-btn">
@@ -17,19 +17,27 @@
       </span>
     </ion-button>
   </div> -->
+   <ion-refresher slot="fixed" (ionRefresh)="refreshAnnouncement($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
 
-    <div class="page-header announcement-header">
+  <div class="page-header announcement-header" *ngIf="announcement">
     <div class="header-background">
       <div class="deco-circle deco-1"></div>
       <div class="deco-circle deco-2"></div>
       <div class="deco-circle deco-3"></div>
     </div>
-    
+
     <div class="header-content">
       <div class="header-icon-wrapper">
         <ion-icon name="megaphone" class="header-icon"></ion-icon>
       </div>
-      <h1 class="page-title">Announcement</h1>
+      <h1 class="page-title">{{ announcement.title }}</h1>
+      <p class="page-subtitle">
+        <ion-icon name="calendar-outline"></ion-icon>
+        {{ announcement.created_at | date:'fullDate' }}
+        <span *ngIf="announcement.created_by">by {{ announcement.created_by }}</span>
+      </p>
     </div>
   </div>
 

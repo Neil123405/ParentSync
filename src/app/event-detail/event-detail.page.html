@@ -8,6 +8,9 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshEvent($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <!-- Decorative School Events Button (not clickable) -->
   <!-- <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
     <ion-button expand="block" class="task-btn giant-btn">
