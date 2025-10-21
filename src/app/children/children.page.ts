@@ -1,17 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-
 import { Router } from '@angular/router';
-
 import { AlertController } from '@ionic/angular';
-
 import { LoadingController, ToastController, ModalController } from '@ionic/angular';
-
-// import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-
+import { Storage } from '@ionic/storage-angular';
 import { ApiService, User, ParentProfile } from '../services/api.service';
 import { AddStudentModalComponent } from '../components/add-student-modal/add-student-modal.component';
 import { ChildOptionsModalComponent } from '../components/child-options-modal/child-options-modal.component';
-import { Storage } from '@ionic/storage-angular';
+import { last } from 'rxjs';
 
 interface LaravelStudent {
   student_id: number;
@@ -24,41 +19,6 @@ interface LaravelStudent {
   photo_url?: string;
 }
 
-interface ConsentForm {
-  form_id: number;
-  title: string;
-  description: string;
-  deadline: string;
-  signed: boolean;
-}
-
-// interface AttendanceRecord {
-//   attendance_id: number;
-//   date: string;
-//   status: string;
-//   teacher_first_name: string;
-//   teacher_last_name: string;
-// }
-
-interface LaravelEvent {
-  event_id: number;
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  location: string;
-  cost: number;
-  scope: string;
-  created_at: string;
-}
-
-interface Announcement {
-  id: number;
-  title: string;
-  content: string;
-  date: string;
-}
-
 @Component({
   selector: 'app-children',
   templateUrl: './children.page.html',
@@ -68,63 +28,47 @@ interface Announcement {
 export class ChildrenPage implements OnInit {
   currentUser: User | null = null;
   currentProfile: ParentProfile | null = null;
-
   laravelChildren: LaravelStudent[] = [];
+  pendingStudents: LaravelStudent[] = [];
   selectedChild: LaravelStudent | null = null;
-
-  // Child-specific data
-  // consentForms: ConsentForm[] = [];
-  // studentEvents: LaravelEvent[] = [];
-
+  upcomingConsentForms: any[] = [];
+  upcomingEvents: any[] = [];
+  recentAnnouncements: any[] = [];
+  animationTimer: any = null;
   activeSection: string = '';
-
   newStudentId: number | null = null;
-
-  // Timeline and consent form states
+  longPressedId: number | null = null;
+  pressTimer: any = null;
   showTimeline: { [studentId: number]: boolean } = {};
   signedConsentForms: { [studentId: number]: any[] } = {};
-
   consentFormCountsTwo: { [studentId: number]: any } = {};
   consentFormCounts: { [studentId: number]: any } = {};
   schoolEventCounts: { [studentId: number]: any } = {};
   announcementCounts: { [studentId: number]: any } = {};
   schoolEventCountsTwo: { [studentId: number]: any } = {};
   announcementCountsTwo: { [studentId: number]: any } = {};
-
-
   showTasks = false;
   showSchoolEvents = false;
-
-  pendingStudents: LaravelStudent[] = [];
-
-  pressTimer: any = null;
-
-
-  centerCardIndex: number = 0;
   isPanning: boolean = false;
+  isLoading: boolean = true;
+  centerCardIndex: number = 0;
   panStartX: number = 0;
   currentPanX: number = 0;
-  // studentAnnouncements: Announcement[] = [];
-  isLoading: boolean = true; // Add loading state
   private _storage: Storage | null = null;
 
   constructor(
     private router: Router,
     private alertController: AlertController,
-    private loadingController: LoadingController,
     private apiService: ApiService,
     private toastController: ToastController,
     private modalController: ModalController,
     private storage: Storage,
-    // private actionSheetController: ActionSheetController
-
   ) { }
 
-  // router.navigate(['])
-
   async ngOnInit() {
-    // Check authentication
-    this._storage = await this.storage.create();
+    if (!this._storage) {
+      this._storage = await this.storage.create();
+    }
     this.currentUser = this.apiService.getCurrentUser();
     this.currentProfile = this.apiService.getCurrentProfile();
 
@@ -145,56 +89,56 @@ export class ChildrenPage implements OnInit {
 
     // Load data including this.consentFormCounts
     if (this.currentProfile) {
+      const lastSelectedChild = await this.storage.get('lastSelectedChild');
+      this.selectedChild = lastSelectedChild || null;
       await this.loadData();
+      console.log('otin:', this.selectedChild);
 
       // Automatically select the first child if available
-      const lastSelectedChild = await this.storage.get('lastSelectedChild');
-      console.log('Last selected child from storage:', lastSelectedChild);
+
       if (lastSelectedChild) {
         const index = this.laravelChildren.findIndex(child => child.student_id === lastSelectedChild.student_id);
         if (index !== -1) {
           this.selectChildAndCenter(this.laravelChildren[index], index);
         }
       }
-      // else if (this.laravelChildren.length > 0) {
-      //   this.selectChildAndCenter(this.laravelChildren[0], 0);
-      // }
     }
 
     setTimeout(() => {
-      if (this.laravelChildren.length > 0) {
-        this.centerCard(0);
+      // if (this.laravelChildren.length > 0) {
+      //   this.centerCard(0);
+      // }
+      if (this.laravelChildren.length === 0) return;
+      if (this.selectedChild) {
+        const idx = this.laravelChildren.findIndex(c => c.student_id === this.selectedChild!.student_id);
+        if (idx !== -1) {
+          this.centerCard(idx);
+          return;
+        }
       }
+      this.centerCard(0);
     }, 100);
 
-    // Listen for signed consent forms signed
-    //* already read!
-    // this.apiService.consentFormSigned$.subscribe(({ formId, studentId }) => {
-    //   // Only update if the selected child matches
-    //   if (this.selectedChild && this.selectedChild.student_id === studentId) {
-    //     this.consentForms = this.consentForms.filter(f => f.form_id !== formId);
-    //   }
-    //   // // Optionally, update the badge/counts as well
-    //   // if (this.consentFormCounts[studentId] !== undefined) {
-    //   //   this.consentFormCounts[studentId] = Math.max(0, this.consentFormCounts[studentId] - 1);
-    //   // }
-    // });
   }
 
   ionViewWillEnter() {
     if (this.currentProfile) {
       this.loadData().then(async () => {
+        if (!this._storage) {
+          this._storage = await this.storage.create();
+        }
         // Check if selectedChild is already set
         if (!this.selectedChild && this.laravelChildren.length > 0) {
           // Try to restore the last selected child from storage
           const lastSelectedChild = await this.storage.get('lastSelectedChild');
-          console.log('Last selected child in ionViewWillEnter:', lastSelectedChild);
+          console.log('Last selected child from storage:', lastSelectedChild);
 
           if (lastSelectedChild) {
             const index = this.laravelChildren.findIndex(child => child.student_id === lastSelectedChild.student_id);
+            console.log('Last selected child from index:', index);
             if (index !== -1) {
               this.selectChildAndCenter(this.laravelChildren[index], index);
-              return; // Exit the method after restoring the last selected child
+              return;
             }
           }
 
@@ -205,23 +149,12 @@ export class ChildrenPage implements OnInit {
     }
   }
 
-  // * loadingController.create({}), .present()
-  // * .forEach((e: any) => {});
-
-
-  upcomingConsentForms: any[] = [];
-  upcomingEvents: any[] = [];
-  recentAnnouncements: any[] = [];
-
   updateSelectedChildData() {
-    console.log('Selected Child:', this.selectedChild);
-
     if (this.selectedChild && this.selectedChild.student_id) {
       this.upcomingConsentForms = this.consentFormCountsTwo[this.selectedChild.student_id] || [];
       this.upcomingEvents = this.schoolEventCountsTwo[this.selectedChild.student_id] || [];
       this.recentAnnouncements = this.announcementCountsTwo[this.selectedChild.student_id] || [];
     } else {
-      console.warn('Selected child or student_id is invalid');
       this.upcomingConsentForms = [];
       this.upcomingEvents = [];
       this.recentAnnouncements = [];
@@ -253,24 +186,15 @@ export class ChildrenPage implements OnInit {
   }
 
   async loadData() {
-    // console.log('loadData called');
     if (!this.currentProfile) {
-      // console.log('No currentProfile, returning');
       return;
     }
-    console.log('loadData started, isLoading:', this.isLoading); // Should log true initially
 
     this.isLoading = true; // Set loading state to true
-    // const loading = await this.loadingController.create({
-    //   message: 'Loading children...',
-    // });
-    // await loading.present();
 
     try {
       // Load children
       const parentId = this.currentProfile.parent_id;
-      // console.log('About to call getParentChildren with:', this.currentProfile.parent_id);
-
       const cachedChildren = await this._storage?.get('laravelChildren');
       const cachedConsentCounts = await this._storage?.get('consentFormCounts');
       const cachedConsentCountsTwo = await this._storage?.get('consentFormCountsTwo');
@@ -278,37 +202,20 @@ export class ChildrenPage implements OnInit {
       const cachedAnnouncementCounts = await this._storage?.get('announcementCounts');
       const cachedEventCountsTwo = await this._storage?.get('schoolEventCountsTwo');
       const cachedAnnouncementCountsTwo = await this._storage?.get('announcementCountsTwo');
-      // if (cachedData) {
-      //   console.log('Using cached data');
-      //   this.laravelChildren = cachedData;
-      //   // this.isLoading = false;
-      //   // return;
-      // } else {
-      //   const childrenRes = await this.apiService.getParentChildren(parentId).toPromise();
-      //   if (childrenRes.success) {
-      //     this.laravelChildren = childrenRes.children || [];
-      //     // Cache the data
-      //     await this._storage?.set('laravelChildren', this.laravelChildren);
-      //   }
-      // }
 
       // Use cached data if available
       if (cachedChildren) {
-        console.log('Using cached children data');
         this.laravelChildren = cachedChildren;
       }
       if (cachedConsentCounts) {
-        console.log('Using cached consent form counts');
         this.consentFormCounts = cachedConsentCounts;
         this.consentFormCountsTwo = cachedConsentCountsTwo;
       }
       if (cachedEventCounts) {
-        console.log('Using cached school event counts');
         this.schoolEventCounts = cachedEventCounts;
         this.schoolEventCountsTwo = cachedEventCountsTwo;
       }
       if (cachedAnnouncementCounts) {
-        console.log('Using cached announcement counts');
         this.announcementCounts = cachedAnnouncementCounts;
         this.announcementCountsTwo = cachedAnnouncementCountsTwo;
       }
@@ -326,12 +233,8 @@ export class ChildrenPage implements OnInit {
           this.laravelChildren = childrenRes.children || [];
           await this._storage?.set('laravelChildren', this.laravelChildren);
         }
-        // if (this.currentProfile?.parent_id) {
-        //   this.apiService.getAllUnsignedConsentFormsForParent(this.currentProfile.parent_id).subscribe(res => {
-        //     const forms = res.forms || [];
         const today = new Date();
-        // Reset counts
-        const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());  // Date only, no time
+        const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         const { grouped: consentFormGrouped, counts: consentFormCounts } = this.processData(
           consentFormsRes.forms,
           form => {
@@ -345,24 +248,6 @@ export class ChildrenPage implements OnInit {
         await this._storage?.set('consentFormCounts', this.consentFormCounts);
         this.consentFormCountsTwo = consentFormGrouped;
         await this._storage?.set('consentFormCountsTwo', this.consentFormCountsTwo);
-        // consentFormsRes.forms.forEach((form: any) => {
-        //   const deadline = new Date(form.deadline);
-        //   const deadlineDate = new Date(deadline.getFullYear(), deadline.getMonth(), deadline.getDate());  // Date only, no time
-        //   const diffDays = (deadlineDate.getTime() - todayDate.getTime()) / (1000 * 3600 * 24);
-        //   if (diffDays >= 0 && diffDays <= 5) {
-        //     const sidTwo = form.student_id;
-        //     if (!this.consentFormCountsTwo[sidTwo]) this.consentFormCountsTwo[sidTwo] = [];
-        //     this.consentFormCountsTwo[sidTwo].push(form);
-        //   }
-        //   const sid = form.student_id;
-
-        //   this.consentFormCounts[sid] = (this.consentFormCounts[sid] || 0) + 1;
-        // });
-        // if (this.selectedChild) this.updateSelectedChildData();
-        // });
-        // this.apiService.getParentEvents(this.currentProfile.parent_id).subscribe(res => {
-        // const events = res.events || [];
-        // const today = new Date();
         const { grouped: eventGrouped, counts: eventCounts } = this.processData(
           eventsRes.events,
           event => {
@@ -376,23 +261,6 @@ export class ChildrenPage implements OnInit {
         this.schoolEventCounts = eventCounts;
         await this._storage?.set('schoolEventCounts', this.schoolEventCounts);
         await this._storage?.set('schoolEventCountsTwo', this.schoolEventCountsTwo);
-        // eventsRes.events.forEach((event: any) => {
-        //   const eventDate = new Date(event.date);
-        //   const diffDays = (eventDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
-        //   if (diffDays >= 0 && diffDays <= 10) {
-        //     const sidTwo = event.student_id;
-        //     if (!this.schoolEventCountsTwo[sidTwo]) this.schoolEventCountsTwo[sidTwo] = [];
-        //     this.schoolEventCountsTwo[sidTwo].push(event);
-        //   }
-        //   const sid = event.student_id;
-        //   this.schoolEventCounts[sid] = (this.schoolEventCounts[sid] || 0) + 1;
-        // });
-        // if (this.selectedChild) this.updateSelectedChildData();
-        // });
-        // this.apiService.getParentAnnouncements(this.currentProfile.parent_id).subscribe(res => {
-        // const announcements = res.announcements || [];
-        // const today = new Date();
-        // const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());  // Date only, no time
         const { grouped: announcementGrouped, counts: announcementCounts } = this.processData(
           announcementsRes.announcements,
           announcement => {
@@ -405,229 +273,66 @@ export class ChildrenPage implements OnInit {
         this.announcementCounts = announcementCounts;
         await this._storage?.set('announcementCounts', this.announcementCounts);
         await this._storage?.set('announcementCountsTwo', this.announcementCountsTwo);
-        // announcementsRes.announcements.forEach((announcement: any) => {
-        //   const date = new Date(announcement.created_at);
-        //   const announcementDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());  // Date only, no time
-        //   if (announcementDate.getTime() === todayDate.getTime()) {  // Only today's announcements
-        //     const sidTwo = announcement.student_id;
-        //     if (!this.announcementCountsTwo[sidTwo]) this.announcementCountsTwo[sidTwo] = [];
-        //     this.announcementCountsTwo[sidTwo].push(announcement);
-        //   }
-        //   const sid = announcement.student_id;
-        //   this.announcementCounts[sid] = (this.announcementCounts[sid] || 0) + 1;
-        // });
-        // if (this.selectedChild) this.updateSelectedChildData();
-        // });
-        // }
-        // this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
-        //   next: (response) => {
-        //     // console.log('API response for children:', response);
-
-        //     if (response.success) {
-        //       this.laravelChildren = response.children;
-        //       // console.log('laravelChildren set to:', this.laravelChildren);
-        //       // Fetch counts for each child
-        //       // this.laravelChildren.forEach(child => {
-        //       //   // this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
-        //       //   //   this.consentFormCounts[child.student_id] = (res.forms || []).length;
-
-        //       //   //   // this.consentForms = res.forms || [];
-        //       //   // });
-        //       //   // this.apiService.getStudentEvents(child.student_id).subscribe(res => {
-        //       //   //   this.schoolEventCounts[child.student_id] = (res.events || []).length;
-        //       //   // });
-        //       //   // Fetch announcements count
-        //       //   // this.apiService.getStudentAnnouncements(child.student_id).subscribe(res => {
-        //       //   //   this.announcementCounts[child.student_id] = (res.announcements || []).length;
-        //       //   // });
-        //       //   // this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
-        //       //   //   child.photo_url = profile.photo_url;
-        //       //   //   // ...update other fields if needed
-        //       //   // });
-        //       // });
-        //     }
-        //     // else {
-        //     //   // console.warn('API response did not have success=true:', response);
-        //     // }
-        //   },
-        //   error: (error) => {
-        //     // console.error('Error loading children:', error);
-        //   }
-        // });
-
-        // Load pending students
-        // this.apiService.getPendingChildren(this.currentProfile.parent_id).subscribe({
-        //   next: (res) => {
-        //     this.pendingStudents = res.pending || [];
-        //   },
-        //   error: () => {
-        //     this.pendingStudents = [];
-        //   }
-        // });
-
         // Process pending students data
         this.pendingStudents = pendingStudentsRes.pending || [];
+
+        const lastSelectedChild = await this._storage?.get('lastSelectedChild');
+        this.selectedChild = lastSelectedChild || null;
+        console.log('Last selected child during loadData:', this.selectedChild);
+        if (lastSelectedChild && this.laravelChildren.length > 0) {
+          const index = this.laravelChildren.findIndex(child => child.student_id === lastSelectedChild.student_id);
+          if (index !== -1) {
+            this.selectChildAndCenter(this.laravelChildren[index], index);
+          } else {
+            this.selectChildAndCenter(this.laravelChildren[0], 0);
+          }
+        } else if (this.laravelChildren.length > 0 && !this.selectedChild) {
+          this.selectChildAndCenter(this.laravelChildren[0], 0);
+        }
       }
       // Update selected child data
       if (this.selectedChild) this.updateSelectedChildData();
-      this.isLoading = false; // Set loading state to true
-      // await loading.dismiss();
+      this.isLoading = false;
     } catch (error) {
-      this.isLoading = false; // Set loading state to true
-      // await loading.dismiss();
-      // console.error('Error loading data:', error);
+      this.isLoading = false;
     }
   }
 
   async clearAllCache() {
     await this._storage?.clear();
-    console.log('All cache cleared');
   }
 
 
-  selectChild(child: LaravelStudent) {
-    this.selectedChild = child;
-    this.activeSection = '';
-    this.showTasks = false;
-    // Optionally reset timeline dropdown of all children when you click a child, think of it as closing all timelines for all children
-    // so that only the selected child's timeline is open
-    // +key converts string keys to numbers
-    // Object.keys(this.showTimeline).forEach(key => this.showTimeline[+key] = false);
-    // Clear previous data
-    // this.consentForms = [];
-    // this.attendanceRecords = [];
-    // this.attendanceSummary = null;
-    // this.studentEvents = [];
-    // this.studentAnnouncements = [];
-    this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
-      this.upcomingConsentForms = res.forms || [];
-    });
+  // selectChild(child: LaravelStudent) {
+  //   this.selectedChild = child;
+  //   this.activeSection = '';
+  //   this.showTasks = false;
+  //   this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
+  //     this.upcomingConsentForms = res.forms || [];
+  //   });
 
-    this.apiService.getStudentEvents(child.student_id).subscribe(res => {
-      this.upcomingEvents = res.events || [];
-    });
+  //   this.apiService.getStudentEvents(child.student_id).subscribe(res => {
+  //     this.upcomingEvents = res.events || [];
+  //   });
 
-    this.apiService.getStudentAnnouncements(child.student_id).subscribe(res => {
-      this.recentAnnouncements = res.announcements || [];
-    });
-    console.log('Upcoming Consent Forms:', this.upcomingConsentForms);
-  }
+  //   this.apiService.getStudentAnnouncements(child.student_id).subscribe(res => {
+  //     this.recentAnnouncements = res.announcements || [];
+  //   });
+  // }
 
   showSection(section: string) {
     this.activeSection = section;
     if (!this.selectedChild) return;
 
-    // if (section === 'tasks') {
-    //   // this.loadConsentForms();      // <-- Load consent forms
-    //   // this.loadStudentEvents();
-    //   // this.loadStudentAnnouncements();   // <-- Load events
-    // }
     if (section === 'timeline') {
       this.toggleTimeline(this.selectedChild);
     }
   }
 
-  // loadConsentForms() {
-  //   if (!this.selectedChild) return;
-  //   this.apiService.getUnsignedConsentFormsForStudent(this.selectedChild.student_id).subscribe({
-  //     next: (response) => {
-  //       this.consentForms = response.forms || [];
-  //     },
-  //     error: (err) => {
-  //       this.consentForms = [];
-  //     }
-  //   });
-  // }
-
-  // async loadAttendance() {
-  //   if (!this.selectedChild) return;
-
-  //   // Load attendance records
-  //   this.apiService.getStudentAttendance(this.selectedChild.student_id).subscribe({
-  //     next: (response) => {
-  //       if (response.success) {
-  //         this.attendanceRecords = response.attendance;
-  //       }
-  //     },
-  //     error: (error) => console.error('Error loading attendance:', error)
-  //   });
-
-  //   // Load attendance summary
-  //   this.apiService.getAttendanceSummary(this.selectedChild.student_id).subscribe({
-  //     next: (response) => {
-  //       if (response.success) {
-  //         const summary: any = {};
-  //         response.summary.forEach((item: any) => {
-  //           summary[item.status.toLowerCase()] = item.count;
-  //         });
-  //         this.attendanceSummary = summary;
-  //       }
-  //     },
-  //     error: (error) => console.error('Error loading attendance summary:', error)
-  //   });
-  // }
-
   toggleSchoolEvents() {
-    this.activeSection = 'tasks'; // Ensure the right section is active
+    this.activeSection = 'tasks';
     this.showSchoolEvents = !this.showSchoolEvents;
-    // if (this.showSchoolEvents && this.selectedChild) {
-    //   this.loadStudentEvents();
-    // }
   }
-
-  // async loadStudentEvents() {
-  //   if (!this.selectedChild) return;
-  //   this.apiService.getStudentEvents(this.selectedChild.student_id).subscribe({
-  //     next: (response) => {
-  //       if (response.success) {
-  //         // Attach student_id to each event
-  //         this.studentEvents = (response.events || []).map((e: any) => ({
-  //           ...e,
-  //           student_id: this.selectedChild ? this.selectedChild.student_id : null
-  //         }));
-  //       } else {
-  //         this.studentEvents = [];
-  //       }
-  //     },
-  //     error: () => {
-  //       this.studentEvents = [];
-  //     }
-  //   });
-  // }
-
-  // getAttendanceColor(status: string): string {
-  //   switch (status.toLowerCase()) {
-  //     case 'present':
-  //       return 'success';
-  //     case 'absent':
-  //       return 'danger';
-  //     case 'late':
-  //       return 'warning';
-  //     default:
-  //       return 'medium';
-  //   }
-  // }
-
-  // async logout() {
-  //   const alert = await this.alertController.create({
-  //     header: 'Logout',
-  //     message: 'Are you sure you want to logout?',
-  //     buttons: [
-  //       {
-  //         text: 'Cancel',
-  //         role: 'cancel'
-  //       },
-  //       {
-  //         text: 'Logout',
-  //         handler: () => {
-  //           this.apiService.logout();
-  //           this.router.navigate(['/login']);
-  //         }
-  //       }
-  //     ]
-  //   });
-  //   await alert.present();
-  // }
 
   navigateToHome() {
     this.router.navigate(['/home']);
@@ -640,42 +345,6 @@ export class ChildrenPage implements OnInit {
       event.target.complete();
     }
   }
-
-  // async addStudent() {
-  //   if (!this.newStudentId || !this.currentProfile) {
-  //     this.showToast('Please enter a valid Student ID.');
-  //     return;
-  //   }
-
-  //   const loading = await this.loadingController.create({
-  //     message: 'Linking student...',
-  //   });
-  //   await loading.present();
-  //   //* already read!
-  //   this.apiService.linkStudentToParent(this.currentProfile.parent_id, this.newStudentId).subscribe({
-  //     next: async (response) => {
-  //       await loading.dismiss();
-  //       if (response.success) {
-  //         this.showToast('Student linked successfully!');
-  //         this.newStudentId = null;
-  //         this.loadData(); // Refresh children list
-  //       } else {
-  //         this.showToast(response.message || 'Failed to link student.');
-  //       }
-  //     },
-  //     error: async (error) => {
-  //       await loading.dismiss();
-  //       let errorMessage = error.error?.message || 'Failed to link student.';
-  //       if (error.error?.errors) {
-  //         const details = Object.entries(error.error.errors)
-  //           .map(([field, messages]) => `${field}: ${(messages as string[]).join(', ')}`)
-  //           .join('\n');
-  //         errorMessage += '\n' + details;
-  //       }
-  //       this.showToast(errorMessage);
-  //     }
-  //   });
-  // }
 
   async showToast(message: string) {
     const toast = await this.toastController.create({
@@ -701,7 +370,6 @@ export class ChildrenPage implements OnInit {
   toggleTimeline(child: LaravelStudent) {
     const studentId = child.student_id;
     // Toggle only for selected child
-    // ! means the opposite of the current value, so if it's true, it becomes false and vice versa
     this.showTimeline[studentId] = !this.showTimeline[studentId];
 
     if (this.showTimeline[studentId]) {
@@ -783,57 +451,8 @@ export class ChildrenPage implements OnInit {
     });
   }
 
-
-
-  // async changeStudentPhoto(student: any) {
-  //   const actionSheet = await this.actionSheetController.create({
-  //     header: 'Change Photo',
-  //     buttons: [
-  //       {
-  //         text: 'Take Photo',
-  //         icon: 'camera',
-  //         handler: () => this.getPhoto(student, CameraSource.Camera)
-  //       },
-  //       {
-  //         text: 'Upload from Device',
-  //         icon: 'image',
-  //         handler: () => this.getPhoto(student, CameraSource.Photos)
-  //       },
-  //       {
-  //         text: 'Cancel',
-  //         icon: 'close',
-  //         role: 'cancel'
-  //       }
-  //     ]
-  //   });
-  //   await actionSheet.present();
-  // }
-
-  // async getPhoto(student: any, source: CameraSource) {
-  //   try {
-  //     const image = await Camera.getPhoto({
-  //       quality: 80,
-  //       allowEditing: true,
-  //       resultType: CameraResultType.Base64,
-  //       source
-  //     });
-  //     if (image && image.base64String) {
-  //       this.apiService.uploadStudentPhoto(student.student_id, image.base64String).subscribe({
-  //         next: (res) => {
-  //           student.photo_url = res.photo_url;
-  //         },
-  //         error: (err) => {
-  //           // console.error('Upload error:', err);
-  //         }
-  //       });
-  //     }
-  //   } catch (err) {
-  //     // console.error('Camera error:', err);
-  //   }
-  // }
-
   async openChildOptions(ev: Event, child: LaravelStudent) {
-    ev.stopPropagation(); // Prevents card click event
+    ev.stopPropagation();
     const modal = await this.modalController.create({
       component: ChildOptionsModalComponent,
       componentProps: { child }
@@ -842,16 +461,11 @@ export class ChildrenPage implements OnInit {
   }
 
   openEventDetail(event: any) {
-    // Pass both event_id and student_id to match your routing
     this.router.navigate(['/event-detail', event.event_id, event.student_id]);
   }
 
-  longPressedId: number | null = null;
-  animationTimer: any = null;
 
   startPress(event: Event, child: any) {
-    // Only prevent default for mouse events, not touch events
-    // event.preventDefault(); prevents default for browser's default behavior like text selection
     if (event instanceof MouseEvent) {
       event.preventDefault();
     }
@@ -861,17 +475,15 @@ export class ChildrenPage implements OnInit {
     }, 100);
 
     this.pressTimer = setTimeout(() => {
-      // this.longPressedId = child.student_id; // Set the pressed student
       this.openChildOptions(event, child);
-      // Optionally, reset after a short delay if you want the animation to disappear
       setTimeout(() => this.longPressedId = null, 800);
-    }, 600); // 600ms for long press
+    }, 600);
   }
 
   endPress() {
     clearTimeout(this.pressTimer);
     clearTimeout(this.animationTimer);
-    this.longPressedId = null; // Remove animation if press is released early
+    this.longPressedId = null;
   }
 
   openConsentFormDetail(form: any) {
@@ -882,31 +494,12 @@ export class ChildrenPage implements OnInit {
     }
   }
 
-  // loadStudentAnnouncements() {
-  //   if (!this.selectedChild) return;
-  //   this.apiService.getStudentAnnouncements(this.selectedChild.student_id).subscribe({
-  //     next: (response) => {
-  //       if (response.success) {
-  //         this.studentAnnouncements = response.announcements || [];
-  //       } else {
-  //         this.studentAnnouncements = [];
-  //       }
-  //     },
-  //     error: () => {
-  //       this.studentAnnouncements = [];
-  //     }
-  //   });
-  // }
-
-
   selectChildAndCenter(child: any, index: number) {
-    // this.selectChild(child);
-    // this.centerCard(index);
     this.selectedChild = child;
     this.centerCardIndex = index;
-    // Ensure selectedChild is valid before updating data
     if (this.selectedChild) {
       this.storage.set('lastSelectedChild', this.selectedChild);
+      console.log('Selected child is:', this.selectedChild);
       this.updateSelectedChildData();
     } else {
       console.error('Selected child is null or invalid');
@@ -916,11 +509,9 @@ export class ChildrenPage implements OnInit {
   centerCard(index: number) {
     if (index >= 0 && index < this.laravelChildren.length) {
       this.centerCardIndex = index;
-
-      // Auto-select the centered child
       if (this.laravelChildren[index]) {
         this.selectedChild = this.laravelChildren[index];
-        this.activeSection = ''; // Reset active section when changing cards
+        this.activeSection = '';
       }
     }
   }
@@ -952,64 +543,46 @@ export class ChildrenPage implements OnInit {
     const diff = index - this.centerCardIndex;
 
     if (diff === 0) {
-      // Center card
       return 'translate(-50%, -50%) scale(1) rotateY(0deg)';
     } else if (diff < 0) {
-      // Left cards
       const distance = Math.abs(diff);
       const translateX = -50 - (distance * 120);
       const scale = Math.max(0.6, 1 - (distance * 0.2));
       const rotateY = Math.min(75, 45 + (distance * 15));
-      const opacity = Math.max(0.1, 1 - (distance * 0.4));
-
       return `translate(${translateX}%, -50%) scale(${scale}) rotateY(${rotateY}deg)`;
     } else {
-      // Right cards
       const distance = diff;
       const translateX = -50 + (distance * 120);
       const scale = Math.max(0.6, 1 - (distance * 0.2));
       const rotateY = Math.max(-75, -45 - (distance * 15));
-      const opacity = Math.max(0.1, 1 - (distance * 0.4));
-
       return `translate(${translateX}%, -50%) scale(${scale}) rotateY(${rotateY}deg)`;
     }
   }
 
-  // Pan gesture handlers
   onPan(event: any) {
     if (!this.isPanning) {
       this.isPanning = true;
       this.panStartX = event.center.x;
     }
-
     this.currentPanX = event.deltaX;
-
-    // Optional: Add real-time pan feedback here
-    // You can modify card positions during pan for smoother UX
   }
 
   onPanEnd(event: any) {
     if (!this.isPanning) return;
-
     this.isPanning = false;
-    const threshold = 50; // Minimum distance to trigger navigation
-
+    const threshold = 50;
     if (Math.abs(event.deltaX) > threshold) {
       if (event.deltaX > 0) {
-        // Panned right - go to previous card
         this.goToPrevCard();
       } else {
-        // Panned left - go to next card
         this.goToNextCard();
       }
     }
-
     this.currentPanX = 0;
   }
 
   onSwipe(event: any) {
     const threshold = 50;
-
     if (Math.abs(event.deltaX) > threshold) {
       if (event.deltaX > 0) {
         this.goToPrevCard();
