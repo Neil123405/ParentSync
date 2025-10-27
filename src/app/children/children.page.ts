@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { LoadingController, ToastController, ModalController } from '@ionic/angular';
+import { ToastController, ModalController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { ApiService, User, ParentProfile } from '../services/api.service';
 import { AddStudentModalComponent } from '../components/add-student-modal/add-student-modal.component';
 import { ChildOptionsModalComponent } from '../components/child-options-modal/child-options-modal.component';
-import { last } from 'rxjs';
 
 interface LaravelStudent {
   student_id: number;
@@ -91,8 +90,7 @@ export class ChildrenPage implements OnInit {
     if (this.currentProfile) {
       const lastSelectedChild = await this.storage.get('lastSelectedChild');
       this.selectedChild = lastSelectedChild || null;
-      await this.loadData();
-      console.log('otin:', this.selectedChild);
+      await this.loadData();      
 
       // Automatically select the first child if available
 
@@ -105,9 +103,6 @@ export class ChildrenPage implements OnInit {
     }
 
     setTimeout(() => {
-      // if (this.laravelChildren.length > 0) {
-      //   this.centerCard(0);
-      // }
       if (this.laravelChildren.length === 0) return;
       if (this.selectedChild) {
         const idx = this.laravelChildren.findIndex(c => c.student_id === this.selectedChild!.student_id);
@@ -131,11 +126,9 @@ export class ChildrenPage implements OnInit {
         if (!this.selectedChild && this.laravelChildren.length > 0) {
           // Try to restore the last selected child from storage
           const lastSelectedChild = await this.storage.get('lastSelectedChild');
-          console.log('Last selected child from storage:', lastSelectedChild);
 
           if (lastSelectedChild) {
             const index = this.laravelChildren.findIndex(child => child.student_id === lastSelectedChild.student_id);
-            console.log('Last selected child from index:', index);
             if (index !== -1) {
               this.selectChildAndCenter(this.laravelChildren[index], index);
               return;
@@ -277,8 +270,7 @@ export class ChildrenPage implements OnInit {
         this.pendingStudents = pendingStudentsRes.pending || [];
 
         const lastSelectedChild = await this._storage?.get('lastSelectedChild');
-        this.selectedChild = lastSelectedChild || null;
-        console.log('Last selected child during loadData:', this.selectedChild);
+        this.selectedChild = lastSelectedChild || null;        
         if (lastSelectedChild && this.laravelChildren.length > 0) {
           const index = this.laravelChildren.findIndex(child => child.student_id === lastSelectedChild.student_id);
           if (index !== -1) {
@@ -301,24 +293,6 @@ export class ChildrenPage implements OnInit {
   async clearAllCache() {
     await this._storage?.clear();
   }
-
-
-  // selectChild(child: LaravelStudent) {
-  //   this.selectedChild = child;
-  //   this.activeSection = '';
-  //   this.showTasks = false;
-  //   this.apiService.getUnsignedConsentFormsForStudent(child.student_id).subscribe(res => {
-  //     this.upcomingConsentForms = res.forms || [];
-  //   });
-
-  //   this.apiService.getStudentEvents(child.student_id).subscribe(res => {
-  //     this.upcomingEvents = res.events || [];
-  //   });
-
-  //   this.apiService.getStudentAnnouncements(child.student_id).subscribe(res => {
-  //     this.recentAnnouncements = res.announcements || [];
-  //   });
-  // }
 
   showSection(section: string) {
     this.activeSection = section;
@@ -499,7 +473,6 @@ export class ChildrenPage implements OnInit {
     this.centerCardIndex = index;
     if (this.selectedChild) {
       this.storage.set('lastSelectedChild', this.selectedChild);
-      console.log('Selected child is:', this.selectedChild);
       this.updateSelectedChildData();
     } else {
       console.error('Selected child is null or invalid');
@@ -546,13 +519,13 @@ export class ChildrenPage implements OnInit {
       return 'translate(-50%, -50%) scale(1) rotateY(0deg)';
     } else if (diff < 0) {
       const distance = Math.abs(diff);
-      const translateX = -50 - (distance * 120);
+      const translateX = -50 - (distance * 80);
       const scale = Math.max(0.6, 1 - (distance * 0.2));
       const rotateY = Math.min(75, 45 + (distance * 15));
       return `translate(${translateX}%, -50%) scale(${scale}) rotateY(${rotateY}deg)`;
     } else {
       const distance = diff;
-      const translateX = -50 + (distance * 120);
+      const translateX = -50 + (distance * 80);
       const scale = Math.max(0.6, 1 - (distance * 0.2));
       const rotateY = Math.max(-75, -45 - (distance * 15));
       return `translate(${translateX}%, -50%) scale(${scale}) rotateY(${rotateY}deg)`;

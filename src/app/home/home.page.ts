@@ -75,7 +75,6 @@ export class HomePage implements OnInit {
     // Check if cached children data exists
     const cachedChildren = await this.storage.get('cachedChildrenWithPhotos');
     if (cachedChildren) {
-      console.log('Using cached children with photos', cachedChildren);
       this.laravelChildren = cachedChildren;
     }
 
@@ -85,8 +84,7 @@ export class HomePage implements OnInit {
         if (response.success) {
           this.laravelChildren = response.children || [];
           // Cache the children data
-          await this.storage.set('cachedChildrenWithPhotos', this.laravelChildren);
-          console.log('Cached children with photos:', this.laravelChildren);
+          await this.storage.set('cachedChildrenWithPhotos', this.laravelChildren);          
         }
       },
       error: (error) => {
@@ -109,12 +107,10 @@ export class HomePage implements OnInit {
     const cachedEvents = await this.storage.get('cachedEvents');
 
     if (cachedAnnouncements) {
-      console.log('Using cached announcements');
       this.laravelAnnouncements = cachedAnnouncements;
     }
 
     if (cachedEvents) {
-      console.log('Using cached events');
       this.laravelEvents = cachedEvents;
     }
 
@@ -122,8 +118,7 @@ export class HomePage implements OnInit {
       next: async (response) => {
         this.laravelAnnouncements = response.announcements || [];
         // Cache the announcements
-        await this.storage.set('cachedAnnouncements', this.laravelAnnouncements);
-        console.log('Cached announcements:', this.laravelAnnouncements);
+        await this.storage.set('cachedAnnouncements', this.laravelAnnouncements);        
       },
       error: (error) => {
         console.error('Error fetching announcements:', error);
@@ -135,7 +130,6 @@ export class HomePage implements OnInit {
         this.laravelEvents = response.events || [];
         // Cache the events
         await this.storage.set('cachedEvents', this.laravelEvents);
-        console.log('Cached events:', this.laravelEvents);
       },
       error: (error) => {
         console.error('Error fetching events:', error);
@@ -146,12 +140,11 @@ export class HomePage implements OnInit {
   async clearAnnouncementsAndEventsCache() {
     await this.storage.remove('cachedChildrenWithPhotos');
     await this.storage.remove('cachedAnnouncements');
-    await this.storage.remove('cachedEvents');
-    console.log('Announcements and events cache cleared');
+    await this.storage.remove('cachedEvents');    
   }
 
   async refreshData(event?: any) {
-    await this.clearAnnouncementsAndEventsCache(); // Clear the cache
+    await this.clearAnnouncementsAndEventsCache();
     await this.loadAnnouncementsAndEvents();
     await this.loadChildrenWithPhotos();
     if (event) {

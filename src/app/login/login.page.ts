@@ -2,7 +2,6 @@ import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { AlertController, LoadingController } from '@ionic/angular';
-// import { environment } from '../../environments/environment'; 
 import { Keyboard } from '@capacitor/keyboard';
 import { PushNotifications } from '@capacitor/push-notifications';
 
@@ -112,7 +111,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
               // listens for the registration event granted by the phone
               PushNotifications.addListener('registration', (token) => {
                 // console.log('FCM Token:', token.value);
-                this.apiService.setFcmToken(token.value); // <-- Add this line
+                this.apiService.setFcmToken(token.value);
                 const profile = this.apiService.getCurrentProfile();
                 if (profile) {
                   this.apiService.savePushToken(profile.parent_id, token.value).subscribe(); // {
