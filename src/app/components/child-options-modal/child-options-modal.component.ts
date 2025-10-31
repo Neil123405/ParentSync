@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core'
-
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -24,9 +23,9 @@ export class ChildOptionsModalComponent implements OnInit {
     private apiService: ApiService,
     private toastController: ToastController,
     private actionSheetController: ActionSheetController
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   close() {
     this.modalCtrl.dismiss();
@@ -66,14 +65,13 @@ export class ChildOptionsModalComponent implements OnInit {
       });
       if (image && image.base64String) {
         this.apiService.uploadStudentPhoto(child.student_id, image.base64String).subscribe({
-          next: (res) => {
+          next: () => {
             this.apiService.getStudentProfile(child.student_id).subscribe(profile => {
-      child.photo_url = profile.photo_url;
-      // ...update other fields if needed
-    });
+              child.photo_url = profile.photo_url;              
+            });
             this.showToast('Photo updated!');
           },
-          error: (err) => {
+          error: () => {
             this.showToast('Upload error.');
           }
         });

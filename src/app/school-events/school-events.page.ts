@@ -43,8 +43,7 @@ export class SchoolEventsPage implements OnInit {
     }
   }
 
-  openEventDetail(event: any) {
-    // console.log('Event clicked:', event); // Debug line
+  openEventDetail(event: any) {    
     this.router.navigate(['/event-detail', event.event_id, event.student_id]);
   }
 

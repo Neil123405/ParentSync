@@ -15,7 +15,7 @@
 <ion-content class="ion-padding" style="--background: #f8f9fa;">
   <!-- Form Container -->
   <div style="max-width: 400px; margin: 20px auto; padding: 0 16px;">
-    
+
     <!-- Form Header Card -->
     <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); 
                 border-radius: 20px; 
@@ -24,8 +24,7 @@
                 margin-bottom: 25px;
                 border: 2px solid rgba(102, 126, 234, 0.2);
                 box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);">
-      <ion-icon name="school-outline" 
-                style="font-size: 4rem; 
+      <ion-icon name="school-outline" style="font-size: 4rem; 
                        color: #667eea; 
                        display: block; 
                        margin-bottom: 15px;"></ion-icon>
@@ -46,7 +45,7 @@
 
     <!-- Form Fields -->
     <div style="margin-bottom: 30px;">
-      
+
       <!-- Student ID Field -->
       <div style="background: white; 
                   border-radius: 16px; 
@@ -64,8 +63,7 @@
             <div style="display: flex; 
                        align-items: center; 
                        margin-bottom: 12px;">
-              <ion-icon name="id-card-outline" 
-                        style="font-size: 1.3rem; 
+              <ion-icon name="id-card-outline" style="font-size: 1.3rem; 
                                color: #667eea; 
                                margin-right: 10px;"></ion-icon>
               <span style="font-weight: 600; 
@@ -74,10 +72,7 @@
                 Student ID *
               </span>
             </div>
-            <ion-input type="number" 
-                       [(ngModel)]="studentId" 
-                       placeholder="Enter student ID"
-                       style="--padding-start: 0; 
+            <ion-input type="number" [(ngModel)]="studentId" placeholder="Enter student ID" style="--padding-start: 0; 
                               --padding-top: 8px; 
                               --padding-bottom: 8px; 
                               font-size: 1.1rem;
@@ -105,8 +100,7 @@
             <div style="display: flex; 
                        align-items: center; 
                        margin-bottom: 12px;">
-              <ion-icon name="person-outline" 
-                        style="font-size: 1.3rem; 
+              <ion-icon name="person-outline" style="font-size: 1.3rem; 
                                color: #667eea; 
                                margin-right: 10px;"></ion-icon>
               <span style="font-weight: 600; 
@@ -115,10 +109,7 @@
                 First Name *
               </span>
             </div>
-            <ion-input type="text" 
-                       [(ngModel)]="firstName" 
-                       placeholder="Enter first name"
-                       style="--padding-start: 0; 
+            <ion-input type="text" [(ngModel)]="firstName" placeholder="Enter first name" style="--padding-start: 0; 
                               --padding-top: 8px; 
                               --padding-bottom: 8px; 
                               font-size: 1.1rem;
@@ -146,8 +137,7 @@
             <div style="display: flex; 
                        align-items: center; 
                        margin-bottom: 12px;">
-              <ion-icon name="person-outline" 
-                        style="font-size: 1.3rem; 
+              <ion-icon name="person-outline" style="font-size: 1.3rem; 
                                color: #667eea; 
                                margin-right: 10px;"></ion-icon>
               <span style="font-weight: 600; 
@@ -156,10 +146,7 @@
                 Last Name *
               </span>
             </div>
-            <ion-input type="text" 
-                       [(ngModel)]="lastName" 
-                       placeholder="Enter last name"
-                       style="--padding-start: 0; 
+            <ion-input type="text" [(ngModel)]="lastName" placeholder="Enter last name" style="--padding-start: 0; 
                               --padding-top: 8px; 
                               --padding-bottom: 8px; 
                               font-size: 1.1rem;
@@ -187,8 +174,7 @@
             <div style="display: flex; 
                        align-items: center; 
                        margin-bottom: 12px;">
-              <ion-icon name="calendar-outline" 
-                        style="font-size: 1.3rem; 
+              <ion-icon name="calendar-outline" style="font-size: 1.3rem; 
                                color: #667eea; 
                                margin-right: 10px;"></ion-icon>
               <span style="font-weight: 600; 
@@ -197,9 +183,7 @@
                 Birthday
               </span>
             </div>
-            <ion-input type="date" 
-                       [(ngModel)]="bday"
-                       style="--padding-start: 0; 
+            <ion-input type="date" [(ngModel)]="bday" style="--padding-start: 0; 
                               --padding-top: 8px; 
                               --padding-bottom: 8px; 
                               font-size: 1.1rem;
@@ -213,10 +197,7 @@
     <!-- Action Buttons -->
     <div style="margin-top: 35px;">
       <!-- Submit Button -->
-      <ion-button expand="block" 
-                  [disabled]="!studentId || !firstName || !lastName"
-                  (click)="submit()"
-                  style="--background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      <ion-button expand="block" [disabled]="!studentId || !firstName || !lastName" (click)="submit()" style="--background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                          --border-radius: 16px;
                          height: 55px;
                          font-weight: 600;
@@ -228,13 +209,9 @@
         <ion-icon name="checkmark-circle-outline" slot="start" style="font-size: 1.3rem;"></ion-icon>
         Add Student
       </ion-button>
-      
+
       <!-- Cancel Button -->
-      <ion-button expand="block" 
-                  fill="outline" 
-                  color="medium"
-                  (click)="dismiss()"
-                  style="--border-radius: 16px;
+      <ion-button expand="block" fill="outline" color="medium" (click)="dismiss()" style="--border-radius: 16px;
                          height: 50px;
                          font-weight: 500;
                          font-size: 1rem;

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router'; // <-- Add Router import
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 
 @Component({
@@ -15,7 +15,7 @@ export class StudentAnnouncementsPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private router: Router // <-- Inject Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -26,7 +26,6 @@ export class StudentAnnouncementsPage implements OnInit {
   }
 
   openAnnouncementDetail(announcement: any) {
-    // Use announcement.id or announcement.announcement_id depending on your API
     this.router.navigate(['/announcement-detail', announcement.id ?? announcement.announcement_id]);
   }
 

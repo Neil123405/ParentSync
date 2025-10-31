@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { PushNotifications, PushNotificationSchema } from '@capacitor/push-notifications';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { ToastController, ModalController, MenuController } from '@ionic/angular';
-import { Router } from '@angular/router';
 import { ApiService, ParentProfile } from './services/api.service';
 import { AccountMenuModalComponent } from './components/account-menu-modal/account-menu-modal.component';
 

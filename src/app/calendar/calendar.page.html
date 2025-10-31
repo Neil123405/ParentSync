@@ -1,18 +1,3 @@
-<!-- <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>ParentSync - Calendar</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="refreshData()">
-        <ion-icon name="refresh" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button (click)="logout()">
-        <ion-icon name="log-out" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header> -->
-// *ngFor
-
 <ion-header>
   <div class="enhanced-calendar-header">
     <!-- Background Gradient -->
@@ -68,44 +53,6 @@
     <!-- FullCalendar Component -->
     <full-calendar [options]="calendarOptions" #calendar></full-calendar>
   </ion-card-content>
-  <!-- <ion-card>
-    <ion-card-header style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-      <ion-card-title style="color: white">School Calendar</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div class="calendar-nav">
-        <ion-button fill="clear" (click)="previousMonth()">
-          <ion-icon name="chevron-back-outline"></ion-icon>
-        </ion-button>
-        <span class="calendar-month-label">
-          {{ monthNames[currentMonth] }} {{ currentYear }}
-        </span>
-        <ion-button fill="clear" (click)="nextMonth()">
-          <ion-icon name="chevron-forward-outline"></ion-icon>
-        </ion-button>
-      </div>
-      <div class="calendar-view-wrapper">
-        <div class="calendar-week-row">
-          <span class="calendar-week-name" *ngFor="let d of weekDays">{{ d }}</span>
-        </div>
-        <div class="calendar-days-grid">
-          <ng-container *ngFor="let week of calendarGrid">
-            <div class="calendar-week">
-              <span *ngFor="let day of week" class="calendar-day" [class.today]="isToday(day)"
-                [class.selected]="isSelected(day)" [class.other-month]="!day?.inMonth"
-                [class.no-events]="!day?.events?.length && !day?.forms?.length"
-                (click)="(day?.events?.length || day?.forms?.length) ? dayClicked(day) : null">
-                {{ day?.date ? day.date.getDate() : '' }}
-                <span *ngIf="day?.events?.length" class="event-dot"></span>
-                <span *ngIf="day?.forms?.length" class="form-dot"></span>
-              </span>
-            </div>
-          </ng-container>
-        </div>
-      </div>
-    </ion-card-content>
-  </ion-card> -->
-
   <!-- Toggle Buttons -->
   <!-- Modern Tab Switcher -->
   <div class="modern-tab-switcher">
