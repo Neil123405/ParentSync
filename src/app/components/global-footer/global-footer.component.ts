@@ -2,19 +2,11 @@ import { Component, OnInit } from '@angular/core';
 
 import { Router, NavigationEnd } from '@angular/router';
 
-import { ModalController } from '@ionic/angular';
-
-import { AlertController } from '@ionic/angular';
-
-import { LoadingController, ToastController, } from '@ionic/angular';
+import { ModalController, AlertController, ToastController, MenuController } from '@ionic/angular';
 
 import { filter } from 'rxjs/operators';
 
-import { MenuController } from '@ionic/angular';
-
-import { ApiService, User, ParentProfile } from '../../services/api.service';
-
-import { DashboardMenuModalComponent } from '../dashboard-menu-modal/dashboard-menu-modal.component';
+import { ApiService, ParentProfile } from '../../services/api.service';
 
 import { AddStudentModalComponent } from '../add-student-modal/add-student-modal.component';
 
@@ -72,18 +64,6 @@ export class GlobalFooterComponent implements OnInit {
   isActive(route: string): boolean {
     return this.currentRoute === route;
   }
-
-  // async openAccountMenu(ev: Event) {
-  //   ev.stopPropagation();
-  //   const modal = await this.modalController.create({
-  //     component: DashboardMenuModalComponent,
-  //     cssClass: 'dashboard-menu-modal'
-  //   });
-  //   await modal.present();
-  //   await modal.onDidDismiss();
-  //   // You need to get a reference to HomePage and call loadAnnouncementsAndEvents()
-  //   // Or, use an event or shared service to notify HomePage to reload
-  // }
 
   async showToast(message: string) {
     const toast = await this.toastController.create({
