@@ -20,7 +20,8 @@
       <label>PASSWORD</label>
       <ion-item lines="none">
         <ion-input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required></ion-input>
-        <ion-icon slot="end" [name]="showPassword ? 'eye-outline' : 'eye-off-outline'" (click)="showPassword = !showPassword"></ion-icon>
+        <ion-icon slot="end" [name]="showPassword ? 'eye-outline' : 'eye-off-outline'"
+          (click)="showPassword = !showPassword"></ion-icon>
       </ion-item>
     </div>
 
@@ -41,7 +42,8 @@
     <div class="input-container">
       <label>FIRST NAME</label>
       <ion-item lines="none">
-        <ion-input type="text" [(ngModel)]="parentInfo.first_name" required placeholder="Enter your first name"></ion-input>
+        <ion-input type="text" [(ngModel)]="parentInfo.first_name" required
+          placeholder="Enter your first name"></ion-input>
       </ion-item>
     </div>
 
@@ -49,7 +51,8 @@
     <div class="input-container">
       <label>LAST NAME</label>
       <ion-item lines="none">
-        <ion-input type="text" [(ngModel)]="parentInfo.last_name" required placeholder="Enter your last name"></ion-input>
+        <ion-input type="text" [(ngModel)]="parentInfo.last_name" required
+          placeholder="Enter your last name"></ion-input>
       </ion-item>
     </div>
 
@@ -57,7 +60,8 @@
     <div class="input-container">
       <label>EMAIL ADDRESS</label>
       <ion-item lines="none">
-        <ion-input type="email" [(ngModel)]="parentInfo.email" required placeholder="your.email@example.com"></ion-input>
+        <ion-input type="email" [(ngModel)]="parentInfo.email" required
+          placeholder="your.email@example.com"></ion-input>
       </ion-item>
     </div>
 
@@ -68,13 +72,20 @@
         <ion-input type="tel" [(ngModel)]="parentInfo.contactNo" required placeholder="09XXXXXXXXX"></ion-input>
       </ion-item>
     </div>
-
+    <div class="input-container">
+      <label>USER NAME</label>
+      <ion-item lines="none">
+        <ion-input type="text" [(ngModel)]="credentials.username" required
+          placeholder="Enter your user name"></ion-input>
+      </ion-item>
+    </div>
     <!-- Password -->
     <div class="input-container">
       <label>PASSWORD</label>
       <ion-item lines="none">
         <ion-input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required></ion-input>
-        <ion-icon slot="end" [name]="showPassword ? 'eye-outline' : 'eye-off-outline'" (click)="showPassword = !showPassword"></ion-icon>
+        <ion-icon slot="end" [name]="showPassword ? 'eye-outline' : 'eye-off-outline'"
+          (click)="showPassword = !showPassword"></ion-icon>
       </ion-item>
     </div>
 
