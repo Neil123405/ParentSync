@@ -223,9 +223,9 @@ export class ApiService {
   // }
 
   // Attendance
-  // getStudentAttendance(studentId: number): Observable<any> {
-  //   return this.http.get(`${this.apiUrl}/attendance/student/${studentId}`, { headers: this.getHeaders() });
-  // }
+  getStudentAttendance(studentId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/student/${studentId}/attendance`, { headers: this.getHeaders() });
+  }
 
   // getAttendanceSummary(studentId: number): Observable<any> {
   //   return this.http.get(`${this.apiUrl}/attendance/student/${studentId}/summary`, { headers: this.getHeaders() });
@@ -234,11 +234,19 @@ export class ApiService {
   linkStudentToParent(parentId: number, studentId: number, firstName: string, lastName: string, birthdate: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/parent/link-student`, {
       parent_id: parentId,
-    student_id: studentId,
-    first_name: firstName,
-    last_name: lastName,
-    birthdate: birthdate
+      student_id: studentId,
+      first_name: firstName,
+      last_name: lastName,
+      birthdate: birthdate
     }, { headers: this.getHeaders() });
+  }
+
+  getStudentMilestones(studentId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/student/${studentId}/milestones`, { headers: this.getHeaders() });
+  }
+
+  getSectionMilestones(sectionId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/student/section/${sectionId}/milestones`, { headers: this.getHeaders() });
   }
 
   unlinkStudentFromParent(studentId: number) {

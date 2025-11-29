@@ -9,13 +9,16 @@ import { ChildrenPageRoutingModule } from './children-routing.module';
 import { ChildrenPage } from './children.page';
 import { ScrollingModule } from '@angular/cdk/scrolling'; // Import this
 
+import { FullCalendarModule } from '@fullcalendar/angular';
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     ScrollingModule, // Add this
     IonicModule,
-    ChildrenPageRoutingModule
+    ChildrenPageRoutingModule,
+    FullCalendarModule,
   ],
   declarations: [ChildrenPage]
 })

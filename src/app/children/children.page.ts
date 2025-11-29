@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { ToastController, ModalController } from '@ionic/angular';
@@ -6,6 +6,10 @@ import { Storage } from '@ionic/storage-angular';
 import { ApiService, User, ParentProfile } from '../services/api.service';
 import { AddStudentModalComponent } from '../components/add-student-modal/add-student-modal.component';
 import { ChildOptionsModalComponent } from '../components/child-options-modal/child-options-modal.component';
+import { CalendarOptions } from '@fullcalendar/core'; // Add this for FullCalendar
+import dayGridPlugin from '@fullcalendar/daygrid'; // Add this for DayGrid view
+import { GestureController, Gesture } from '@ionic/angular';
+import { FullCalendarComponent } from '@fullcalendar/angular/public-api';
 
 interface LaravelStudent {
   student_id: number;
@@ -24,7 +28,7 @@ interface LaravelStudent {
   styleUrls: ['./children.page.scss'],
   standalone: false,
 })
-export class ChildrenPage implements OnInit {
+export class ChildrenPage implements OnInit, AfterViewInit {
   currentUser: User | null = null;
   currentProfile: ParentProfile | null = null;
   laravelChildren: LaravelStudent[] = [];
@@ -53,7 +57,42 @@ export class ChildrenPage implements OnInit {
   centerCardIndex: number = 0;
   panStartX: number = 0;
   currentPanX: number = 0;
+  // attendanceData: any[] = []; // Raw attendance data from API
+  // uniqueTeachers: any[] = []; // List of unique teachers
+  // selectedTeacher: any = null; // Currently selected teacher
+  attendanceEvents: any[] = []; // Array to hold FullCalendar events
+  attendanceCurrentMonth: string = '';
+  presentCount: number = 0;
+  absentCount: number = 0;
+  lateCount: number = 0;
+  excusedCount: number = 0;
+  
+  private attendanceGesture?: Gesture;
+  calendarOptions: CalendarOptions = {
+    plugins: [dayGridPlugin],
+    initialView: 'dayGridMonth',
+    events: [], // Will be populated with attendanceEvents
+    height: 'auto', // Adjust as needed
+    eventDisplay: 'background', // Show as background colors on dates
+    eventColor: '#3788d8', // Default color (overridden per event)
+    headerToolbar: {
+      left: '',
+      center: '',
+      right: '',
+    },
+    datesSet: (arg) => {
+      const centerDate = new Date(arg.view.currentStart);
+      this.attendanceCurrentMonth = centerDate.toLocaleString('default', { 
+        month: 'long', 
+        year: 'numeric' 
+      });
+      this.updateAttendanceStats(centerDate);
+      this.cdr.detectChanges();
+    },
+  };
+  milestones: any[] = []; // Array to hold milestone data
   private _storage: Storage | null = null;
+  @ViewChild('attendanceCalendar') attendanceCalendarComponent!: FullCalendarComponent;
 
   constructor(
     private router: Router,
@@ -62,7 +101,112 @@ export class ChildrenPage implements OnInit {
     private toastController: ToastController,
     private modalController: ModalController,
     private storage: Storage,
+    private gestureCtrl: GestureController,
+    private cdr: ChangeDetectorRef
   ) { }
+
+  ngAfterViewInit() {
+    // Initialize swipe gesture after view is ready
+    setTimeout(() => {
+      this.initializeAttendanceSwipe();
+    }, 500);
+  }
+
+  initializeAttendanceSwipe() {
+    const calendarElement = document.querySelector('#attendanceCalendar full-calendar');
+    if (calendarElement && this.attendanceCalendarComponent) {
+      this.attendanceGesture = this.gestureCtrl.create({
+        el: calendarElement,
+        gestureName: 'swipe',
+        threshold: 15,
+        passive: false,
+        onEnd: (ev) => {
+        // Prevent default only when necessary
+        if (Math.abs(ev.deltaX) > 50) {
+          this.handleAttendanceSwipe(ev);
+        }
+      },
+      });
+      this.attendanceGesture.enable(true);
+    }
+  }
+
+  // handleAttendanceSwipe(ev: any) {
+  //   const calendarElement = document.querySelector('#attendanceCalendar full-calendar');
+  //   if (ev.deltaX > 50) {
+  //     calendarElement?.classList.add('swipe-right');
+  //     setTimeout(() => calendarElement?.classList.remove('swipe-right'), 300);
+  //     this.goToAttendancePrevious();
+  //   } else if (ev.deltaX < -50) {
+  //     calendarElement?.classList.add('swipe-left');
+  //     setTimeout(() => calendarElement?.classList.remove('swipe-left'), 300);
+  //     this.goToAttendanceNext();
+  //   }
+  // }
+
+  handleAttendanceSwipe(ev: any) {
+  const calendarElement = document.querySelector('#attendanceCalendar full-calendar');
+  
+  // Use requestAnimationFrame for better performance
+  requestAnimationFrame(() => {
+    if (ev.deltaX > 50) {
+      calendarElement?.classList.add('swipe-right');
+      setTimeout(() => calendarElement?.classList.remove('swipe-right'), 300);
+      this.goToAttendancePrevious();
+    } else if (ev.deltaX < -50) {
+      calendarElement?.classList.add('swipe-left');
+      setTimeout(() => calendarElement?.classList.remove('swipe-left'), 300);
+      this.goToAttendanceNext();
+    }
+  });
+}
+
+  goToAttendancePrevious() {
+    if (this.attendanceCalendarComponent) {
+      const calendarApi = this.attendanceCalendarComponent.getApi();
+      calendarApi.prev();
+    }
+  }
+
+  goToAttendanceNext() {
+    if (this.attendanceCalendarComponent) {
+      const calendarApi = this.attendanceCalendarComponent.getApi();
+      calendarApi.next();
+    }
+  }
+
+   updateAttendanceStats(currentDate: Date) {
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
+    // Reset counts
+    this.presentCount = 0;
+    this.absentCount = 0;
+    this.lateCount = 0;
+    this.excusedCount = 0;
+    
+    // Count attendance by status for current month
+    this.attendanceEvents.forEach(event => {
+      const eventDate = new Date(event.start);
+      if (eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear) {
+        const status = event.extendedProps?.status?.toLowerCase();
+        switch (status) {
+          case 'present':
+            this.presentCount++;
+            break;
+          case 'absent':
+            this.absentCount++;
+            break;
+          case 'late':
+            this.lateCount++;
+            break;
+          case 'excused':
+            this.excusedCount++;
+            break;
+        }
+      }
+    });
+  }
 
   async ngOnInit() {
     if (!this._storage) {
@@ -90,7 +234,7 @@ export class ChildrenPage implements OnInit {
     if (this.currentProfile) {
       const lastSelectedChild = await this.storage.get('lastSelectedChild');
       this.selectedChild = lastSelectedChild || null;
-      await this.loadData();      
+      await this.loadData();
 
       // Automatically select the first child if available
 
@@ -270,7 +414,7 @@ export class ChildrenPage implements OnInit {
         this.pendingStudents = pendingStudentsRes.pending || [];
 
         const lastSelectedChild = await this._storage?.get('lastSelectedChild');
-        this.selectedChild = lastSelectedChild || null;        
+        this.selectedChild = lastSelectedChild || null;
         if (lastSelectedChild && this.laravelChildren.length > 0) {
           const index = this.laravelChildren.findIndex(child => child.student_id === lastSelectedChild.student_id);
           if (index !== -1) {
@@ -297,9 +441,88 @@ export class ChildrenPage implements OnInit {
   showSection(section: string) {
     this.activeSection = section;
     if (!this.selectedChild) return;
+    if (section === 'attendance') {
+      this.loadAttendanceData(); // Load attendance when section is selected
+    } else if (section === 'milestones') {
+      this.loadMilestonesData(); // Load milestones when section is selected
+    }
+    // else if (section === 'timeline') {
+    //   this.toggleTimeline(this.selectedChild);
+    // }
+  }
 
-    if (section === 'timeline') {
-      this.toggleTimeline(this.selectedChild);
+  loadMilestonesData() {
+    if (!this.selectedChild) return;
+
+    this.apiService.getStudentMilestones(this.selectedChild.student_id).subscribe({
+      next: (response) => {
+        if (response.success && response.milestones.length > 0) {
+          this.milestones = response.milestones;
+        } else {
+          this.milestones = [];
+          this.showToast('No milestones found.');
+        }
+      },
+      error: (err) => {
+        console.error('Error loading milestones:', err);
+        this.showToast('Failed to load milestones data.');
+      },
+    });
+  }
+
+  loadAttendanceData() {
+    if (!this.selectedChild) return;
+
+    this.apiService.getStudentAttendance(this.selectedChild.student_id).subscribe({
+      next: (response) => {
+        if (response.success && response.attendance.length > 0) {
+          // Directly create events from all attendance records
+          this.attendanceEvents = response.attendance.map((record: any) => ({
+            title: record.status.charAt(0).toUpperCase() + record.status.slice(1),
+            start: record.date,
+            allDay: true,
+            backgroundColor: this.getStatusColor(record.status),
+            borderColor: this.getStatusColor(record.status),
+            extendedProps: {
+              teacher: `${record.teacher_first_name} ${record.teacher_last_name}`,
+              status: record.status,
+            },
+          }));
+          // Update calendar options
+          this.calendarOptions = {
+            ...this.calendarOptions,
+            events: this.attendanceEvents,
+          };
+          const now = new Date();
+          this.attendanceCurrentMonth = now.toLocaleString('default', { 
+            month: 'long', 
+            year: 'numeric' 
+          });
+          this.updateAttendanceStats(now);
+        } else {
+          this.attendanceEvents = [];
+          this.showToast('No attendance records found.');
+        }
+      },
+      error: (err) => {
+        console.error('Error loading attendance:', err);
+        this.showToast('Failed to load attendance data.');
+      },
+    });
+  }
+
+  getStatusColor(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'present':
+        return '#28a745'; // Green
+      case 'absent':
+        return '#dc3545'; // Red
+      case 'late':
+        return '#ffc107'; // Yellow/Orange
+      case 'excused':
+        return '#6c757d'; // Gray/Blue
+      default:
+        return '#3788d8'; // Default blue
     }
   }
 

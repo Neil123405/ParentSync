@@ -35,12 +35,11 @@
         (swipe)="onSwipe($event)">
         <div *ngIf="!isLoading">
           <div *ngFor="let child of laravelChildren; let i = index" class="student-card-carousel"
-            [class.center]="centerCardIndex === i"
-            [class.left]="i < centerCardIndex" [class.right]="i > centerCardIndex"
-            [class.long-pressed]="longPressedId === child.student_id" (click)="selectChildAndCenter(child, i)"
-            (mousedown)="startPress($event, child)" (mouseup)="endPress()" (mouseleave)="endPress()"
-            (touchstart)="startPress($event, child)" (touchend)="endPress()" [style.transform]="getCardTransform(i)"
-            style="position: absolute;">
+            [class.center]="centerCardIndex === i" [class.left]="i < centerCardIndex"
+            [class.right]="i > centerCardIndex" [class.long-pressed]="longPressedId === child.student_id"
+            (click)="selectChildAndCenter(child, i)" (mousedown)="startPress($event, child)" (mouseup)="endPress()"
+            (mouseleave)="endPress()" (touchstart)="startPress($event, child)" (touchend)="endPress()"
+            [style.transform]="getCardTransform(i)" style="position: absolute;">
             <!-- Badge at top right -->
             <span class="student-badge">
               {{
@@ -76,13 +75,17 @@
     <ion-button expand="block" color="primary" [disabled]="!selectedChild"
       [fill]="activeSection === 'tasks' ? 'solid' : 'outline'" (click)="showSection('tasks')" style="flex: 1;">
       <ion-icon name="list" slot="start"></ion-icon>
-      Tasks
     </ion-button>
-    <!-- <ion-button expand="block" color="secondary" [disabled]="!selectedChild"
-      [fill]="activeSection === 'timeline' ? 'solid' : 'outline'" (click)="showSection('timeline')" style="flex: 1;">
-      <ion-icon name="time" slot="start"></ion-icon>
-      Timeline
-    </ion-button> -->
+    <ion-button expand="block" color="secondary" [disabled]="!selectedChild"
+      [fill]="activeSection === 'attendance' ? 'solid' : 'outline'" (click)="showSection('attendance')"
+      style="flex: 1;">
+      <ion-icon name="calendar-outline" slot="start"></ion-icon>
+    </ion-button>
+    <ion-button expand="block" color="tertiary" [disabled]="!selectedChild"
+      [fill]="activeSection === 'milestones' ? 'solid' : 'outline'" (click)="showSection('milestones')"
+      style="flex: 1;">
+      <ion-icon name="trophy-outline" slot="start"></ion-icon>
+    </ion-button>
   </div>
 
   <!-- Consent Forms and School Events Buttons under Tasks -->
@@ -196,20 +199,150 @@
     </div>
   </div>
 
+ <!-- Attendance Section -->
+<div *ngIf="activeSection === 'attendance' && selectedChild" class="attendance-section">
+  <!-- Enhanced Calendar Header -->
+  <div class="enhanced-attendance-header">
+    <div class="header-gradient"></div>
+    
+    <div class="header-decoration">
+      <div class="deco-circle deco-1"></div>
+      <div class="deco-circle deco-2"></div>
+      <div class="deco-circle deco-3"></div>
+    </div>
+    
+    <div class="header-content">
+      <div class="month-display">
+        <h1 class="current-month">{{ attendanceCurrentMonth }}</h1>
+      </div>
+      
+      <div class="stats-row">
+        <!-- Present Days -->
+        <div class="stat-card present-stat">
+          <div class="stat-icon-wrapper">
+            <ion-icon name="checkmark-circle" class="stat-icon"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{ presentCount }}</span>
+            <span class="stat-label">Present</span>
+          </div>
+        </div>
+        
+        <!-- Absent Days -->
+        <div class="stat-card absent-stat">
+          <div class="stat-icon-wrapper">
+            <ion-icon name="close-circle" class="stat-icon"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{ absentCount }}</span>
+            <span class="stat-label">Absent</span>
+          </div>
+        </div>
+        
+        <!-- Late Days -->
+        <div class="stat-card late-stat">
+          <div class="stat-icon-wrapper">
+            <ion-icon name="time" class="stat-icon"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{ lateCount }}</span>
+            <span class="stat-label">Late</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar Content -->
+  <ion-card-content class="attendance-calendar-content">
+    <full-calendar [options]="calendarOptions" #attendanceCalendar></full-calendar>
+  </ion-card-content>
+
+  <!-- Legend -->
+  <div class="attendance-legend">
+    <div class="legend-item">
+      <div class="legend-color present-color"></div>
+      <span class="legend-label">Present</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color absent-color"></div>
+      <span class="legend-label">Absent</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color late-color"></div>
+      <span class="legend-label">Late</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color excused-color"></div>
+      <span class="legend-label">Excused</span>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="attendanceEvents.length === 0" class="empty-attendance-state">
+    <ion-icon name="calendar-outline" class="empty-icon"></ion-icon>
+    <h3>No Attendance Records</h3>
+    <p>Attendance records will appear here once available</p>
+  </div>
+
+  <!-- Bottom Spacer -->
+  <div class="content-bottom-spacer"></div>
+</div>
+
   <!-- Consent Forms Section -->
   <!-- Timeline Section -->
-  <ion-list *ngIf="activeSection === 'timeline' && selectedChild">
-    <ion-item *ngFor="let form of signedConsentForms[selectedChild.student_id]" (click)="openConsentFormDetail(form)">
-      <ion-label>
-        <h3>{{ form.title }}</h3>
-        <p><ion-icon name="time-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>Signed at: {{
-          form.signed_at | date:'medium' }}</p>
-      </ion-label>
-    </ion-item>
-    <ion-item *ngIf="signedConsentForms[selectedChild.student_id]?.length === 0">
-      <ion-label>No signed consent forms.</ion-label>
-    </ion-item>
-  </ion-list>
+  <!-- Milestones Section -->
+<div *ngIf="activeSection === 'milestones' && selectedChild" class="milestones-section ion-padding">
+  <div class="section-header">
+    <h2 class="section-title">
+      <ion-icon name="trophy" color="warning"></ion-icon>
+      Milestones & Achievements
+    </h2>
+    <p class="section-subtitle">Track your child's progress and accomplishments</p>
+  </div>
+
+  <div class="milestones-grid">
+    <div *ngFor="let milestone of milestones; let i = index" class="milestone-card" [class.milestone-animate]="true" [style.animation-delay]="i * 0.1 + 's'">
+      <div class="milestone-header">
+        <div class="milestone-icon-wrapper">
+          <ion-icon name="trophy" class="milestone-icon"></ion-icon>
+          <div class="milestone-shine"></div>
+        </div>
+        <div class="milestone-badge">
+          <ion-icon name="checkmark-circle" color="success"></ion-icon>
+        </div>
+      </div>
+      
+      <div class="milestone-body">
+        <h3 class="milestone-title">{{ milestone.title }}</h3>
+        <p class="milestone-description">{{ milestone.description }}</p>
+        
+        <div class="milestone-meta">
+          <div class="meta-item">
+            <ion-icon name="person-outline"></ion-icon>
+            <span>{{ milestone.teacher.first_name }} {{ milestone.teacher.last_name }}</span>
+          </div>
+          <div class="meta-item">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>{{ milestone.created_at | date:'MMM d, y' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="milestone-footer">
+        <div class="milestone-ribbon">Achievement Unlocked!</div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="milestones.length === 0" class="no-milestones">
+    <div class="empty-state">
+      <ion-icon name="trophy-outline" class="empty-icon"></ion-icon>
+      <h3>No Milestones Yet</h3>
+      <p>Milestones will appear here as your child achieves them</p>
+    </div>
+  </div>
+</div>
 
   <!-- Default message when no child is selected -->
   <div *ngIf="!selectedChild && laravelChildren.length > 0" class="no-selection ion-padding">
