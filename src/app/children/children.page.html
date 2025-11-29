@@ -205,53 +205,18 @@
   <div class="enhanced-attendance-header">
     <div class="header-gradient"></div>
     
-    <div class="header-decoration">
+    <!-- <div class="header-decoration">
       <div class="deco-circle deco-1"></div>
       <div class="deco-circle deco-2"></div>
       <div class="deco-circle deco-3"></div>
-    </div>
+    </div> -->
     
     <div class="header-content">
       <div class="month-display">
         <h1 class="current-month">{{ attendanceCurrentMonth }}</h1>
       </div>
-      
-      <div class="stats-row">
-        <!-- Present Days -->
-        <div class="stat-card present-stat">
-          <div class="stat-icon-wrapper">
-            <ion-icon name="checkmark-circle" class="stat-icon"></ion-icon>
-          </div>
-          <div class="stat-content">
-            <span class="stat-number">{{ presentCount }}</span>
-            <span class="stat-label">Present</span>
-          </div>
-        </div>
-        
-        <!-- Absent Days -->
-        <div class="stat-card absent-stat">
-          <div class="stat-icon-wrapper">
-            <ion-icon name="close-circle" class="stat-icon"></ion-icon>
-          </div>
-          <div class="stat-content">
-            <span class="stat-number">{{ absentCount }}</span>
-            <span class="stat-label">Absent</span>
-          </div>
-        </div>
-        
-        <!-- Late Days -->
-        <div class="stat-card late-stat">
-          <div class="stat-icon-wrapper">
-            <ion-icon name="time" class="stat-icon"></ion-icon>
-          </div>
-          <div class="stat-content">
-            <span class="stat-number">{{ lateCount }}</span>
-            <span class="stat-label">Late</span>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
+  </div> 
 
   <!-- Calendar Content -->
   <ion-card-content class="attendance-calendar-content">

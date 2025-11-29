@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CalendarEvent } from 'angular-calendar';
 
@@ -52,6 +52,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     private gestureCtrl: GestureController,
     private cdr: ChangeDetectorRef,
     private storage: Storage,
+    private elementRef: ElementRef // 2. Inject ElementRef
   ) { }
 
   handleEventClick(info: any) {
@@ -66,8 +67,11 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const calendarElement = document.querySelector('full-calendar');
+    const calendarElement = this.elementRef.nativeElement.querySelector('full-calendar');
     if (calendarElement) {
+      if (this.gesture) {
+        this.gesture.destroy();
+      }
       this.gesture = this.gestureCtrl.create({
         el: calendarElement, // Attach directly to the calendar element
         gestureName: 'swipe',
@@ -78,10 +82,30 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     } else {
       console.error('FullCalendar element not found');
     }
+    setTimeout(() => {
+      this.initializeSwipeGesture();
+    }, 500); // 500ms delay
+  }
+
+  initializeSwipeGesture() {
+    // Use a more specific selector if possible, or ensure this is the only one
+    const calendarElement = document.querySelector('full-calendar');
+    if (calendarElement) {
+      this.gesture = this.gestureCtrl.create({
+        el: calendarElement,
+        gestureName: 'swipe',
+        threshold: 15,
+        passive: true, // Add this to prevent conflicts with scrolling
+        onEnd: (ev) => this.handleSwipe(ev),
+      });
+      this.gesture.enable(true);
+    } else {
+      console.error('FullCalendar element not found for swipe gesture.');
+    }
   }
 
   handleSwipe(ev: any) {
-    const calendarElement = document.querySelector('full-calendar');
+    const calendarElement = this.elementRef.nativeElement.querySelector('full-calendar');
     if (ev.deltaX > 50) {
       calendarElement?.classList.add('swipe-right');
       setTimeout(() => calendarElement?.classList.remove('swipe-right'), 300);
@@ -90,6 +114,13 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
       calendarElement?.classList.add('swipe-left');
       setTimeout(() => calendarElement?.classList.remove('swipe-left'), 300);
       this.goToNext();
+    }
+  }
+
+  ionViewWillLeave() {
+    if (this.gesture) {
+      this.gesture.destroy();
+      this.gesture = undefined;
     }
   }
 
@@ -361,7 +392,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     }).sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
   }
 
-  doRefresh(event: any) {   
+  doRefresh(event: any) {
     this.clearCalendarCache(); // Clear the cache
     this.ngOnInit();
 

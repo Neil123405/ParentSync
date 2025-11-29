@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { ToastController, ModalController } from '@ionic/angular';
@@ -66,7 +66,7 @@ export class ChildrenPage implements OnInit, AfterViewInit {
   absentCount: number = 0;
   lateCount: number = 0;
   excusedCount: number = 0;
-  
+
   private attendanceGesture?: Gesture;
   calendarOptions: CalendarOptions = {
     plugins: [dayGridPlugin],
@@ -82,9 +82,9 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     },
     datesSet: (arg) => {
       const centerDate = new Date(arg.view.currentStart);
-      this.attendanceCurrentMonth = centerDate.toLocaleString('default', { 
-        month: 'long', 
-        year: 'numeric' 
+      this.attendanceCurrentMonth = centerDate.toLocaleString('default', {
+        month: 'long',
+        year: 'numeric'
       });
       this.updateAttendanceStats(centerDate);
       this.cdr.detectChanges();
@@ -102,7 +102,8 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     private modalController: ModalController,
     private storage: Storage,
     private gestureCtrl: GestureController,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private elementRef: ElementRef // 2. Inject ElementRef
   ) { }
 
   ngAfterViewInit() {
@@ -113,19 +114,23 @@ export class ChildrenPage implements OnInit, AfterViewInit {
   }
 
   initializeAttendanceSwipe() {
-    const calendarElement = document.querySelector('#attendanceCalendar full-calendar');
-    if (calendarElement && this.attendanceCalendarComponent) {
+     if (this.attendanceGesture) {
+      this.attendanceGesture.destroy();
+      this.attendanceGesture = undefined;
+    }
+    const calendarElement = this.elementRef.nativeElement.querySelector('full-calendar');
+    if (calendarElement) {
       this.attendanceGesture = this.gestureCtrl.create({
         el: calendarElement,
         gestureName: 'swipe',
         threshold: 15,
-        passive: false,
+        passive: true,
         onEnd: (ev) => {
-        // Prevent default only when necessary
-        if (Math.abs(ev.deltaX) > 50) {
-          this.handleAttendanceSwipe(ev);
-        }
-      },
+          // Prevent default only when necessary
+          if (Math.abs(ev.deltaX) > 50) {
+            this.handleAttendanceSwipe(ev);
+          }
+        },
       });
       this.attendanceGesture.enable(true);
     }
@@ -143,23 +148,27 @@ export class ChildrenPage implements OnInit, AfterViewInit {
   //     this.goToAttendanceNext();
   //   }
   // }
+  
 
   handleAttendanceSwipe(ev: any) {
-  const calendarElement = document.querySelector('#attendanceCalendar full-calendar');
-  
-  // Use requestAnimationFrame for better performance
-  requestAnimationFrame(() => {
-    if (ev.deltaX > 50) {
-      calendarElement?.classList.add('swipe-right');
-      setTimeout(() => calendarElement?.classList.remove('swipe-right'), 300);
-      this.goToAttendancePrevious();
-    } else if (ev.deltaX < -50) {
-      calendarElement?.classList.add('swipe-left');
-      setTimeout(() => calendarElement?.classList.remove('swipe-left'), 300);
-      this.goToAttendanceNext();
+    const calendarElement = this.elementRef.nativeElement.querySelector('full-calendar');
+    const swipeThreshold = 50; // Minimum pixels for a swipe
+
+    // Check for horizontal swipe
+    if (Math.abs(ev.deltaX) > swipeThreshold) {
+      if (ev.deltaX > 0) {
+        // Swiped right
+        calendarElement?.classList.add('swipe-right');
+        setTimeout(() => calendarElement?.classList.remove('swipe-right'), 300);
+        this.goToAttendancePrevious();
+      } else {
+        // Swiped left
+        calendarElement?.classList.add('swipe-left');
+        setTimeout(() => calendarElement?.classList.remove('swipe-left'), 300);
+        this.goToAttendanceNext();
+      }
     }
-  });
-}
+  }
 
   goToAttendancePrevious() {
     if (this.attendanceCalendarComponent) {
@@ -175,16 +184,16 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     }
   }
 
-   updateAttendanceStats(currentDate: Date) {
+  updateAttendanceStats(currentDate: Date) {
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
-    
+
     // Reset counts
     this.presentCount = 0;
     this.absentCount = 0;
     this.lateCount = 0;
     this.excusedCount = 0;
-    
+
     // Count attendance by status for current month
     this.attendanceEvents.forEach(event => {
       const eventDate = new Date(event.start);
@@ -443,6 +452,9 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     if (!this.selectedChild) return;
     if (section === 'attendance') {
       this.loadAttendanceData(); // Load attendance when section is selected
+      setTimeout(() => {
+        this.initializeAttendanceSwipe();
+      }, 300); 
     } else if (section === 'milestones') {
       this.loadMilestonesData(); // Load milestones when section is selected
     }
@@ -494,9 +506,9 @@ export class ChildrenPage implements OnInit, AfterViewInit {
             events: this.attendanceEvents,
           };
           const now = new Date();
-          this.attendanceCurrentMonth = now.toLocaleString('default', { 
-            month: 'long', 
-            year: 'numeric' 
+          this.attendanceCurrentMonth = now.toLocaleString('default', {
+            month: 'long',
+            year: 'numeric'
           });
           this.updateAttendanceStats(now);
         } else {
