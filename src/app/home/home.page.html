@@ -22,7 +22,6 @@
                 <ion-icon name="person"></ion-icon>
               </div>
             </ng-template>
-            <div class="status-indicator"></div>
           </div>
         </div>
       </div>
@@ -79,7 +78,7 @@
 
             <ion-card-content class="announcement-card-content">
               <!-- Student Photos Column -->
-              <div class="student-photos-column">
+              <div class="student-photos-column" (click)="showAssociatedStudents($event, group.studentIds)">
                 <ng-container *ngFor="let studentId of group.studentIds.slice(0, 3); let i = index">
                   <div class="student-avatar">
                     <ng-container
@@ -113,7 +112,8 @@
                     <span class="meta-text">
                       {{ group.announcement.scope === 'school' ? 'School-wide' :
                       group.announcement.scope === 'section' ? 'Section' :
-                      group.announcement.scope === 'class' ? 'Class' : 'Unknown' }}
+                      group.announcement.scope === 'class' ? 'Class' :
+                      group.announcement.scope === 'individual' ? 'Individual/s' : 'Unknown' }}
                     </span>
                   </div>
 
@@ -156,7 +156,7 @@
 
             <ion-card-content class="announcement-card-content">
               <!-- Student Photos Column -->
-              <div class="student-photos-column">
+              <div class="student-photos-column" (click)="showAssociatedStudents($event, group.studentIds)">
                 <ng-container *ngFor="let studentId of group.studentIds.slice(0, 3); let i = index">
                   <div class="student-avatar">
                     <ng-container
@@ -222,3 +222,35 @@
     </div>
   </div>
 </ion-content>
+
+<!-- ...existing code... -->
+
+<!-- Associated Students Modal -->
+<ion-modal [isOpen]="isStudentsModalOpen" (didDismiss)="setStudentModalOpen(false)" [initialBreakpoint]="0.3" [breakpoints]="[0, 0.3, 0.5]">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title style="color: white;">Associated Students</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding-top">
+      <ion-list lines="none">
+        <ion-item *ngFor="let student of selectedStudents">
+          <ion-avatar slot="start">
+            <ng-container *ngIf="student.photo_url && student.photo_url.startsWith('http'); else defaultAvatar">
+              <img [src]="student.photo_url" alt="Student Photo" />
+            </ng-container>
+            <ng-template #defaultAvatar>
+              <div class="modal-avatar-placeholder">
+                <ion-icon name="person"></ion-icon>
+              </div>
+            </ng-template>
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ student.first_name }} {{ student.last_name }}</h2>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ng-template>
+</ion-modal>

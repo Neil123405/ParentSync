@@ -6,6 +6,8 @@ import { ApiService, User, ParentProfile } from '../services/api.service';
 
 import { Storage } from '@ionic/storage-angular';
 
+import { ActionSheetController } from '@ionic/angular'; // Import this
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -32,8 +34,28 @@ export class HomePage implements OnInit {
     private apiService: ApiService,
     private router: Router,
     private storage: Storage,
+    private actionSheetController: ActionSheetController // Inject thi
   ) {
 
+  }
+
+    selectedStudents: any[] = [];
+  isStudentsModalOpen: boolean = false;
+
+  async showAssociatedStudents(event: Event, studentIds: number[]) {
+    event.stopPropagation(); // Prevent opening the announcement detail page
+
+    this.selectedStudents = studentIds
+      .map(id => this.getStudentById(id))
+      .filter(s => s !== undefined);
+
+    if (this.selectedStudents.length > 0) {
+      this.isStudentsModalOpen = true;
+    }
+  }
+
+    setStudentModalOpen(isOpen: boolean) {
+    this.isStudentsModalOpen = isOpen;
   }
 
   parent: ParentProfile | null = null;
@@ -70,7 +92,7 @@ export class HomePage implements OnInit {
   async loadChildrenWithPhotos() {
     if (!this.currentProfile) {
       return;
-    } 
+    }
 
     // Check if cached children data exists
     const cachedChildren = await this.storage.get('cachedChildrenWithPhotos');
@@ -84,7 +106,7 @@ export class HomePage implements OnInit {
         if (response.success) {
           this.laravelChildren = response.children || [];
           // Cache the children data
-          await this.storage.set('cachedChildrenWithPhotos', this.laravelChildren);          
+          await this.storage.set('cachedChildrenWithPhotos', this.laravelChildren);
         }
       },
       error: (error) => {
@@ -118,7 +140,7 @@ export class HomePage implements OnInit {
       next: async (response) => {
         this.laravelAnnouncements = response.announcements || [];
         // Cache the announcements
-        await this.storage.set('cachedAnnouncements', this.laravelAnnouncements);        
+        await this.storage.set('cachedAnnouncements', this.laravelAnnouncements);
       },
       error: (error) => {
         console.error('Error fetching announcements:', error);
@@ -140,7 +162,7 @@ export class HomePage implements OnInit {
   async clearAnnouncementsAndEventsCache() {
     await this.storage.remove('cachedChildrenWithPhotos');
     await this.storage.remove('cachedAnnouncements');
-    await this.storage.remove('cachedEvents');    
+    await this.storage.remove('cachedEvents');
   }
 
   async refreshData(event?: any) {

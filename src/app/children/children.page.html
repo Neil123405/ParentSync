@@ -74,17 +74,17 @@
   <div class="ion-padding action-buttons" style="display: flex; gap: 8px;">
     <ion-button expand="block" color="primary" [disabled]="!selectedChild"
       [fill]="activeSection === 'tasks' ? 'solid' : 'outline'" (click)="showSection('tasks')" style="flex: 1;">
-      <ion-icon name="list" slot="start"></ion-icon>
+      <ion-icon name="list" slot="icon-only"></ion-icon>
     </ion-button>
     <ion-button expand="block" color="secondary" [disabled]="!selectedChild"
       [fill]="activeSection === 'attendance' ? 'solid' : 'outline'" (click)="showSection('attendance')"
       style="flex: 1;">
-      <ion-icon name="calendar-outline" slot="start"></ion-icon>
+      <ion-icon name="calendar-outline" slot="icon-only"></ion-icon>
     </ion-button>
     <ion-button expand="block" color="tertiary" [disabled]="!selectedChild"
       [fill]="activeSection === 'milestones' ? 'solid' : 'outline'" (click)="showSection('milestones')"
       style="flex: 1;">
-      <ion-icon name="trophy-outline" slot="start"></ion-icon>
+      <ion-icon name="trophy-outline" slot="icon-only"></ion-icon>
     </ion-button>
   </div>
 
@@ -202,21 +202,62 @@
  <!-- Attendance Section -->
 <div *ngIf="activeSection === 'attendance' && selectedChild" class="attendance-section">
   <!-- Enhanced Calendar Header -->
-  <div class="enhanced-attendance-header">
-    <div class="header-gradient"></div>
+  <div class="calendar-header">
+    <div class="calendar-header-gradient"></div>
     
-    <!-- <div class="header-decoration">
-      <div class="deco-circle deco-1"></div>
-      <div class="deco-circle deco-2"></div>
-      <div class="deco-circle deco-3"></div>
-    </div> -->
+    <!-- Month Display (Centered) -->
+    <div class="calendar-month-year">
+      <h1 class="calendar-month">{{ attendanceCurrentMonth }}</h1>
+    </div>
     
-    <div class="header-content">
-      <div class="month-display">
-        <h1 class="current-month">{{ attendanceCurrentMonth }}</h1>
+    <!-- Quick Stats Cards -->
+    <div class="calendar-stats">
+      <div class="stat-card stat-present">
+        <div class="stat-icon">
+          <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ presentCount }}</span>
+          <span class="stat-label">Present</span>
+        </div>
+      </div>
+      
+      <div class="stat-card stat-absent">
+        <div class="stat-icon">
+          <ion-icon name="close-circle"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ absentCount }}</span>
+          <span class="stat-label">Absent</span>
+        </div>
+      </div>
+      
+      <div class="stat-card stat-late">
+        <div class="stat-icon">
+          <ion-icon name="time"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ lateCount }}</span>
+          <span class="stat-label">Late</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-excused">
+        <div class="stat-icon">
+          <ion-icon name="document-text"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ excusedCount }}</span>
+          <span class="stat-label">Excused</span>
+        </div>
       </div>
     </div>
-  </div> 
+    
+    <!-- Calendar Icon Decoration -->
+    <div class="calendar-decoration">
+      <ion-icon name="calendar" class="calendar-bg-icon"></ion-icon>
+    </div>
+  </div>
 
   <!-- Calendar Content -->
   <ion-card-content class="attendance-calendar-content">
@@ -259,15 +300,26 @@
   <!-- Milestones Section -->
 <div *ngIf="activeSection === 'milestones' && selectedChild" class="milestones-section ion-padding">
   <div class="section-header">
-    <h2 class="section-title">
-      <ion-icon name="trophy" color="warning"></ion-icon>
-      Milestones & Achievements
-    </h2>
-    <p class="section-subtitle">Track your child's progress and accomplishments</p>
+    <div class="header-text">
+      <h2 class="section-title">
+        <ion-icon name="trophy" color="warning"></ion-icon>
+        Milestones
+      </h2>
+      <p class="section-subtitle">Track your children's achievements and progress</p>
+    </div>
+
+    <!-- Year Filter Dropdown -->
+    <div class="year-filter">
+      <ion-select interface="popover" [(ngModel)]="selectedYear" mode="ios">
+        <ion-select-option *ngFor="let year of availableYears" [value]="year">
+          {{ year }}
+        </ion-select-option>
+      </ion-select>
+    </div>
   </div>
 
   <div class="milestones-grid">
-    <div *ngFor="let milestone of milestones; let i = index" class="milestone-card" [class.milestone-animate]="true" [style.animation-delay]="i * 0.1 + 's'">
+    <div *ngFor="let milestone of filteredMilestones; let i = index" class="milestone-card" [class.milestone-animate]="true" [style.animation-delay]="i * 0.1 + 's'">
       <div class="milestone-header">
         <div class="milestone-icon-wrapper">
           <ion-icon name="trophy" class="milestone-icon"></ion-icon>
@@ -289,7 +341,7 @@
           </div>
           <div class="meta-item">
             <ion-icon name="calendar-outline"></ion-icon>
-            <span>{{ milestone.created_at | date:'MMM d, y' }}</span>
+            <span>{{ milestone.achieved_on | date:'MMM d, y' }}</span>
           </div>
         </div>
       </div>
@@ -300,11 +352,11 @@
     </div>
   </div>
 
-  <div *ngIf="milestones.length === 0" class="no-milestones">
+  <div *ngIf="filteredMilestones.length === 0" class="no-milestones">
     <div class="empty-state">
-      <ion-icon name="trophy-outline" class="empty-icon"></ion-icon>
-      <h3>No Milestones Yet</h3>
-      <p>Milestones will appear here as your child achieves them</p>
+      <ion-icon name="filter-outline" class="empty-icon"></ion-icon>
+      <h3>No Milestones Found</h3>
+      <p>No achievements found for the year {{ selectedYear }}</p>
     </div>
   </div>
 </div>

@@ -262,14 +262,14 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
               type: 'event', // Custom property to differentiate events
               description: event.description,
               student: {
-                first_name: event.first_name,
-                last_name: event.last_name,
+                first_name: event.student_first_name,
+                last_name: event.student_last_name,
               },
             }, meta: {
               student_id: event.student_id, description: event.description,
               student: {
-                first_name: event.first_name,
-                last_name: event.last_name
+                first_name: event.student_first_name,
+                last_name: event.student_last_name
               }
             }
           }));
@@ -277,7 +277,15 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
           this.linkedEventIds = new Set(events.map((ev: any) => ev.id));
           // Fetch consent forms
           this.apiService.getAllUnsignedConsentFormsForParent(parentProfile.parent_id).subscribe((res) => {
-            this.loadedConsentForms = res.forms || [];
+
+            this.loadedConsentForms = (res.forms || []).map((form: any) => ({
+              ...form,
+              student: {
+                first_name: form.student_first_name,
+                last_name: form.student_last_name,
+                student_id: form.student_id
+              }
+            }));
             const consentForms = (res.forms || []).map((form: any) => ({
               ...form,
               student_id: form.student_id,

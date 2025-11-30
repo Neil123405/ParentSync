@@ -1,721 +1,26 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
-}
-
-.parent-sync-title {
-  color: white;
-
-  font-size: 25px;
-}
-
-.announcements-title {
-  margin-bottom: 150px;
-}
-
-.error-message {
-  color: var(--ion-color-danger);
-  padding: 10px 0;
-  font-size: 14px;
-}
-
-h2 {
-  margin-top: 20px;
-  margin-bottom: 10px;
-  color: var(--ion-color-primary);
-  font-weight: 600;
-}
-
-h3 {
-  margin-top: 16px;
-  margin-bottom: 8px;
-  color: var(--ion-color-primary);
-  font-weight: 500;
-}
-
-// h4 {
-//   margin: 8px 0;
-//   color: var(--ion-color-primary);
-//   font-weight: 500;
-// }
-
-// h5 {
-//   margin: 8px 0;
-//   color: var(--ion-color-dark);
-//   font-weight: 500;
-// }
-
-ion-tab-button.selected {
-  color: var(--ion-color-primary);
-}
-
-ion-tab-bar {
-  border-top: 1px solid var(--ion-color-light);
-}
-
-.announcement-card {
-  margin: 0;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: none;
-
-  &:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-  }
-
-  h3 {
-    margin: 0 0 8px 0;
-    color: var(--ion-color-primary);
-  }
-
-  p {
-    margin: 8px 0;
-    line-height: 1.4;
-  }
-
-  ion-note {
-    display: block;
-    margin-top: 12px;
-    text-align: right;
-  }
-
-  flex: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  border-radius: 18px;
-  min-height: 200px;
-  flex-direction: row;
-  height: auto;
-
-}
-
-.school-card {
-  background: linear-gradient(135deg, #FFE57F 0%, #FFD54F 50%, #FFC107 100%);
-  border-left: 5px solid #B8860B;
-  box-shadow: 0 8px 16px rgba(255, 215, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  color: #8B4513;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg,
-        transparent 30%,
-        rgba(255, 255, 255, 0.3) 50%,
-        transparent 70%);
-    transform: rotate(45deg);
-    animation: shine 3s infinite;
-  }
-}
-
-.school-card h3 {
-  color: #8B4513;
-  position: relative;
-  z-index: 1;
-}
-
-.section-card {
-  background: linear-gradient(135deg,
-      #E5E5E5 0%,
-      #F5F5F5 25%,
-      #E5E5E5 50%,
-      #C0C0C0 75%,
-      #A9A9A9 100%);
-  border-left: 5px solid #708090;
-  box-shadow: 0 8px 16px rgba(192, 192, 192, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  color: #2F4F4F;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg,
-        transparent 30%,
-        rgba(255, 255, 255, 0.4) 50%,
-        transparent 70%);
-    transform: rotate(45deg);
-    animation: shine 3s infinite;
-  }
-}
-
-@keyframes shine {
-  0% {
-    transform: translateX(-100%) translateY(-100%) rotate(45deg);
-  }
-
-  100% {
-    transform: translateX(100%) translateY(100%) rotate(45deg);
-  }
-}
-
-.section-card h3 {
-  color: #2F4F4F;
-  position: relative;
-  z-index: 1;
-}
-
-.event-card {
-  margin-bottom: 16px;
-  border-left: 4px solid var(--ion-color-secondary);
-
-  h3 {
-    margin: 0 0 8px 0;
-    color: var(--ion-color-secondary);
-  }
-
-  p {
-    margin: 4px 0;
-    line-height: 1.4;
-  }
-
-  .event-details p {
-    font-size: 14px;
-
-    strong {
-      color: var(--ion-color-dark);
-    }
-  }
-}
-
-.event-list-item {
-  margin-bottom: 0px; // just a tiny gap
-  border-radius: 14px; // rounded corners
-  overflow: hidden; // ensures children respect border-radius
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); // optional: subtle shadow for separation
-  // --border-width: 0;
-}
-
-// Horizontal Students Layout
-.students-horizontal-section {
-  border-bottom: 1px solid var(--ion-color-light);
-  margin-bottom: 16px;
-}
-
-.student-photo-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 18px;
-  padding: 16px 0;
-  margin-bottom: 16px;
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 2px 12px 0 rgba(102, 126, 234, 0.10);
-}
-
-.tab-button-group {
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  margin-top: 16px;
-}
-
-.tab-btn {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 1.2rem;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  font-weight: 600;
-  padding: 8px 0;
-  border-bottom: 3px solid transparent;
-  transition: border-color 0.2s, color 0.2s;
-  cursor: pointer;
-}
-
-.tab-btn.active {
-  color: #ffd700;
-  border-bottom: 3px solid #ffd700;
-}
-
-.event-card-custom {
-  margin: 4px 0; // just a tiny gap between cards
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  // cursor: pointer;
-
-  h3 {
-    font-size: 1.17em; // or 22px to match h3, adjust as needed
-    margin: 0 0 8px 0;
-    // color: #222 !important;
-    font-weight: 500;
-  }
-}
-
-.event-student-photo {
-  width: 64px;
-  height: 64px;
-  border-radius: 12px;
-  object-fit: cover;
-  display: block;
-}
-
-h2,
-h3,
-ion-label,
-.announcement-card h3,
-.event-card-custom h3 {
-  color: #222;
-}
-
-.centered-number-input {
-  text-align: center;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.student-section {
-  --background: #c6ffc6;
-}
-
-.sort-section {
-  --background: #c6d8ff;
-}
-
-.show-section {
-  --background: #e0e2e6;
-}
-
-ion-header,
-ion-toolbar {
-  border-bottom-left-radius: 18px;
-  border-bottom-right-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
-}
-
-ion-header,
-ion-toolbar {
-  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.header-footer {
-  width: 100%;
-  margin-top: 20px;
-  /* Slight overlap, adjust as needed */
-  background: transparent;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  /* Stack children vertically */
-  position: static;
-  /* Remove absolute positioning */
-}
-
-.tab-button-group {
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  margin-top: 16px;
-  /* Push the button group down */
-}
-
-.tab-btn {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 1.2rem;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  font-weight: 600;
-  padding: 8px 0;
-  border-bottom: 3px solid transparent;
-  transition: border-color 0.2s, color 0.2s;
-  cursor: pointer;
-}
-
-.tab-btn.active {
-  color: #ffd700;
-  border-bottom: 3px solid #ffd700;
-}
-
-.smiling-header {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: start;
-  /* Push children to the bottom */
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 24px 0 0 0;
-  text-align: center;
-  min-height: 140px;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
-  position: relative;
-  overflow: hidden;
-}
-
-.user-photo {
-  // Ensures the image fills the circle
-  margin-bottom: 8px;
-}
-
-.parent-photo-topright {
-  position: relative;
-}
-
-.header-top-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 12px;
-  margin-left: 10px;
-}
-
-.user-photo {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 0;
-}
-
-.parent-photo-topright {
-  flex-shrink: 0;
-  /* Prevent the photo from shrinking */
-  margin-left: 130px;
-}
-
-.default-photo {
-  font-size: 40px;
-  color: #888;
-  background: #fff;
-  border-radius: 50%;
-  border: 3px solid #fff;
-}
-
-.header-top-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 16px;
-  margin-bottom: 12px;
-}
-
-.welcome-message {
-  font-size: 0.95rem;
-  color: white;
-  font-weight: 500;
-  margin: 0;
-}
-
-.student-photo {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #fff;
-  box-shadow: 0 0 0 2px #e0e0e0;
-  cursor: pointer;
-}
-
-.default-photo {
-  font-size: 56px;
-  color: #888;
-  background: #fff;
-  border-radius: 50%;
-  border: 3px solid #fff;
-}
-
-.student-photos {
-  margin-right: 16px;
-  display: flex;
-  gap: 8px;
-  justify-content: flex-start;
-  width: auto;
-  height: auto;
-  flex-direction: column;
-  align-items: center;
-}
-
-.photo-wrapper-column {
-  display: flex;
-  justify-content: center;
-}
-
-.student-photo-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 0 !important;
-  margin: 0 0 0 0 !important;
-  /* Overlap photos */
-  flex-direction: column;
-}
-
-.student-photo-overlap {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #fff;
-  box-shadow: 0 0 0 2px #e0e0e0;
-}
-
-.student-no-photo {
-  width: 48px;
-  height: 48px;
-  color: #888;
-  background: #fff;
-  border-radius: 50%;
-  border: 3px solid #fff;
-  box-shadow: 0 0 0 2px #e0e0e0;
-  top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card-ion {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-info {
-  display: flex;
-  align-items: center;
-}
-
-.student-photo-card {
-  margin: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.card-date {
-  margin-right: 16px;
-  color: #222;
-  font-weight: 500;
-}
-
-.event-card-custom.school-card {
-  background: linear-gradient(135deg,
-      #FFD700 0%,
-      #FFED4E 25%,
-      #FFD700 50%,
-      #FFA500 75%,
-      #FF8C00 100%);
-  border-left: 5px solid #B8860B;
-  box-shadow: 0 8px 16px rgba(255, 215, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  color: #8B4513;
-  position: relative;
-  overflow: hidden;
-}
-
-.event-card-custom.school-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg,
-      transparent 30%,
-      rgba(255, 255, 255, 0.3) 50%,
-      transparent 70%);
-  transform: rotate(45deg);
-  animation: shine 3s infinite;
-}
-
-.event-card-custom.section-card {
-  background: linear-gradient(135deg,
-      #E5E5E5 0%,
-      #F5F5F5 25%,
-      #E5E5E5 50%,
-      #C0C0C0 75%,
-      #A9A9A9 100%);
-  border-left: 5px solid #708090;
-  box-shadow: 0 8px 16px rgba(192, 192, 192, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  color: #2F4F4F;
-  position: relative;
-  overflow: hidden;
-}
-
-.event-card-custom.section-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg,
-      transparent 30%,
-      rgba(255, 255, 255, 0.4) 50%,
-      transparent 70%);
-  transform: rotate(45deg);
-  animation: shine 3s infinite;
-}
-
-.header-circle {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.25;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.circle-1 {
-  width: 80px;
-  height: 80px;
-  background: #ff9800;
-  top: 10px;
-  left: -30px;
-}
-
-.circle-2 {
-  width: 120px;
-  height: 120px;
-  background: #ffd700;
-  bottom: -40px;
-  right: 20px;
-}
-
-.circle-3 {
-  width: 160px;
-  height: 160px;
-  background: #c6ed3a;
-  top: 40px;
-  right: -20px;
-}
-
-.circle-4 {
-  width: 150px;
-  height: 150px;
-  background: #e1ff00;
-  bottom: 10px;
-  left: 30px;
-}
-
-.circle-5 {
-  width: 120px;
-  height: 120px;
-  background: #ffd700;
-  top: -40px;
-  right: 100px;
-}
-
-/* filepath: c:\Users\et cetera\Desktop\Ionic\ParentSync\src\app\home\home.page.scss */
-
-/* Make cards clickable */
-.clickable {
-  transition: transform 0.01s ease, box-shadow 0.2s ease;
-}
-
-.clickable:active {
-  transform: scale(0.98);
-  /* Slight shrink effect on click */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  /* Reduce shadow */
-}
-
-.announcement-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.announcement-title {
-  margin: 0;
-  /* Remove default margins */
-  padding: 0;
-  /* Remove default padding */
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  /* Stack content vertically */
-  height: 100%;
-
-  font-size: 1.1rem;
-  font-weight: 600;
-  line-height: 1.4;
-  color: rgba(0, 0, 0, 0.85);
-  flex: 1;
-  color: #E65100;
-  /* Ensure it takes up the full height of the parent */
-}
-
-/* filepath: c:\Users\et cetera\Desktop\Ionic\ParentSync\src\app\home\home.page.scss */
-
-:host ::ng-deep ion-content {
-  background: transparent !important;
-}
-
-/* Set the background image for the page */
+// ===================================
+// CONTENT BACKGROUND
+// ===================================
 :host ::ng-deep ion-content {
   --background: url('/assets/images/school.jpg') no-repeat center center fixed !important;
   --background-size: cover !important;
 }
 
-/* Make the content slightly transparent */
 .transparent-content {
   background-color: rgba(255, 255, 255, 0.6) !important;
-  /* More transparent (60% opacity) - adjust as needed */
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   position: relative;
   z-index: 1;
-  /* Ensure it's above the background */
 }
 
-
-/* filepath: c:\Users\et cetera\Desktop\Ionic\ParentSync\src\app\home\home.page.scss */
-
-// Modern Header Styles
+// ===================================
+// MODERN HEADER
+// ===================================
 .modern-header {
   position: relative;
   height: 160px;
-  // overflow: hidden;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 0 0 32px 32px;
   padding: 0;
@@ -823,6 +128,69 @@ ion-toolbar {
   }
 }
 
+.header-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: rgba(255, 100, 100, 0.1);
+  border: 1px solid red;
+  overflow: hidden;
+
+  .deco-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(135, 206, 235, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    animation: float 6s ease-in-out infinite;
+    background: rgb(255, 78, 78) !important;
+    opacity: 1 !important;
+    z-index: 10 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    &.deco-1 {
+      width: 80px;
+      height: 80px;
+      top: 10px; // FIX: Moved inside header
+      right: 20px; // FIX: Moved inside header
+      animation-delay: 0s;
+    }
+
+    &.deco-2 {
+      width: 120px;
+      height: 120px;
+      top: 40px; // FIX: Adjusted position
+      right: -40px; // FIX: Slightly inside
+      animation-delay: 2s;
+      opacity: 0.8;
+    }
+
+    &.deco-3 {
+      width: 60px;
+      height: 60px;
+      bottom: 20px; // FIX: Moved inside header
+      left: 20px; // FIX: Moved inside header
+      animation-delay: 4s;
+      opacity: 0.6;
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(180deg);
+  }
+}
+
+// ===================================
+// TAB NAVIGATION
+// ===================================
 .tab-navigation {
   position: relative;
   background: rgba(255, 255, 255, 0.15);
@@ -871,7 +239,6 @@ ion-toolbar {
   }
 
   &.active {
-
     .tab-icon,
     .tab-label {
       color: white;
@@ -901,211 +268,30 @@ ion-toolbar {
   z-index: 1;
 }
 
-// .header-decoration {
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   right: 0;
-//   bottom: 0;
-//   pointer-events: none;
-//   z-index: 0;
-
-//   .deco-circle {
-//     position: absolute;
-//     border-radius: 50%;
-//     background: rgba(255, 255, 255, 0.1);
-//     animation: float 6s ease-in-out infinite;
-
-//     &.deco-1 {
-//       width: 80px;
-//       height: 80px;
-//       top: -40px;
-//       right: -20px;
-//       animation-delay: 0s;
-//     }
-
-//     &.deco-2 {
-//       width: 120px;
-//       height: 120px;
-//       top: 20px;
-//       right: -60px;
-//       animation-delay: 2s;
-//       opacity: 0.6;
-//     }
-
-//     &.deco-3 {
-//       width: 60px;
-//       height: 60px;
-//       bottom: -30px;
-//       left: -30px;
-//       animation-delay: 4s;
-//       opacity: 0.4;
-//     }
-//   }
-// }
-
-// @keyframes float {
-//   0%, 100% {
-//     transform: translateY(0px) rotate(0deg);
-//   }
-//   50% {
-//     transform: translateY(-10px) rotate(180deg);
-//   }
-// }
-
-
-/* filepath: c:\Users\et cetera\Desktop\Ionic\ParentSync\src\app\home\home.page.scss */
-
-// ... existing styles ...
-
-.header-decoration {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 1;
-  background: rgba(255, 100, 100, 0.1);
-  /* Add a red background for debugging */
-  border: 1px solid red;
-  /* Add a border for visibility */
-
-  .deco-circle {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(135, 206, 235, 0.7); // Changed to light blue for better visibility against gradient
-    border: 2px solid rgba(255, 255, 255, 0.5); // Added border for definition
-    animation: float 6s ease-in-out infinite;
-    background: rgb(255, 83, 83) !important;
-    /* Force a bright red color */
-    opacity: 1 !important;
-    /* Ensure full opacity */
-    z-index: 10 !important;
-    /* Bring it to the front */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); // Added shadow for depth
-
-    &.deco-1 {
-      width: 80px;
-      height: 80px;
-      top: -40px;
-      right: -20px;
-      animation-delay: 0s;
-    }
-
-    &.deco-2 {
-      width: 120px;
-      height: 120px;
-      top: 20px;
-      right: -60px;
-      animation-delay: 2s;
-      opacity: 0.8; // Increased opacity
-    }
-
-    &.deco-3 {
-      width: 60px;
-      height: 60px;
-      bottom: -30px;
-      left: -30px;
-      animation-delay: 4s;
-      opacity: 0.6; // Increased opacity
-    }
-  }
-}
-
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-
-  50% {
-    transform: translateY(-10px) rotate(180deg);
-  }
-}
-
-// ... rest of existing styles ...
-
-// Remove old header styles
-.smiling-header,
-.header-top-row,
-.header-footer,
-.tab-button-group,
-.welcome-message,
-.parent-photo-topright,
-.header-circle {
-  display: none;
-}
-
-// Responsive adjustments
-@media (max-width: 480px) {
-  .modern-header {
-    height: 140px;
-  }
-
-  .header-content {
-    padding: 16px 20px 20px 20px;
-  }
-
-  .greeting-section {
-    .user-name {
-      font-size: 1.6rem;
-    }
-  }
-
-  .profile-section .profile-avatar {
-    width: 44px;
-    height: 44px;
-  }
-
-  .modern-tab {
-    padding: 10px 12px;
-
-    .tab-label {
-      font-size: 0.85rem;
-    }
-
-    .tab-icon {
-      font-size: 1rem;
-    }
-  }
-}
-
-@media (max-width: 360px) {
-  .modern-tab {
-    .tab-content {
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .tab-label {
-      font-size: 0.75rem;
-    }
-
-    .tab-icon {
-      font-size: 1.1rem;
-    }
-  }
-}
-
-// Ensure header is above content
-ion-header {
-  z-index: 10;
-}
-
-ion-header.ios {
-  .modern-header {
-    padding-top: env(safe-area-inset-top);
-    height: calc(160px + env(safe-area-inset-top));
-  }
-}
-
+// ===================================
+// ANNOUNCEMENT & EVENT CARDS
+// ===================================
 .announcement-wrapper {
   margin-bottom: 12px;
 }
 
-// ... rest of existing styles ...
+.announcement-card {
+  margin: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  min-height: 200px;
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  }
+}
 
 .announcement-card-content {
   padding: 16px;
@@ -1115,12 +301,168 @@ ion-header.ios {
   position: relative;
 }
 
+// Gold Card (School-wide)
+.school-card {
+  background: linear-gradient(135deg, #FFE57F 0%, #FFD54F 50%, #FFC107 100%);
+  border-left: 5px solid #B8860B;
+  box-shadow: 0 8px 16px rgba(255, 215, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+    transform: rotate(45deg);
+    animation: shine 6s infinite;
+  }
+
+  .announcement-icon,
+  .meta-icon,
+  .meta-text,
+  .card-arrow ion-icon {
+    color: #F57C00;
+  }
+
+  .announcement-title {
+    color: #E65100;
+  }
+
+  .announcement-preview {
+    color: #BF360C;
+  }
+
+  .student-avatar {
+    border-color: rgba(255, 255, 255, 0.95);
+  }
+}
+
+// Silver Card (Section)
+.section-card {
+  background: linear-gradient(135deg, #E5E5E5 0%, #F5F5F5 25%, #E5E5E5 50%, #C0C0C0 75%, #A9A9A9 100%);
+  border-left: 5px solid #708090;
+  box-shadow: 0 8px 16px rgba(192, 192, 192, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.4) 50%, transparent 70%);
+    transform: rotate(45deg);
+    animation: shine 6s infinite;
+  }
+
+  .announcement-icon,
+  .meta-icon,
+  .meta-text,
+  .card-arrow ion-icon {
+    color: #4527A0;
+  }
+
+  .announcement-title {
+    color: #311B92;
+  }
+
+  .announcement-preview {
+    color: #4527A0;
+  }
+
+  .student-avatar {
+    border-color: rgba(255, 255, 255, 0.95);
+  }
+}
+
+// Purple Card (Class)
+.class-card {
+  background: linear-gradient(135deg, #B39DDB 0%, #9575CD 50%, #7E57C2 100%);
+  border-left: 5px solid #512DA8;
+  box-shadow: 0 8px 16px rgba(149, 117, 205, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+    transform: rotate(45deg);
+    animation: shine 6s infinite;
+  }
+
+  .announcement-icon,
+  .meta-icon,
+  .meta-text,
+  .card-arrow ion-icon {
+    color: #4527A0;
+  }
+
+  .announcement-title {
+    color: #311B92;
+  }
+
+  .announcement-preview {
+    color: #4527A0;
+  }
+
+  .student-avatar {
+    border-color: rgba(255, 255, 255, 0.95);
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+// Event Cards (extend announcement styles)
+.event-card-custom {
+  @extend .announcement-card;
+  margin: 4px 0;
+}
+
+.event-card-custom.school-card {
+  @extend .school-card;
+}
+
+.event-card-custom.section-card {
+  @extend .section-card;
+}
+
+.event-card-custom.class-card {
+  @extend .class-card;
+}
+
+// ===================================
+// STUDENT PHOTOS COLUMN
+// ===================================
 .student-photos-column {
   display: flex;
   flex-direction: column;
   gap: 8px;
   align-items: center;
   min-width: 56px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 .student-avatar {
@@ -1167,7 +509,9 @@ ion-header.ios {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-// Announcement Details
+// ===================================
+// ANNOUNCEMENT DETAILS
+// ===================================
 .announcement-details {
   flex: 1;
   min-width: 0;
@@ -1184,9 +528,14 @@ ion-header.ios {
   font-size: 22px;
   flex-shrink: 0;
   margin-top: 2px;
-  color: #F57C00;
 }
 
+.announcement-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
 
 .announcement-meta {
   display: flex;
@@ -1204,21 +553,18 @@ ion-header.ios {
 .meta-icon {
   font-size: 16px;
   opacity: 0.7;
-  color: #F57C00;
 }
 
 .meta-text {
   font-size: 0.85rem;
   font-weight: 500;
   opacity: 0.8;
-  color: #F57C00;
 }
 
 .announcement-preview {
   margin: 8px 0 0 0;
   font-size: 0.9rem;
   line-height: 1.5;
-  color: #BF360C;
   opacity: 0.9;
 }
 
@@ -1232,45 +578,9 @@ ion-header.ios {
   }
 }
 
-.card-arrow ion-icon {
-  color: #F57C00;
-}
-
-.student-avatar {
-    border-color: rgba(255, 255, 255, 0.95);
-  }
-
-  // Section Card (Blue/Purple Theme)
-.section-card {
-  background: linear-gradient(135deg, #B39DDB 0%, #9575CD 50%, #7E57C2 100%);
-  
-  .announcement-icon {
-    color: #4527A0;
-  }
-  
-  .announcement-title {
-    color: #311B92;
-  }
-  
-  .meta-icon,
-  .meta-text {
-    color: #4527A0;
-  }
-  
-  .announcement-preview {
-    color: #4527A0;
-  }
-  
-  .card-arrow ion-icon {
-    color: #4527A0;
-  }
-  
-  .student-avatar {
-    border-color: rgba(255, 255, 255, 0.95);
-  }
-}
-
-// Empty State
+// ===================================
+// EMPTY STATE
+// ===================================
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -1278,13 +588,13 @@ ion-header.ios {
   justify-content: center;
   padding: 48px 24px;
   text-align: center;
-  
+
   .empty-icon {
     font-size: 64px;
     color: rgba(0, 0, 0, 0.2);
     margin-bottom: 16px;
   }
-  
+
   .empty-text {
     margin: 0;
     font-size: 1rem;
@@ -1293,62 +603,114 @@ ion-header.ios {
   }
 }
 
-// Responsive adjustments
+// ===================================
+// MODAL STYLES
+// ===================================
+.modal-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+
+  ion-icon {
+    font-size: 24px;
+  }
+}
+
+// ===================================
+// RESPONSIVE
+// ===================================
 @media (max-width: 480px) {
+  .modern-header {
+    height: 140px;
+  }
+
+  .header-content {
+    padding: 16px 20px 20px 20px;
+  }
+
+  .greeting-section .user-name {
+    font-size: 1.6rem;
+  }
+
+  .profile-section .profile-avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .modern-tab {
+    padding: 10px 12px;
+
+    .tab-label {
+      font-size: 0.85rem;
+    }
+
+    .tab-icon {
+      font-size: 1rem;
+    }
+  }
+
   .announcement-card-content {
     padding: 12px;
     gap: 12px;
   }
-  
+
   .student-photos-column {
     min-width: 48px;
   }
-  
+
   .student-avatar {
     width: 42px;
     height: 42px;
   }
-  
+
   .announcement-title {
     font-size: 1rem;
   }
-  
+
   .announcement-meta {
     gap: 12px;
   }
-  
+
   .meta-text {
     font-size: 0.8rem;
   }
-  
+
   .announcement-preview {
     font-size: 0.85rem;
   }
 }
 
-// Remove old styles (if they exist
+@media (max-width: 360px) {
+  .modern-tab {
+    .tab-content {
+      flex-direction: column;
+      gap: 4px;
+    }
 
-// Event Cards (Same as Announcements)
-.event-card-custom {
-  @extend .announcement-card;
+    .tab-label {
+      font-size: 0.75rem;
+    }
+
+    .tab-icon {
+      font-size: 1.1rem;
+    }
+  }
 }
 
-// School Event Card Styling
-.event-card-custom.school-card {
-  @extend .school-card;
+// ===================================
+// IOS SAFE AREA
+// ===================================
+ion-header {
+  z-index: 10;
 }
 
-// Section Event Card Styling
-.event-card-custom.section-card {
-  @extend .section-card;
-}
-
-// Class Event Card Styling
-.event-card-custom.class-card {
-  @extend .class-card;
-}
-
-// Empty State for Events
-.empty-state {
-  @extend .empty-state;
+ion-header.ios {
+  .modern-header {
+    padding-top: env(safe-area-inset-top);
+    height: calc(160px + env(safe-area-inset-top));
+  }
 }
