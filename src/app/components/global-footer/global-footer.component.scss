@@ -1,3 +1,6 @@
+// ===================================
+// FOOTER CONTAINER
+// ===================================
 .global-footer-container {
   position: fixed;
   bottom: 0;
@@ -5,16 +8,43 @@
   right: 0;
   z-index: 9999;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   height: 60px;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+.global-footer-container::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: inherit;
+  border-top-left-radius: 100px;
+  border-top-right-radius: 100px;
+  z-index: -1;
+}
+
+// ===================================
+// FOOTER BUTTONS CONTAINER
+// ===================================
 .footer-buttons {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
   height: 100%;
+  position: relative;
 }
 
+// ===================================
+// FOOTER TAB ITEMS
+// ===================================
 .footer-tab {
   flex: 1;
   display: flex;
@@ -24,13 +54,14 @@
   padding: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: #fff; // Icon and text default to white
+  color: #fff;
+  position: relative;
 
   ion-icon {
     font-size: 24px;
     margin-bottom: 4px;
-    color: #fff !important; // Default icon color is white
-    transition: color 0.3s;
+    color: #fff !important;
+    transition: color 0.3s ease;
     z-index: 2;
   }
 
@@ -38,25 +69,26 @@
     font-size: 10px;
     font-weight: 500;
     text-align: center;
-    color: #fff; // Default text color is white
+    color: #fff;
     z-index: 2;
   }
-
-  position: relative;
 }
 
+// Active/Pressed State
 .footer-tab.active,
 .footer-tab:active {
-  // White circle background for active/pressed tab
-  color: #3fff38; // Text/icon go green
+  color: #4CAF50;
+
   ion-icon {
-    color: #3fff38 !important; // Icon goes green
+    color: #4CAF50 !important;
   }
+
   span {
-    color: #3fff38 !important; // Text goes green
+    color: #4CAF50 !important;
   }
 }
 
+// White Circle Background for Active Tab
 .footer-tab.active::before,
 .footer-tab:active::before {
   content: '';
@@ -64,20 +96,64 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 52px;      // Increased from 38px to 48px
-  height: 52px;     // Increased from 38px to 48px
+  width: 52px;
+  height: 52px;
   background: #fff;
   border-radius: 50%;
   z-index: 1;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
 }
 
+// ===================================
+// FLOATING ADD BUTTON
+// ===================================
+.floating-add-btn-container {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+}
+
+.floating-add-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #fff;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 
+    0 4px 16px rgba(102, 126, 234, 0.5),
+    0 2px 8px rgba(118, 75, 162, 0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 28px;
+    color: #fff;
+  }
+}
+
+.floating-add-btn:active {
+  transform: scale(0.95);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+  box-shadow: 
+    0 2px 8px rgba(102, 126, 234, 0.4),
+    0 1px 4px rgba(118, 75, 162, 0.2);
+}
+
+// ===================================
+// BUTTON OVERRIDES
+// ===================================
 ion-button,
 button,
 .footer-btn {
-  --background: #222 !important;
+  --background: transparent !important;
   --color: #fff !important;
-  background: #222 !important;
+  background: transparent !important;
   color: #fff !important;
   border: none;
 }
@@ -85,80 +161,37 @@ button,
 ion-button:active,
 button:active,
 .footer-btn:active {
-  background: #111 !important;
-  color: #fff !important;
+  opacity: 0.8;
 }
 
-/* filepath: c:\Users\et cetera\Desktop\Ionic\ParentSync\src\app\components\global-footer\global-footer.component.scss */
+// ===================================
+// RESPONSIVE DESIGN
+// ===================================
+@media (max-width: 480px) {
+  .footer-tab {
+    padding: 6px;
 
+    ion-icon {
+      font-size: 22px;
+    }
 
-.global-footer-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 9999;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-top: 1px solid #e0e0e0;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  height: 60px;
-  border-top-left-radius: 40px; /* Curve on the left */
-  border-top-right-radius: 40px; /* Curve on the right */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+    span {
+      font-size: 9px;
+    }
+  }
 
-.global-footer-container::before {
-  content: '';
-  position: absolute;
-  // top: -15px; /* Adjust height for the curve */
-  left: 0;
-  right: 0;
-  height: 80px; /* Height of the curve */
-  background: inherit; /* Use the same background as the footer */
-  border-top-left-radius: 100px; /* Larger curve */
-  border-top-right-radius: 100px; /* Larger curve */
-  z-index: -1; /* Place behind the footer content */
-}
+  .footer-tab.active::before,
+  .footer-tab:active::before {
+    width: 48px;
+    height: 48px;
+  }
 
-.footer-buttons {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  position: relative;
-}
+  .floating-add-btn {
+    width: 44px;
+    height: 44px;
 
-.floating-add-btn-container {
-  position: absolute;
-  bottom: 50px; /* Adjust to overlap the footer */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10000; /* Ensure it overlaps other elements */
-}
-
-.floating-add-btn {
-  background-color: rgba(0, 255, 0, 0.8) !important; /* Green with 80% opacity */ 
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5); /* Green shadow with 50% opacity */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-// .floating-add-btn:hover {
-//   transform: scale(1.1); /* Slight zoom effect on hover */
-//   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-// }
-
-.floating-add-btn:active {
-  background-color: rgb(255, 255, 255) !important; /* Green with 80% opacity */ 
-  transform: scale(2); /* Slight shrink effect on click */
-  box-shadow: 0 4px 8px rgb(255, 255, 255) !important; /* Reduced shadow opacity */
+    ion-icon {
+      font-size: 26px;
+    }
+  }
 }

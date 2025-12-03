@@ -43,7 +43,8 @@
 .deco-circle {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(135, 206, 235, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.5);
   
   &.deco-1 {
     width: 120px;
@@ -123,14 +124,6 @@
   &:active {
     transform: scale(0.95);
   }
-}
-
-.event-stat {
-  animation: glowingBlue 6s infinite ease-in-out;
-}
-
-.form-stat {
-  animation: glowingGreen 6s infinite ease-in-out;
 }
 
 .stat-icon-wrapper {
@@ -362,7 +355,7 @@ full-calendar {
   }
 
   &.forms-theme {
-    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
   }
 
   .header-icon {
@@ -618,32 +611,32 @@ full-calendar {
 }
 
 .event-stat {
-  animation: glowingBlue 6s infinite ease-in-out;
+  animation: glowingPurple 6s infinite ease-in-out;
   
   .stat-number {
-    animation: textColorBlue 6s infinite ease-in-out;
+    animation: textColorPurple 6s infinite ease-in-out;
   }
   
   .stat-label {
-    animation: textColorBlueDark 6s infinite ease-in-out;
+    animation: textColorPurple 6s infinite ease-in-out;
   }
 }
 
 .form-stat {
-  animation: glowingGreen 6s infinite ease-in-out;
+  animation: glowingPurple 6s infinite ease-in-out;
   
   .stat-number {
-    animation: textColorGreen 6s infinite ease-in-out;
+    animation: textColorPurple 6s infinite ease-in-out;
   }
   
   .stat-label {
-    animation: textColorGreenDark 6s infinite ease-in-out;
+    animation: textColorPurple 6s infinite ease-in-out;
   }
 }
 
-@keyframes glowingBlue {
+@keyframes glowingPurple {
   0%, 100% {
-    background: linear-gradient(135deg, #2196F3, #1976D2);
+    background: linear-gradient(135deg, #4a8bc2 0%, #3a7bb1 100%);
     box-shadow: 0 0 20px rgba(33, 150, 243, 0.5);
   }
   50% {
@@ -663,42 +656,42 @@ full-calendar {
   }
 }
 
-@keyframes textColorBlue {
-  0%, 100% {
-    color: white;
-  }
-  50% {
-    color: #2196F3;
-  }
-}
+// @keyframes textColorBlue {
+//   0%, 100% {
+//     color: white;
+//   }
+//   50% {
+//     color: purple;
+//   }
+// }
 
-@keyframes textColorBlueDark {
+@keyframes textColorPurple {
   0%, 100% {
     color: rgba(255, 255, 255, 0.9);
   }
   50% {
-    color: #1976D2;
+    color: purple;
   }
 }
 
 // Text color animations for green (Forms)
-@keyframes textColorGreen {
-  0%, 100% {
-    color: white;
-  }
-  50% {
-    color: #66BB6A;
-  }
-}
+// @keyframes textColorGreen {
+//   0%, 100% {
+//     color: white;
+//   }
+//   50% {
+//     color: #66BB6A;
+//   }
+// }
 
-@keyframes textColorGreenDark {
-  0%, 100% {
-    color: rgba(255, 255, 255, 0.9);
-  }
-  50% {
-    color: #43A047;
-  }
-}
+// @keyframes textColorGreenDark {
+//   0%, 100% {
+//     color: rgba(255, 255, 255, 0.9);
+//   }
+//   50% {
+//     color: #43A047;
+//   }
+// }
 
 // ===================================
 // RESPONSIVE

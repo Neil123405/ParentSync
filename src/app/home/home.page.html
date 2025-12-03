@@ -73,7 +73,8 @@
           <ion-card class="announcement-card clickable" [ngClass]="{
         'school-card': group.announcement.scope === 'school', 
         'section-card': group.announcement.scope === 'section',
-        'class-card': group.announcement.scope === 'class'
+        'class-card': group.announcement.scope === 'class',
+        'individual-card': group.announcement.scope === 'individual'
       }" (click)="openAnnouncement(group.announcement)">
 
             <ion-card-content class="announcement-card-content">

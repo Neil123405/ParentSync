@@ -72,19 +72,19 @@
 
   <!-- Action Buttons (Tasks & Timeline) -->
   <div class="ion-padding action-buttons" style="display: flex; gap: 8px;">
-    <ion-button expand="block" color="primary" [disabled]="!selectedChild"
+    <ion-button expand="block" class="children-btn" [disabled]="!selectedChild"
       [fill]="activeSection === 'tasks' ? 'solid' : 'outline'" (click)="showSection('tasks')" style="flex: 1;">
-      <ion-icon name="list" slot="icon-only"></ion-icon>
+      <ion-icon name="list" class="list" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button expand="block" color="secondary" [disabled]="!selectedChild"
+    <ion-button expand="block" class="children-btn" [disabled]="!selectedChild"
       [fill]="activeSection === 'attendance' ? 'solid' : 'outline'" (click)="showSection('attendance')"
       style="flex: 1;">
-      <ion-icon name="calendar-outline" slot="icon-only"></ion-icon>
+      <ion-icon name="calendar-outline" class="calendar" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button expand="block" color="tertiary" [disabled]="!selectedChild"
+    <ion-button expand="block" class="children-btn" [disabled]="!selectedChild"
       [fill]="activeSection === 'milestones' ? 'solid' : 'outline'" (click)="showSection('milestones')"
       style="flex: 1;">
-      <ion-icon name="trophy-outline" slot="icon-only"></ion-icon>
+      <ion-icon name="trophy-outline" class="trophy" slot="icon-only"></ion-icon>
     </ion-button>
   </div>
 
