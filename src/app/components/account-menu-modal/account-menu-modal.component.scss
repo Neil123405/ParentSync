@@ -10,16 +10,16 @@ ion-header {
   position: relative;
   overflow: hidden;
 
-//   &::before {
-//     content: '';
-//     position: absolute;
-//     top: -50%;
-//     right: -20%;
-//     width: 200px;
-//     height: 200px;
-//     background: rgba(255, 255, 255, 0.1);
-//     border-radius: 50%;
-//   }
+  //   &::before {
+  //     content: '';
+  //     position: absolute;
+  //     top: -50%;
+  //     right: -20%;
+  //     width: 200px;
+  //     height: 200px;
+  //     background: rgba(255, 255, 255, 0.1);
+  //     border-radius: 50%;
+  //   }
 }
 
 .modal-title {
@@ -68,8 +68,9 @@ ion-content {
 .deco-circle {
   position: absolute;
   border-radius: 50%;
-  background: rgb(255, 255, 255);
-  
+  background: rgba(135, 206, 235, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+
   &.deco-1 {
     width: 150px;
     height: 150px;
@@ -77,7 +78,7 @@ ion-content {
     right: -30px;
     animation: float 6s ease-in-out infinite;
   }
-  
+
   &.deco-2 {
     width: 100px;
     height: 100px;
@@ -88,13 +89,14 @@ ion-content {
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0) scale(1);
-    opacity: 0.08;
   }
+
   50% {
     transform: translateY(-25px) scale(1.2);
-    opacity: 0.12;
   }
 }
 
@@ -218,7 +220,7 @@ ion-content {
 
   .section-icon {
     font-size: 1.3rem;
-    color: #667eea;
+    color: purple;
   }
 }
 

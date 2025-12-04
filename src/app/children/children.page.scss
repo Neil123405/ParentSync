@@ -1405,3 +1405,15 @@
 .trophy {
   color: #ffd54f !important;
 }
+
+// ===================================
+// PENDING STUDENTS
+// ===================================
+:host {
+  --ion-color-tertiary: #9932cc; /* Custom purple */
+  --ion-color-tertiary-rgb: 153, 50, 204;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #8a2be2;
+  --ion-color-tertiary-tint: #a040d3;
+}

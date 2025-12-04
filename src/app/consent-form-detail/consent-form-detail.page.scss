@@ -207,11 +207,11 @@ ion-content {
   border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 600;
-  background: #FFF3E0;
-  color: #F57C00;
+  background: linear-gradient(135deg, #ba55d3, #6a0dad);
+  color: white;
 
   &.signed {
-    background: linear-gradient(135deg, #9c27b0, #e91e63);
+    background: linear-gradient(135deg, #ba55d3, #6a0dad);
     color: white;
   }
 
@@ -314,7 +314,7 @@ ion-content {
   gap: 8px;
   padding: 16px 24px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #9c27b0, #e91e63);
+  background: linear-gradient(135deg, #ba55d3, #6a0dad);
   color: white;
   font-weight: 600;
   font-size: 1rem;

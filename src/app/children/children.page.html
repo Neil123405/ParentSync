@@ -374,12 +374,12 @@
 
   <!-- Pending Students Section -->
   <ion-list *ngIf="pendingStudents.length">
-    <ion-list-header color="warning">Pending Students</ion-list-header>
+    <ion-list-header color="tertiary">Pending Students</ion-list-header>
     <ion-item *ngFor="let student of pendingStudents">
       <ion-label>
         (ID: {{ student.student_id }})
       </ion-label>
-      <ion-note slot="end" color="warning">Pending Verification</ion-note>
+      <ion-note slot="end" color="tertiary">Pending Verification</ion-note>
     </ion-item>
   </ion-list>
 
