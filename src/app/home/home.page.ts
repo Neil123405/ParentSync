@@ -34,12 +34,11 @@ export class HomePage implements OnInit {
     private apiService: ApiService,
     private router: Router,
     private storage: Storage,
-    private actionSheetController: ActionSheetController // Inject thi
   ) {
 
   }
 
-    selectedStudents: any[] = [];
+  selectedStudents: any[] = [];
   isStudentsModalOpen: boolean = false;
 
   async showAssociatedStudents(event: Event, studentIds: number[]) {
@@ -54,7 +53,7 @@ export class HomePage implements OnInit {
     }
   }
 
-    setStudentModalOpen(isOpen: boolean) {
+  setStudentModalOpen(isOpen: boolean) {
     this.isStudentsModalOpen = isOpen;
   }
 

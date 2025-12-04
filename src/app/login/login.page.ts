@@ -1,9 +1,10 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 import { PushNotifications } from '@capacitor/push-notifications';
+import { IonContent } from '@ionic/angular';  // Add IonContent
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,7 @@ import { PushNotifications } from '@capacitor/push-notifications';
 })
 //* already read!
 export class LoginPage implements AfterViewInit, OnDestroy {
+
   credentials = {
     username: '',
     password: ''
@@ -26,7 +28,10 @@ export class LoginPage implements AfterViewInit, OnDestroy {
   };
 
   isRegistering = false;
+  keyboardOpen = false;  // Add this flag
   private keyboardShowListener: any;
+  private keyboardHideListener: any;  // Add this for hide listener
+
 
   constructor(
     private apiService: ApiService,
@@ -60,20 +65,24 @@ export class LoginPage implements AfterViewInit, OnDestroy {
 
   // prevents keyboard from covering input fields
   ngAfterViewInit() {
-    this.keyboardShowListener = Keyboard.addListener('keyboardWillShow', async () => {
-      const el = document.activeElement as HTMLElement;
-      if (el && (el.tagName === 'INPUT' || el.tagName === 'ION-INPUT')) {
-        setTimeout(() => {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
-      }
+    // Remove old focus listeners and scrolling
+    // Add keyboard listeners instead
+    this.keyboardShowListener = Keyboard.addListener('keyboardWillShow', () => {
+      this.keyboardOpen = true;
+    });
+    this.keyboardHideListener = Keyboard.addListener('keyboardWillHide', () => {
+      this.keyboardOpen = false;
     });
   }
+
 
   // cleans up the keyboard listener when the component is destroyed
   ngOnDestroy() {
     if (this.keyboardShowListener) {
       this.keyboardShowListener.remove();
+    }
+    if (this.keyboardHideListener) {
+      this.keyboardHideListener.remove();
     }
   }
 

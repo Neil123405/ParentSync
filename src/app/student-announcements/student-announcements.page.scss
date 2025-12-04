@@ -1,93 +1,6 @@
-.task-btn-wrapper {
-  position: relative;
-  margin-bottom: 8px;
-}
-
-.task-btn {
-  --background: #fff;
-  --color: #222;
-  border-radius: 12px !important;
-  margin-bottom: 8px;
-  overflow: visible;
-  box-shadow: 0 6px 32px rgba(0,0,0,0.10);
-  border: 1px solid var(--ion-color-primary);
-  pointer-events: none;
-}
-
-.giant-btn {
-  height: 140px;
-  --padding-start: 0;
-  --padding-end: 0;
-  --border-radius: 12px;
-  border-radius: 12px !important;
-  font-size: 2.4rem;
-  display: flex;
-  align-items: center;
-  margin-bottom: 28px;
-  box-shadow: 0 6px 32px rgba(0,0,0,0.10);
-}
-
-.btn-content {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: flex-start;
-}
-
-.task-img-giant {
-  width: 120px;
-  height: 120px;
-  margin-right: 36px;
-  margin-left: 0;
-  object-fit: contain;
-  border-radius: 32px;
-  background: #fff;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-  flex-shrink: 0;
-}
-
-.btn-label {
-  font-size: 1.2rem;
-  font-weight: bold;
-  letter-spacing: 1px;
-  color: #222;
-}
-
-.events-background-box {
-  background: #f6f8ff;
-  border-radius: 8px;
-  padding: 32px 16px;
-  margin: 0 20px 24px 20px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.06);
-  position: relative;
-}
-
-ion-list {
-  background: transparent !important;
-}
-
-.event-card {
-  background: #fff;
-  border-radius: 8px;
-  margin-bottom: 18px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  border: 1.5px solid var(--ion-color-primary-tint, #d0e2ff);
-  transition: box-shadow 0.2s;
-  width: 100%;
-}
-
-// ion-header, ion-toolbar {
-//   border-bottom-left-radius: 18px;
-//   border-bottom-right-radius: 18px;
-//   overflow: hidden;
-//   box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
-// }
-
-// ion-header, ion-toolbar {
-//   --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-
-// }
-
+// ===================================
+// HEADER STYLES
+// ===================================
 ion-header {
   background: transparent !important;
   box-shadow: none !important;
@@ -100,10 +13,16 @@ ion-toolbar {
   --padding-bottom: 16px;
 }
 
+// ===================================
+// CONTENT BACKGROUND
+// ===================================
 ion-content {
   --background: #f5f7fa;
 }
 
+// ===================================
+// PAGE HEADER SECTION
+// ===================================
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 32px 24px 48px 24px;
@@ -118,9 +37,10 @@ ion-content {
     right: -20%;
     width: 300px;
     height: 300px;
-    background: rgb(255, 255, 255);
     border-radius: 50%;
     animation: float 6s ease-in-out infinite;
+    background: rgba(135, 206, 235, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.5);
   }
 
   &::after {
@@ -130,20 +50,22 @@ ion-content {
     left: -10%;
     width: 200px;
     height: 200px;
-    background: rgb(255, 255, 255);
     border-radius: 50%;
     animation: float 6s ease-in-out infinite reverse;
+    background: rgba(135, 206, 235, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.5);
   }
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0) scale(1);
-    opacity: 0.08;
   }
+
   50% {
     transform: translateY(-25px) scale(1.2);
-    opacity: 0.18;
   }
 }
 
@@ -183,11 +105,17 @@ ion-content {
   z-index: 1;
 }
 
+// ===================================
+// MAIN CONTENT WRAPPER
+// ===================================
 .content-wrapper {
   padding: 24px 16px;
   padding-bottom: 80px;
 }
 
+// ===================================
+// ANNOUNCEMENT LIST ITEM
+// ===================================
 .announcement-list-item {
   background: white;
   border-radius: 16px;
@@ -209,7 +137,7 @@ ion-content {
     top: 0;
     bottom: 0;
     width: 4px;
-    background: linear-gradient(135deg, #FF9800, #F57C00);
+    background: linear-gradient(135deg, #667eea, #764ba2);
   }
 
   &:active {
@@ -217,6 +145,9 @@ ion-content {
   }
 }
 
+// ===================================
+// DATE BADGE
+// ===================================
 .date-badge {
   display: flex;
   flex-direction: column;
@@ -225,10 +156,10 @@ ion-content {
   min-width: 60px;
   height: 60px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 
   &.announcements-badge {
-    background: linear-gradient(135deg, #FF9800, #F57C00);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
   }
 
   .date-day {
@@ -247,11 +178,14 @@ ion-content {
   }
 }
 
+// ===================================
+// ANNOUNCEMENT AVATAR
+// ===================================
 .announcement-avatar {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+  background: linear-gradient(135deg, #e1bee7, #9c27b0);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -259,10 +193,13 @@ ion-content {
 
   ion-icon {
     font-size: 1.8rem;
-    color: #FF9800;
+    color: white;
   }
 }
 
+// ===================================
+// ANNOUNCEMENT INFO
+// ===================================
 .announcement-info {
   flex: 1;
   min-width: 0;
@@ -309,7 +246,7 @@ ion-content {
 
 .announcement-teacher {
   font-weight: 500;
-  color: #34495e; /* Slightly darker for emphasis */
+  color: #34495e;
 }
 
 .announcement-details {
@@ -329,6 +266,9 @@ ion-content {
   }
 }
 
+// ===================================
+// ANNOUNCEMENT ACTIONS
+// ===================================
 .announcement-actions {
   display: flex;
   flex-direction: column;
@@ -346,9 +286,9 @@ ion-content {
   white-space: nowrap;
 
   &.read-btn {
-    background: linear-gradient(135deg, #FF9800, #F57C00);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
     color: white;
-    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 
     &:active {
       transform: scale(0.95);
@@ -356,6 +296,9 @@ ion-content {
   }
 }
 
+// ===================================
+// EMPTY STATE
+// ===================================
 .empty-state {
   text-align: center;
   padding: 60px 24px;
@@ -380,6 +323,9 @@ ion-content {
   }
 }
 
+// ===================================
+// RESPONSIVE DESIGN
+// ===================================
 @media (max-width: 480px) {
   .announcement-list-item {
     padding: 16px;

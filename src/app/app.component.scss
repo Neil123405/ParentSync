@@ -86,8 +86,9 @@ ion-menu {
 .deco-circle {
   position: absolute;
   border-radius: 50%;
-  background: rgb(255, 255, 255);
-  
+  background: rgba(135, 206, 235, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+
   &.deco-1 {
     width: 120px;
     height: 120px;
@@ -95,7 +96,7 @@ ion-menu {
     right: -20px;
     animation: float 6s ease-in-out infinite;
   }
-  
+
   &.deco-2 {
     width: 80px;
     height: 80px;
@@ -106,13 +107,14 @@ ion-menu {
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0) scale(1);
-    opacity: 0.08;
   }
+
   50% {
     transform: translateY(-25px) scale(1.2);
-    opacity: 0.18;
   }
 }
 

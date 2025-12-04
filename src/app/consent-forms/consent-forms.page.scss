@@ -1,101 +1,6 @@
-.task-btn-wrapper {
-  position: relative;
-  margin-bottom: 8px;
-}
-
-.task-btn {
-  --background: #fff;
-  --color: #222;
-  border-radius: 12px !important;
-  margin-bottom: 8px;
-  overflow: visible;
-  box-shadow: 0 6px 32px rgba(0,0,0,0.10);
-  border: 1px solid var(--ion-color-primary);
-  pointer-events: none;
-}
-
-.giant-btn {
-  height: 140px;
-  --padding-start: 0;
-  --padding-end: 0;
-  --border-radius: 12px;
-  border-radius: 12px !important;
-  font-size: 2.4rem;
-  display: flex;
-  align-items: center;
-  margin-bottom: 28px;
-  box-shadow: 0 6px 32px rgba(0,0,0,0.10);
-}
-
-.btn-content {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: flex-start;
-}
-
-.task-img-giant {
-  width: 120px;
-  height: 120px;
-  margin-right: 36px;
-  margin-left: 0;
-  object-fit: contain;
-  border-radius: 32px;
-  background: #fff;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-  flex-shrink: 0;
-}
-
-.btn-label {
-  font-size: 1.2rem;
-  font-weight: bold;
-  letter-spacing: 1px;
-  color: #222;
-}
-
-.consent-background-box {
-  background: #fefff6;
-  border-radius: 8px;
-  padding: 32px 16px;
-  margin: 0 20px 24px 20px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.06);
-  position: relative;
-}
-
-ion-list {
-  background: transparent !important;
-  padding: 0 !important;
-}
-
-.consent-card {
-  background: #fff;
-  border-radius: 8px;
-  margin-bottom: 18px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  // border: 1.5px solid var(--ion-color-primary-tint, #d0e2ff);
-  transition: box-shadow 0.2s;
-  width: 100%;
-}
-
-.signed-form {
-  --background: #f4ffd6 !important; /* Light yellow-green, more visible */
-  box-shadow: 0 0 12px 2px #eaffb0, 0 2px 12px rgba(180, 255, 120, 0.18);
-  // border-left: 4px solid #b2e672;
-  transition: box-shadow 0.2s, background 0.2s;
-}
-
-// ion-header, ion-toolbar {
-//   border-bottom-left-radius: 18px;
-//   border-bottom-right-radius: 18px;
-//   overflow: hidden;
-//   box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
-// }
-
-// ion-header, ion-toolbar {
-//   --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-
-// }
-
+// ===================================
+// HEADER STYLES
+// ===================================
 ion-header {
   background: transparent !important;
   box-shadow: none !important;
@@ -114,10 +19,21 @@ ion-toolbar {
   font-size: 1.3rem;
 }
 
+// ===================================
+// CONTENT BACKGROUND
+// ===================================
 ion-content {
   --background: #f5f7fa;
 }
 
+ion-list {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+// ===================================
+// PAGE HEADER SECTION
+// ===================================
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 32px 24px 48px 24px;
@@ -132,9 +48,10 @@ ion-content {
     right: -20%;
     width: 300px;
     height: 300px;
-    background: rgb(255, 255, 255);
     border-radius: 50%;
     animation: float 6s ease-in-out infinite;
+    background: rgba(135, 206, 235, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.5);
   }
 
   &::after {
@@ -144,56 +61,19 @@ ion-content {
     left: -10%;
     width: 200px;
     height: 200px;
-    background: rgb(255, 255, 255);
     border-radius: 50%;
-    animation: float 6s ease-in-out infinite;
+    animation: float 6s ease-in-out infinite reverse;
+    background: rgba(135, 206, 235, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.5);
   }
 }
-
-// ...existing code...
-
-.form-meta {
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.85rem;
-  color: #7f8c8d;
-
-  ion-icon {
-    font-size: 1rem;
-    color: #bdc3c7;
-  }
-}
-
-
-
-.teacher-item {
-  font-weight: 500;
-  color: #34495e; /* Slightly darker for emphasis */
-}
-
-.details-item {
-  font-style: italic;
-}
-
-// ...existing code...
 
 @keyframes float {
   0%, 100% {
     transform: translateY(0) scale(1);
-    opacity: 0.08;
   }
   50% {
     transform: translateY(-25px) scale(1.2);
-    opacity: 0.18;
   }
 }
 
@@ -233,7 +113,9 @@ ion-content {
   z-index: 1;
 }
 
-// Filter Segment
+// ===================================
+// FILTER SEGMENT
+// ===================================
 .filter-container {
   padding: 16px;
   background: #f5f7fa;
@@ -249,7 +131,7 @@ ion-content {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 
   ion-segment-button {
-    --indicator-color: linear-gradient(135deg, #66BB6A, #43A047);
+    --indicator-color: linear-gradient(135deg, #667eea, #764ba2);
     --color: #7f8c8d;
     --color-checked: white;
     min-height: 40px;
@@ -264,7 +146,7 @@ ion-content {
     }
 
     &::part(indicator-background) {
-      background: linear-gradient(135deg, #66BB6A, #43A047);
+      background: linear-gradient(135deg, #667eea, #764ba2);
       border-radius: 8px;
     }
 
@@ -276,11 +158,17 @@ ion-content {
   }
 }
 
+// ===================================
+// MAIN CONTENT WRAPPER
+// ===================================
 .content-wrapper {
   padding: 16px;
   padding-bottom: 80px;
 }
 
+// ===================================
+// FORM LIST ITEM
+// ===================================
 .form-list-item {
   background: white;
   border-radius: 16px;
@@ -302,15 +190,15 @@ ion-content {
     top: 0;
     bottom: 0;
     width: 4px;
-    background: linear-gradient(135deg, #66BB6A, #43A047);
+    background: linear-gradient(135deg, #667eea, #764ba2);
   }
 
   &.signed-item {
-    background: linear-gradient(135deg, #f1f8e9 0%, #f9fbe7 100%);
-    border: 1px solid rgba(102, 187, 106, 0.2);
+    background: linear-gradient(135deg, #f3e5f5 0%, #f8bbd0 100%);
+    border: 1px solid rgba(102, 126, 234, 0.2);
 
     &::before {
-      background: linear-gradient(135deg, #81C784, #66BB6A);
+      background: linear-gradient(135deg, #9c27b0, #e91e63);
     }
   }
 
@@ -319,6 +207,9 @@ ion-content {
   }
 }
 
+// ===================================
+// DATE BADGE
+// ===================================
 .date-badge {
   display: flex;
   flex-direction: column;
@@ -327,15 +218,15 @@ ion-content {
   min-width: 60px;
   height: 60px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 
   &.forms-badge {
-    background: linear-gradient(135deg, #66BB6A, #43A047);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
   }
 
   &.signed-badge {
-    background: linear-gradient(135deg, #81C784, #66BB6A);
-    box-shadow: 0 4px 12px rgba(129, 199, 132, 0.4);
+    background: linear-gradient(135deg, #9c27b0, #e91e63);
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.4);
   }
 
   .date-day {
@@ -354,11 +245,14 @@ ion-content {
   }
 }
 
+// ===================================
+// FORM AVATAR
+// ===================================
 .form-avatar {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  background: linear-gradient(135deg, #e1bee7, #9c27b0);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -366,18 +260,21 @@ ion-content {
 
   ion-icon {
     font-size: 1.8rem;
-    color: #66BB6A;
+    color: white;
   }
 
   &.signed-avatar {
-    background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+    background: linear-gradient(135deg, #f8bbd0, #e91e63);
 
     ion-icon {
-      color: #43A047;
+      color: white;
     }
   }
 }
 
+// ===================================
+// FORM INFO
+// ===================================
 .form-info {
   flex: 1;
   min-width: 0;
@@ -426,6 +323,15 @@ ion-content {
   }
 }
 
+.teacher-item {
+  font-weight: 500;
+  color: #34495e;
+}
+
+.details-item {
+  font-style: italic;
+}
+
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -440,6 +346,9 @@ ion-content {
   }
 }
 
+// ===================================
+// FORM ACTIONS
+// ===================================
 .form-actions {
   display: flex;
   flex-direction: column;
@@ -457,9 +366,9 @@ ion-content {
   white-space: nowrap;
 
   &.sign-btn {
-    background: linear-gradient(135deg, #66BB6A, #43A047);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
     color: white;
-    box-shadow: 0 2px 8px rgba(102, 187, 106, 0.3);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 
     &:active {
       transform: scale(0.95);
@@ -467,9 +376,9 @@ ion-content {
   }
 
   &.view-btn {
-    background: linear-gradient(135deg, #81C784, #66BB6A);
+    background: linear-gradient(135deg, #9c27b0, #e91e63);
     color: white;
-    box-shadow: 0 2px 8px rgba(129, 199, 132, 0.3);
+    box-shadow: 0 2px 8px rgba(156, 39, 176, 0.3);
 
     &:active {
       transform: scale(0.95);
@@ -477,6 +386,9 @@ ion-content {
   }
 }
 
+// ===================================
+// EMPTY STATE
+// ===================================
 .empty-state {
   text-align: center;
   padding: 60px 24px;
@@ -501,6 +413,9 @@ ion-content {
   }
 }
 
+// ===================================
+// RESPONSIVE DESIGN
+// ===================================
 @media (max-width: 480px) {
   .form-list-item {
     padding: 16px;

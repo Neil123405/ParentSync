@@ -1,4 +1,4 @@
-<ion-content [fullscreen]="true" class="login-background">
+<ion-content [fullscreen]="true" scrollY="true" class="login-background" #content>
   <!-- Wave Header -->
   <div class="wave-header">
     <h2>{{ isRegistering ? 'Join Us,' : 'Welcome!,' }}</h2>
@@ -37,7 +37,7 @@
   </div>
 
   <!-- Registration Form -->
-  <div class="registration-form" *ngIf="isRegistering">
+  <div class="registration-form" [class.keyboard-open]="keyboardOpen" *ngIf="isRegistering">
     <!-- First Name -->
     <div class="input-container">
       <label>FIRST NAME</label>

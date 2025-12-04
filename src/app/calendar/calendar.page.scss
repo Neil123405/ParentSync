@@ -322,11 +322,11 @@ full-calendar {
 }
 
 .events-card {
-  border-top: 4px solid #2196F3;
+  border-top: 4px solid #764ba2;
 }
 
 .forms-card {
-  border-top: 4px solid #66BB6A;
+  border-top: 4px solid #764ba2;
 }
 
 // ===================================
@@ -418,7 +418,7 @@ full-calendar {
 .event-date-badge {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -446,9 +446,10 @@ full-calendar {
 .form-priority-badge {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 16px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-right: 16px;
@@ -457,6 +458,21 @@ full-calendar {
   .priority-icon {
     font-size: 1.5rem;
     color: white;
+  }
+
+  .date-day {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+  }
+
+  .date-month {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 }
 

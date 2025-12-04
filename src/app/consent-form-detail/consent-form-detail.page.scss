@@ -1,70 +1,6 @@
-// .task-btn-wrapper {
-//   position: relative;
-//   margin-bottom: 8px;
-// }
-
-// .task-btn {
-//   --background: #fff;
-//   --color: #222;
-//   border-radius: 12px !important;
-//   margin-bottom: 8px;
-//   overflow: visible;
-//   box-shadow: 0 6px 32px rgba(0,0,0,0.10);
-//   border: 1px solid var(--ion-color-primary);
-//   pointer-events: none;
-// }
-
-// .giant-btn {
-//   height: 140px;
-//   --padding-start: 0;
-//   --padding-end: 0;
-//   --border-radius: 12px;
-//   border-radius: 12px !important;
-//   font-size: 2.4rem;
-//   display: flex;
-//   align-items: center;
-//   margin-bottom: 28px;
-//   box-shadow: 0 6px 32px rgba(0,0,0,0.10);
-// }
-
-// .btn-content {
-//   display: flex;
-//   align-items: center;
-//   width: 100%;
-//   justify-content: flex-start;
-// }
-
-// .task-img-giant {
-//   width: 120px;
-//   height: 120px;
-//   margin-right: 36px;
-//   margin-left: 0;
-//   object-fit: contain;
-//   border-radius: 32px;
-//   background: #fff;
-//   box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-//   flex-shrink: 0;
-// }
-
-// .btn-label {
-//   font-size: 1.2rem;
-//   font-weight: bold;
-//   letter-spacing: 1px;
-//   color: #222;
-// }
-
-// ion-header, ion-toolbar {
-//   border-bottom-left-radius: 18px;
-//   border-bottom-right-radius: 18px;
-//   overflow: hidden;
-//   box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
-// }
-
-// ion-header, ion-toolbar {
-//   --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-
-// }
-
+// ===================================
+// HEADER STYLES
+// ===================================
 ion-header {
   background: transparent !important;
   box-shadow: none !important;
@@ -77,17 +13,6 @@ ion-header {
   --padding-bottom: 16px;
   position: relative;
   overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 200px;
-    height: 200px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-  }
 }
 
 .header-title {
@@ -98,18 +23,23 @@ ion-header {
   z-index: 2;
 }
 
+// ===================================
+// CONTENT BACKGROUND
+// ===================================
 ion-content {
   --background: #f5f7fa;
 }
 
-// Page Header
+// ===================================
+// PAGE HEADER SECTION
+// ===================================
 .page-header {
   padding: 32px 24px 48px 24px;
   position: relative;
   overflow: hidden;
 
   &.form-header {
-    background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
 }
 
@@ -122,11 +52,13 @@ ion-content {
   overflow: hidden;
 }
 
+// Decorative Circles
 .deco-circle {
   position: absolute;
   border-radius: 50%;
-  background: rgb(255, 255, 255);
-
+  background: rgba(135, 206, 235, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  
   &.deco-1 {
     width: 150px;
     height: 150px;
@@ -134,7 +66,7 @@ ion-content {
     right: -30px;
     animation: float 6s ease-in-out infinite;
   }
-
+  
   &.deco-2 {
     width: 100px;
     height: 100px;
@@ -142,52 +74,34 @@ ion-content {
     left: -20px;
     animation: float 8s ease-in-out infinite reverse;
   }
-
+  
   &.deco-3 {
     width: 80px;
     height: 80px;
     top: 60%;
     left: 40%;
     animation: float 7s ease-in-out infinite;
-    opacity: 0.5;
-  }
-}
-
-::ng-deep app-signature-pad {
-  display: block;
-
-  canvas {
-    width: 250px !important;
-    max-width: 400px;
-    height: 150px !important;
-    margin: 0 auto;
-    display: block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
   }
 }
 
 @keyframes float {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0) scale(1);
-    opacity: 0.08;
   }
-
   50% {
     transform: translateY(-20px) scale(1.15);
-    opacity: 0.15;
   }
 }
 
+// Header Content
 .header-content {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  color: white;
 }
 
 .header-icon-wrapper {
@@ -209,7 +123,7 @@ ion-content {
 
 .page-title {
   margin: 0 0 8px 0;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: 700;
   color: white;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -222,6 +136,7 @@ ion-content {
   color: rgba(255, 255, 255, 0.95);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
 
   ion-icon {
@@ -229,12 +144,17 @@ ion-content {
   }
 }
 
-// Content
+// ===================================
+// MAIN CONTENT WRAPPER
+// ===================================
 .content-wrapper {
   padding: 24px 16px;
   padding-bottom: 80px;
 }
 
+// ===================================
+// DETAIL CARD
+// ===================================
 .detail-card {
   background: white;
   border-radius: 16px;
@@ -244,21 +164,21 @@ ion-content {
 
 .card-header {
   padding: 24px;
-  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  background: linear-gradient(135deg, #e1bee7, #9c27b0);
 }
 
 .form-title {
   margin: 0 0 16px 0;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #2c3e50;
+  line-height: 1.3;
 }
 
 .form-meta {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   flex-wrap: wrap;
-  align-items: center;
   margin-bottom: 12px;
 }
 
@@ -275,7 +195,7 @@ ion-content {
 
   ion-icon {
     font-size: 1rem;
-    color: #66BB6A;
+    color: #9c27b0;
   }
 }
 
@@ -291,7 +211,7 @@ ion-content {
   color: #F57C00;
 
   &.signed {
-    background: linear-gradient(135deg, #66BB6A, #43A047);
+    background: linear-gradient(135deg, #9c27b0, #e91e63);
     color: white;
   }
 
@@ -312,7 +232,7 @@ ion-content {
 
   ion-icon {
     font-size: 1.1rem;
-    color: #43A047;
+    color: #9c27b0;
   }
 }
 
@@ -326,6 +246,9 @@ ion-content {
   background: linear-gradient(90deg, transparent, #e9ecef, transparent);
 }
 
+// ===================================
+// CARD BODY
+// ===================================
 .card-body {
   padding: 24px;
 }
@@ -341,7 +264,7 @@ ion-content {
 
   ion-icon {
     font-size: 1.2rem;
-    color: #66BB6A;
+    color: #9c27b0;
   }
 }
 
@@ -353,9 +276,12 @@ ion-content {
   background: #f8f9fa;
   padding: 16px;
   border-radius: 12px;
-  border-left: 4px solid #66BB6A;
+  border-left: 4px solid #9c27b0;
 }
 
+// ===================================
+// SIGNATURE SECTION
+// ===================================
 .signature-section {
   background: #f8f9fa;
 }
@@ -364,7 +290,7 @@ ion-content {
   background: white;
   border-radius: 12px;
   padding: 20px;
-  border: 2px dashed #66BB6A;
+  border: 2px dashed #9c27b0;
 }
 
 .signature-instruction {
@@ -388,11 +314,11 @@ ion-content {
   gap: 8px;
   padding: 16px 24px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #66BB6A, #43A047);
+  background: linear-gradient(135deg, #9c27b0, #e91e63);
   color: white;
   font-weight: 600;
   font-size: 1rem;
-  box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
+  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
 
   ion-icon {
     font-size: 1.5rem;
@@ -423,9 +349,33 @@ ion-content {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
+// ===================================
+// SIGNATURE PAD CANVAS
+// ===================================
+::ng-deep app-signature-pad {
+  display: block;
+
+  canvas {
+    width: 250px !important;
+    max-width: 400px;
+    height: 150px !important;
+    margin: 0 auto;
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+}
+
+// ===================================
+// RESPONSIVE DESIGN
+// ===================================
 @media (max-width: 480px) {
   .page-title {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
+  }
+
+  .form-title {
+    font-size: 1.3rem;
   }
 
   .card-header,

@@ -180,9 +180,12 @@
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
+
   50% {
     transform: translateY(-10px) rotate(180deg);
   }
@@ -239,6 +242,7 @@
   }
 
   &.active {
+
     .tab-icon,
     .tab-label {
       color: white;
@@ -496,6 +500,7 @@
   0% {
     transform: translateX(-100%) translateY(-100%) rotate(45deg);
   }
+
   100% {
     transform: translateX(100%) translateY(100%) rotate(45deg);
   }
@@ -680,11 +685,13 @@
 .modal-avatar-placeholder {
   width: 100%;
   height: 100%;
-  background: #f0f0f0;
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #999;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   ion-icon {
     font-size: 24px;
@@ -784,4 +791,12 @@ ion-header.ios {
     padding-top: env(safe-area-inset-top);
     height: calc(160px + env(safe-area-inset-top));
   }
+}
+
+.modal-header-gradient {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.modal-header-gradient ion-toolbar {
+  --background: transparent;
 }

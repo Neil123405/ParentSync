@@ -22,21 +22,20 @@
       </div>
       <div class="header-content">
         <h2 class="card-title">Events for {{ selectedDay | date:'MMM d, yyyy' }}</h2>
-        <p class="card-subtitle">{{ filteredEvents.length }} event{{ filteredEvents.length !== 1 ? 's' : '' }} scheduled</p>
+        <p class="card-subtitle">{{ filteredEvents.length }} event{{ filteredEvents.length !== 1 ? 's' : '' }} scheduled
+        </p>
       </div>
     </div>
 
     <div class="card-body" *ngIf="filteredEvents.length > 0; else noEventsTemplate">
-      <div class="event-item" 
-           *ngFor="let event of filteredEvents; let i = index" 
-           (click)="openEventDetail(event)"
-           [style.animation-delay]="i * 100 + 'ms'">
-        
+      <div class="event-item" *ngFor="let event of filteredEvents; let i = index" (click)="openEventDetail(event)"
+        [style.animation-delay]="i * 100 + 'ms'">
+
         <div class="event-date-badge">
           <span class="date-day">{{ event.start ? (event.start | date:'dd') : (event.date | date:'dd') }}</span>
           <span class="date-month">{{ event.start ? (event.start | date:'MMM') : (event.date | date:'MMM') }}</span>
         </div>
-        
+
         <div class="event-content">
           <h3 class="event-title">{{ event.title }}</h3>
           <div class="event-details">
@@ -48,9 +47,9 @@
               <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
               <span>{{ event.description }}</span>
             </div>
-            <div class="event-student" *ngIf="event.first_name && event.last_name">
+            <div class="event-student" *ngIf="event.student_first_name && event.student_last_name">
               <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
-              <span>{{ event.first_name }} {{ event.last_name }}</span>
+              <span>{{ event.student_first_name }} {{ event.student_last_name }}</span>
             </div>
             <div class="event-student" *ngIf="event.location">
               <ion-icon name="location-outline" class="detail-icon"></ion-icon>
@@ -58,7 +57,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="event-arrow">
           <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
         </div>
@@ -87,15 +86,14 @@
     </div>
 
     <div class="card-body" *ngIf="filteredForms.length > 0; else noFormsTemplate">
-      <div class="form-item" 
-           *ngFor="let form of filteredForms; let i = index" 
-           (click)="openConsentFormDetail(form)"
-           [style.animation-delay]="i * 100 + 'ms'">
-        
+      <div class="form-item" *ngFor="let form of filteredForms; let i = index" (click)="openConsentFormDetail(form)"
+        [style.animation-delay]="i * 100 + 'ms'">
+
         <div class="form-priority-badge">
-          <ion-icon name="alert-circle" class="priority-icon"></ion-icon>
+          <span class="date-day">{{ form.deadline | date:'dd' }}</span>
+          <span class="date-month">{{ form.deadline | date:'MMM' }}</span>
         </div>
-        
+
         <div class="form-content">
           <h3 class="form-title">{{ form.title }}</h3>
           <div class="form-details">
@@ -107,13 +105,13 @@
               <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
               <span>{{ form.description }}</span>
             </div>
-            <div class="form-student" *ngIf="form.first_name && form.last_name">
+            <div class="form-student" *ngIf="form.student_first_name && form.student_last_name">
               <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
-              <span>{{ form.first_name }} {{ form.last_name }}</span>
+              <span>{{ form.student_first_name }} {{ form.student_last_name }}</span>
             </div>
           </div>
         </div>
-        
+
         <div class="form-arrow">
           <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
         </div>

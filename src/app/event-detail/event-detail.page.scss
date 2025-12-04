@@ -1,70 +1,6 @@
-// .task-btn-wrapper {
-//   position: relative;
-//   margin-bottom: 8px;
-// }
-
-// .task-btn {
-//   --background: #fff;
-//   --color: #222;
-//   border-radius: 12px !important;
-//   margin-bottom: 8px;
-//   overflow: visible;
-//   box-shadow: 0 6px 32px rgba(0,0,0,0.10);
-//   border: 1px solid var(--ion-color-primary);
-//   pointer-events: none;
-// }
-
-// .giant-btn {
-//   height: 140px;
-//   --padding-start: 0;
-//   --padding-end: 0;
-//   --border-radius: 12px;
-//   border-radius: 12px !important;
-//   font-size: 2.4rem;
-//   display: flex;
-//   align-items: center;
-//   margin-bottom: 28px;
-//   box-shadow: 0 6px 32px rgba(0,0,0,0.10);
-// }
-
-// .btn-content {
-//   display: flex;
-//   align-items: center;
-//   width: 100%;
-//   justify-content: flex-start;
-// }
-
-// .task-img-giant {
-//   width: 120px;
-//   height: 120px;
-//   margin-right: 36px;
-//   margin-left: 0;
-//   object-fit: contain;
-//   border-radius: 32px;
-//   background: #fff;
-//   box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-//   flex-shrink: 0;
-// }
-
-// .btn-label {
-//   font-size: 1.2rem;
-//   font-weight: bold;
-//   letter-spacing: 1px;
-//   color: #222;
-// }
-
-// ion-header, ion-toolbar {
-//   border-bottom-left-radius: 18px;
-//   border-bottom-right-radius: 18px;
-//   overflow: hidden;
-//   box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
-// }
-
-// ion-header, ion-toolbar {
-//   --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-
-// }
-
+// ===================================
+// HEADER STYLES
+// ===================================
 ion-header {
   background: transparent !important;
   box-shadow: none !important;
@@ -77,17 +13,6 @@ ion-header {
   --padding-bottom: 16px;
   position: relative;
   overflow: hidden;
-
-  // &::before {
-  //   content: '';
-  //   position: absolute;
-  //   top: -50%;
-  //   right: -20%;
-  //   width: 200px;
-  //   height: 200px;
-  //   background: rgba(255, 255, 255, 0.1);
-  //   border-radius: 50%;
-  // }
 }
 
 .header-title {
@@ -98,18 +23,23 @@ ion-header {
   z-index: 2;
 }
 
+// ===================================
+// CONTENT BACKGROUND
+// ===================================
 ion-content {
   --background: #f5f7fa;
 }
 
-// Page Header
+// ===================================
+// PAGE HEADER SECTION
+// ===================================
 .page-header {
   padding: 32px 24px 48px 24px;
   position: relative;
   overflow: hidden;
 
   &.event-header {
-    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
 }
 
@@ -122,10 +52,12 @@ ion-content {
   overflow: hidden;
 }
 
+// Decorative Circles
 .deco-circle {
   position: absolute;
   border-radius: 50%;
-  background: rgb(255, 255, 255);
+  background: rgba(135, 206, 235, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.5);
   
   &.deco-1 {
     width: 150px;
@@ -149,21 +81,19 @@ ion-content {
     top: 60%;
     left: 40%;
     animation: float 7s ease-in-out infinite;
-    opacity: 0.5;
   }
 }
 
 @keyframes float {
   0%, 100% {
     transform: translateY(0) scale(1);
-    opacity: 0.08;
   }
   50% {
     transform: translateY(-20px) scale(1.15);
-    opacity: 0.15;
   }
 }
 
+// Header Content
 .header-content {
   position: relative;
   z-index: 2;
@@ -214,12 +144,17 @@ ion-content {
   }
 }
 
-// Content
+// ===================================
+// MAIN CONTENT WRAPPER
+// ===================================
 .content-wrapper {
   padding: 24px 16px;
   padding-bottom: 80px;
 }
 
+// ===================================
+// DETAIL CARD
+// ===================================
 .detail-card {
   background: white;
   border-radius: 16px;
@@ -289,6 +224,9 @@ ion-content {
   background: linear-gradient(90deg, transparent, #e9ecef, transparent);
 }
 
+// ===================================
+// CARD BODY
+// ===================================
 .card-body {
   padding: 24px;
 }
@@ -319,6 +257,9 @@ ion-content {
   border-left: 4px solid #2196F3;
 }
 
+// ===================================
+// ADDITIONAL INFO SECTION
+// ===================================
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -376,7 +317,9 @@ ion-content {
   font-weight: 600;
 }
 
-// Loading State
+// ===================================
+// LOADING STATE
+// ===================================
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -396,6 +339,9 @@ ion-content {
   }
 }
 
+// ===================================
+// RESPONSIVE DESIGN
+// ===================================
 @media (max-width: 480px) {
   .page-title {
     font-size: 1.4rem;
