@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Platform } from '@ionic/angular'; // Add this import
+import { Platform } from '@ionic/angular';
 import { PushNotifications, PushNotificationSchema } from '@capacitor/push-notifications';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { ToastController, ModalController, MenuController } from '@ionic/angular';
@@ -21,9 +21,9 @@ export class AppComponent implements OnInit {
     private menu: MenuController,
     private apiService: ApiService,
     private router: Router,
-    private platform: Platform // Add this to constructor
+    private platform: Platform
   ) {
-    this.initializeApp(); // Call this in constructor
+    this.initializeApp();
   }
 
   ngOnInit() {

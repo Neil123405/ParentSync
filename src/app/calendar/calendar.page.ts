@@ -52,7 +52,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     private gestureCtrl: GestureController,
     private cdr: ChangeDetectorRef,
     private storage: Storage,
-    private elementRef: ElementRef // 2. Inject ElementRef
+    private elementRef: ElementRef
   ) { }
 
   handleEventClick(info: any) {
@@ -138,7 +138,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     }
   }
 
-  // This will run every time the page is shown (not just on first load)
+  // run every time the page is shown (not just on first load)
   ionViewWillEnter() {
     this.loadEventsAndConsentForms();
   }
@@ -341,11 +341,11 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   }
 
   openEventDetail(event: any) {
-    // Try to get studentId from multiple possible locations
+    
     const eventId = event.id ?? event.event_id;
     let studentId = event.student_id ?? event.meta?.student_id;
 
-    // If still missing, try to get from event.student (sometimes used in forms)
+    
     if (!studentId && event.student && event.student.student_id) {
       studentId = event.student.student_id;
     }

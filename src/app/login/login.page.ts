@@ -4,7 +4,7 @@ import { ApiService } from '../services/api.service';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 import { PushNotifications } from '@capacitor/push-notifications';
-import { IonContent } from '@ionic/angular';  // Add IonContent
+import { IonContent } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -28,9 +28,9 @@ export class LoginPage implements AfterViewInit, OnDestroy {
   };
 
   isRegistering = false;
-  keyboardOpen = false;  // Add this flag
+  keyboardOpen = false;
   private keyboardShowListener: any;
-  private keyboardHideListener: any;  // Add this for hide listener
+  private keyboardHideListener: any;
 
 
   constructor(

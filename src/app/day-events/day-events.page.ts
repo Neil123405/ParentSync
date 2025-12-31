@@ -45,14 +45,14 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     editable: false, // Disable drag-and-drop for this page
     dateClick: this.handleDateClick.bind(this), // Handle date clicks
     eventClick: this.handleEventClick.bind(this), // Handle event clicks
-    datesSet: this.handleDatesSet.bind(this), // Add this to detect view changes
+    datesSet: this.handleDatesSet.bind(this), // to detect view changes
   };
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private apiService: ApiService,
-    private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) { }
 
   handleHeaderDateClick(date: Date, jsEvent: any) {

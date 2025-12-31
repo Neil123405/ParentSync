@@ -48,7 +48,7 @@ export class SchoolEventsPage implements OnInit {
   }
 
   doRefresh(event: any) {
-  this.ngOnInit(); // Replace with your actual data loading method
+  this.ngOnInit();
   setTimeout(() => {
     event.target.complete();
   }, 1000); // Or call complete after data is actually loaded
