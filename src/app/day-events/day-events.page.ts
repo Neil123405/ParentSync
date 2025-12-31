@@ -39,6 +39,8 @@ export class DayEventsPage implements OnInit, AfterViewInit {
       center: 'title',
       right: 'next',
     },
+    navLinks: true,
+    navLinkDayClick: this.handleHeaderDateClick.bind(this),
     events: [], // Events will be dynamically loaded
     editable: false, // Disable drag-and-drop for this page
     dateClick: this.handleDateClick.bind(this), // Handle date clicks
@@ -52,6 +54,10 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     private apiService: ApiService,
     private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
   ) { }
+
+  handleHeaderDateClick(date: Date, jsEvent: any) {
+    this.handleDateClick({ dateStr: date.toISOString() });
+  }
 
   isLoadingWeek: boolean = false; // Flag to prevent multiple loads
 

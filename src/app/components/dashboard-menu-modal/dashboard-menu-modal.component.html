@@ -13,9 +13,8 @@
     <div style="display: flex; align-items: center; margin-bottom: 24px;">
       <div (click)="openProfileSettings()" style="cursor: pointer;">
         <ng-container *ngIf="parent?.photo_url; else noPhoto">
-          <img [src]="parent?.photo_url"
-               alt="Parent Photo"
-               style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover;" />
+          <img [src]="parent?.photo_url" alt="Parent Photo"
+            style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover;" />
         </ng-container>
         <ng-template #noPhoto>
           <ion-icon name="person-circle" style="font-size: 64px; color: #888;"></ion-icon>

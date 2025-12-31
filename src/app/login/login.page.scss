@@ -1,6 +1,7 @@
-// ...existing code...
+// ============================================================================
+// PAGE BASE STYLES
+// ============================================================================
 
-/* Page base */
 .login-background {
   --background: #ffffff;
   --padding-start: 0;
@@ -9,138 +10,162 @@
   --padding-bottom: 0;
 }
 
-/* Wave header */
+
+// ============================================================================
+// WAVE HEADER SECTION
+// ============================================================================
+
 .wave-header {
+  // Layout
   position: relative;
-  height: 34vh;
-  min-height: 220px;
-  padding: 24px 28px 0;
-  color: #ffffff;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  height: 34vh;
+  min-height: 220px;
+  padding: 24px 28px 0;
 
+  // Appearance
+  color: #ffffff;
   background: radial-gradient(1200px 600px at -10% -20%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 50%),
-    linear-gradient(135deg, #2d67c0 0%, #2c82c6 40%, #2aa2c8 100%);
+              linear-gradient(135deg, #2d67c0 0%, #2c82c6 40%, #2aa2c8 100%);
   border-bottom-left-radius: 45% 35%;
 
-  /* right cut-out bubble */
+  // Decorative bubble with family image
   &::after {
     content: "";
     position: absolute;
-    right: -50px;
     top: 20px;
+    right: -50px;
     width: 220px;
     height: 220px;
-    background: #fff;
+    background: #fff url('../../assets/images/family.png');
+    background-size: cover;
     border-radius: 50%;
     box-shadow: -12px 16px 24px rgba(0, 0, 0, 0.05);
-    /* subtle depth like screenshot */
-    background-image: url('../../assets/images/family.png');
-    /* Add the image */
-    background-size: cover;
   }
 
+  // Header text styles
   h2 {
-    margin: 0 0 2px 0px;
+    margin: 0 0 2px 0;
     font-weight: 500;
-    opacity: 0.95;
+    font-size: inherit;
     letter-spacing: 0.2px;
+    opacity: 0.95;
   }
 
   h1 {
-    margin: 0 0 16px 0px;
+    margin: 0 0 16px 0;
     font-size: 40px;
-    line-height: 1.05;
     font-weight: 800;
+    line-height: 1.05;
     letter-spacing: 0.2px;
   }
 }
 
-/* Shared form styling for login and registration */
+
+// ============================================================================
+// FORM STYLES (LOGIN & REGISTRATION)
+// ============================================================================
+
 .login-form,
 .registration-form {
   max-width: 360px;
   margin: 18px auto 40px;
   padding: 0 20px;
-  &.keyboard-open {
-    padding-bottom: 150px;  /* Activate when keyboard is open */
-  }
-  /* keeps it centered on small screens */
 
+  // Keyboard open state
+  &.keyboard-open {
+    padding-bottom: 150px;
+  }
+
+  // ----------------------------------------------------------------------------
+  // Input Container
+  // ----------------------------------------------------------------------------
   .input-container {
     margin-bottom: 18px;
 
+    // Input label
     label {
       display: block;
       margin: 0 10px 8px;
       font-size: 10px;
       font-weight: 700;
       color: #a6a9b0;
-      /* light gray like the mock */
       letter-spacing: 0.6px;
       text-transform: uppercase;
     }
 
+    // Input field wrapper
     ion-item {
+      // Ionic CSS variables
       --background: #ffffff;
       --inner-padding-end: 0;
       --padding-start: 14px;
       --padding-end: 12px;
       --min-height: 48px;
 
+      // Custom styles
       border: 1.6px solid #d6e4ef;
-      /* soft outline */
       border-radius: 22px;
-      /* pill */
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-      transition: border-color .2s ease, box-shadow .2s ease;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
-      /* focus state to match accent outline */
+      // Focus state
       &:focus-within {
         border-color: #2aa2c8;
         box-shadow: 0 6px 14px rgba(42, 162, 200, 0.18);
       }
 
+      // Input field
       ion-input {
-        font-size: 15px;
-        color: #1f2a37;
         --placeholder-color: #8ea3b5;
         --placeholder-opacity: 1;
-        --padding-start: 10px; // Add this to shift placeholders right
+        --padding-start: 10px;
+
+        font-size: 15px;
+        color: #1f2a37;
       }
 
+      // Input icon
       ion-icon {
-        color: #8ea3b5;
-        font-size: 20px;
-        opacity: .85;
         margin-right: 6px;
+        font-size: 20px;
+        color: #8ea3b5;
+        opacity: 0.85;
       }
     }
   }
 
+  // ----------------------------------------------------------------------------
+  // Submit Button
+  // ----------------------------------------------------------------------------
   .login-button {
+    // Ionic CSS variables
     --background: linear-gradient(90deg, #2d67c0 0%, #2aa2c8 100%);
     --background-activated: linear-gradient(90deg, #265aa8 0%, #2293b6 100%);
     --border-radius: 22px;
     --padding-top: 12px;
     --padding-bottom: 12px;
     --box-shadow: 0 8px 18px rgba(45, 103, 192, 0.28);
-    font-weight: 700;
-    font-size: 16px;
-    text-transform: none;
-    letter-spacing: .2px;
+
+    // Custom styles
     width: 200px;
-    /* similar width to mock */
     margin: 18px auto 0;
-    /* centered */
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    text-transform: none;
   }
 
+  // ----------------------------------------------------------------------------
+  // Register Link
+  // ----------------------------------------------------------------------------
   .register-link {
-    text-align: center;
     margin-top: 22px;
-    color: #6b7280;
     font-size: 14px;
+    color: #6b7280;
+    text-align: center;
 
     span {
       color: #2d67c0;
@@ -150,7 +175,11 @@
   }
 }
 
-/* Ensure ion-item native part stays clean */
+
+// ============================================================================
+// IONIC COMPONENT OVERRIDES
+// ============================================================================
+
 ion-item::part(native) {
   padding: 0;
   background: transparent;

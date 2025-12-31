@@ -10,8 +10,6 @@ import { DayEventsPage } from './day-events.page';
 
 import { FullCalendarModule } from '@fullcalendar/angular';
 
-import { WeekCalendarComponent } from '../components/week-calendar/week-calendar.component';
-
 @NgModule({
   imports: [
     FullCalendarModule,
@@ -20,6 +18,6 @@ import { WeekCalendarComponent } from '../components/week-calendar/week-calendar
     IonicModule,
     DayEventsPageRoutingModule
   ],
-  declarations: [DayEventsPage, WeekCalendarComponent]
+  declarations: [DayEventsPage]
 })
 export class DayEventsPageModule {}

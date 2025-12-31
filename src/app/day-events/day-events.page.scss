@@ -477,3 +477,11 @@ ion-card {
 * {
   -webkit-tap-highlight-color: transparent;
 }
+
+// ADDITIONAL STYLES FOR FULLCALENDAR LINKS
+:host ::ng-deep a.fc-col-header-cell-cushion {
+  
+  &:hover {
+    text-decoration: none !important;
+  }
+}
