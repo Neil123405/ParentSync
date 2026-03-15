@@ -6,7 +6,7 @@
   </div>
 
   <!-- Login Form -->
-  <div class="login-form" *ngIf="!isRegistering">
+  <div class="login-form" [class.keyboard-open]="keyboardOpen" *ngIf="!isRegistering">
     <!-- Email Address -->
     <div class="input-container">
       <label>Username</label>

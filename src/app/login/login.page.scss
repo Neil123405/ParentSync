@@ -73,10 +73,11 @@
   max-width: 360px;
   margin: 18px auto 40px;
   padding: 0 20px;
+  padding-bottom: 20px;
 
   // Keyboard open state
   &.keyboard-open {
-    padding-bottom: 150px;
+    padding-bottom: 300px;
   }
 
   // ----------------------------------------------------------------------------
@@ -184,4 +185,8 @@ ion-item::part(native) {
   padding: 0;
   background: transparent;
   border-radius: 22px;
+}
+
+ion-content {
+  --padding-bottom: 40px; // Add padding to allow scrolling past buttons
 }

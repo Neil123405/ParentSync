@@ -14,6 +14,7 @@ import { IonContent } from '@ionic/angular';
 })
 //* already read!
 export class LoginPage implements AfterViewInit, OnDestroy {
+  @ViewChild(IonContent) content!: IonContent;
 
   credentials = {
     username: '',
@@ -45,6 +46,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
 
 
   ngOnInit() {
+    this.setupKeyboardListeners();
     this.credentials = {
       username: '',
       password: ''
@@ -55,6 +57,20 @@ export class LoginPage implements AfterViewInit, OnDestroy {
       email: '',
       contactNo: ''
     };
+  }
+
+  
+  setupKeyboardListeners() {
+    Keyboard.addListener('keyboardWillShow', () => {
+      this.keyboardOpen = true;
+      setTimeout(() => {
+        this.content.scrollToBottom(300);
+      }, 100);
+    });
+
+    Keyboard.addListener('keyboardWillHide', () => {
+      this.keyboardOpen = false;
+    });
   }
 
   ionViewWillEnter() {
