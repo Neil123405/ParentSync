@@ -73,7 +73,8 @@
           <ion-card class="announcement-card clickable" [ngClass]="{
         'school-card': group.announcement.scope === 'school', 
         'section-card': group.announcement.scope === 'section',
-        'class-card': group.announcement.scope === 'class'
+        'class-card': group.announcement.scope === 'class',
+        'individual-card': group.announcement.scope === 'individual'
       }" (click)="openAnnouncement(group.announcement)">
 
             <ion-card-content class="announcement-card-content">
@@ -229,7 +230,7 @@
 <ion-modal [isOpen]="isStudentsModalOpen" (didDismiss)="setStudentModalOpen(false)" [initialBreakpoint]="0.3" [breakpoints]="[0, 0.3, 0.5]">
   <ng-template>
     <ion-header>
-      <ion-toolbar>
+      <ion-toolbar class="modal-header-gradient">
         <ion-title style="color: white;">Associated Students</ion-title>
       </ion-toolbar>
     </ion-header>

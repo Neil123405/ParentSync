@@ -85,7 +85,7 @@ export class ChildrenPage implements OnInit, AfterViewInit {
       years.add(year);
     });
 
-    // Sort years newest to oldest and add 'All' at the start
+    // Sort years newest to oldest 'All' at the start
     this.availableYears = ['All', ...Array.from(years).sort().reverse()];
 
     this.selectedYear = 'All';
@@ -96,7 +96,7 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     plugins: [dayGridPlugin],
     initialView: 'dayGridMonth',
     events: [], // Will be populated with attendanceEvents
-    height: 'auto', // Adjust as needed
+    height: 'auto',
     eventDisplay: 'background', // Show as background colors on dates
     eventColor: '#3788d8', // Default color (overridden per event)
     headerToolbar: {
@@ -127,7 +127,7 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     private storage: Storage,
     private gestureCtrl: GestureController,
     private cdr: ChangeDetectorRef,
-    private elementRef: ElementRef // 2. Inject ElementRef
+    private elementRef: ElementRef
   ) { }
 
   ngAfterViewInit() {
@@ -563,7 +563,7 @@ export class ChildrenPage implements OnInit, AfterViewInit {
       events: this.attendanceEvents,
     };
 
-    // Only update stats if we are viewing the current month/context
+    // Only update stats if viewing the current month/context
     // (Optional: logic to check if calendar is currently viewed)
     let now = new Date();
     if (this.attendanceCalendarComponent) {

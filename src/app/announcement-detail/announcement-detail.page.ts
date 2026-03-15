@@ -59,7 +59,7 @@ export class AnnouncementDetailPage implements OnInit {
         // Cache the fresh data
         await this.storage.set(`announcement_${this.announcementId}`, this.announcement);
 
-        // Complete the refresher
+        // Complete refresher
         event.target.complete();
       },
       error: (error) => {

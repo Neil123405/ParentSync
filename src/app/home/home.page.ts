@@ -6,7 +6,7 @@ import { ApiService, User, ParentProfile } from '../services/api.service';
 
 import { Storage } from '@ionic/storage-angular';
 
-import { ActionSheetController } from '@ionic/angular'; // Import this
+import { ActionSheetController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -34,12 +34,11 @@ export class HomePage implements OnInit {
     private apiService: ApiService,
     private router: Router,
     private storage: Storage,
-    private actionSheetController: ActionSheetController // Inject thi
   ) {
 
   }
 
-    selectedStudents: any[] = [];
+  selectedStudents: any[] = [];
   isStudentsModalOpen: boolean = false;
 
   async showAssociatedStudents(event: Event, studentIds: number[]) {
@@ -54,7 +53,7 @@ export class HomePage implements OnInit {
     }
   }
 
-    setStudentModalOpen(isOpen: boolean) {
+  setStudentModalOpen(isOpen: boolean) {
     this.isStudentsModalOpen = isOpen;
   }
 

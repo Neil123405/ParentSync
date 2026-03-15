@@ -1,18 +1,27 @@
-ion-header, ion-toolbar {
+// ===================================
+// HEADER STYLES
+// ===================================
+ion-header,
+ion-toolbar {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-bottom-left-radius: 18px;
   border-bottom-right-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.08);
 }
 
-ion-header, ion-toolbar {
-  --background: #3fff38;
-
+// ===================================
+// CONTENT BACKGROUND
+// ===================================
+ion-content {
+  --background: #f6f8ff;
 }
 
-/* filepath: c:\Users\et cetera\Desktop\Ionic\ParentSync\src\app\day-events\day-events.page.scss */
+// ===================================
+// FULLCALENDAR STYLES
+// ===================================
 
-// Modern FullCalendar Styling
+// Toolbar
 :host ::ng-deep .fc-toolbar {
   margin-bottom: 1.5rem !important;
   padding: 0 16px;
@@ -25,46 +34,36 @@ ion-header, ion-toolbar {
   letter-spacing: -0.5px !important;
 }
 
-// Modern Navigation Buttons
+// Navigation Buttons
 :host ::ng-deep .fc-button-group {
   border-radius: 16px !important;
   overflow: hidden !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
 }
 
-:host ::ng-deep .fc-button {
-  background: white !important;
-  border: 1px solid rgba(102, 126, 234, 0.2) !important;
+:host ::ng-deep .fc-button,
+:host ::ng-deep .fc-button-primary {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   color: #667eea !important;
+  padding: 12px !important;
   font-weight: 600 !important;
-  padding: 12px 12px !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  position: relative !important;
-  overflow: hidden !important;
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   
-  &:hover {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    color: white !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+  &:hover,
+  &:focus {
+    background: transparent !important;
+    color: #764ba2 !important;
+    box-shadow: none !important;
   }
   
   &:active {
     transform: translateY(0) !important;
   }
-  
-  &:focus {
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2) !important;
-  }
 }
 
-:host ::ng-deep .fc-button-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  border-color: transparent !important;
-  color: white !important;
-}
-
-// Modern Arrow Icons
+// Arrow Icons
 :host ::ng-deep .fc-icon {
   font-family: 'Ionicons' !important;
   font-style: normal !important;
@@ -84,7 +83,7 @@ ion-header, ion-toolbar {
   font-weight: 300 !important;
 }
 
-// Calendar Grid Styling
+// Calendar Grid
 :host ::ng-deep .fc-theme-standard td,
 :host ::ng-deep .fc-theme-standard th {
   border: 1px solid rgba(0, 0, 0, 0.05) !important;
@@ -95,28 +94,6 @@ ion-header, ion-toolbar {
   font-weight: 600 !important;
   padding: 8px !important;
 }
-
-
-// Remove background, border, and shadow from FullCalendar navigation arrows/buttons
-:host ::ng-deep .fc-button,
-:host ::ng-deep .fc-button-primary {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  color: #667eea !important;
-  padding: 12px 12px !important;
-  font-weight: 600 !important;
-  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-:host ::ng-deep .fc-button:hover,
-:host ::ng-deep .fc-button:focus {
-  background: transparent !important;
-  color: #764ba2 !important;
-  box-shadow: none !important;
-}
-
-
 
 :host ::ng-deep .fc-col-header-cell {
   background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%) !important;
@@ -131,6 +108,7 @@ ion-header, ion-toolbar {
   background: rgba(102, 126, 234, 0.08) !important;
 }
 
+// Calendar Events
 :host ::ng-deep .fc-event {
   border: none !important;
   border-radius: 8px !important;
@@ -142,9 +120,9 @@ ion-header, ion-toolbar {
   margin: 2px !important;
 }
 
-// Style for event-class (blue, similar to event-stat in calendar.page)
+// Event Class (Blue)
 :host ::ng-deep .event-class {
-  background: blue !important;
+  background: linear-gradient(135deg, #2196F3, #1976D2) !important;
   color: white !important;
   border: none !important;
   border-radius: 8px !important;
@@ -153,9 +131,9 @@ ion-header, ion-toolbar {
   font-size: 0.85rem !important;
 }
 
-// Style for consent-form-class (green, similar to form-stat in calendar.page)
+// Consent Form Class (Green)
 :host ::ng-deep .consent-form-class {
-  background: green !important;
+  background: linear-gradient(135deg, #66BB6A, #43A047) !important;
   color: white !important;
   border: none !important;
   border-radius: 8px !important;
@@ -164,12 +142,9 @@ ion-header, ion-toolbar {
   font-size: 0.85rem !important;
 }
 
-// Content Styling
-ion-content {
-  --background: #f6f8ff;
-}
-
-// Modern Cards using the same design as calendar.page
+// ===================================
+// MODERN CARD STYLES
+// ===================================
 .modern-card {
   background: white;
   border-radius: 24px;
@@ -180,6 +155,17 @@ ion-content {
   margin-top: 24px;
 }
 
+.events-card {
+  border-top: 4px solid purple;
+}
+
+.forms-card {
+  border-top: 4px solid purple;
+}
+
+// ===================================
+// CARD HEADER
+// ===================================
 .card-header {
   padding: 24px;
   background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
@@ -199,11 +185,11 @@ ion-content {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 
   &.events-theme {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
   }
 
   &.forms-theme {
-    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
   }
 
   .header-icon {
@@ -231,10 +217,16 @@ ion-content {
   }
 }
 
+// ===================================
+// CARD BODY
+// ===================================
 .card-body {
   padding: 8px 0;
 }
 
+// ===================================
+// EVENT & FORM ITEMS
+// ===================================
 .event-item,
 .form-item {
   display: flex;
@@ -253,6 +245,11 @@ ion-content {
   &:hover {
     background: rgba(102, 126, 234, 0.02);
     transform: translateX(4px);
+
+    .arrow-icon {
+      color: #667eea;
+      transform: translateX(4px);
+    }
   }
 
   &:active {
@@ -271,6 +268,9 @@ ion-content {
   }
 }
 
+// ===================================
+// EVENT DATE BADGE
+// ===================================
 .event-date-badge {
   width: 60px;
   height: 60px;
@@ -299,12 +299,16 @@ ion-content {
   }
 }
 
+// ===================================
+// FORM PRIORITY BADGE
+// ===================================
 .form-priority-badge {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 16px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-right: 16px;
@@ -314,8 +318,26 @@ ion-content {
     font-size: 1.5rem;
     color: white;
   }
+
+  .date-day {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+  }
+
+  .date-month {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 }
 
+// ===================================
+// CONTENT & DETAILS
+// ===================================
 .event-content,
 .form-content {
   flex: 1;
@@ -361,6 +383,9 @@ ion-content {
   }
 }
 
+// ===================================
+// ARROW ICONS
+// ===================================
 .event-arrow,
 .form-arrow {
   margin-left: 12px;
@@ -372,12 +397,9 @@ ion-content {
   }
 }
 
-.event-item:hover .arrow-icon,
-.form-item:hover .arrow-icon {
-  color: #667eea;
-  transform: translateX(4px);
-}
-
+// ===================================
+// EMPTY STATE
+// ===================================
 .empty-state {
   text-align: center;
   padding: 60px 24px;
@@ -402,20 +424,16 @@ ion-content {
   }
 }
 
-.events-card {
-  border-top: 4px solid #667eea;
-}
-
-.forms-card {
-  border-top: 4px solid #4ecdc4;
-}
-
-// Hide old ion-card styling
+// ===================================
+// HIDE OLD STYLES
+// ===================================
 ion-card {
   display: none;
 }
 
-// Responsive Design
+// ===================================
+// RESPONSIVE DESIGN
+// ===================================
 @media (max-width: 480px) {
   .card-header {
     padding: 20px;
@@ -453,7 +471,17 @@ ion-card {
   }
 }
 
-// Smooth transitions
+// ===================================
+// SMOOTH TRANSITIONS
+// ===================================
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+// ADDITIONAL STYLES FOR FULLCALENDAR LINKS
+:host ::ng-deep a.fc-col-header-cell-cushion {
+  
+  &:hover {
+    text-decoration: none !important;
+  }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
 import { PushNotifications, PushNotificationSchema } from '@capacitor/push-notifications';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { ToastController, ModalController, MenuController } from '@ionic/angular';
@@ -19,8 +20,11 @@ export class AppComponent implements OnInit {
     private modalCtrl: ModalController,
     private menu: MenuController,
     private apiService: ApiService,
-    private router: Router  
-  ) { }
+    private router: Router,
+    private platform: Platform
+  ) {
+    this.initializeApp();
+  }
 
   ngOnInit() {
     this.parent = this.apiService.getCurrentProfile();
@@ -44,7 +48,28 @@ export class AppComponent implements OnInit {
     });
   }
 
-   onMenuOpen() {
+  initializeApp() {
+    this.platform.ready().then(() => {
+      // Handle back button globally to prevent re-entry after logout
+      this.platform.backButton.subscribeWithPriority(10, () => {
+        const currentUrl = this.router.url;
+        if (currentUrl === '/login') {
+          // If on login page, exit the app instead of allowing back navigation
+          if ((window as any).Capacitor?.isNativePlatform) {
+            (window as any).Capacitor.Plugins.App.exitApp();
+          } else {
+            // In browser, prevent default back behavior
+            window.history.replaceState(null, '', '/login');
+          }
+        } else {
+          // Allow normal back navigation for other pages
+          window.history.back();
+        }
+      });
+    });
+  }
+
+  onMenuOpen() {
     this.parent = this.apiService.getCurrentProfile();
   }
 

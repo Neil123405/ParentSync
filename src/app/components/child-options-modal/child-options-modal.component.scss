@@ -1,61 +1,75 @@
+// ============================================================================
+// CHILD OPTIONS MODAL STYLES
+// ============================================================================
+
+
+// ============================================================================
+// HEADER & TOOLBAR
+// ============================================================================
+
 ion-header {
   box-shadow: none !important;
 }
 
 .modal-toolbar {
+  // Ionic CSS variables
   --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --color: white;
   --padding-top: 16px;
   --padding-bottom: 16px;
+  
+  // Layout
   position: relative;
   overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 200px;
-    height: 200px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-  }
 }
 
 .modal-title {
-  color: white;
-  font-weight: 700;
-  font-size: 1.3rem;
   position: relative;
   z-index: 2;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
 }
 
 .close-btn {
+  // Ionic CSS variables
   --color: white;
   --background: rgba(255, 255, 255, 0.2);
   --border-radius: 12px;
-  width: 40px;
-  height: 40px;
+  
+  // Layout
   position: relative;
   z-index: 2;
+  width: 40px;
+  height: 40px;
 
   ion-icon {
     font-size: 1.3rem;
   }
 }
 
+
+// ============================================================================
+// CONTENT CONTAINER
+// ============================================================================
+
 ion-content {
   --background: #f5f7fa;
 }
 
-// Student Profile Header
+
+// ============================================================================
+// STUDENT PROFILE HEADER
+// ============================================================================
+
 .student-profile-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 32px 24px 48px 24px;
   position: relative;
+  padding: 32px 24px 48px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   overflow: hidden;
 }
 
+// Background decorative container
 .profile-background {
   position: absolute;
   top: 0;
@@ -65,10 +79,12 @@ ion-content {
   overflow: hidden;
 }
 
+// Animated decorative circles
 .deco-circle {
   position: absolute;
+  background: rgba(255, 254, 254, 0.726);
+  border: 2px solid rgba(255, 255, 255, 0.5);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
   
   &.deco-1 {
     width: 150px;
@@ -92,18 +108,6 @@ ion-content {
     top: 60%;
     left: 30%;
     animation: float 7s ease-in-out infinite;
-    opacity: 0.5;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-    opacity: 0.08;
-  }
-  50% {
-    transform: translateY(-15px) scale(1.1);
-    opacity: 0.12;
   }
 }
 
@@ -116,21 +120,26 @@ ion-content {
   text-align: center;
 }
 
+
+// ============================================================================
+// STUDENT AVATAR SECTION
+// ============================================================================
+
 .student-avatar-container {
   position: relative;
   margin-bottom: 20px;
 }
 
 .avatar-wrapper {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: white;
-  padding: 4px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100px;
+  height: 100px;
+  padding: 4px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .student-avatar {
@@ -140,14 +149,15 @@ ion-content {
   object-fit: cover;
 }
 
+// Placeholder when no avatar exists
 .avatar-placeholder {
-  width: 92px;
-  height: 92px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 92px;
+  height: 92px;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border-radius: 50%;
 
   .placeholder-icon {
     font-size: 3rem;
@@ -155,18 +165,22 @@ ion-content {
   }
 }
 
+// Status badge on avatar
 .avatar-badge {
+  // Layout
   position: absolute;
   bottom: 8px;
   right: 8px;
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, #4CAF50, #388E3C);
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 32px;
+  height: 32px;
+  
+  // Appearance
+  background: linear-gradient(135deg, #4CAF50, #388E3C);
   border: 3px solid white;
+  border-radius: 50%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 
   .badge-icon {
@@ -174,6 +188,11 @@ ion-content {
     color: white;
   }
 }
+
+
+// ============================================================================
+// STUDENT INFO SECTION
+// ============================================================================
 
 .student-info {
   color: white;
@@ -215,26 +234,33 @@ ion-content {
   }
 }
 
-// Action Cards
+
+// ============================================================================
+// ACTION CARDS SECTION
+// ============================================================================
+
 .action-cards-container {
-  padding: 24px 16px;
-  padding-bottom: 32px;
+  padding: 24px 16px 32px 16px;
 }
 
 .action-card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 16px;
+  // Layout
+  position: relative;
   display: flex;
   align-items: center;
   gap: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  
+  // Appearance
+  background: white;
+  border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
   cursor: pointer;
-  position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
 
+  // Left border indicator
   &::before {
     content: '';
     position: absolute;
@@ -246,13 +272,14 @@ ion-content {
   }
 
   &.photo-card::before {
-    background: linear-gradient(135deg, #2196F3, #1976D2);
+    background: purple;
   }
 
   &.unlink-card::before {
-    background: linear-gradient(135deg, #f44336, #d32f2f);
+    background: purple;
   }
 
+  // Interaction states
   &:active {
     transform: scale(0.98);
   }
@@ -262,14 +289,15 @@ ion-content {
   }
 }
 
+// Icon container
 .card-icon-wrapper {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 56px;
+  height: 56px;
   flex-shrink: 0;
+  border-radius: 14px;
 
   &.photo-theme {
     background: linear-gradient(135deg, #2196F3, #1976D2);
@@ -287,6 +315,7 @@ ion-content {
   }
 }
 
+// Card text content
 .card-content {
   flex: 1;
   min-width: 0;
@@ -306,6 +335,7 @@ ion-content {
   line-height: 1.4;
 }
 
+// Arrow indicator
 .card-arrow {
   margin-left: 8px;
 
@@ -321,13 +351,17 @@ ion-content {
   transform: translateX(4px);
 }
 
-// Info Card
+
+// ============================================================================
+// INFO CARD SECTION
+// ============================================================================
+
 .info-card {
-  background: white;
-  border-radius: 16px;
   padding: 20px;
+  background: white;
+  border-left: 4px solid purple;
+  border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  border-left: 4px solid #667eea;
 }
 
 .info-header {
@@ -338,13 +372,13 @@ ion-content {
 
   .info-icon {
     font-size: 1.3rem;
-    color: #667eea;
+    color: purple;
   }
 
   .info-title {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #2c3e50;
+    color: #000000;
   }
 }
 
@@ -368,14 +402,14 @@ ion-content {
 
 .info-label {
   font-size: 0.9rem;
-  color: #7f8c8d;
   font-weight: 500;
+  color: #7f8c8d;
 }
 
 .info-value {
   font-size: 0.9rem;
-  color: #2c3e50;
   font-weight: 600;
+  color: #2c3e50;
 }
 
 .status-badge {
@@ -383,7 +417,25 @@ ion-content {
   font-weight: 600;
 }
 
-// Responsive Design
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-15px) scale(1.1);
+  }
+}
+
+
+// ============================================================================
+// RESPONSIVE DESIGN
+// ============================================================================
+
 @media (max-width: 480px) {
   .student-profile-header {
     padding: 24px 16px 36px 16px;

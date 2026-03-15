@@ -146,7 +146,7 @@
     background: rgba(135, 206, 235, 0.7);
     border: 2px solid rgba(255, 255, 255, 0.5);
     animation: float 6s ease-in-out infinite;
-    background: rgb(255, 78, 78) !important;
+    background: rgba(255, 254, 254, 0.726) !important;
     opacity: 1 !important;
     z-index: 10 !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -180,9 +180,12 @@
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
+
   50% {
     transform: translateY(-10px) rotate(180deg);
   }
@@ -239,6 +242,7 @@
   }
 
   &.active {
+
     .tab-icon,
     .tab-label {
       color: white;
@@ -286,10 +290,42 @@
   display: flex;
   align-items: center;
   min-height: 200px;
+  background: white !important; // FIX: Plain white background for all cards
 
-  &:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  // &:active {
+  //   transform: scale(0.98);
+  //   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  // }
+
+  // &::before {
+  //   content: '';
+  //   position: absolute;
+  //   top: -50%;
+  //   left: -50%;
+  //   width: 200%;
+  //   height: 200%;
+  //   background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+  //   transform: rotate(45deg);
+  //   animation: shine 6s infinite;
+  // }
+
+  .announcement-icon,
+  .meta-icon,
+  .meta-text,
+  .card-arrow ion-icon {
+    color: #666;
+  }
+
+  .announcement-title {
+    color: #333;
+  }
+
+  .announcement-preview {
+    color: #666;
+  }
+
+  .student-avatar {
+    border-color: rgba(255, 255, 255, 0.95);
   }
 }
 
@@ -302,129 +338,169 @@
 }
 
 // Gold Card (School-wide)
-.school-card {
-  background: linear-gradient(135deg, #FFE57F 0%, #FFD54F 50%, #FFC107 100%);
-  border-left: 5px solid #B8860B;
-  box-shadow: 0 8px 16px rgba(255, 215, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  position: relative;
-  overflow: hidden;
+// .school-card {
+//   background: white;
+//   border-left: 5px solid #B8860B;
+//   box-shadow: 0 8px 16px rgba(255, 215, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+//   position: relative;
+//   overflow: hidden;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
-    transform: rotate(45deg);
-    animation: shine 6s infinite;
-  }
+//   &::before {
+//     content: '';
+//     position: absolute;
+//     top: -50%;
+//     left: -50%;
+//     width: 200%;
+//     height: 200%;
+//     background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+//     transform: rotate(45deg);
+//     animation: shine 6s infinite;
+//   }
 
-  .announcement-icon,
-  .meta-icon,
-  .meta-text,
-  .card-arrow ion-icon {
-    color: #F57C00;
-  }
+//   .announcement-icon,
+//   .meta-icon,
+//   .meta-text,
+//   .card-arrow ion-icon {
+//     color: #F57C00;
+//   }
 
-  .announcement-title {
-    color: #E65100;
-  }
+//   .announcement-title {
+//     color: #E65100;
+//   }
 
-  .announcement-preview {
-    color: #BF360C;
-  }
+//   .announcement-preview {
+//     color: #BF360C;
+//   }
 
-  .student-avatar {
-    border-color: rgba(255, 255, 255, 0.95);
-  }
-}
+//   .student-avatar {
+//     border-color: rgba(255, 255, 255, 0.95);
+//   }
+// }
 
-// Silver Card (Section)
-.section-card {
-  background: linear-gradient(135deg, #E5E5E5 0%, #F5F5F5 25%, #E5E5E5 50%, #C0C0C0 75%, #A9A9A9 100%);
-  border-left: 5px solid #708090;
-  box-shadow: 0 8px 16px rgba(192, 192, 192, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  position: relative;
-  overflow: hidden;
+// .individual-card {
+//   background: white;
+//   border-left: 5px solid #B8860B;
+//   box-shadow: 0 8px 16px rgba(255, 215, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+//   position: relative;
+//   overflow: hidden;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.4) 50%, transparent 70%);
-    transform: rotate(45deg);
-    animation: shine 6s infinite;
-  }
+//   &::before {
+//     content: '';
+//     position: absolute;
+//     top: -50%;
+//     left: -50%;
+//     width: 200%;
+//     height: 200%;
+//     background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+//     transform: rotate(45deg);
+//     animation: shine 6s infinite;
+//   }
 
-  .announcement-icon,
-  .meta-icon,
-  .meta-text,
-  .card-arrow ion-icon {
-    color: #4527A0;
-  }
+//   .announcement-icon,
+//   .meta-icon,
+//   .meta-text,
+//   .card-arrow ion-icon {
+//     color: #F57C00;
+//   }
 
-  .announcement-title {
-    color: #311B92;
-  }
+//   .announcement-title {
+//     color: #E65100;
+//   }
 
-  .announcement-preview {
-    color: #4527A0;
-  }
+//   .announcement-preview {
+//     color: #BF360C;
+//   }
 
-  .student-avatar {
-    border-color: rgba(255, 255, 255, 0.95);
-  }
-}
+//   .student-avatar {
+//     border-color: rgba(255, 255, 255, 0.95);
+//   }
+// }
 
-// Purple Card (Class)
-.class-card {
-  background: linear-gradient(135deg, #B39DDB 0%, #9575CD 50%, #7E57C2 100%);
-  border-left: 5px solid #512DA8;
-  box-shadow: 0 8px 16px rgba(149, 117, 205, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  position: relative;
-  overflow: hidden;
+// // Silver Card (Section)
+// .section-card {
+//   background: white;
+//   border-left: 5px solid #708090;
+//   box-shadow: 0 8px 16px rgba(192, 192, 192, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+//   position: relative;
+//   overflow: hidden;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
-    transform: rotate(45deg);
-    animation: shine 6s infinite;
-  }
+//   &::before {
+//     content: '';
+//     position: absolute;
+//     top: -50%;
+//     left: -50%;
+//     width: 200%;
+//     height: 200%;
+//     background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.4) 50%, transparent 70%);
+//     transform: rotate(45deg);
+//     animation: shine 6s infinite;
+//   }
 
-  .announcement-icon,
-  .meta-icon,
-  .meta-text,
-  .card-arrow ion-icon {
-    color: #4527A0;
-  }
+//   .announcement-icon,
+//   .meta-icon,
+//   .meta-text,
+//   .card-arrow ion-icon {
+//     color: #4527A0;
+//   }
 
-  .announcement-title {
-    color: #311B92;
-  }
+//   .announcement-title {
+//     color: #311B92;
+//   }
 
-  .announcement-preview {
-    color: #4527A0;
-  }
+//   .announcement-preview {
+//     color: #4527A0;
+//   }
 
-  .student-avatar {
-    border-color: rgba(255, 255, 255, 0.95);
-  }
-}
+//   .student-avatar {
+//     border-color: rgba(255, 255, 255, 0.95);
+//   }
+// }
+
+// // Purple Card (Class)
+// .class-card {
+//   background: linear-gradient white;
+//   border-left: 5px solid #512DA8;
+//   box-shadow: 0 8px 16px rgba(149, 117, 205, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+//   position: relative;
+//   overflow: hidden;
+
+//   &::before {
+//     content: '';
+//     position: absolute;
+//     top: -50%;
+//     left: -50%;
+//     width: 200%;
+//     height: 200%;
+//     background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+//     transform: rotate(45deg);
+//     animation: shine 6s infinite;
+//   }
+
+//   .announcement-icon,
+//   .meta-icon,
+//   .meta-text,
+//   .card-arrow ion-icon {
+//     color: #4527A0;
+//   }
+
+//   .announcement-title {
+//     color: #311B92;
+//   }
+
+//   .announcement-preview {
+//     color: #4527A0;
+//   }
+
+//   .student-avatar {
+//     border-color: rgba(255, 255, 255, 0.95);
+//   }
+// }
 
 @keyframes shine {
   0% {
     transform: translateX(-100%) translateY(-100%) rotate(45deg);
   }
+
   100% {
     transform: translateX(100%) translateY(100%) rotate(45deg);
   }
@@ -609,11 +685,13 @@
 .modal-avatar-placeholder {
   width: 100%;
   height: 100%;
-  background: #f0f0f0;
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #999;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   ion-icon {
     font-size: 24px;
@@ -713,4 +791,12 @@ ion-header.ios {
     padding-top: env(safe-area-inset-top);
     height: calc(160px + env(safe-area-inset-top));
   }
+}
+
+.modal-header-gradient {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.modal-header-gradient ion-toolbar {
+  --background: transparent;
 }

@@ -1,61 +1,87 @@
+// ============================================================================
+// ACCOUNT MENU MODAL STYLES
+// ============================================================================
+
+
+// ============================================================================
+// HEADER & TOOLBAR
+// ============================================================================
+
 ion-header {
   box-shadow: none !important;
 }
 
 .modal-toolbar {
+  // Ionic CSS variables
   --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --color: white;
   --padding-top: 16px;
   --padding-bottom: 16px;
+  
+  // Layout
   position: relative;
   overflow: hidden;
 
-//   &::before {
-//     content: '';
-//     position: absolute;
-//     top: -50%;
-//     right: -20%;
-//     width: 200px;
-//     height: 200px;
-//     background: rgba(255, 255, 255, 0.1);
-//     border-radius: 50%;
-//   }
+  // Optional decorative element (currently disabled)
+  // &::before {
+  //   content: '';
+  //   position: absolute;
+  //   top: -50%;
+  //   right: -20%;
+  //   width: 200px;
+  //   height: 200px;
+  //   background: rgba(255, 255, 255, 0.1);
+  //   border-radius: 50%;
+  // }
 }
 
 .modal-title {
-  color: white;
-  font-weight: 700;
-  font-size: 1.3rem;
   position: relative;
   z-index: 2;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
 }
 
 .close-btn {
+  // Ionic CSS variables
   --color: white;
   --background: rgba(255, 255, 255, 0.2);
   --border-radius: 12px;
-  width: 40px;
-  height: 40px;
+  
+  // Layout
   position: relative;
   z-index: 2;
+  width: 40px;
+  height: 40px;
 
   ion-icon {
     font-size: 1.3rem;
   }
 }
 
+
+// ============================================================================
+// CONTENT CONTAINER
+// ============================================================================
+
 ion-content {
   --background: #f5f7fa;
 }
 
-// Account Header
+
+// ============================================================================
+// ACCOUNT HEADER SECTION
+// ============================================================================
+
 .account-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 32px 24px 48px 24px;
   position: relative;
+  padding: 32px 24px 48px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   overflow: hidden;
 }
 
+// Background decorative container
 .header-background {
   position: absolute;
   top: 0;
@@ -65,11 +91,13 @@ ion-content {
   overflow: hidden;
 }
 
+// Animated decorative circles
 .deco-circle {
   position: absolute;
   border-radius: 50%;
-  background: rgb(255, 255, 255);
-  
+  background: rgba(135, 206, 235, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+
   &.deco-1 {
     width: 150px;
     height: 150px;
@@ -77,7 +105,7 @@ ion-content {
     right: -30px;
     animation: float 6s ease-in-out infinite;
   }
-  
+
   &.deco-2 {
     width: 100px;
     height: 100px;
@@ -87,16 +115,10 @@ ion-content {
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-    opacity: 0.08;
-  }
-  50% {
-    transform: translateY(-25px) scale(1.2);
-    opacity: 0.12;
-  }
-}
+
+// ============================================================================
+// PROFILE SECTION
+// ============================================================================
 
 .account-profile {
   position: relative;
@@ -107,21 +129,22 @@ ion-content {
   text-align: center;
 }
 
+// Profile photo container
 .profile-photo-container {
   position: relative;
   margin-bottom: 20px;
 }
 
 .photo-wrapper {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: white;
-  padding: 4px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100px;
+  height: 100px;
+  padding: 4px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .profile-photo {
@@ -131,14 +154,15 @@ ion-content {
   object-fit: cover;
 }
 
+// Placeholder when no photo exists
 .photo-placeholder {
-  width: 92px;
-  height: 92px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 92px;
+  height: 92px;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border-radius: 50%;
 
   .placeholder-icon {
     font-size: 3rem;
@@ -146,18 +170,22 @@ ion-content {
   }
 }
 
+// Edit photo button
 .photo-edit-btn {
+  // Layout
   position: absolute;
   bottom: 8px;
   right: 8px;
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, #4CAF50, #388E3C);
-  border: none;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  height: 36px;
+  
+  // Appearance
+  background: linear-gradient(135deg, #4CAF50, #388E3C);
+  border: none;
+  border-radius: 50%;
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
   cursor: pointer;
   transition: all 0.3s ease;
@@ -172,6 +200,7 @@ ion-content {
   }
 }
 
+// Profile text
 .account-name {
   margin: 0 0 8px 0;
   font-size: 1.6rem;
@@ -186,16 +215,19 @@ ion-content {
   color: rgba(255, 255, 255, 0.9);
 }
 
-// Form Container
+
+// ============================================================================
+// FORM SECTION
+// ============================================================================
+
 .form-container {
-  padding: 24px 16px;
-  padding-bottom: 32px;
+  padding: 24px 16px 32px 16px;
 }
 
 .form-card {
+  padding: 24px;
   background: white;
   border-radius: 16px;
-  padding: 24px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
@@ -208,19 +240,24 @@ ion-content {
 }
 
 .section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0 0 20px 0;
   font-size: 1.2rem;
   font-weight: 600;
   color: #2c3e50;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 
   .section-icon {
     font-size: 1.3rem;
-    color: #667eea;
+    color: purple;
   }
 }
+
+
+// ============================================================================
+// FORM INPUTS
+// ============================================================================
 
 .input-group {
   display: flex;
@@ -230,27 +267,33 @@ ion-content {
 
 .input-wrapper {
   .custom-input {
+    // Ionic CSS variables
     --background: #f8f9fa;
     --border-radius: 12px;
     --padding-start: 16px;
     --padding-end: 16px;
     --min-height: 56px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    
+    // Appearance
     border: 1px solid #e9ecef;
     border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     transition: all 0.3s ease;
 
+    // Focus state
     &.item-has-focus {
       --background: white;
       border-color: #667eea;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
+    // Label styling
     ion-label {
       --color: #7f8c8d;
       font-weight: 500;
     }
 
+    // Input text styling
     ion-input {
       --color: #2c3e50;
       font-weight: 500;
@@ -258,27 +301,35 @@ ion-content {
   }
 }
 
-// Action Buttons
+
+// ============================================================================
+// ACTION BUTTONS
+// ============================================================================
+
 .action-buttons {
   display: flex;
   gap: 12px;
   margin-top: 24px;
 }
 
+// Shared button styles
 .save-btn,
 .cancel-btn {
+  // Layout
   flex: 1;
-  padding: 16px 24px;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  padding: 16px 24px;
+  
+  // Appearance
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 
   .btn-icon {
     font-size: 1.2rem;
@@ -289,6 +340,7 @@ ion-content {
   }
 }
 
+// Save button
 .save-btn {
   background: linear-gradient(135deg, #4CAF50, #388E3C);
   color: white;
@@ -299,6 +351,7 @@ ion-content {
   }
 }
 
+// Cancel button
 .cancel-btn {
   background: #f8f9fa;
   color: #7f8c8d;
@@ -310,7 +363,25 @@ ion-content {
   }
 }
 
-// Responsive Design
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-25px) scale(1.2);
+  }
+}
+
+
+// ============================================================================
+// RESPONSIVE DESIGN
+// ============================================================================
+
 @media (max-width: 480px) {
   .account-header {
     padding: 24px 16px 36px 16px;

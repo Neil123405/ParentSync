@@ -152,7 +152,8 @@
             (click)="openConsentFormDetail(form)" [style.animation-delay]="i * 100 + 'ms'">
 
             <div class="form-priority-badge">
-              <ion-icon name="alert-circle" class="priority-icon"></ion-icon>
+              <span class="date-day">{{ form.deadline | date:'dd' }}</span>
+              <span class="date-month">{{ form.deadline | date:'MMM' }}</span>
             </div>
 
             <div class="form-content">

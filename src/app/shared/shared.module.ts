@@ -3,20 +3,18 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { GlobalFooterComponent } from '../components/global-footer/global-footer.component';
 
-import { SimpleCalendarComponent } from '../components/simple-calendar/simple-calendar.component';
-
 
 
 @NgModule({
   declarations: [
-    GlobalFooterComponent, SimpleCalendarComponent
+    GlobalFooterComponent
   ],
   imports: [
     CommonModule,
     IonicModule
   ],
   exports: [
-    GlobalFooterComponent, SimpleCalendarComponent
+    GlobalFooterComponent
   ]
 })
 export class SharedModule { }
