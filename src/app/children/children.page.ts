@@ -677,6 +677,7 @@ export class ChildrenPage implements OnInit, AfterViewInit {
         const alert = await this.alertController.create({
           header: 'Confirm Link',
           message: `Are you sure you want to link this student to your account? (ID: ${profile.student_id})`,
+          cssClass: 'purple-alert',
           buttons: [
             {
               text: 'Cancel',

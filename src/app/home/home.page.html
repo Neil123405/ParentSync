@@ -8,7 +8,7 @@
       <!-- Top section with greeting and profile -->
       <div class="header-top">
         <div class="greeting-section">
-          <p class="greeting-text">Welcome back</p>
+          <p class="greeting-text">Welcome</p>
           <h1 class="user-name">{{ parent?.first_name || 'User' }}!</h1>
         </div>
 
@@ -61,7 +61,7 @@
 
 
 
-<ion-content [fullscreen]="true" class="ion-padding content-with-footer">
+<ion-content [fullscreen]="true" class="ion-padding content-with-footer" style="--padding-bottom: 350px;">
   <div class="transparent-content">
     <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
       <ion-refresher-content></ion-refresher-content>

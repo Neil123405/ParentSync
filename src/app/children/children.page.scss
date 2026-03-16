@@ -1312,6 +1312,16 @@
   }
 }
 
+::ng-deep .purple-alert {
+  .alert-button {
+    color: #667eea;
+  }
+  
+  .alert-button.alert-button-confirm {
+    color: #667eea;
+  }
+}
+
 @media (max-width: 480px) {
   .student-card-carousel {
     width: 120px;

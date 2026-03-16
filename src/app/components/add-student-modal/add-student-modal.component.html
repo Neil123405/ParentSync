@@ -12,7 +12,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" style="--background: #f8f9fa;">
+<ion-content class="ion-padding" style="--background: #f8f9fa; --padding-bottom: 400px;" scrollAssist="true">
   <!-- Form Container -->
   <div style="max-width: 400px; margin: 20px auto; padding: 0 16px;">
 
@@ -183,12 +183,14 @@
                 Birthday
               </span>
             </div>
-            <ion-input type="date" [(ngModel)]="bday" style="--padding-start: 0; 
-                              --padding-top: 8px; 
-                              --padding-bottom: 8px; 
-                              font-size: 1.1rem;
-                              font-weight: 500;">
-            </ion-input>
+            <ion-datetime color="primary" [(ngModel)]="bday" 
+              presentation="date"
+              style="--padding-start: 0; 
+                     --padding-top: 8px; 
+                     --padding-bottom: 8px; 
+                     font-size: 1.1rem;
+                     font-weight: 500;">
+</ion-datetime>
           </div>
         </ion-item>
       </div>
