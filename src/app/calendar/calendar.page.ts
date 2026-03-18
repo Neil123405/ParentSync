@@ -15,6 +15,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { CalendarOptions } from '@fullcalendar/core';
 import { FullCalendarComponent } from '@fullcalendar/angular';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-calendar',
@@ -52,19 +53,56 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     private gestureCtrl: GestureController,
     private cdr: ChangeDetectorRef,
     private storage: Storage,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private alertController: AlertController, // <--- add this
   ) { }
 
-  handleEventClick(info: any) {
-    alert(`Event: ${info.event.title}`);
-  }
+  async handleEventClick(info: any) {
+  const event = info.event;
+  const type = event.extendedProps?.type;
+
+  const header = type === 'consentForm' ? 'Consent Form' : 'Event';
+  const message = `Open ${header} details for “${event.title}”?`;
+
+  const alert = await this.alertController.create({
+    header,
+    message,
+    buttons: [
+      { text: 'Cancel', role: 'cancel' },
+      {
+        text: 'Yes',
+        handler: () => {
+          if (type === 'consentForm') {
+            this.openConsentFormDetail(event);
+          } else {
+            this.openEventDetail(event);
+          }
+        }
+      }
+    ]
+  });
+
+  await alert.present();
+}
 
   // Handle date clicks
-  handleDateClick(info: any) {
-    alert(`Date clicked: ${info.dateStr}`);
-    const clickedDate = info.dateStr; // Format: YYYY-MM-DD
-    this.router.navigate(['/day-events', clickedDate]);
-  }
+ async handleDateClick(info: any) {
+  const dateStr = info.dateStr;
+  const alert = await this.alertController.create({
+    header: 'View Day',
+    message: `Go to day view for ${dateStr}?`,
+    buttons: [
+      { text: 'Cancel', role: 'cancel' },
+      {
+        text: 'Yes',
+        handler: () => {
+          this.router.navigate(['/day-events', dateStr]);
+        }
+      }
+    ]
+  });
+  await alert.present();
+}
 
   ngAfterViewInit() {
     const calendarElement = this.elementRef.nativeElement.querySelector('full-calendar');
@@ -293,6 +331,8 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
               start: new Date(form.deadline), // Consent form deadline
               extendedProps: {
                 type: 'consentForm', // Custom property for consent forms
+                form_id: form.form_id,          // <--- add this
+    student_id: form.student_id,
                 student: {
                   first_name: form.first_name,
                   last_name: form.last_name,
@@ -343,12 +383,15 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   openEventDetail(event: any) {
     
     const eventId = event.id ?? event.event_id;
-    let studentId = event.student_id ?? event.meta?.student_id;
-
+    // let studentId = event.student_id ?? event.meta?.student_id;
+const studentId =
+    event.extendedProps?.student?.student_id ??
+    event.extendedProps?.student_id ??
+    event.student_id ?? event.meta?.student_id;
     
-    if (!studentId && event.student && event.student.student_id) {
-      studentId = event.student.student_id;
-    }
+    // if (!studentId && event.student && event.student.student_id) {
+    //   studentId = event.student.student_id;
+    // }
 
     if (eventId && studentId) {
       this.router.navigate(['/event-detail', eventId, studentId]);
@@ -358,16 +401,19 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     }
   }
 
-  openConsentFormDetail(form: any) {
-    const formId = form.form_id;
+  openConsentFormDetail(event: any) {
+    const formId = event.form_id ?? event.extendedProps?.form_id;
     // Try to get studentId from multiple possible locations
-    let studentId = form.student_id;
-    if (!studentId && form.student && form.student.student_id) {
-      studentId = form.student.student_id;
-    }
-    if (!studentId && form.student) {
-      studentId = form.student.id ?? form.student.student_id;
-    }
+    const studentId =
+    event.student_id ??
+    event.extendedProps?.student_id ??
+    event.extendedProps?.student?.student_id;
+    // if (!studentId && event.student && form.student.student_id) {
+    //   studentId = form.student.student_id;
+    // }
+    // if (!studentId && form.student) {
+    //   studentId = form.student.id ?? form.student.student_id;
+    // }
     if (formId && studentId) {
       this.router.navigate(['/consent-form-detail', formId, studentId]);
     } else {
