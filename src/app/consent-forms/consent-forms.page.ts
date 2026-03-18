@@ -13,7 +13,7 @@ import { ApiService } from '../services/api.service';
 export class ConsentFormsPage implements OnInit {
   studentId!: number;
   consentForms: any[] = [];
-  filter: 'all' | 'signed' | 'unsigned' = 'all';
+  filter: 'all' | 'signed' | 'unsigned' | 'declined' = 'all';
 
   constructor(
     private route: ActivatedRoute,
@@ -28,7 +28,7 @@ export class ConsentFormsPage implements OnInit {
     });
   }
 
-  setFilter(filter: 'all' | 'signed' | 'unsigned') {
+  setFilter(filter: 'all' | 'signed' | 'unsigned' | 'declined') {
     this.filter = filter;
   }
 
@@ -39,6 +39,8 @@ export class ConsentFormsPage implements OnInit {
     if (this.filter === 'unsigned') {
       return this.consentForms.filter(f => !f.signed);
     }
+    if (this.filter === 'declined') 
+      return this.consentForms.filter(f => f.declined);
     return this.consentForms;
   }
 

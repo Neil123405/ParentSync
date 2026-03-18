@@ -80,6 +80,9 @@
             <ion-icon name="checkmark-circle"></ion-icon>
             Signed
           </ion-badge>  
+          <ion-badge *ngIf="!form.signed && form.declined" class="status-badge declined">
+  <ion-icon name="close-circle"></ion-icon> Declined
+</ion-badge>
         </div>
       </div>
 

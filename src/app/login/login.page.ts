@@ -30,8 +30,8 @@ export class LoginPage implements AfterViewInit, OnDestroy {
 
   isRegistering = false;
   keyboardOpen = false;
-  private keyboardShowListener: any;
-  private keyboardHideListener: any;
+  // private keyboardShowListener: any;
+  // private keyboardHideListener: any;
 
 
   constructor(
@@ -46,7 +46,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
 
 
   ngOnInit() {
-    this.setupKeyboardListeners();
+    // this.setupKeyboardListeners();
     this.credentials = {
       username: '',
       password: ''
@@ -65,7 +65,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
       this.keyboardOpen = true;
       setTimeout(() => {
         this.content.scrollToBottom(300);
-      }, 100);
+      }, 200);
     });
 
     Keyboard.addListener('keyboardWillHide', () => {
@@ -83,23 +83,19 @@ export class LoginPage implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     // Remove old focus listeners and scrolling
     // Add keyboard listeners instead
-    this.keyboardShowListener = Keyboard.addListener('keyboardWillShow', () => {
-      this.keyboardOpen = true;
-    });
-    this.keyboardHideListener = Keyboard.addListener('keyboardWillHide', () => {
-      this.keyboardOpen = false;
-    });
+    this.setupKeyboardListeners();
   }
 
 
   // cleans up the keyboard listener when the component is destroyed
   ngOnDestroy() {
-    if (this.keyboardShowListener) {
-      this.keyboardShowListener.remove();
-    }
-    if (this.keyboardHideListener) {
-      this.keyboardHideListener.remove();
-    }
+    // if (this.keyboardShowListener) {
+    //   this.keyboardShowListener.remove();
+    // }
+    // if (this.keyboardHideListener) {
+    //   this.keyboardHideListener.remove();
+    // }
+    Keyboard.removeAllListeners();
   }
 
   async login() {

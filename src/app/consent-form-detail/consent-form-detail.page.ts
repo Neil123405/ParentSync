@@ -18,6 +18,7 @@ export class ConsentFormDetailPage implements OnInit {
   form: any;
   alreadySigned = false;
   signatureImage: string | null = null;
+  declined = false;
 
   
   signaturePadOptions: Object = {
@@ -37,11 +38,64 @@ export class ConsentFormDetailPage implements OnInit {
   ngOnInit() {
     this.formId = +this.route.snapshot.paramMap.get('formId')!;
     this.studentId = +this.route.snapshot.paramMap.get('studentId')!;
-    this.apiService.getConsentFormDetail(this.formId, this.studentId).subscribe(res => {
-      this.form = res.form;
-      this.alreadySigned = res.alreadySigned;
-      // Fix: prepend data URL if needed
-      if (res.signatureImage) {
+    this.loadFormDetail();
+    // this.apiService.getConsentFormDetail(this.formId, this.studentId).subscribe(res => {
+    //   this.form = res.form;
+    //   this.alreadySigned = res.alreadySigned;
+    //   // Fix: prepend data URL if needed
+    //   if (res.signatureImage) {
+    //     if (res.signatureImage.startsWith('data:')) {
+    //       // Already a data URL
+    //       this.signatureImage = res.signatureImage;
+    //     } else if (res.signatureImage.startsWith('http')) {
+    //       // It's a URL from backend
+    //       this.signatureImage = res.signatureImage;
+    //     } else {
+    //       // Assume it's base64
+    //       this.signatureImage = `data:image/png;base64,${res.signatureImage}`;
+    //     }
+    //   } else {
+    //     this.signatureImage = null;
+    //   }
+    // });
+  }
+
+async submitDeclined() {
+  const alert = await this.alertController.create({
+    header: 'Confirm',
+    message: 'Submit without a signature (no consent)?',
+    buttons: [
+      { text: 'Cancel', role: 'cancel' },
+      {
+        text: 'Submit',
+        handler: () => {
+          this.apiService
+            .signConsentForm(this.formId, this.studentId, null, true)
+            .subscribe(res => {
+              if (res.success) {
+                this.declined = true;
+                this.alreadySigned = false;
+                this.signatureImage = null;
+                this.loadFormDetail(); // reload status if backend provides it
+              }
+            });
+        }
+      }
+    ]
+  });
+  await alert.present();
+}
+
+private loadFormDetail() {
+  this.apiService.getConsentFormDetail(this.formId, this.studentId).subscribe(res => {
+    this.form = res.form;
+
+    // Debug: see if signature_path is empty or not
+    console.log('signature_path:', this.form.signature_path);
+
+    this.alreadySigned = !!res.declined ? false : !!res.signature_path || res.alreadySigned;
+      this.declined = !!res.declined || (!res.signature_path && !res.alreadySigned);
+    if (res.signatureImage) {
         if (res.signatureImage.startsWith('data:')) {
           // Already a data URL
           this.signatureImage = res.signatureImage;
@@ -55,8 +109,8 @@ export class ConsentFormDetailPage implements OnInit {
       } else {
         this.signatureImage = null;
       }
-    });
-  }
+  });
+}
 
   onDrawEnd() {
     // Called when signature is finished

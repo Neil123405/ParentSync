@@ -37,12 +37,12 @@ interface SignConsentResponse {
   success: boolean;
   signatureImage?: string;
 }
-
+// environment.apiUrl || 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = environment.apiUrl || 'http://192.168.1.4:8000/api';
+  private apiUrl = environment.apiUrl || 'http://localhost:8000/api';
 
   // User management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -254,10 +254,11 @@ export class ApiService {
     });
   }
 
-  signConsentForm(formId: number, studentId: number, signatureData: string): Observable<SignConsentResponse> {
+  signConsentForm(formId: number, studentId: number, signatureData: string | null, declined: boolean = false): Observable<SignConsentResponse> {
     return this.http.post<SignConsentResponse>(`${this.apiUrl}/consent-forms/${formId}/sign`, {
       student_id: studentId,
-      signature: signatureData
+      signature: signatureData,
+      declined,
     }, { headers: this.getHeaders() });
   }
 

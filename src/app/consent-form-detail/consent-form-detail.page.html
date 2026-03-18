@@ -77,6 +77,9 @@
           <p class="signature-instruction">Please sign below to approve this consent form</p>
           <app-signature-pad #signaturePad (signature)="submitSignature($event)"></app-signature-pad>
         </div>
+<ion-button expand="block" color="danger" (click)="submitDeclined()">
+  Submit without signature
+</ion-button>
 
         <div *ngIf="alreadySigned" class="signed-container">
           <div class="success-badge">

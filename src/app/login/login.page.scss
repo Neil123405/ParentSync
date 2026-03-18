@@ -27,8 +27,12 @@
 
   // Appearance
   color: #ffffff;
-  background: radial-gradient(1200px 600px at -10% -20%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 50%),
-              linear-gradient(135deg, #2d67c0 0%, #2c82c6 40%, #2aa2c8 100%);
+   background: linear-gradient(
+    160deg,
+    #18145f 0%,
+    #3d3899 42%,
+    #6ea8ff 100%
+  ) !important;
   border-bottom-left-radius: 45% 35%;
 
   // Decorative bubble with family image
