@@ -93,8 +93,15 @@ private loadFormDetail() {
     // Debug: see if signature_path is empty or not
     console.log('signature_path:', this.form.signature_path);
 
-    this.alreadySigned = !!res.declined ? false : !!res.signature_path || res.alreadySigned;
-      this.declined = !!res.declined || (!res.signature_path && !res.alreadySigned);
+    const signature = res.signature; // <-- signature record (may be null)
+    const hasSignature = !!(signature?.signed_at || signature?.signature_path);
+    const isDeclined = !!signature?.declined;
+
+     this.alreadySigned = hasSignature && !isDeclined;
+    this.declined = isDeclined;
+
+    // Debug output
+    console.log('signature record:', signature);
     if (res.signatureImage) {
         if (res.signatureImage.startsWith('data:')) {
           // Already a data URL

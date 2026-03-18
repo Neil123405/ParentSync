@@ -25,7 +25,7 @@
       <div class="deco-circle deco-2"></div>
       <div class="deco-circle deco-3"></div>
     </div>
-    
+
     <div class="header-content">
       <div class="header-icon-wrapper">
         <ion-icon name="document-text" class="header-icon"></ion-icon>
@@ -48,9 +48,12 @@
             <ion-icon name="calendar-outline"></ion-icon>
             <span>Due: {{ form.deadline | date:'fullDate' }}</span>
           </div>
-          <div class="status-badge" [class.signed]="alreadySigned">
-            <ion-icon [name]="alreadySigned ? 'checkmark-circle' : 'time'"></ion-icon>
-            <span>{{ alreadySigned ? 'Signed' : 'Pending' }}</span>
+          <div class="status-badge" [class.signed]="alreadySigned" [class.declined]="declined">
+            <ion-icon [name]="alreadySigned ? 'checkmark-circle' : declined ? 'close-circle' : 'time'">
+            </ion-icon>
+            <span>
+              {{ alreadySigned ? 'Signed' : declined ? 'Declined' : 'Pending' }}
+            </span>
           </div>
         </div>
       </div>
@@ -73,20 +76,20 @@
           Signature
         </h3>
 
-        <div *ngIf="!alreadySigned" class="signature-container">
+        <div *ngIf="!alreadySigned && !declined" class="signature-container">
           <p class="signature-instruction">Please sign below to approve this consent form</p>
           <app-signature-pad #signaturePad (signature)="submitSignature($event)"></app-signature-pad>
         </div>
-<ion-button expand="block" color="danger" (click)="submitDeclined()">
-  Submit without signature
-</ion-button>
+        <ion-button expand="block" color="danger" (click)="submitDeclined()">
+          Submit without signature
+        </ion-button>
 
         <div *ngIf="alreadySigned" class="signed-container">
           <div class="success-badge">
             <ion-icon name="checkmark-circle"></ion-icon>
             <span>Form Successfully Signed</span>
           </div>
-          
+
           <div *ngIf="signatureImage" class="signature-preview">
             <p class="preview-label">Your Signature:</p>
             <img [src]="signatureImage" alt="Signature" class="signature-image" />
