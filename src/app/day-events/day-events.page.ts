@@ -10,6 +10,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { CalendarOptions } from '@fullcalendar/core';
 import { forkJoin } from 'rxjs';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-day-events',
@@ -52,7 +53,8 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private router: Router,
     private apiService: ApiService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private alertController: AlertController
   ) { }
 
   handleHeaderDateClick(date: Date, jsEvent: any) {
@@ -317,14 +319,31 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     console.log('Filtered Forms for', selectedDate.toDateString(), ':', this.filteredForms.length);
   }
 
-  handleEventClick(info: any) {
-    const { type } = info.event.extendedProps;
-    if (type === 'event') {
-      this.openEventDetail(info.event.extendedProps);
-    } else if (type === 'consentForm') {
-      this.openConsentFormDetail(info.event.extendedProps);
-    }
-  }
+ async handleEventClick(info: any) {
+  const type = info.event.extendedProps?.type;
+  const title = info.event.title ?? 'item';
+  const header = type === 'consentForm' ? 'Consent Form' : 'Event';
+
+  const alert = await this.alertController.create({
+    header,
+    message: `Open ${header} details for "${title}"?`,
+    buttons: [
+      { text: 'Cancel', role: 'cancel' },
+      {
+        text: 'Yes',
+        handler: () => {
+          if (type === 'consentForm') {
+            this.openConsentFormDetail(info.event.extendedProps);
+          } else {
+            this.openEventDetail(info.event.extendedProps);
+          }
+        }
+      }
+    ]
+  });
+
+  await alert.present();
+}
 
   getWeekDays(startDate: Date): string[] {
     return Array.from({ length: 7 }, (_, i) => {
@@ -432,13 +451,44 @@ export class DayEventsPage implements OnInit, AfterViewInit {
   //   }
   // }
 
-  openEventDetail(event: any) {
-    this.router.navigate(['/event-detail', event.id ?? event.event_id, event.student_id]);
+ openEventDetail(event: any) {
+  const eventId =
+    event.id ??
+    event.event_id ??
+    event.raw?.event_id ??
+    event.raw?.id ??
+    event.extendedProps?.raw?.id; 
+
+  const studentId =
+    event.student_id ??
+    event.raw?.student_id ??
+    event.meta?.student_id ??
+    event.extendedProps?.student?.student_id;
+
+  if (eventId && studentId) {
+    this.router.navigate(['/event-detail', eventId, studentId]);
+  } else {
+    alert('Cannot open event details: missing student or event information.');
   }
+}
 
   openConsentFormDetail(form: any) {
-    this.router.navigate(['/consent-form-detail', form.form_id, form.student_id ?? form.student?.student_id]);
+  const formId =
+    form.form_id ??
+    form.id ??
+    form.raw?.form_id;
+
+  const studentId =
+    form.student_id ??
+    form.raw?.student_id ??
+    form.student?.student_id;
+
+  if (formId && studentId) {
+    this.router.navigate(['/consent-form-detail', formId, studentId]);
+  } else {
+    alert('Cannot open consent form details: missing student or form information.');
   }
+}
 
   doRefresh(event: any) {
     // Reload your data here (e.g., call loadEventsForDate and loadConsentFormsForDate)
