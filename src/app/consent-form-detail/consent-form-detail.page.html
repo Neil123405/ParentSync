@@ -76,13 +76,28 @@
           Signature
         </h3>
 
-        <div *ngIf="!alreadySigned && !declined" class="signature-container">
+        <!-- Two action buttons -->
+        <div *ngIf="!alreadySigned && !declined">
+          <ion-row class="signature-action-row">
+            <ion-col size="6">
+              <ion-button expand="block" fill="outline" (click)="showSignaturePad = !showSignaturePad">
+                {{ showSignaturePad ? 'Hide signature' : 'I consent (sign)' }}
+                <ion-icon [name]="showSignaturePad ? 'chevron-up' : 'chevron-down'" slot="end"></ion-icon>
+              </ion-button>
+            </ion-col>
+
+            <ion-col size="6">
+              <ion-button expand="block" color="danger" (click)="submitDeclined()">
+                I do not consent
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div *ngIf="showSignaturePad && !alreadySigned && !declined" class="signature-container">
           <p class="signature-instruction">Please sign below to approve this consent form</p>
           <app-signature-pad #signaturePad (signature)="submitSignature($event)"></app-signature-pad>
         </div>
-        <ion-button expand="block" color="danger" (click)="submitDeclined()">
-          Submit without signature
-        </ion-button>
 
         <div *ngIf="alreadySigned" class="signed-container">
           <div class="success-badge">
@@ -93,6 +108,13 @@
           <div *ngIf="signatureImage" class="signature-preview">
             <p class="preview-label">Your Signature:</p>
             <img [src]="signatureImage" alt="Signature" class="signature-image" />
+          </div>
+        </div>
+
+        <div *ngIf="declined" class="declined-container">
+          <div class="success-badge">
+            <ion-icon name="close-circle"></ion-icon>
+            <span>Form Declined</span>
           </div>
         </div>
       </div>

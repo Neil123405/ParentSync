@@ -19,6 +19,7 @@ export class ConsentFormDetailPage implements OnInit {
   alreadySigned = false;
   signatureImage: string | null = null;
   declined = false;
+  showSignaturePad = false;
 
   
   signaturePadOptions: Object = {
