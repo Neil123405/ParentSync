@@ -23,7 +23,12 @@ ion-menu {
 // MENU TOOLBAR
 // ===================================
 .menu-toolbar {
-  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --background: linear-gradient(
+    160deg,
+    #18145f 0%,
+    #3d3899 42%,
+    #6ea8ff 100%
+  ) !important;
   --color: white;
   --padding-top: 16px;
   --padding-bottom: 16px;

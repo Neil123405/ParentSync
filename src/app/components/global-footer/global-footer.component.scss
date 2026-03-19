@@ -7,7 +7,12 @@
   left: 0;
   right: 0;
   z-index: 9999;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(
+    160deg,
+    #18145f 0%,
+    #3d3899 42%,
+    #6ea8ff 100%
+  ) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   height: 60px;

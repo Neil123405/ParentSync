@@ -13,7 +13,12 @@
 // ===================================
 .enhanced-calendar-header {
   position: relative;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(
+    160deg,
+    #18145f 0%,
+    #3d3899 42%,
+    #6ea8ff 100%
+  ) !important;
   padding: 32px 20px 24px 20px;
   overflow: hidden;
   min-height: 180px;
@@ -25,7 +30,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+  background: linear-gradient(
+    160deg,
+    #18145f 0%,
+    #3d3899 42%,
+    #6ea8ff 100%
+  ) !important;
   z-index: 1;
 }
 

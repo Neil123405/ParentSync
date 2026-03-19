@@ -7,7 +7,12 @@ ion-header {
 }
 
 ion-toolbar {
-  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --background: linear-gradient(
+    160deg,
+    #18145f 0%,
+    #3d3899 42%,
+    #6ea8ff 100%
+  ) !important;
   --color: white;
   --padding-top: 16px;
   --padding-bottom: 16px;
@@ -24,7 +29,12 @@ ion-content {
 // PAGE HEADER SECTION
 // ===================================
 .page-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(
+    160deg,
+    #18145f 0%,
+    #3d3899 42%,
+    #6ea8ff 100%
+  ) !important;
   padding: 32px 24px 48px 24px;
   text-align: center;
   position: relative;
