@@ -1,102 +1,147 @@
 <ion-content [fullscreen]="true" scrollY="true" class="login-background" #content>
-  <!-- Wave Header -->
-  <div class="wave-header">
-    <h2>{{ isRegistering ? 'Join Us,' : 'Welcome!,' }}</h2>
-    <h1>{{ isRegistering ? 'Sign Up!' : 'Log In!' }}</h1>
-  </div>
+  
+  <!-- Premium Header Section -->
+  <div class="premium-header">
+    <div class="header-content">
+      <div class="security-badge">
+        <ion-icon name="shield-checkmark"></ion-icon>
+        <span>Secure Portal Access</span>
+      </div>
+      
+      <div class="branding-section">
+        <h2 class="brand-greeting">{{ isRegistering ? 'Join Us,' : 'Welcome!,' }}</h2>
+        <h1 class="brand-title">{{ isRegistering ? 'Create Your Account' : 'Sign In!' }}</h1>
+        <p class="brand-subtitle">{{ isRegistering ? 'Connect with your school community' : 'Use your assigned school account to continue.' }}</p>
+      </div>
 
-  <!-- Login Form -->
-  <div class="login-form" [class.keyboard-open]="keyboardOpen" *ngIf="!isRegistering">
-    <!-- Email Address -->
-    <div class="input-container">
-      <label>Username</label>
-      <ion-item lines="none">
-        <ion-input type="text" [(ngModel)]="credentials.username" required placeholder="John Doe"></ion-input>
-      </ion-item>
+      <!-- Decorative bubble with logo -->
+      <div class="logo-bubble"></div>
     </div>
 
-    <!-- Password -->
-    <div class="input-container">
-      <label>PASSWORD</label>
-      <ion-item lines="none">
-        <ion-input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required></ion-input>
-        <ion-icon slot="end" [name]="showPassword ? 'eye-outline' : 'eye-off-outline'"
-          (click)="showPassword = !showPassword"></ion-icon>
-      </ion-item>
-    </div>
-
-    <!-- Login Button -->
-    <ion-button expand="block" class="login-button" (click)="login()" [disabled]="!isLoginValid()">
-      Log In
-    </ion-button>
-
-    <!-- Registration Link -->
-    <div class="register-link">
-      <span (click)="toggleMode()">Need an account? Register</span>
-    </div>
-  </div>
-
-  <!-- Registration Form -->
-  <div class="registration-form" [class.keyboard-open]="keyboardOpen" *ngIf="isRegistering">
-    <!-- First Name -->
-    <div class="input-container">
-      <label>FIRST NAME</label>
-      <ion-item lines="none">
-        <ion-input type="text" [(ngModel)]="parentInfo.first_name" required
-          placeholder="Enter your first name"></ion-input>
-      </ion-item>
-    </div>
-
-    <!-- Last Name -->
-    <div class="input-container">
-      <label>LAST NAME</label>
-      <ion-item lines="none">
-        <ion-input type="text" [(ngModel)]="parentInfo.last_name" required
-          placeholder="Enter your last name"></ion-input>
-      </ion-item>
-    </div>
-
-    <!-- Email Address -->
-    <div class="input-container">
-      <label>EMAIL ADDRESS</label>
-      <ion-item lines="none">
-        <ion-input type="email" [(ngModel)]="parentInfo.email" required
-          placeholder="your.email@example.com"></ion-input>
-      </ion-item>
-    </div>
-
-    <!-- Contact Number -->
-    <div class="input-container">
-      <label>CONTACT NUMBER</label>
-      <ion-item lines="none">
-        <ion-input type="tel" [(ngModel)]="parentInfo.contactNo" required placeholder="09XXXXXXXXX"></ion-input>
-      </ion-item>
-    </div>
-    <div class="input-container">
-      <label>USER NAME</label>
-      <ion-item lines="none">
-        <ion-input type="text" [(ngModel)]="credentials.username" required
-          placeholder="Enter your user name"></ion-input>
-      </ion-item>
-    </div>
-    <!-- Password -->
-    <div class="input-container">
-      <label>PASSWORD</label>
-      <ion-item lines="none">
-        <ion-input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required></ion-input>
-        <ion-icon slot="end" [name]="showPassword ? 'eye-outline' : 'eye-off-outline'"
-          (click)="showPassword = !showPassword"></ion-icon>
-      </ion-item>
-    </div>
-
-    <!-- Register Button -->
-    <ion-button expand="block" class="login-button" (click)="register()" [disabled]="!isRegistrationValid()">
-      Sign Up
-    </ion-button>
-
-    <!-- Login Link -->
-    <div class="register-link">
-      <span (click)="toggleMode()">Already have an account? Log In</span>
+    <!-- Benefits Section (for login mode) -->
+    <div class="benefits" *ngIf="!isRegistering">
+      <div class="benefit-item">
+        <ion-icon name="bell"></ion-icon>
+        <span>Instant parent alerts</span>
+      </div>
+      <div class="benefit-item">
+        <ion-icon name="checkmark-circle"></ion-icon>
+        <span>Clear attendance visibility</span>
+      </div>
+      <div class="benefit-item">
+        <ion-icon name="notification"></ion-icon>
+        <span>Never miss updates</span>
+      </div>
     </div>
   </div>
+
+  <!-- Form Card Container -->
+  <div class="form-card-wrapper">
+    
+    <!-- Login Form -->
+    <div class="form-card" [class.keyboard-open]="keyboardOpen" *ngIf="!isRegistering">
+      <!-- Login Form Fields -->
+      <div class="input-container">
+        <label>USERNAME</label>
+        <ion-item lines="none">
+          <ion-icon name="person" slot="start"></ion-icon>
+          <ion-input type="text" [(ngModel)]="credentials.username" required placeholder="Enter your username"></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="input-container">
+        <label>PASSWORD</label>
+        <ion-item lines="none">
+          <ion-icon name="lock-closed" slot="start"></ion-icon>
+          <ion-input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required placeholder="Enter your password"></ion-input>
+          <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'"
+            (click)="showPassword = !showPassword" class="toggle-icon"></ion-icon>
+        </ion-item>
+      </div>
+
+      <!-- Remember Me -->
+      <div class="remember-me">
+        <ion-checkbox [(ngModel)]="rememberMe" labelPlacement="end">
+          <span>Keep me signed in on this device</span>
+        </ion-checkbox>
+      </div>
+
+      <!-- Sign In Button -->
+      <ion-button expand="block" class="premium-button" (click)="login()" [disabled]="!isLoginValid()">
+        Sign In
+      </ion-button>
+
+      <!-- Register Link -->
+      <div class="auth-toggle">
+        <span>Don't have an account? <strong (click)="toggleMode()">Create one</strong></span>
+      </div>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="form-card" [class.keyboard-open]="keyboardOpen" *ngIf="isRegistering">
+      <div class="input-container">
+        <label>FIRST NAME</label>
+        <ion-item lines="none">
+          <ion-icon name="person" slot="start"></ion-icon>
+          <ion-input type="text" [(ngModel)]="parentInfo.first_name" required
+            placeholder="Your first name"></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="input-container">
+        <label>LAST NAME</label>
+        <ion-item lines="none">
+          <ion-icon name="person" slot="start"></ion-icon>
+          <ion-input type="text" [(ngModel)]="parentInfo.last_name" required
+            placeholder="Your last name"></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="input-container">
+        <label>EMAIL ADDRESS</label>
+        <ion-item lines="none">
+          <ion-icon name="mail" slot="start"></ion-icon>
+          <ion-input type="email" [(ngModel)]="parentInfo.email" required
+            placeholder="your.email@example.com"></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="input-container">
+        <label>CONTACT NUMBER</label>
+        <ion-item lines="none">
+          <ion-icon name="call" slot="start"></ion-icon>
+          <ion-input type="tel" [(ngModel)]="parentInfo.contactNo" required placeholder="09XXXXXXXXX"></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="input-container">
+        <label>USERNAME</label>
+        <ion-item lines="none">
+          <ion-icon name="person" slot="start"></ion-icon>
+          <ion-input type="text" [(ngModel)]="credentials.username" required
+            placeholder="Choose a username"></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="input-container">
+        <label>PASSWORD</label>
+        <ion-item lines="none">
+          <ion-icon name="lock-closed" slot="start"></ion-icon>
+          <ion-input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required></ion-input>
+          <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'"
+            (click)="showPassword = !showPassword" class="toggle-icon"></ion-icon>
+        </ion-item>
+      </div>
+
+      <ion-button expand="block" class="premium-button" (click)="register()" [disabled]="!isRegistrationValid()">
+        Create Account
+      </ion-button>
+
+      <div class="auth-toggle">
+        <span>Already have an account? <strong (click)="toggleMode()">Sign in</strong></span>
+      </div>
+    </div>
+
+  </div>
+
 </ion-content>

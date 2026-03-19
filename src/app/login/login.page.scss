@@ -3,7 +3,7 @@
 // ============================================================================
 
 .login-background {
-  --background: #ffffff;
+  --background: #f8fafc;
   --padding-start: 0;
   --padding-end: 0;
   --padding-top: 0;
@@ -12,182 +12,272 @@
 
 
 // ============================================================================
-// WAVE HEADER SECTION
+// PREMIUM HEADER SECTION
 // ============================================================================
 
-.wave-header {
-  // Layout
+.premium-header {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 34vh;
-  min-height: 220px;
-  padding: 24px 28px 0;
-
-  // Appearance
-  color: #ffffff;
-   background: linear-gradient(
+  background: linear-gradient(
     160deg,
     #18145f 0%,
     #3d3899 42%,
     #6ea8ff 100%
   ) !important;
-  border-bottom-left-radius: 45% 35%;
+  padding: 32px 20px 48px;
+  border-bottom-left-radius: 32px;
+  border-bottom-right-radius: 32px;
+  overflow: visible;
+}
 
-  // Decorative bubble with family image
-  &::after {
-    content: "";
-    position: absolute;
-    top: 20px;
-    right: -50px;
-    width: 220px;
-    height: 220px;
-     background:
-    url('../../assets/images/ParentSync-Logo.png') center/60% no-repeat,
-    rgba(255, 255, 255, 0.22);
+.header-content {
+  position: relative;
+  z-index: 2;
+  max-width: 100%;
+}
 
-    
-  background-size: contain;
-    border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+// Security Badge
+.security-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  backdrop-filter: blur(8px);
+  margin-bottom: 24px;
 
-  /* Optional: extra “frosted glass” blur */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25);
-
-    
+  ion-icon {
+    font-size: 14px;
   }
+}
 
-  // Header text styles
-  h2 {
-    margin: 0 0 2px 0;
+// Branding Section
+.branding-section {
+  margin-bottom: 32px;
+  color: #ffffff;
+  padding-right: 220px;
+
+  .brand-greeting {
+    margin: 0;
+    font-size: 14px;
     font-weight: 500;
-    font-size: inherit;
-    letter-spacing: 0.2px;
-    opacity: 0.95;
+    opacity: 0.9;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
   }
 
-  h1 {
-    margin: 0 0 16px 0;
-    font-size: 40px;
+  .brand-title {
+    margin: 0;
+    font-size: 36px;
     font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: 0.2px;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+  }
+
+  .brand-subtitle {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.85;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+}
+
+// Logo Bubble (positioned like pseudo-element but now a div)
+.logo-bubble {
+  position: absolute;
+  top: -20px;
+  right: 0;
+  width: 150px;
+  height: 150px;
+  background:
+    url('../../assets/images/ParentSync-Logo.png') center/70% no-repeat,
+    rgba(255, 255, 255, 0.15);
+  background-size: 100%, cover;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+// Benefits Section
+.benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+  padding-top: 16px;
+
+  .benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+
+    ion-icon {
+      font-size: 18px;
+      color: #4ade80;
+      flex-shrink: 0;
+    }
   }
 }
 
 
 // ============================================================================
-// FORM STYLES (LOGIN & REGISTRATION)
+// FORM CARD WRAPPER & STYLES
 // ============================================================================
 
-.login-form,
-.registration-form {
-  max-width: 360px;
-  margin: 18px auto 40px;
-  padding: 0 20px;
-  padding-bottom: 20px;
+.form-card-wrapper {
+  max-width: 420px;
+  margin: -36px auto 0;
+  padding: 0 16px 40px;
+  position: relative;
+  z-index: 10;
+}
 
-  // Keyboard open state
+.form-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px 24px;
+  box-shadow: 0 20px 60px rgba(24, 20, 95, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+
   &.keyboard-open {
     padding-bottom: 300px;
   }
 
-  // ----------------------------------------------------------------------------
   // Input Container
-  // ----------------------------------------------------------------------------
   .input-container {
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 
-    // Input label
     label {
       display: block;
-      margin: 0 10px 8px;
-      font-size: 10px;
+      margin: 0 0 8px 0;
+      font-size: 11px;
       font-weight: 700;
-      color: #a6a9b0;
-      letter-spacing: 0.6px;
+      color: #64748b;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
     }
 
-    // Input field wrapper
+    // Input Item
     ion-item {
-      // Ionic CSS variables
-      --background: #ffffff;
+      --background: #f1f5f9;
       --inner-padding-end: 0;
       --padding-start: 14px;
       --padding-end: 12px;
       --min-height: 48px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      box-shadow: none;
+      transition: all 0.25s ease;
 
-      // Custom styles
-      border: 1.6px solid #d6e4ef;
-      border-radius: 22px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
-      // Focus state
       &:focus-within {
-        border-color: #2aa2c8;
-        box-shadow: 0 6px 14px rgba(42, 162, 200, 0.18);
+        --background: #ffffff;
+        border-color: #2d67c0;
+        box-shadow: 0 0 0 3px rgba(45, 103, 192, 0.1);
       }
 
-      // Input field
+      // Start Icon
+      ion-icon[slot="start"] {
+        color: #94a3b8;
+        font-size: 18px;
+        margin-right: 8px;
+      }
+
+      // Input
       ion-input {
-        --placeholder-color: #8ea3b5;
+        --placeholder-color: #cbd5e1;
         --placeholder-opacity: 1;
-        --padding-start: 10px;
-
+        --padding-start: 0;
         font-size: 15px;
-        color: #1f2a37;
+        color: #0f172a;
+        font-weight: 500;
       }
 
-      // Input icon
-      ion-icon {
-        margin-right: 6px;
+      // Toggle Icon
+      .toggle-icon {
+        color: #94a3b8;
         font-size: 20px;
-        color: #8ea3b5;
-        opacity: 0.85;
+        cursor: pointer;
+        transition: color 0.2s ease;
+
+        &:active {
+          color: #2d67c0;
+        }
       }
     }
   }
 
-  // ----------------------------------------------------------------------------
-  // Submit Button
-  // ----------------------------------------------------------------------------
-  .login-button {
-    // Ionic CSS variables
-    --background: linear-gradient(90deg, #2d67c0 0%, #2aa2c8 100%);
-    --background-activated: linear-gradient(90deg, #265aa8 0%, #2293b6 100%);
-    --border-radius: 22px;
-    --padding-top: 12px;
-    --padding-bottom: 12px;
-    --box-shadow: 0 8px 18px rgba(45, 103, 192, 0.28);
+  // Remember Me
+  .remember-me {
+    margin: 16px 0 24px;
+    
+    ion-checkbox {
+      --size: 18px;
+      --checkbox-background-checked: #2d67c0;
+      --checkbox-border-color: #cbd5e1;
+      --checkbox-border-color-checked: #2d67c0;
 
-    // Custom styles
-    width: 200px;
-    margin: 18px auto 0;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.2px;
-    text-transform: none;
+      span {
+        font-size: 13px;
+        color: #475569;
+        font-weight: 500;
+        margin-left: 8px;
+      }
+    }
   }
 
-  // ----------------------------------------------------------------------------
-  // Register Link
-  // ----------------------------------------------------------------------------
-  .register-link {
-    margin-top: 22px;
-    font-size: 14px;
-    color: #6b7280;
-    text-align: center;
+  // Premium Button
+  .premium-button {
+    --background: linear-gradient(135deg, #2d67c0 0%, #1e40af 100%);
+    --background-hover: linear-gradient(135deg, #2555a8 0%, #183099 100%);
+    --background-activated: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+    --border-radius: 12px;
+    --padding-top: 14px;
+    --padding-bottom: 14px;
+    --box-shadow: 0 10px 25px rgba(45, 103, 192, 0.3);
+    
+    margin-top: 8px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: none;
 
-    span {
+    &:disabled {
+      --background: #cbd5e1;
+      --box-shadow: none;
+      opacity: 0.6;
+    }
+  }
+
+  // Auth Toggle
+  .auth-toggle {
+    text-align: center;
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+
+    strong {
       color: #2d67c0;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
+      transition: color 0.2s ease;
+
+      &:active {
+        color: #1e40af;
+      }
     }
   }
 }
@@ -200,9 +290,12 @@
 ion-item::part(native) {
   padding: 0;
   background: transparent;
-  border-radius: 22px;
 }
 
 ion-content {
-  --padding-bottom: 40px; // Add padding to allow scrolling past buttons
+  --padding-bottom: 20px;
+}
+
+ion-checkbox::part(container) {
+  border-radius: 4px;
 }
