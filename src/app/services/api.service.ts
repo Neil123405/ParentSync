@@ -37,16 +37,18 @@ interface SignConsentResponse {
   success: boolean;
   signatureImage?: string;
 }
-// environment.apiUrl || 
+// environment.apiUrl ||
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = environment.apiUrl || 'http://localhost:8000/api';
 
   // User management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
-  private currentProfileSubject = new BehaviorSubject<ParentProfile | null>(null);
+  private currentProfileSubject = new BehaviorSubject<ParentProfile | null>(
+    null
+  );
 
   public currentUser$ = this.currentUserSubject.asObservable();
   public currentProfile$ = this.currentProfileSubject.asObservable();
@@ -60,31 +62,57 @@ export class ApiService {
     this.loadStoredUser();
   }
 
+  private storeValue(key: string, value: string, remember: boolean) {
+    if (remember) {
+      localStorage.setItem(key, value);
+      sessionStorage.removeItem(key);
+    } else {
+      sessionStorage.setItem(key, value);
+      localStorage.removeItem(key);
+    }
+  }
+
+  private getToken(): string | null {
+    // Prefer sessionStorage first (non-remembered), then localStorage (remembered)
+    return sessionStorage.getItem('token') || localStorage.getItem('token');
+  }
+
   private getHeaders() {
-    const token = localStorage.getItem('token');
+    const token = this.getToken();
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      Accept: 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     });
+  }
+
+  setToken(token: string, remember: boolean) {
+    this.storeValue('token', token, remember);
   }
 
   // Authentication Methods
   login(credentials: any): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials, { headers: this.getHeaders() });
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials, {
+      headers: this.getHeaders(),
+      withCredentials: true,
+    });
   }
 
   register(userData: any): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData, { headers: this.getHeaders() });
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData, {
+      headers: this.getHeaders(),
+    });
   }
 
   // User Management Methods
-  setCurrentUser(user: User, profile?: ParentProfile): void {
-    localStorage.setItem('currentUser', JSON.stringify(user));
+  setCurrentUser(user: User, profile?: ParentProfile, remember: boolean = false): void {
+    const storage = remember ? localStorage : sessionStorage;
+
+  storage.setItem('currentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
 
     if (profile) {
-      localStorage.setItem('currentProfile', JSON.stringify(profile));
+      storage.setItem('currentProfile', JSON.stringify(profile));
       this.currentProfileSubject.next(profile);
       // console.log('setCurrentUser: profile set', profile);
     } else {
@@ -111,8 +139,11 @@ export class ApiService {
     // }
 
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     localStorage.removeItem('currentUser');
+    sessionStorage.removeItem('currentUser');
     localStorage.removeItem('currentProfile');
+    sessionStorage.removeItem('currentProfile');
     this.currentUserSubject.next(null);
     this.currentProfileSubject.next(null);
   }
@@ -122,35 +153,42 @@ export class ApiService {
   }
 
   private loadStoredUser(): void {
-    const storedUser = localStorage.getItem('currentUser');
-    const storedProfile = localStorage.getItem('currentProfile');
+    const storedUser =
+      sessionStorage.getItem('currentUser') ||
+      localStorage.getItem('currentUser');
+    const storedProfile =
+      sessionStorage.getItem('currentProfile') ||
+      localStorage.getItem('currentProfile');
 
-    if (storedUser) {
-      this.currentUserSubject.next(JSON.parse(storedUser));
-    }
-    if (storedProfile) {
+    if (storedUser) this.currentUserSubject.next(JSON.parse(storedUser));
+    if (storedProfile)
       this.currentProfileSubject.next(JSON.parse(storedProfile));
-
-      // console.log('loadStoredUser: loaded profile', JSON.parse(storedProfile));
-    }
   }
 
   // Parent APIs
   getParentProfile(parentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/parent/${parentId}/profile`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/parent/${parentId}/profile`, {
+      headers: this.getHeaders(),
+    });
   }
 
   getParentChildren(parentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/parent/${parentId}/children`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/parent/${parentId}/children`, {
+      headers: this.getHeaders(),
+    });
   }
 
   updateParentProfile(parentId: number, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/parent/${parentId}/profile`, data, { headers: this.getHeaders() });
+    return this.http.put(`${this.apiUrl}/parent/${parentId}/profile`, data, {
+      headers: this.getHeaders(),
+    });
   }
 
   // Announcements
   getParentAnnouncements(parentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/parent/${parentId}/announcements`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/parent/${parentId}/announcements`, {
+      headers: this.getHeaders(),
+    });
   }
 
   getParentEvents(parentId: number, date?: string): Observable<any> {
@@ -162,14 +200,31 @@ export class ApiService {
   }
 
   uploadParentPhoto(base64: string) {
-    return this.http.post(`${this.apiUrl}/parent/upload-photo`, { photo: base64 }, { headers: this.getHeaders() });
+    return this.http.post(
+      `${this.apiUrl}/parent/upload-photo`,
+      { photo: base64 },
+      { headers: this.getHeaders() }
+    );
   }
 
-  updateParentAccount(parentId: number, data: { first_name: string; last_name: string; email: string; contactNo: string }) {
-    return this.http.put(`${this.apiUrl}/parent/${parentId}/profile`, data, { headers: this.getHeaders() });
+  updateParentAccount(
+    parentId: number,
+    data: {
+      first_name: string;
+      last_name: string;
+      email: string;
+      contactNo: string;
+    }
+  ) {
+    return this.http.put(`${this.apiUrl}/parent/${parentId}/profile`, data, {
+      headers: this.getHeaders(),
+    });
   }
 
-  getAllUnsignedConsentFormsForParent(parentId: number, date?: string): Observable<any> {
+  getAllUnsignedConsentFormsForParent(
+    parentId: number,
+    date?: string
+  ): Observable<any> {
     let url = `${this.apiUrl}/parent/${parentId}/unsigned-consent-forms`;
     if (date) {
       url += `?date=${date}`;
@@ -178,11 +233,15 @@ export class ApiService {
   }
 
   getStudentAnnouncements(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/student/${studentId}/announcements`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/student/${studentId}/announcements`, {
+      headers: this.getHeaders(),
+    });
   }
 
   getAnnouncementDetail(announcementId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/announcements/${announcementId}`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/announcements/${announcementId}`, {
+      headers: this.getHeaders(),
+    });
   }
 
   // Events
@@ -191,7 +250,9 @@ export class ApiService {
   // }
 
   getStudentEvents(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/student/${studentId}/events`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/student/${studentId}/events`, {
+      headers: this.getHeaders(),
+    });
   }
 
   // participateInEvent(eventId: number, studentId: number): Observable<any> {
@@ -201,20 +262,29 @@ export class ApiService {
   // }
 
   getEventDetail(eventId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/events/${eventId}`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/events/${eventId}`, {
+      headers: this.getHeaders(),
+    });
   }
 
   // Consent Forms
   getConsentFormsForStudent(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/consent-forms/student/${studentId}`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/consent-forms/student/${studentId}`, {
+      headers: this.getHeaders(),
+    });
   }
 
   getConsentFormDetail(formId: number, studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/consent-forms/${formId}/student/${studentId}`, { headers: this.getHeaders() });
+    return this.http.get(
+      `${this.apiUrl}/consent-forms/${formId}/student/${studentId}`,
+      { headers: this.getHeaders() }
+    );
   }
 
   getStudentProfile(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/student/${studentId}/profile`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/student/${studentId}/profile`, {
+      headers: this.getHeaders(),
+    });
   }
 
   // getAllEvents() {
@@ -223,55 +293,92 @@ export class ApiService {
 
   // Attendance
   getStudentAttendance(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/student/${studentId}/attendance`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/student/${studentId}/attendance`, {
+      headers: this.getHeaders(),
+    });
   }
 
   // getAttendanceSummary(studentId: number): Observable<any> {
   //   return this.http.get(`${this.apiUrl}/attendance/student/${studentId}/summary`, { headers: this.getHeaders() });
   // }
 
-  linkStudentToParent(parentId: number, studentId: number, firstName: string, lastName: string, birthdate: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/parent/link-student`, {
-      parent_id: parentId,
-      student_id: studentId,
-      first_name: firstName,
-      last_name: lastName,
-      birthdate: birthdate
-    }, { headers: this.getHeaders() });
+  linkStudentToParent(
+    parentId: number,
+    studentId: number,
+    firstName: string,
+    lastName: string,
+    birthdate: string
+  ): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/parent/link-student`,
+      {
+        parent_id: parentId,
+        student_id: studentId,
+        first_name: firstName,
+        last_name: lastName,
+        birthdate: birthdate,
+      },
+      { headers: this.getHeaders() }
+    );
   }
 
   getStudentMilestones(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/student/${studentId}/milestones`, { headers: this.getHeaders() });
-  }
-
-  getSectionMilestones(sectionId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/student/section/${sectionId}/milestones`, { headers: this.getHeaders() });
-  }
-
-  unlinkStudentFromParent(studentId: number) {
-    return this.http.post(`${this.apiUrl}/parent/unlink-student`, { student_id: studentId }, {
-      headers: this.getHeaders()
+    return this.http.get(`${this.apiUrl}/student/${studentId}/milestones`, {
+      headers: this.getHeaders(),
     });
   }
 
-  signConsentForm(formId: number, studentId: number, signatureData: string | null, declined: boolean = false): Observable<SignConsentResponse> {
-    return this.http.post<SignConsentResponse>(`${this.apiUrl}/consent-forms/${formId}/sign`, {
-      student_id: studentId,
-      signature: signatureData,
-      declined,
-    }, { headers: this.getHeaders() });
+  getSectionMilestones(sectionId: number): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/student/section/${sectionId}/milestones`,
+      { headers: this.getHeaders() }
+    );
+  }
+
+  unlinkStudentFromParent(studentId: number) {
+    return this.http.post(
+      `${this.apiUrl}/parent/unlink-student`,
+      { student_id: studentId },
+      {
+        headers: this.getHeaders(),
+      }
+    );
+  }
+
+  signConsentForm(
+    formId: number,
+    studentId: number,
+    signatureData: string | null,
+    declined: boolean = false
+  ): Observable<SignConsentResponse> {
+    return this.http.post<SignConsentResponse>(
+      `${this.apiUrl}/consent-forms/${formId}/sign`,
+      {
+        student_id: studentId,
+        signature: signatureData,
+        declined,
+      },
+      { headers: this.getHeaders() }
+    );
   }
 
   getSignedConsentForms(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/consent-forms/student/${studentId}?signed=1`, { headers: this.getHeaders() });
+    return this.http.get(
+      `${this.apiUrl}/consent-forms/student/${studentId}?signed=1`,
+      { headers: this.getHeaders() }
+    );
   }
 
   getUnsignedConsentFormsForStudent(studentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/consent-forms/student/${studentId}/unsigned`, { headers: this.getHeaders() });
+    return this.http.get(
+      `${this.apiUrl}/consent-forms/student/${studentId}/unsigned`,
+      { headers: this.getHeaders() }
+    );
   }
 
   uploadStudentPhoto(studentId: number, base64Image: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/student/${studentId}/upload-photo`,
+    return this.http.post(
+      `${this.apiUrl}/student/${studentId}/upload-photo`,
       { image: base64Image },
       { headers: this.getHeaders() }
     );
@@ -285,7 +392,9 @@ export class ApiService {
   // }
 
   getPendingChildren(parentId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/parent/${parentId}/pending-children`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/parent/${parentId}/pending-children`, {
+      headers: this.getHeaders(),
+    });
   }
 
   // getParentEventParticipants(parentId: number) {
@@ -325,5 +434,4 @@ export class ApiService {
   //     { headers: this.getHeaders() }
   //   );
   // }
-
 }

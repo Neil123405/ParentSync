@@ -10,7 +10,7 @@ import { IonContent } from '@ionic/angular';
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
-  standalone: false
+  standalone: false,
 })
 //* already read!
 export class LoginPage implements AfterViewInit, OnDestroy {
@@ -18,14 +18,14 @@ export class LoginPage implements AfterViewInit, OnDestroy {
 
   credentials = {
     username: '',
-    password: ''
+    password: '',
   };
 
   parentInfo = {
     first_name: '',
     last_name: '',
     email: '',
-    contactNo: ''
+    contactNo: '',
   };
 
   isRegistering = false;
@@ -33,33 +33,30 @@ export class LoginPage implements AfterViewInit, OnDestroy {
   // private keyboardShowListener: any;
   // private keyboardHideListener: any;
 
-
   constructor(
     private apiService: ApiService,
     private alertController: AlertController,
     private loadingController: LoadingController,
     private router: Router
-  ) { }
+  ) {}
 
   showPassword = false;
   rememberMe = false;
-
 
   ngOnInit() {
     // this.setupKeyboardListeners();
     this.credentials = {
       username: '',
-      password: ''
+      password: '',
     };
     this.parentInfo = {
       first_name: '',
       last_name: '',
       email: '',
-      contactNo: ''
+      contactNo: '',
     };
   }
 
-  
   setupKeyboardListeners() {
     Keyboard.addListener('keyboardWillShow', () => {
       this.keyboardOpen = true;
@@ -76,7 +73,12 @@ export class LoginPage implements AfterViewInit, OnDestroy {
   ionViewWillEnter() {
     this.credentials = { username: '', password: '' };
     // Optionally, also clear registration fields if needed:
-    this.parentInfo = { first_name: '', last_name: '', email: '', contactNo: '' };
+    this.parentInfo = {
+      first_name: '',
+      last_name: '',
+      email: '',
+      contactNo: '',
+    };
   }
 
   // prevents keyboard from covering input fields
@@ -85,7 +87,6 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     // Add keyboard listeners instead
     this.setupKeyboardListeners();
   }
-
 
   // cleans up the keyboard listener when the component is destroyed
   ngOnDestroy() {
@@ -99,6 +100,11 @@ export class LoginPage implements AfterViewInit, OnDestroy {
   }
 
   async login() {
+    const payload = {
+      username: this.credentials.username,
+      password: this.credentials.password,
+      remember: this.rememberMe,
+    };
     if (!this.isLoginValid()) {
       this.showAlert('Error', 'Please fill in all fields');
       return;
@@ -109,14 +115,15 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     });
     await loading.present();
 
-    this.apiService.login(this.credentials).subscribe({
+    this.apiService.login(payload).subscribe({
       next: async (response) => {
         await loading.dismiss();
         // console.log('Login successful:', response);
 
-        localStorage.setItem('token', response.token); // Store the token
+        // Replace the localStorage line with:
+        this.apiService.setToken(response.token, this.rememberMe);
         // Store user data using ApiService
-        this.apiService.setCurrentUser(response.user, response.profile);
+        this.apiService.setCurrentUser(response.user, response.profile, this.rememberMe);
         // console.log('After setCurrentUser:', {
         //   user: this.apiService.getCurrentUser(),
         //   profile: this.apiService.getCurrentProfile()
@@ -135,7 +142,9 @@ export class LoginPage implements AfterViewInit, OnDestroy {
                 this.apiService.setFcmToken(token.value);
                 const profile = this.apiService.getCurrentProfile();
                 if (profile) {
-                  this.apiService.savePushToken(profile.parent_id, token.value).subscribe(); // {
+                  this.apiService
+                    .savePushToken(profile.parent_id, token.value)
+                    .subscribe(); // {
                   //   next: (res) => console.log('Token saved!', res),
                   //   error: (err) => console.error('Failed to save token', err)
                   // });
@@ -156,7 +165,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
 
         const errorMessage = error.error?.message || 'Invalid credentials';
         this.showAlert('Login Failed', errorMessage);
-      }
+      },
     });
     // console.log('API URL:', environment.apiUrl);
   }
@@ -175,7 +184,10 @@ export class LoginPage implements AfterViewInit, OnDestroy {
 
     // Validate contact number format (Philippine format)
     if (!this.isValidContactNumber(this.parentInfo.contactNo)) {
-      this.showAlert('Error', 'Please enter a valid Philippine mobile number (09XXXXXXXXX)');
+      this.showAlert(
+        'Error',
+        'Please enter a valid Philippine mobile number (09XXXXXXXXX)'
+      );
       return;
     }
 
@@ -186,7 +198,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
       first_name: this.parentInfo.first_name,
       last_name: this.parentInfo.last_name,
       email: this.parentInfo.email,
-      contactNo: this.parentInfo.contactNo
+      contactNo: this.parentInfo.contactNo,
     };
 
     const loading = await this.loadingController.create({
@@ -199,7 +211,10 @@ export class LoginPage implements AfterViewInit, OnDestroy {
         await loading.dismiss();
         // console.log('Registration successful:', response);
 
-        this.showAlert('Success', 'Account created successfully! You can now login.');
+        this.showAlert(
+          'Success',
+          'Account created successfully! You can now login.'
+        );
         this.isRegistering = false;
         this.clearForms();
       },
@@ -211,12 +226,12 @@ export class LoginPage implements AfterViewInit, OnDestroy {
         // If there are validation errors, append them to the message
         if (error.error?.errors) {
           const details = Object.entries(error.error.errors)
-            .map(([field, messages]) => `${field}: ${(messages as string[])}`)
+            .map(([field, messages]) => `${field}: ${messages as string[]}`)
             .join(' | ');
           errorMessage += ' ' + details;
         }
         this.showAlert('Registration Failed', errorMessage);
-      }
+      },
     });
     // console.log('API URL:', environment.apiUrl); // <-- Add this line
   }
@@ -225,7 +240,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     const alert = await this.alertController.create({
       header,
       message,
-      buttons: ['OK']
+      buttons: ['OK'],
     });
     await alert.present();
   }
@@ -241,7 +256,7 @@ export class LoginPage implements AfterViewInit, OnDestroy {
       first_name: '',
       last_name: '',
       email: '',
-      contactNo: ''
+      contactNo: '',
     };
   }
 
