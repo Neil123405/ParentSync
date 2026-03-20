@@ -1,4 +1,11 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { CalendarEvent } from 'angular-calendar';
 
@@ -54,58 +61,59 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private storage: Storage,
     private elementRef: ElementRef,
-    private alertController: AlertController, // <--- add this
-  ) { }
+    private alertController: AlertController // <--- add this
+  ) {}
 
   async handleEventClick(info: any) {
-  const event = info.event;
-  const type = event.extendedProps?.type;
+    const event = info.event;
+    const type = event.extendedProps?.type;
 
-  const header = type === 'consentForm' ? 'Consent Form' : 'Event';
-  const message = `Open ${header} details for “${event.title}”?`;
+    const header = type === 'consentForm' ? 'Consent Form' : 'Event';
+    const message = `Open ${header} details for “${event.title}”?`;
 
-  const alert = await this.alertController.create({
-    header,
-    message,
-    buttons: [
-      { text: 'Cancel', role: 'cancel' },
-      {
-        text: 'Yes',
-        handler: () => {
-          if (type === 'consentForm') {
-            this.openConsentFormDetail(event);
-          } else {
-            this.openEventDetail(event);
-          }
-        }
-      }
-    ]
-  });
+    const alert = await this.alertController.create({
+      header,
+      message,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Yes',
+          handler: () => {
+            if (type === 'consentForm') {
+              this.openConsentFormDetail(event);
+            } else {
+              this.openEventDetail(event);
+            }
+          },
+        },
+      ],
+    });
 
-  await alert.present();
-}
+    await alert.present();
+  }
 
   // Handle date clicks
- async handleDateClick(info: any) {
-  const dateStr = info.dateStr;
-  const alert = await this.alertController.create({
-    header: 'View Day',
-    message: `Go to day view for ${dateStr}?`,
-    buttons: [
-      { text: 'Cancel', role: 'cancel' },
-      {
-        text: 'Yes',
-        handler: () => {
-          this.router.navigate(['/day-events', dateStr]);
-        }
-      }
-    ]
-  });
-  await alert.present();
-}
+  async handleDateClick(info: any) {
+    const dateStr = info.dateStr;
+    const alert = await this.alertController.create({
+      header: 'View Day',
+      message: `Go to day view for ${dateStr}?`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Yes',
+          handler: () => {
+            this.router.navigate(['/day-events', dateStr]);
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
 
   ngAfterViewInit() {
-    const calendarElement = this.elementRef.nativeElement.querySelector('full-calendar');
+    const calendarElement =
+      this.elementRef.nativeElement.querySelector('full-calendar');
     if (calendarElement) {
       if (this.gesture) {
         this.gesture.destroy();
@@ -143,7 +151,8 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   }
 
   handleSwipe(ev: any) {
-    const calendarElement = this.elementRef.nativeElement.querySelector('full-calendar');
+    const calendarElement =
+      this.elementRef.nativeElement.querySelector('full-calendar');
     if (ev.deltaX > 50) {
       calendarElement?.classList.add('swipe-right');
       setTimeout(() => calendarElement?.classList.remove('swipe-right'), 300);
@@ -186,7 +195,10 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     const cachedConsentFormCount = await this.storage.get('consentFormCount');
     const cachedEventCount = await this.storage.get('eventCount');
 
-    if (cachedConsentFormCount !== null && cachedConsentFormCount !== undefined) {
+    if (
+      cachedConsentFormCount !== null &&
+      cachedConsentFormCount !== undefined
+    ) {
       this.consentFormCount = cachedConsentFormCount;
     }
 
@@ -197,17 +209,19 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     await this.updateCurrentMonthCounts();
   }
 
-
   async updateCurrentMonthCounts() {
     const now = new Date();
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1); // Start of the month
     const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0); // End of the month
-    const normalizeDate = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const normalizeDate = (date: Date) =>
+      new Date(date.getFullYear(), date.getMonth(), date.getDate());
     // Filter Consent Forms and Events for the current month
-    this.consentFormCount = (this.loadedConsentForms || []).filter((form: any) => {
-      const deadline = normalizeDate(new Date(form.deadline));
-      return deadline >= currentMonthStart && deadline <= currentMonthEnd;
-    }).length;
+    this.consentFormCount = (this.loadedConsentForms || []).filter(
+      (form: any) => {
+        const deadline = normalizeDate(new Date(form.deadline));
+        return deadline >= currentMonthStart && deadline <= currentMonthEnd;
+      }
+    ).length;
 
     this.eventCount = (this._calendarEvents || []).filter((event: any) => {
       const eventDate = normalizeDate(new Date(event.start)); // Use `start` instead of `date`
@@ -237,19 +251,25 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
       const centerDate = new Date(arg.view.currentStart); // Center date of the visible range
 
       // Update the current month name
-      this.currentMonth = centerDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+      this.currentMonth = centerDate.toLocaleString('default', {
+        month: 'long',
+        year: 'numeric',
+      });
 
       // Normalize dates for filtering
-      const normalizeDate = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const normalizeDate = (date: Date) =>
+        new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
       // Filter Consent Forms and Events for the current month
-      this.consentFormCount = (this.loadedConsentForms || []).filter((form: any) => {
-        const deadline = normalizeDate(new Date(form.deadline));
-        return (
-          deadline.getFullYear() === centerDate.getFullYear() &&
-          deadline.getMonth() === centerDate.getMonth()
-        );
-      }).length;
+      this.consentFormCount = (this.loadedConsentForms || []).filter(
+        (form: any) => {
+          const deadline = normalizeDate(new Date(form.deadline));
+          return (
+            deadline.getFullYear() === centerDate.getFullYear() &&
+            deadline.getMonth() === centerDate.getMonth()
+          );
+        }
+      ).length;
 
       this.eventCount = (this._calendarEvents || []).filter((event: any) => {
         const eventDate = normalizeDate(new Date(event.start));
@@ -266,91 +286,152 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   async loadEventsAndConsentForms() {
     const parentProfile = this.apiService.getCurrentProfile();
     if (parentProfile) {
-
       const cachedEvents = await this.storage.get('calendarEvents');
       if (cachedEvents) {
         this.calendarOptions.events = cachedEvents;
 
         // Assign cached events to _calendarEvents and loadedConsentForms
-        this._calendarEvents = cachedEvents.filter((event: any) => event.extendedProps.type === 'event');
-        this.loadedConsentForms = cachedEvents.filter((event: any) => event.extendedProps.type === 'consentForm');
+        this._calendarEvents = cachedEvents.filter(
+          (event: any) => event.extendedProps.type === 'event'
+        );
+        this.loadedConsentForms = cachedEvents.filter(
+          (event: any) => event.extendedProps.type === 'consentForm'
+        );
       }
       // Fetch children linked to the parent
-      this.apiService.getParentChildren(parentProfile.parent_id).subscribe((childrenRes) => {
-        const childrenArray = childrenRes.children || [];
-        this.linkedStudentIds = childrenArray.map((child: any) => child.student_id);
+      this.apiService
+        .getParentChildren(parentProfile.parent_id)
+        .subscribe((childrenRes) => {
+          const childrenArray = childrenRes.children || [];
+          this.linkedStudentIds = childrenArray.map(
+            (child: any) => child.student_id
+          );
 
-        // If no linked students, clear consent forms and events
-        if (this.linkedStudentIds.length === 0) {
-          this.loadedConsentForms = [];
-          this.calendarOptions.events = []; // Clear calendar events
-          return;
-        }
+          // If no linked students, clear consent forms and events
+          if (this.linkedStudentIds.length === 0) {
+            this.loadedConsentForms = [];
+            this.calendarOptions.events = []; // Clear calendar events
+            return;
+          }
 
-        // Fetch events
-        this.apiService.getParentEvents(parentProfile.parent_id).subscribe((res) => {
+          // Fetch events
+          this.apiService
+            .getParentEvents(parentProfile.parent_id)
+            .subscribe((res) => {
+              const events = (res.events || []).map(
+                (event: any, index: number) => {
+                  const rawId =
+                    event.event_id ??
+                    event.id ??
+                    `${event.date}-${event.title}`; // guaranteed unique key source
+                  const mappedEvent = {
+                    ...event,
+                    title: event.title,
+                    start: new Date(event.date),
+                    id: `event-${rawId}-${index}`,
+                    student_id: event.student_id,
+                    extendedProps: {
+                      type: 'event',
+                      originalId: rawId,
+                      description: event.description,
+                      student: {
+                        first_name: event.student_first_name,
+                        last_name: event.student_last_name,
+                      },
+                    },
+                    meta: {
+                      student_id: event.student_id,
+                      description: event.description,
+                      student: {
+                        first_name: event.student_first_name,
+                        last_name: event.student_last_name,
+                      },
+                    },
+                  };
 
-          const events = (res.events || []).map((event: any) => ({
-            ...event,
-            title: event.title, // Event title
-            start: new Date(event.date), // Event date
-            id: event.id ?? event.event_id,
-            student_id: event.student_id,
-            extendedProps: {
-              type: 'event', // Custom property to differentiate events
-              description: event.description,
-              student: {
-                first_name: event.student_first_name,
-                last_name: event.student_last_name,
-              },
-            }, meta: {
-              student_id: event.student_id, description: event.description,
-              student: {
-                first_name: event.student_first_name,
-                last_name: event.student_last_name
-              }
-            }
-          }));
-          this._calendarEvents = events;
-          this.linkedEventIds = new Set(events.map((ev: any) => ev.id));
-          // Fetch consent forms
-          this.apiService.getAllUnsignedConsentFormsForParent(parentProfile.parent_id).subscribe((res) => {
+                  console.log('[event debug]', index, {
+                    student_id: mappedEvent.student_id,
+                    eventId: event.event_id,
+                    id: event.id,
+                    mappedId: mappedEvent.id,
+                    rawId,
+                    title: mappedEvent.title,
+                    start: mappedEvent.start,
+                  });
 
-            this.loadedConsentForms = (res.forms || []).map((form: any) => ({
-              ...form,
-              student: {
-                first_name: form.student_first_name,
-                last_name: form.student_last_name,
-                student_id: form.student_id
-              }
-            }));
-            const consentForms = (res.forms || []).map((form: any) => ({
-              ...form,
-              student_id: form.student_id,
-              title: 'Consent Form: ' + form.title, // Consent form title
-              start: new Date(form.deadline), // Consent form deadline
-              extendedProps: {
-                type: 'consentForm', // Custom property for consent forms
-                form_id: form.form_id,          // <--- add this
-    student_id: form.student_id,
-                student: {
-                  first_name: form.first_name,
-                  last_name: form.last_name,
-                  student_id: form.student_id
-                },
-              },
-            }));
+                  return mappedEvent;
+                }
+              );
+              this._calendarEvents = events;
+              this.linkedEventIds = new Set(
+                events.map((ev: any) => ev.extendedProps?.originalId ?? ev.id)
+              );
+              // Fetch consent forms
+              this.apiService
+                .getAllUnsignedConsentFormsForParent(parentProfile.parent_id)
+                .subscribe((res) => {
+                  this.loadedConsentForms = (res.forms || []).map(
+                    (form: any) => ({
+                      ...form,
+                      student: {
+                        first_name: form.student_first_name,
+                        last_name: form.student_last_name,
+                        student_id: form.student_id,
+                      },
+                    })
+                  );
+                  const consentForms = (res.forms || []).map(
+                    (form: any, index: number) => {
+                      const mapped = {
+                        ...form,
+                        student_id: form.student_id,
+                        title: 'Consent Form: ' + form.title,
+                        start: new Date(form.deadline),
+                        id: `consent-${form.form_id}-${form.student_id}-${index}`,
+                        extendedProps: {
+                          type: 'consentForm',
+                          form_id: form.form_id,
+                          originalId: `${form.form_id}-${form.student_id}`,
+                          student_id: form.student_id,
+                          student: {
+                            first_name: form.first_name,
+                            last_name: form.last_name,
+                            student_id: form.student_id,
+                          },
+                        },
+                      };
+                      console.log(
+                        '[consent debug]',
+                        index,
+                        mapped.id,
+                        mapped.title,
+                        mapped.start,
+                        mapped.extendedProps
+                      );
+                      return mapped;
+                    }
+                  );
 
-            // Combine events and consent forms
-            const combinedEvents = [...events, ...consentForms];
-            this.calendarOptions.events = combinedEvents;
+                  // Combine events and consent forms
+                  const combinedEvents = [...events, ...consentForms];
+                  console.log('Loaded calendar events:', combinedEvents.length);
+                  combinedEvents.forEach((e: any, idx: number) => {
+                    console.log(idx, {
+                      id: e.id,
+                      title: e.title,
+                      start: e.start,
+                      type: e.extendedProps?.type,
+                      dateKey: e.start?.toISOString?.(),
+                    });
+                  });
+                  this.calendarOptions.events = combinedEvents;
 
-            // Cache the combined events
-            this.storage.set('calendarEvents', combinedEvents);
-            this.updateCurrentMonthCounts();
-          });
+                  // Cache the combined events
+                  this.storage.set('calendarEvents', combinedEvents);
+                  this.updateCurrentMonthCounts();
+                });
+            });
         });
-      });
     }
   }
 
@@ -381,14 +462,14 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   }
 
   openEventDetail(event: any) {
-    
     const eventId = event.id ?? event.event_id;
     // let studentId = event.student_id ?? event.meta?.student_id;
-const studentId =
-    event.extendedProps?.student?.student_id ??
-    event.extendedProps?.student_id ??
-    event.student_id ?? event.meta?.student_id;
-    
+    const studentId =
+      event.extendedProps?.student?.student_id ??
+      event.extendedProps?.student_id ??
+      event.student_id ??
+      event.meta?.student_id;
+
     // if (!studentId && event.student && event.student.student_id) {
     //   studentId = event.student.student_id;
     // }
@@ -405,9 +486,9 @@ const studentId =
     const formId = event.form_id ?? event.extendedProps?.form_id;
     // Try to get studentId from multiple possible locations
     const studentId =
-    event.student_id ??
-    event.extendedProps?.student_id ??
-    event.extendedProps?.student?.student_id;
+      event.student_id ??
+      event.extendedProps?.student_id ??
+      event.extendedProps?.student?.student_id;
     // if (!studentId && event.student && form.student.student_id) {
     //   studentId = form.student.student_id;
     // }
@@ -417,33 +498,47 @@ const studentId =
     if (formId && studentId) {
       this.router.navigate(['/consent-form-detail', formId, studentId]);
     } else {
-      alert('Cannot open consent form details: missing student or form information.');
+      alert(
+        'Cannot open consent form details: missing student or form information.'
+      );
     }
   }
 
   get upcomingEvents(): CalendarEvent[] {
     const now = startOfDay(new Date());
     const maxDaysAhead = 14; // Show events within the next 14 days
-    return this.calendarEvents.filter(ev => {
-      const evDate = startOfDay(ev.start);
-      const daysDiff = (evDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
-      return (
-        typeof ev.id === 'number' &&
-        this.linkedEventIds.has(ev.id) &&
-        daysDiff >= 0 && daysDiff <= maxDaysAhead
-      );
-    }).sort((a, b) => a.start.getTime() - b.start.getTime());
+    return this.calendarEvents
+      .filter((ev: any) => {
+        if (ev.extendedProps?.type !== 'event') return false;
+        const evDate = startOfDay(ev.start);
+        const daysDiff =
+          (evDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+
+        // Optionally keep original DB id check
+        const originId = ev.extendedProps?.originalId ?? ev.id;
+        const isLinked = this.linkedEventIds.has(originId) || true;
+        // (or remove linkedEventIds set logic entirely if not needed)
+
+        return isLinked && daysDiff >= 0 && daysDiff <= maxDaysAhead;
+      })
+      .sort((a, b) => a.start.getTime() - b.start.getTime());
   }
 
   get upcomingConsentForms(): any[] {
     const now = startOfDay(new Date());
     const maxDaysAhead = 14; // Show forms within the next 14 days
-    return this.loadedConsentForms.filter(form => {
-      if (!form.deadline) return false;
-      const deadlineDate = startOfDay(new Date(form.deadline));
-      const daysDiff = (deadlineDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
-      return daysDiff >= 0 && daysDiff <= maxDaysAhead;
-    }).sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
+    return this.loadedConsentForms
+      .filter((form) => {
+        if (!form.deadline) return false;
+        const deadlineDate = startOfDay(new Date(form.deadline));
+        const daysDiff =
+          (deadlineDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+        return daysDiff >= 0 && daysDiff <= maxDaysAhead;
+      })
+      .sort(
+        (a, b) =>
+          new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
+      );
   }
 
   doRefresh(event: any) {
