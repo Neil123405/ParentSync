@@ -67,11 +67,25 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   async handleEventClick(info: any) {
     const event = info.event;
     const type = event.extendedProps?.type;
-const student = event.extendedProps?.student || {};
-  const studentName = `${student.first_name || ''} ${student.last_name || ''}`.trim() || `ID ${event.extendedProps?.student_id ?? event.student_id ?? 'unknown'}`;
+    const studentExtended = event.extendedProps?.student || {};
+    const studentFirstName =
+      studentExtended.first_name ||
+      event.extendedProps?.student_first_name ||
+      event.first_name ||
+      '';
+    const studentLastName =
+      studentExtended.last_name ||
+      event.extendedProps?.student_last_name ||
+      event.last_name ||
+      '';
+    const studentText = `${studentFirstName} ${studentLastName}`.trim();
+
+    const studentName =
+      studentText ||
+      `ID ${event.extendedProps?.student_id ?? event.student_id ?? 'unknown'}`;
     const header = type === 'consentForm' ? 'Consent Form' : 'Event';
-     const message = `Open ${header} details “${event.title}”` +
-                  `\nStudent: ${studentName}`;
+    const message =
+      `${header} details “${event.title}”` + `\nfor ${studentName}`;
 
     const alert = await this.alertController.create({
       header,
