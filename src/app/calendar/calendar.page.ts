@@ -85,7 +85,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
       `ID ${event.extendedProps?.student_id ?? event.student_id ?? 'unknown'}`;
     const header = type === 'consentForm' ? 'Consent Form' : 'Event';
     const message =
-      `${header} details “${event.title}”` + `\nfor ${studentName}`;
+      `${header}` + ` ` +`(${studentName})`;
 
     const alert = await this.alertController.create({
       header,
@@ -93,7 +93,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         {
-          text: 'Yes',
+          text: 'Details',
           handler: () => {
             if (type === 'consentForm') {
               this.openConsentFormDetail(event);

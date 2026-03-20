@@ -113,6 +113,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
           const d = new Date(ev.date);
           return d >= start && d < end;
         }).map((ev: any) => {
+          console.log('Event from API:', ev); // Add this
           let startDate: Date | string;
           if (ev.time && /^\d{2}:\d{2}:\d{2}$/.test(ev.time)) {
             // Combine date and time: "YYYY-MM-DDTHH:mm:ss"
@@ -128,7 +129,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
             title: ev.title,
             start: startDate,
             className: 'event-class', // Add custom class for events
-            extendedProps: { type: 'event', description: ev.description, student: { first_name: ev.first_name, last_name: ev.last_name }, raw: ev }
+            extendedProps: { type: 'event', description: ev.description, student: { first_name: ev.student_first_name, last_name: ev.student_last_name }, raw: ev }
           }
         });
 
@@ -140,7 +141,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
           start: new Date(f.deadline),
           allDay: true,
           className: 'consent-form-class', // Add custom class for consent forms
-          extendedProps: { type: 'consentForm', student: { first_name: f.first_name, last_name: f.last_name }, raw: f }
+          extendedProps: { type: 'consentForm', student: { first_name: f.student_first_name, last_name: f.student_last_name }, raw: f }
         }));
 
         const combined = [...events, ...forms];
@@ -322,15 +323,19 @@ export class DayEventsPage implements OnInit, AfterViewInit {
  async handleEventClick(info: any) {
   const type = info.event.extendedProps?.type;
   const title = info.event.title ?? 'item';
-  const header = type === 'consentForm' ? 'Consent Form' : 'Event';
+const student = info.event.extendedProps?.student;
 
+  const firstName = student?.first_name?.trim() || '';
+  const lastName = student?.last_name?.trim() || '';
+  const studentName = (firstName || lastName) ? `${firstName} ${lastName}`.trim() : 'Unknown';
+  const header = type === 'consentForm' ? 'Consent Form' : 'Event';
   const alert = await this.alertController.create({
     header,
-    message: `Open ${header} details for "${title}"?`,
+    message: `${header}  (${studentName})`,
     buttons: [
       { text: 'Cancel', role: 'cancel' },
       {
-        text: 'Yes',
+        text: 'Details',
         handler: () => {
           if (type === 'consentForm') {
             this.openConsentFormDetail(info.event.extendedProps);

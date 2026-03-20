@@ -485,3 +485,46 @@ ion-card {
     text-decoration: none !important;
   }
 }
+
+/* ===== TIMED EVENTS (BLUE) ===== */
+:host ::ng-deep .fc-timegrid-event.event-class {
+  width: 4px !important;
+  max-width: 4px !important;
+  margin: 3px 1px !important;
+  padding: 0 !important;
+  border-radius: 1px !important;
+  font-size: 0 !important;
+  overflow: hidden !important;
+}
+
+:host ::ng-deep .fc-timegrid-event.event-class .fc-event-title,
+:host ::ng-deep .fc-timegrid-event.event-class .fc-event-time {
+  display: none !important;
+}
+
+:host ::ng-deep .fc-timegrid-event.event-class .fc-event-main {
+  padding: 0 !important;
+  min-height: 0 !important;
+}
+
+/* ===== ALL-DAY EVENTS (GREEN CONSENT FORMS) ===== */
+:host ::ng-deep .fc-daygrid-event.consent-form-class {
+  width: 20px !important;
+  max-width: 20px !important;
+  margin: 4px auto !important;
+  padding: 0 !important;
+  border-radius: 1px !important;
+  height: 5px !important;
+  font-size: 0 !important;
+  overflow: hidden !important;
+}
+
+:host ::ng-deep .fc-daygrid-event.consent-form-class .fc-event-title,
+:host ::ng-deep .fc-daygrid-event.consent-form-class .fc-event-time {
+  display: none !important;
+}
+
+:host ::ng-deep .fc-daygrid-event.consent-form-class .fc-event-main {
+  padding: 0 !important;
+  min-height: auto !important;
+}
