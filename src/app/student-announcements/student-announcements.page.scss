@@ -147,7 +147,7 @@ ion-content {
     top: 0;
     bottom: 0;
     width: 4px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
   }
 
   &:active {
@@ -169,7 +169,7 @@ ion-content {
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 
   &.announcements-badge {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+    background: linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
   }
 
   .date-day {
@@ -195,7 +195,7 @@ ion-content {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #e1bee7, #9c27b0);
+  background: linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -296,7 +296,7 @@ ion-content {
   white-space: nowrap;
 
   &.read-btn {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+    background: linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
     color: white;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 

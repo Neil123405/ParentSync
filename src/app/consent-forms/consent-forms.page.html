@@ -48,16 +48,21 @@
 
   <!-- Consent Forms List -->
   <div class="content-wrapper">
-    <div class="form-list-item" *ngFor="let form of filteredConsentForms" [class.signed-item]="form.signed"
-      (click)="openConsentForm(form)">
-
+    <div
+      class="form-list-item"
+      *ngFor="let form of filteredConsentForms"
+      [class.signed-item]="form.signed"
+      (click)="openConsentForm(form)"
+    >
       <div class="date-badge forms-badge" [class.signed-badge]="form.signed">
         <span class="date-day">{{ form.created_at | date:'d' }}</span>
         <span class="date-month">{{ form.created_at | date:'MMM' }}</span>
       </div>
 
       <div class="form-avatar" [class.signed-avatar]="form.signed">
-        <ion-icon [name]="form.signed ? 'checkmark-circle' : 'document-text-outline'"></ion-icon>
+        <ion-icon
+          [name]="form.signed ? 'checkmark-circle' : 'document-text-outline'"
+        ></ion-icon>
       </div>
 
       <div class="form-info">
@@ -70,25 +75,37 @@
           </span>
           <span class="meta-item teacher-item">
             <ion-icon name="person-outline"></ion-icon>
-            Posted by {{ (form.first_name && form.last_name) ? (form.first_name + ' ' + form.last_name) : 'Admin' }}
+            Posted by {{ (form.first_name && form.last_name) ? (form.first_name
+            + ' ' + form.last_name) : 'Admin' }}
           </span>
-          <span class="meta-item details-item" *ngIf="form.subject_name || form.section_name">
+          <span
+            class="meta-item details-item"
+            *ngIf="form.subject_name || form.section_name"
+          >
             <ion-icon name="school-outline"></ion-icon>
             {{ form.subject_name }} | {{ form.section_name }}
           </span>
           <ion-badge *ngIf="form.signed" class="status-badge">
             <ion-icon name="checkmark-circle"></ion-icon>
             Signed
-          </ion-badge>  
-          <ion-badge *ngIf="!form.signed && form.declined" class="status-badge declined">
-  <ion-icon name="close-circle"></ion-icon> Declined
-</ion-badge>
+          </ion-badge>
+          <ion-badge
+            *ngIf="!form.signed && form.declined"
+            class="status-badge declined"
+          >
+            <ion-icon name="close-circle"></ion-icon> Declined
+          </ion-badge>
         </div>
       </div>
 
       <div class="form-actions">
-        <button type="button" class="action-btn" [class.sign-btn]="!form.signed" [class.view-btn]="form.signed"
-          (click)="onActionButtonClick(form, $event)">
+        <button
+          type="button"
+          class="action-btn"
+          [class.sign-btn]="!form.signed"
+          [class.view-btn]="form.signed"
+          (click)="onActionButtonClick(form, $event)"
+        >
           {{ form.signed ? 'View' : 'Sign' }}
         </button>
       </div>
@@ -99,9 +116,8 @@
       <ion-icon name="document-text-outline" class="empty-icon"></ion-icon>
       <h3 class="empty-title">No Consent Forms</h3>
       <p class="empty-subtitle">
-        {{ filter === 'signed' ? 'No signed forms yet' :
-        filter === 'unsigned' ? 'All forms have been signed!' :
-        'No consent forms available' }}
+        {{ filter === 'signed' ? 'No signed forms yet' : filter === 'unsigned' ?
+        'All forms have been signed!' : 'No consent forms available' }}
       </p>
     </div>
   </div>

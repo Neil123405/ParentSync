@@ -236,7 +236,12 @@ full-calendar {
   left: 4px;
   width: calc(50% - 4px);
   height: calc(100% - 8px);
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(
+    160deg,
+    #18145f 0%,
+    #3d3899 42%,
+    #6ea8ff 100%
+  ) !important;
   border-radius: 16px;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
@@ -662,7 +667,7 @@ full-calendar {
 
 @keyframes glowingPurple {
   0%, 100% {
-    background: linear-gradient(135deg, #4a8bc2 0%, #3a7bb1 100%);
+    background: linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
     box-shadow: 0 0 20px rgba(33, 150, 243, 0.5);
   }
   50% {
