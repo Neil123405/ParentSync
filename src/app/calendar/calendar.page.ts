@@ -222,7 +222,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
       this.eventCount = cachedEventCount;
     }
     await this.loadEventsAndConsentForms();
-    await this.updateCurrentMonthCounts();
+    await this.updateMonthCounts();
   }
 
   async updateCurrentMonthCounts() {
@@ -248,6 +248,42 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     await this.storage.set('eventCount', this.eventCount);
   }
 
+  private updateMonthCounts() {
+  const calendarApi = this.calendarComponent?.getApi();
+  // If the calendar isn't ready yet, use today's month as a backup
+  const centerDate = calendarApi ? new Date(calendarApi.view.currentStart) : new Date();
+
+  const normalizeDate = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+  // Count Consent Forms for the currently visible month
+  this.consentFormCount = (this.loadedConsentForms || []).filter(
+    (form: any) => {
+      const deadline = normalizeDate(new Date(form.deadline));
+      return (
+        deadline.getFullYear() === centerDate.getFullYear() &&
+        deadline.getMonth() === centerDate.getMonth()
+      );
+    }
+  ).length;
+
+  // Count Events for the currently visible month
+  this.eventCount = (this._calendarEvents || []).filter((event: any) => {
+    const eventDate = normalizeDate(new Date(event.start));
+    return (
+      eventDate.getFullYear() === centerDate.getFullYear() &&
+      eventDate.getMonth() === centerDate.getMonth()
+    );
+  }).length;
+
+  // Save to storage so they persist
+  this.storage.set('consentFormCount', this.consentFormCount);
+  this.storage.set('eventCount', this.eventCount);
+
+  // Force the screen to update the numbers immediately
+  this.cdr.detectChanges();
+}
+
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth', // Default view (month view)
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin], // Plugins for different views and interactions
@@ -272,30 +308,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
         year: 'numeric',
       });
 
-      // Normalize dates for filtering
-      const normalizeDate = (date: Date) =>
-        new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-      // Filter Consent Forms and Events for the current month
-      this.consentFormCount = (this.loadedConsentForms || []).filter(
-        (form: any) => {
-          const deadline = normalizeDate(new Date(form.deadline));
-          return (
-            deadline.getFullYear() === centerDate.getFullYear() &&
-            deadline.getMonth() === centerDate.getMonth()
-          );
-        }
-      ).length;
-
-      this.eventCount = (this._calendarEvents || []).filter((event: any) => {
-        const eventDate = normalizeDate(new Date(event.start));
-        return (
-          eventDate.getFullYear() === centerDate.getFullYear() &&
-          eventDate.getMonth() === centerDate.getMonth()
-        );
-      }).length;
-
-      this.cdr.detectChanges(); // Trigger change detection
+      this.updateMonthCounts();
     },
   };
 
@@ -379,6 +392,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
                 }
               );
               this._calendarEvents = events;
+               this.updateMonthCounts();
               this.linkedEventIds = new Set(
                 events.map((ev: any) => ev.extendedProps?.originalId ?? ev.id)
               );
@@ -444,7 +458,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
 
                   // Cache the combined events
                   this.storage.set('calendarEvents', combinedEvents);
-                  this.updateCurrentMonthCounts();
+                  this.updateMonthCounts();
                 });
             });
         });
@@ -520,41 +534,93 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     }
   }
 
-  get upcomingEvents(): CalendarEvent[] {
+  // get upcomingEvents(): CalendarEvent[] {
+  //   const now = startOfDay(new Date());
+  //   const maxDaysAhead = 14; // Show events within the next 14 days
+  //   return this.calendarEvents
+  //     .filter((ev: any) => {
+  //       if (ev.extendedProps?.type !== 'event') return false;
+  //       const evDate = startOfDay(ev.start);
+  //       const daysDiff =
+  //         (evDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+
+  //       // Optionally keep original DB id check
+  //       const originId = ev.extendedProps?.originalId ?? ev.id;
+  //       const isLinked = this.linkedEventIds.has(originId) || true;
+  //       // (or remove linkedEventIds set logic entirely if not needed)
+
+  //       return isLinked && daysDiff >= 0 && daysDiff <= maxDaysAhead;
+  //     })
+  //     .sort((a, b) => a.start.getTime() - b.start.getTime());
+  // }
+
+  // get upcomingConsentForms(): any[] {
+  //   const now = startOfDay(new Date());
+  //   const maxDaysAhead = 14; // Show forms within the next 14 days
+  //   return this.loadedConsentForms
+  //     .filter((form) => {
+  //       if (!form.deadline) return false;
+  //       const deadlineDate = startOfDay(new Date(form.deadline));
+  //       const daysDiff =
+  //         (deadlineDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+  //       return daysDiff >= 0 && daysDiff <= maxDaysAhead;
+  //     })
+  //     .sort(
+  //       (a, b) =>
+  //         new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
+  //     );
+  // }
+
+    get upcomingEvents(): CalendarEvent[] {
+    const calendarApi = this.calendarComponent?.getApi();
+    const centerDate = calendarApi ? new Date(calendarApi.view.currentStart) : new Date();
     const now = startOfDay(new Date());
-    const maxDaysAhead = 14; // Show events within the next 14 days
-    return this.calendarEvents
+    const maxDaysAhead = 14; 
+
+    return (this._calendarEvents || [])
       .filter((ev: any) => {
         if (ev.extendedProps?.type !== 'event') return false;
-        const evDate = startOfDay(ev.start);
-        const daysDiff =
-          (evDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+        
+        const evDate = new Date(ev.start);
+        const evDayOnly = startOfDay(evDate);
+        const daysDiff = (evDayOnly.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
 
-        // Optionally keep original DB id check
-        const originId = ev.extendedProps?.originalId ?? ev.id;
-        const isLinked = this.linkedEventIds.has(originId) || true;
-        // (or remove linkedEventIds set logic entirely if not needed)
+        // CHECK 1: Is it in the Month/Year we are looking at?
+        const isThisMonth = evDate.getFullYear() === centerDate.getFullYear() &&
+                            evDate.getMonth() === centerDate.getMonth();
 
-        return isLinked && daysDiff >= 0 && daysDiff <= maxDaysAhead;
+        // CHECK 2: Is it within 14 days of today?
+        const isWithin14Days = daysDiff >= 0 && daysDiff <= maxDaysAhead;
+
+        return isThisMonth && isWithin14Days;
       })
-      .sort((a, b) => a.start.getTime() - b.start.getTime());
+      .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
   }
 
   get upcomingConsentForms(): any[] {
+    const calendarApi = this.calendarComponent?.getApi();
+    const centerDate = calendarApi ? new Date(calendarApi.view.currentStart) : new Date();
     const now = startOfDay(new Date());
-    const maxDaysAhead = 14; // Show forms within the next 14 days
-    return this.loadedConsentForms
+    const maxDaysAhead = 14;
+
+    return (this.loadedConsentForms || [])
       .filter((form) => {
         if (!form.deadline) return false;
-        const deadlineDate = startOfDay(new Date(form.deadline));
-        const daysDiff =
-          (deadlineDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
-        return daysDiff >= 0 && daysDiff <= maxDaysAhead;
+        
+        const deadlineDate = new Date(form.deadline);
+        const deadlineDayOnly = startOfDay(deadlineDate);
+        const daysDiff = (deadlineDayOnly.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+
+        // CHECK 1: Is it in the Month/Year we are looking at?
+        const isThisMonth = deadlineDate.getFullYear() === centerDate.getFullYear() &&
+                            deadlineDate.getMonth() === centerDate.getMonth();
+
+        // CHECK 2: Is it within 14 days of today?
+        const isWithin14Days = daysDiff >= 0 && daysDiff <= maxDaysAhead;
+
+        return isThisMonth && isWithin14Days;
       })
-      .sort(
-        (a, b) =>
-          new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
-      );
+      .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
   }
 
   doRefresh(event: any) {
