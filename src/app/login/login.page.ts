@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController, IonInput } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { IonContent } from '@ionic/angular';
@@ -42,6 +42,13 @@ export class LoginPage implements AfterViewInit, OnDestroy {
 
   showPassword = false;
   rememberMe = false;
+
+  togglePassword(passwordInput: IonInput) {
+  this.showPassword = !this.showPassword;
+  setTimeout(() => {
+    passwordInput.setFocus();
+  }, 0);
+}
 
   ngOnInit() {
     // this.setupKeyboardListeners();
