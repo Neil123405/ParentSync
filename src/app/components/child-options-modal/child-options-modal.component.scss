@@ -13,7 +13,12 @@ ion-header {
 
 .modal-toolbar {
   // Ionic CSS variables
-  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --background: linear-gradient(
+    160deg,
+    #18145f 0%,
+    #3d3899 42%,
+    #6ea8ff 100%
+  );
   --color: white;
   --padding-top: 16px;
   --padding-bottom: 16px;
@@ -65,7 +70,12 @@ ion-content {
 .student-profile-header {
   position: relative;
   padding: 32px 24px 48px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(
+    160deg,
+    #18145f 0%,
+    #3d3899 42%,
+    #6ea8ff 100%
+  );
   overflow: hidden;
 }
 
@@ -272,11 +282,11 @@ ion-content {
   }
 
   &.photo-card::before {
-    background: purple;
+    background: blue;
   }
 
   &.unlink-card::before {
-    background: purple;
+    background: blue;
   }
 
   // Interaction states
@@ -346,10 +356,10 @@ ion-content {
   }
 }
 
-.action-card:hover .arrow-icon {
-  color: #667eea;
-  transform: translateX(4px);
-}
+// .action-card:hover .arrow-icon {
+//   color: #667eea;
+//   transform: translateX(4px);
+// }
 
 
 // ============================================================================
@@ -359,7 +369,7 @@ ion-content {
 .info-card {
   padding: 20px;
   background: white;
-  border-left: 4px solid purple;
+  border-left: 4px solid blue;
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
@@ -372,7 +382,7 @@ ion-content {
 
   .info-icon {
     font-size: 1.3rem;
-    color: purple;
+    color: blue;
   }
 
   .info-title {

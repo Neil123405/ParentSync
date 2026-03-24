@@ -357,7 +357,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
                     ...event,
                     title: event.title,
                     start: new Date(event.date),
-                    id: `event-${rawId}-${index}`,
+                    id: event.event_id ?? event.id ?? index,
                     student_id: event.student_id,
                     extendedProps: {
                       type: 'event',
@@ -492,7 +492,8 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   }
 
   openEventDetail(event: any) {
-    const eventId = event.id ?? event.event_id;
+    const rawEventId = event.id ?? event.event_id;
+    const eventId = Number(rawEventId);
     // let studentId = event.student_id ?? event.meta?.student_id;
     const studentId =
       event.extendedProps?.student?.student_id ??
@@ -504,10 +505,11 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     //   studentId = event.student.student_id;
     // }
 
-    if (eventId && studentId) {
+    if (!isNaN(eventId) && studentId) {
       this.router.navigate(['/event-detail', eventId, studentId]);
     } else {
       // Show a toast or alert for missing info
+      console.error('Invalid eventId or studentId', { rawEventId, eventId, studentId, event });
       alert('Cannot open event details: missing student or event information.');
     }
   }

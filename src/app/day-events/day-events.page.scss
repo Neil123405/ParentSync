@@ -509,12 +509,12 @@ ion-card {
 
 /* ===== ALL-DAY EVENTS (GREEN CONSENT FORMS) ===== */
 :host ::ng-deep .fc-daygrid-event.consent-form-class {
-  width: 20px !important;
+  width: 10px !important;
   max-width: 20px !important;
   margin: 4px auto !important;
   padding: 0 !important;
   border-radius: 1px !important;
-  height: 5px !important;
+  height: 3px !important;
   font-size: 0 !important;
   overflow: hidden !important;
 }

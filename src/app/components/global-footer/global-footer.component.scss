@@ -82,14 +82,14 @@
 // Active/Pressed State
 .footer-tab.active,
 .footer-tab:active {
-  color: #4CAF50;
+  color: #ffffff;
 
   ion-icon {
-    color: #4CAF50 !important;
+    color: #ffffff !important;
   }
 
   span {
-    color: #4CAF50 !important;
+    color: #ffffff !important;
   }
 }
 
@@ -107,6 +107,7 @@
   border-radius: 50%;
   z-index: 1;
   transition: all 0.3s ease;
+  background: linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
 }
 
 // ===================================

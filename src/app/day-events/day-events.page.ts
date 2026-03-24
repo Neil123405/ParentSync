@@ -40,6 +40,11 @@ export class DayEventsPage implements OnInit, AfterViewInit {
       center: 'title',
       right: 'next',
     },
+     defaultTimedEventDuration: '00:10:00',
+      slotDuration: '00:30:00',
+  slotLabelInterval: '01:00:00',  
+  // slotMinTime: '07:00:00',
+  // slotMaxTime: '19:00:00',  
     navLinks: true,
     navLinkDayClick: this.handleHeaderDateClick.bind(this),
     events: [], // Events will be dynamically loaded
