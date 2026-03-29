@@ -127,9 +127,10 @@
         <label>PASSWORD</label>
         <ion-item lines="none">
           <ion-icon name="lock-closed" slot="start"></ion-icon>
-          <ion-input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required></ion-input>
+          <ion-input #passwordInputRegister [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required></ion-input>
           <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'"
-            (click)="showPassword = !showPassword" class="toggle-icon"></ion-icon>
+            (pointerdown)="$event.preventDefault()"
+            (click)="togglePassword(passwordInputRegister)" class="toggle-icon"></ion-icon>
         </ion-item>
       </div>
 
