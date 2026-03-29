@@ -42,7 +42,7 @@ interface SignConsentResponse {
   providedIn: 'root',
 })
 export class ApiService {
-  private apiUrl = 'http://192.168.1.10:8000/api';
+  private apiUrl = 'http://192.168.1.4:8000/api';
 
   // User management
   private currentUserSubject = new BehaviorSubject<User | null>(null);

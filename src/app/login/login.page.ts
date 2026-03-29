@@ -67,9 +67,9 @@ export class LoginPage implements AfterViewInit, OnDestroy {
   setupKeyboardListeners() {
     Keyboard.addListener('keyboardWillShow', () => {
       this.keyboardOpen = true;
-      setTimeout(() => {
-        this.content.scrollToBottom(300);
-      }, 200);
+      // setTimeout(() => {
+      //   this.content.scrollToBottom(300);
+      // }, 200);
     });
 
     Keyboard.addListener('keyboardWillHide', () => {
