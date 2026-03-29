@@ -6,6 +6,7 @@ import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { ToastController, ModalController, MenuController } from '@ionic/angular';
 import { ApiService, ParentProfile } from './services/api.service';
 import { AccountMenuModalComponent } from './components/account-menu-modal/account-menu-modal.component';
+import { Storage } from '@ionic/storage-angular';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,8 @@ export class AppComponent implements OnInit {
     private menu: MenuController,
     private apiService: ApiService,
     private router: Router,
-    private platform: Platform
+    private platform: Platform,
+    private storage: Storage
   ) {
     this.initializeApp();
   }
@@ -101,17 +103,44 @@ export class AppComponent implements OnInit {
     if ((window as any).Capacitor?.isNativePlatform && token) {
       this.apiService.removePushToken(token).subscribe({
         next: () => {
-          this.apiService.logout();
+          this.performFullLogout();
           this.router.navigateByUrl('/login', { replaceUrl: true });
         },
         error: () => {
-          this.apiService.logout();
+          this.performFullLogout();
           this.router.navigateByUrl('/login', { replaceUrl: true });
         }
       });
     } else {
-      this.apiService.logout();
+      this.performFullLogout();
       this.router.navigateByUrl('/login', { replaceUrl: true });
     }
   }
+
+  private async performFullLogout() {
+  // Step 2: Clear all storage via ApiService
+  this.apiService.logout();
+
+  // Step 3: Clear Ionic Storage cache
+  await this.clearIonicStorage();
+
+  // Step 4: Clear browser caches & cookies
+  this.clearBrowserCache();
+
+  // Step 5: Navigate to login
+  this.router.navigateByUrl('/login', { replaceUrl: true });
+}
+
+private async clearIonicStorage() {
+  const storage = await this.storage.create();
+  await storage.clear();
+}
+
+private clearBrowserCache() {
+  if ('caches' in window) {
+    caches.keys().then(names => {
+      names.forEach(name => caches.delete(name));
+    });
+  }
+}
 }

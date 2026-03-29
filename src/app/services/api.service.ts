@@ -144,6 +144,9 @@ export class ApiService {
     sessionStorage.removeItem('currentUser');
     localStorage.removeItem('currentProfile');
     sessionStorage.removeItem('currentProfile');
+    localStorage.clear();
+  sessionStorage.clear();
+    this.fcmToken = null;
     this.currentUserSubject.next(null);
     this.currentProfileSubject.next(null);
   }
