@@ -13,8 +13,14 @@
     <!-- Header Content -->
     <div class="header-content">
       <div class="month-display">
-        <h1 class="current-month">{{ currentMonth }}</h1>
-      </div>
+  <button class="nav-arrow" (click)="goToPrevious()">
+    <ion-icon name="chevron-back"></ion-icon>
+  </button>
+  <h1 class="current-month">{{ currentMonth }}</h1>
+  <button class="nav-arrow" (click)="goToNext()">
+    <ion-icon name="chevron-forward"></ion-icon>
+  </button>
+</div>
       
       <div class="stats-row">
         <!-- Event Count Indicator -->
