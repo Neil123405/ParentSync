@@ -111,9 +111,10 @@
                   <div class="meta-item">
                     <ion-icon name="people-outline" class="meta-icon"></ion-icon>
                     <span class="meta-text">
-                      {{ group.announcement.scope === 'school' ? 'School-wide' :
+                      {{ group.announcement.scope === 'schoolwide' ? 'School-wide' :
                       group.announcement.scope === 'section' ? 'Section' :
-                      group.announcement.scope === 'class' ? 'Class' :
+                      group.announcement.scope === 'students' ? 'Student/s' :
+                      group.announcement.scope === 'grade_section_class' ? 'Grade/Section/Class' :
                       group.announcement.scope === 'individual' ? 'Individual/s' : 'Unknown' }}
                     </span>
                   </div>
