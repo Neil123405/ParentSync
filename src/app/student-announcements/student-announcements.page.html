@@ -31,6 +31,7 @@
 
   <div class="content-wrapper">
     <div class="announcement-list-item" *ngFor="let announcement of announcements" (click)="openAnnouncementDetail(announcement)">
+      <div class="unread-badge" *ngIf="announcement.is_read === 0 || announcement.is_read === '0'"></div>
       <div class="date-badge announcements-badge">
         <span class="date-day">{{ announcement.created_at | date:'d' }}</span>
         <span class="date-month">{{ announcement.created_at | date:'MMM' }}</span>

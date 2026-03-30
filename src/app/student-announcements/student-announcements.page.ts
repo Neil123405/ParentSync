@@ -22,8 +22,9 @@ export class StudentAnnouncementsPage implements OnInit {
     this.studentId = +this.route.snapshot.paramMap.get('studentId')!;
     this.apiService.getStudentAnnouncements(this.studentId).subscribe(res => {
       this.announcements = res.announcements || [];
+      console.log('announcements', this.announcements);
     });
-    console.log('studentId from route', this.studentId);
+    
   }
 
   openAnnouncementDetail(announcement: any) {

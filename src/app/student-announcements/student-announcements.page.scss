@@ -373,3 +373,38 @@ ion-content {
     font-size: 0.85rem;
   }
 }
+
+.announcement-list-item {
+  position: relative; // Make it a positioning context for the badge
+  
+  &.has-unread-badge {
+    // Slight padding adjustment to accommodate badge
+    padding-right: 8px;
+  }
+}
+
+// Unread badge circle positioned at top-right
+.unread-badge {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  animation: pulse-badge 2s infinite;
+  z-index: 10;
+}
+
+@keyframes pulse-badge {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.9;
+  }
+}
