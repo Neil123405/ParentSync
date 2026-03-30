@@ -14,6 +14,7 @@ import { Storage } from '@ionic/storage-angular';
 })
 export class AnnouncementDetailPage implements OnInit {
   announcementId!: number;
+  studentId!: number;
   announcement: any;
 
   constructor(
@@ -26,12 +27,17 @@ export class AnnouncementDetailPage implements OnInit {
     // the plus converts the string to a number
     await this.storage.create();
     this.announcementId = +this.route.snapshot.paramMap.get('announcementId')!;
+    this.studentId = +this.route.snapshot.paramMap.get('studentId')!;
     const cachedAnnouncement = await this.storage.get(`announcement_${this.announcementId}`);
     if (cachedAnnouncement) {
       this.announcement = cachedAnnouncement;
     }
     this.apiService.getAnnouncementDetail(this.announcementId).subscribe({
       next: async (res) => {
+        this.apiService.markAnnouncementAsRead(this.announcementId, this.studentId).subscribe({
+  next: () => { this.announcement.is_read = true; },
+  error: (err) => console.warn('mark read failed', err)
+});
         this.announcement = res.announcement;
 
         // Cache the announcement

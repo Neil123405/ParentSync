@@ -23,11 +23,23 @@ export class StudentAnnouncementsPage implements OnInit {
     this.apiService.getStudentAnnouncements(this.studentId).subscribe(res => {
       this.announcements = res.announcements || [];
     });
+    console.log('studentId from route', this.studentId);
   }
 
   openAnnouncementDetail(announcement: any) {
-    this.router.navigate(['/announcement-detail', announcement.id ?? announcement.announcement_id]);
+  const announcementId = announcement.id ?? announcement.announcement_id;
+  const studentId = this.studentId; // from route param
+   if (!studentId) {
+    console.error('studentId missing');
+    return;
   }
+  this.apiService.markAnnouncementAsRead(announcementId, studentId).subscribe({
+    next: () => { announcement.is_read = true; },
+    error: (err) => { console.warn('mark read failed', err); }
+  });
+
+  this.router.navigate(['/announcement-detail', announcementId, studentId]);
+}
 
   doRefresh(event: any) {
     this.ngOnInit();

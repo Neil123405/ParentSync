@@ -36,7 +36,7 @@ const routes: Routes = [
     loadChildren: () => import('./school-events/school-events.module').then( m => m.SchoolEventsPageModule)
   },
   {
-    path: 'announcement-detail/:announcementId',
+    path: 'announcement-detail/:announcementId/:studentId',
     loadChildren: () => import('./announcement-detail/announcement-detail.module').then( m => m.AnnouncementDetailPageModule)
   },
   {

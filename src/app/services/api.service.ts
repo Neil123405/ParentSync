@@ -241,6 +241,13 @@ export class ApiService {
     });
   }
 
+markAnnouncementAsRead(announcementId: number, studentId: number) {
+  return this.http.post(
+    `${this.apiUrl}/student/${studentId}/announcements/${announcementId}/read`,
+    { student_id: studentId }, // optional if route is authoritative
+    { headers: this.getHeaders() }
+  );
+}
   getAnnouncementDetail(announcementId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/announcements/${announcementId}`, {
       headers: this.getHeaders(),
