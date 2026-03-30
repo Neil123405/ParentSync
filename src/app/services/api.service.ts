@@ -53,9 +53,19 @@ export class ApiService {
   public currentUser$ = this.currentUserSubject.asObservable();
   public currentProfile$ = this.currentProfileSubject.asObservable();
   public profileUpdated$ = new Subject<void>();
+  public unreadAnnouncementCounts: { [studentId: number]: number } = {};
   // consentFormSigned$ = new Subject<{ formId: number, studentId: number }>();
 
   private fcmToken: string | null = null;
+
+  setUnreadAnnouncementCount(studentId: number, value: number) {
+  this.unreadAnnouncementCounts[studentId] = value;
+}
+
+decrementUnreadAnnouncementCount(studentId: number) {
+  const current = this.unreadAnnouncementCounts[studentId] || 0;
+  this.unreadAnnouncementCounts[studentId] = Math.max(0, current - 1);
+}
 
   constructor(private http: HttpClient) {
     // Load stored user data on service initialization

@@ -317,7 +317,12 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     }
   }
 
-  processData<T extends { deadline: string; student_id: number; date: string; created_at: string }>(
+  // Expose to template
+  get unreadAnnouncementCounts() {
+    return this.apiService.unreadAnnouncementCounts;
+  }
+
+  processData<T extends { deadline: string; student_id: number; date: string; created_at: string; is_read?: number | string }>(
     items: T[],
     filterCondition: (item: T) => boolean,
     groupByKey: (item: T) => string | number
@@ -375,6 +380,33 @@ export class ChildrenPage implements OnInit, AfterViewInit {
         this.announcementCounts = cachedAnnouncementCounts;
         this.announcementCountsTwo = cachedAnnouncementCountsTwo;
       }
+
+//       try {
+//   const announcementsRes = await this.apiService.getParentAnnouncements(parentId).toPromise();
+  
+//   console.log('🔍 Raw announcementsRes:', announcementsRes);
+//   console.log('🔍 announcementsRes.announcements:', announcementsRes?.announcements);
+//   console.log('🔍 Array length:', announcementsRes?.announcements?.length);
+  
+//   // Count ALL unread announcements
+//   const unreadCounts: { [key: number]: number } = {};
+//   if (announcementsRes?.announcements && Array.isArray(announcementsRes.announcements)) {
+//     announcementsRes.announcements.forEach((ann: any) => {
+//       console.log('🔍 Checking announcement:', ann.announcement_id, 'is_read:', ann.is_read, 'type:', typeof ann.is_read);
+//       if (ann.is_read === 0 || ann.is_read === '0' || ann.is_read === false) {
+//         const id = ann.student_id;
+//         unreadCounts[id] = (unreadCounts[id] || 0) + 1;
+//         this.apiService.setUnreadAnnouncementCount(id, unreadCounts[id]);
+//       }
+//     });
+//   } else {
+//     console.warn('⚠️ announcements is not an array or doesnt exist');
+//   }
+//   console.log('✓ Final unreadCounts:', unreadCounts);
+//   console.log('✓ ApiService.unreadAnnouncementCounts:', this.apiService.unreadAnnouncementCounts);
+// } catch (error) {
+//   console.error('❌ Failed to fetch announcements for unread count:', error);
+// }
       if (!cachedChildren || !cachedConsentCounts || !cachedEventCounts || !cachedAnnouncementCounts) {
         const [childrenRes, eventsRes, announcementsRes, consentFormsRes, pendingStudentsRes] = await Promise.all([
           this.apiService.getParentChildren(parentId).toPromise(),
@@ -421,12 +453,25 @@ export class ChildrenPage implements OnInit, AfterViewInit {
           announcementsRes.announcements,
           announcement => {
             const announcementDate = new Date(new Date(announcement.created_at).toDateString());
-            return announcementDate.getTime() === todayDate.getTime();
+            const isToday = announcementDate.getTime() === todayDate.getTime();
+            return isToday;
           },
           announcement => announcement.student_id
         );
         this.announcementCountsTwo = announcementGrouped;
         this.announcementCounts = announcementCounts;
+        // Simple: count ALL unread announcements (no date filter)
+        const unreadCounts: { [key: number]: number } = {};
+        announcementsRes.announcements.forEach((ann: any) => {
+          if (ann.is_read === 0 || ann.is_read === '0') {
+            const id = ann.student_id;
+            unreadCounts[id] = (unreadCounts[id] || 0) + 1;
+            // Sync to ApiService
+            this.apiService.setUnreadAnnouncementCount(id, unreadCounts[id]);
+          }
+        });
+        console.log('Unread counts:', unreadCounts);
+console.log('ApiService unreadAnnouncementCounts:', this.apiService.unreadAnnouncementCounts);
         await this._storage?.set('announcementCounts', this.announcementCounts);
         await this._storage?.set('announcementCountsTwo', this.announcementCountsTwo);
         // Process pending students data
@@ -572,11 +617,11 @@ export class ChildrenPage implements OnInit, AfterViewInit {
         now = calendarApi.getDate();
       }
     }
-      this.attendanceCurrentMonth = now.toLocaleString('default', {
-        month: 'long',
-        year: 'numeric'
-      });
-      this.updateAttendanceStats(now);
+    this.attendanceCurrentMonth = now.toLocaleString('default', {
+      month: 'long',
+      year: 'numeric'
+    });
+    this.updateAttendanceStats(now);
   }
 
   getStatusColor(status: string): string {

@@ -34,8 +34,13 @@ export class StudentAnnouncementsPage implements OnInit {
     return;
   }
   this.apiService.markAnnouncementAsRead(announcementId, studentId).subscribe({
-    next: () => { announcement.is_read = true; },
-    error: (err) => { console.warn('mark read failed', err); }
+    next: () => {
+    announcement.is_read = 1;
+    // this.apiService.decrementUnreadAnnouncementCount(studentId);
+  },
+  error: (err) => {
+    console.warn('mark read failed', err);
+  }
   });
 
   this.router.navigate(['/announcement-detail', announcementId, studentId]);
