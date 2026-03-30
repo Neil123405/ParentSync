@@ -55,12 +55,25 @@ export class ApiService {
   public profileUpdated$ = new Subject<void>();
   public unreadAnnouncementCounts: { [studentId: number]: number } = {};
   public unreadEventCounts: { [studentId: number]: number } = {};
+  public unreadConsentFormCounts: { [studentId: number]: number } = {};
   // consentFormSigned$ = new Subject<{ formId: number, studentId: number }>();
 
   private fcmToken: string | null = null;
 
   // Broadcast when new announcement received
   announcementReceived$ = new Subject<void>();
+
+  setUnreadConsentFormCount(studentId: number, value: number) {
+    this.unreadConsentFormCounts[studentId] = value;
+  }
+
+  markConsentFormAsRead(formId: number, studentId: number): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/student/${studentId}/consent-forms/${formId}/read`,
+      {},
+      { headers: this.getHeaders() }
+    );
+  }
 
   // Method to trigger the broadcast
   notifyNewAnnouncement() {

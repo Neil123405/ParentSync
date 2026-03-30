@@ -44,10 +44,18 @@ export class ConsentFormsPage implements OnInit {
     return this.consentForms;
   }
 
-  openConsentForm(form: any) {    
+  openConsentForm(form: any) {
+    // Mark form as read immediately
+    this.apiService.markConsentFormAsRead(form.form_id, this.studentId).subscribe({
+      next: (response) => {
+        console.log('✓ Consent form marked as read:', response);
+        form.is_read = 1;  // ← Update local object to hide badge
+      },
+      error: (error) => console.error('❌ Error marking consent form as read:', error)
+    });
+
     this.router.navigate(['/consent-form-detail', form.form_id, this.studentId]);
   }
-
   onActionButtonClick(form: any, event: Event) {
     event?.preventDefault?.();
     event?.stopPropagation?.();    

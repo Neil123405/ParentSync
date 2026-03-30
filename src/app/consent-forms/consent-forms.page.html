@@ -54,6 +54,7 @@
       [class.signed-item]="form.signed"
       (click)="openConsentForm(form)"
     >
+    <div class="unread-badge" *ngIf="form.is_read === 0 || form.is_read === '0'"></div>
       <div class="date-badge forms-badge" [class.signed-badge]="form.signed">
         <span class="date-day">{{ form.created_at | date:'d' }}</span>
         <span class="date-month">{{ form.created_at | date:'MMM' }}</span>

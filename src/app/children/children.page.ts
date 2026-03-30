@@ -296,8 +296,9 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     // Fetch both announcements AND events
   Promise.all([
     this.apiService.getParentAnnouncements(parentId).toPromise(),
-    this.apiService.getParentEvents(parentId).toPromise()
-  ]).then(([announcementsRes, eventsRes]) => {
+    this.apiService.getParentEvents(parentId).toPromise(),
+    this.apiService.getAllUnsignedConsentFormsForParent(parentId).toPromise()
+  ]).then(([announcementsRes, eventsRes, consentFormsRes]) => {
     // Count unread announcements
     const unreadAnnouncementCounts: { [key: number]: number } = {};
     announcementsRes.announcements.forEach((ann: any) => {
@@ -317,7 +318,20 @@ export class ChildrenPage implements OnInit, AfterViewInit {
         this.apiService.setUnreadEventCount(id, unreadEventCounts[id]);
       }
     });
-      console.log('✓ Unread counts refreshed:', unreadAnnouncementCounts, unreadEventCounts);
+     const unreadConsentFormCounts: { [key: number]: number } = {};
+    consentFormsRes.forms.forEach((form: any) => {
+      if (form.is_read === 0 || form.is_read === '0' || form.is_read === false) {
+        const id = form.student_id;
+        unreadConsentFormCounts[id] = (unreadConsentFormCounts[id] || 0) + 1;
+        this.apiService.setUnreadConsentFormCount(id, unreadConsentFormCounts[id]);
+      }
+    });
+
+    console.log('✓ Unread counts refreshed:', { 
+      unreadAnnouncementCounts, 
+      unreadEventCounts, 
+      unreadConsentFormCounts  // ← ADD THIS
+    });
 
       // Force change detection (push notifications may fire outside Angular zone)
       this.cdr.detectChanges();
@@ -367,6 +381,10 @@ export class ChildrenPage implements OnInit, AfterViewInit {
   // Expose to template
   get unreadAnnouncementCounts() {
     return this.apiService.unreadAnnouncementCounts;
+  }
+
+  get unreadConsentFormCounts() {
+    return this.apiService.unreadConsentFormCounts;
   }
 
   processData<T extends { deadline: string; student_id: number; date: string; created_at: string; is_read?: number | string }>(
