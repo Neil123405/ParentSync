@@ -41,7 +41,7 @@ export class AppComponent implements OnInit {
       const toast = await this.toastController.create({
         message: notification.title
           ? `${notification.title}`
-          : 'New Announcement/s',
+          : 'New Update',
         duration: 4000,
         position: 'top',
         color: 'primary'
