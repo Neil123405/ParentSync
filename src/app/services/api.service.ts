@@ -54,25 +54,31 @@ export class ApiService {
   public currentProfile$ = this.currentProfileSubject.asObservable();
   public profileUpdated$ = new Subject<void>();
   public unreadAnnouncementCounts: { [studentId: number]: number } = {};
+  public unreadEventCounts: { [studentId: number]: number } = {};
   // consentFormSigned$ = new Subject<{ formId: number, studentId: number }>();
 
   private fcmToken: string | null = null;
 
   // Broadcast when new announcement received
   announcementReceived$ = new Subject<void>();
-  
+
   // Method to trigger the broadcast
   notifyNewAnnouncement() {
     this.announcementReceived$.next();
   }
   setUnreadAnnouncementCount(studentId: number, value: number) {
-  this.unreadAnnouncementCounts[studentId] = value;
-}
+    this.unreadAnnouncementCounts[studentId] = value;
+  }
 
-decrementUnreadAnnouncementCount(studentId: number) {
-  const current = this.unreadAnnouncementCounts[studentId] || 0;
-  this.unreadAnnouncementCounts[studentId] = Math.max(0, current - 1);
-}
+  // decrementUnreadAnnouncementCount(studentId: number) {
+  //   const current = this.unreadAnnouncementCounts[studentId] || 0;
+  //   this.unreadAnnouncementCounts[studentId] = Math.max(0, current - 1);
+  // }
+
+  setUnreadEventCount(studentId: number, value: number) {
+    this.unreadEventCounts[studentId] = value;
+  }
+
 
   constructor(private http: HttpClient) {
     // Load stored user data on service initialization
@@ -125,7 +131,7 @@ decrementUnreadAnnouncementCount(studentId: number) {
   setCurrentUser(user: User, profile?: ParentProfile, remember: boolean = false): void {
     const storage = remember ? localStorage : sessionStorage;
 
-  storage.setItem('currentUser', JSON.stringify(user));
+    storage.setItem('currentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
 
     if (profile) {
@@ -162,7 +168,7 @@ decrementUnreadAnnouncementCount(studentId: number) {
     localStorage.removeItem('currentProfile');
     sessionStorage.removeItem('currentProfile');
     localStorage.clear();
-  sessionStorage.clear();
+    sessionStorage.clear();
     this.fcmToken = null;
     this.currentUserSubject.next(null);
     this.currentProfileSubject.next(null);
@@ -258,13 +264,21 @@ decrementUnreadAnnouncementCount(studentId: number) {
     });
   }
 
-markAnnouncementAsRead(announcementId: number, studentId: number) {
-  return this.http.post(
-    `${this.apiUrl}/student/${studentId}/announcements/${announcementId}/read`,
-    { student_id: studentId }, // optional if route is authoritative
-    { headers: this.getHeaders() }
-  );
-}
+  markAnnouncementAsRead(announcementId: number, studentId: number) {
+    return this.http.post(
+      `${this.apiUrl}/student/${studentId}/announcements/${announcementId}/read`,
+      { student_id: studentId }, // optional if route is authoritative
+      { headers: this.getHeaders() }
+    );
+  }
+
+  markEventAsRead(eventId: number, studentId: number): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/student/${studentId}/events/${eventId}/read`,
+      { student_id: studentId },
+      { headers: this.getHeaders() }
+    );
+  }
   getAnnouncementDetail(announcementId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/announcements/${announcementId}`, {
       headers: this.getHeaders(),

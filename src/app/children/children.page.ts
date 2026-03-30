@@ -160,6 +160,10 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     }
   }
 
+  get unreadEventCounts() {
+  return this.apiService.unreadEventCounts;
+}
+
   handleAttendanceSwipe(ev: any) {
     const calendarElement = this.elementRef.nativeElement.querySelector('full-calendar');
     const swipeThreshold = 50; // Minimum pixels for a swipe
@@ -289,16 +293,31 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     const parentId = this.currentProfile?.parent_id;
     if (!parentId) return;
 
-    this.apiService.getParentAnnouncements(parentId).toPromise().then(announcementsRes => {
-      const unreadCounts: { [key: number]: number } = {};
-      announcementsRes.announcements.forEach((ann: any) => {
-        if (ann.is_read === 0 || ann.is_read === '0' || ann.is_read === false) {
-          const id = ann.student_id;
-          unreadCounts[id] = (unreadCounts[id] || 0) + 1;
-          this.apiService.setUnreadAnnouncementCount(id, unreadCounts[id]);
-        }
-      });
-      console.log('✓ Unread counts refreshed:', unreadCounts);
+    // Fetch both announcements AND events
+  Promise.all([
+    this.apiService.getParentAnnouncements(parentId).toPromise(),
+    this.apiService.getParentEvents(parentId).toPromise()
+  ]).then(([announcementsRes, eventsRes]) => {
+    // Count unread announcements
+    const unreadAnnouncementCounts: { [key: number]: number } = {};
+    announcementsRes.announcements.forEach((ann: any) => {
+      if (ann.is_read === 0 || ann.is_read === '0' || ann.is_read === false) {
+        const id = ann.student_id;
+        unreadAnnouncementCounts[id] = (unreadAnnouncementCounts[id] || 0) + 1;
+        this.apiService.setUnreadAnnouncementCount(id, unreadAnnouncementCounts[id]);
+      }
+    });
+
+    // Count unread events
+    const unreadEventCounts: { [key: number]: number } = {};
+    eventsRes.events.forEach((event: any) => {
+      if (event.is_read === 0 || event.is_read === '0' || event.is_read === false) {
+        const id = event.student_id;
+        unreadEventCounts[id] = (unreadEventCounts[id] || 0) + 1;
+        this.apiService.setUnreadEventCount(id, unreadEventCounts[id]);
+      }
+    });
+      console.log('✓ Unread counts refreshed:', unreadAnnouncementCounts, unreadEventCounts);
 
       // Force change detection (push notifications may fire outside Angular zone)
       this.cdr.detectChanges();

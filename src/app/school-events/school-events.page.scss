@@ -362,3 +362,33 @@ ion-content {
     font-size: 0.85rem;
   }
 }
+
+// ===================================
+// EVENT LIST ITEM - UNREAD BADGE
+// ===================================
+.event-list-item {
+  position: relative;
+}
+
+.unread-badge {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(54, 40, 150, 0.3);
+  animation: pulse 2s infinite;
+  z-index: 10;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(54, 40, 150, 0.3);
+  }
+  50% {
+    box-shadow: 0 2px 16px rgba(54, 40, 150, 0.6);
+  }
+}

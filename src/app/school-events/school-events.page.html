@@ -32,6 +32,7 @@
 
   <div class="content-wrapper">
     <div class="event-list-item" *ngFor="let event of events" (click)="openEventDetail(event)">
+      <div class="unread-badge" *ngIf="event.is_read === 0 || event.is_read === '0'"></div>
       <div class="date-badge">
         <span class="date-day">{{ event.date | date:'d' }}</span>
         <span class="date-month">{{ event.date | date:'MMM' }}</span>

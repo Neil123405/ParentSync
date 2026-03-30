@@ -43,9 +43,19 @@ export class SchoolEventsPage implements OnInit {
     }
   }
 
-  openEventDetail(event: any) {    
-    this.router.navigate(['/event-detail', event.event_id, event.student_id]);
-  }
+  openEventDetail(event: any) {
+  // Just mark as read, don't decrement (will be recounted on next refresh)
+  this.apiService.markEventAsRead(event.event_id, event.student_id).subscribe({
+    next: (response) => {
+      event.is_read = 1;
+      console.log('✓ Event marked as read:', response);
+    },
+    error: (error) => console.error('❌ Error marking event as read:', error)
+  });
+
+  // Navigate to detail page
+  this.router.navigate(['/event-detail', event.event_id, event.student_id]);
+}
 
   doRefresh(event: any) {
   this.ngOnInit();
