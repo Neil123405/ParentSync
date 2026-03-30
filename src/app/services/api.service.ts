@@ -58,6 +58,13 @@ export class ApiService {
 
   private fcmToken: string | null = null;
 
+  // Broadcast when new announcement received
+  announcementReceived$ = new Subject<void>();
+  
+  // Method to trigger the broadcast
+  notifyNewAnnouncement() {
+    this.announcementReceived$.next();
+  }
   setUnreadAnnouncementCount(studentId: number, value: number) {
   this.unreadAnnouncementCounts[studentId] = value;
 }

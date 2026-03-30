@@ -47,6 +47,8 @@ export class AppComponent implements OnInit {
         color: 'primary'
       });
       toast.present();
+
+      this.apiService.notifyNewAnnouncement();
     });
   }
 

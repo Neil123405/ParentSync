@@ -248,6 +248,11 @@ export class ChildrenPage implements OnInit, AfterViewInit {
       this.currentProfile = profile;
     });
 
+    this.apiService.announcementReceived$.subscribe(() => {
+    console.log('📢 New announcement detected! Refreshing unread counts...');
+    this.refreshUnreadCounts(); // Call new method
+  });
+
 
     // Load data including this.consentFormCounts
     if (this.currentProfile) {
@@ -278,6 +283,29 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     }, 100);
 
   }
+
+// New method to refresh only unread counts (lightweight)
+refreshUnreadCounts() {
+  const parentId = this.currentProfile?.parent_id;
+  if (!parentId) return;
+
+  this.apiService.getParentAnnouncements(parentId).toPromise().then(announcementsRes => {
+    const unreadCounts: { [key: number]: number } = {};
+    announcementsRes.announcements.forEach((ann: any) => {
+      if (ann.is_read === 0 || ann.is_read === '0' || ann.is_read === false) {
+        const id = ann.student_id;
+        unreadCounts[id] = (unreadCounts[id] || 0) + 1;
+        this.apiService.setUnreadAnnouncementCount(id, unreadCounts[id]);
+      }
+    });
+    console.log('✓ Unread counts refreshed:', unreadCounts);
+    
+    // Force change detection (push notifications may fire outside Angular zone)
+    this.cdr.detectChanges();
+  }).catch(err => {
+    console.error('❌ Failed to refresh unread counts:', err);
+  });
+}
 
   ionViewWillEnter() {
     if (this.currentProfile) {
