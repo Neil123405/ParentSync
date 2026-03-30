@@ -249,9 +249,9 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     });
 
     this.apiService.announcementReceived$.subscribe(() => {
-    console.log('📢 New announcement detected! Refreshing unread counts...');
-    this.refreshUnreadCounts(); // Call new method
-  });
+      console.log('📢 New announcement detected! Refreshing unread counts...');
+      this.refreshUnreadCounts(); // Call new method
+    });
 
 
     // Load data including this.consentFormCounts
@@ -284,28 +284,28 @@ export class ChildrenPage implements OnInit, AfterViewInit {
 
   }
 
-// New method to refresh only unread counts (lightweight)
-refreshUnreadCounts() {
-  const parentId = this.currentProfile?.parent_id;
-  if (!parentId) return;
+  // New method to refresh only unread counts (lightweight)
+  refreshUnreadCounts() {
+    const parentId = this.currentProfile?.parent_id;
+    if (!parentId) return;
 
-  this.apiService.getParentAnnouncements(parentId).toPromise().then(announcementsRes => {
-    const unreadCounts: { [key: number]: number } = {};
-    announcementsRes.announcements.forEach((ann: any) => {
-      if (ann.is_read === 0 || ann.is_read === '0' || ann.is_read === false) {
-        const id = ann.student_id;
-        unreadCounts[id] = (unreadCounts[id] || 0) + 1;
-        this.apiService.setUnreadAnnouncementCount(id, unreadCounts[id]);
-      }
+    this.apiService.getParentAnnouncements(parentId).toPromise().then(announcementsRes => {
+      const unreadCounts: { [key: number]: number } = {};
+      announcementsRes.announcements.forEach((ann: any) => {
+        if (ann.is_read === 0 || ann.is_read === '0' || ann.is_read === false) {
+          const id = ann.student_id;
+          unreadCounts[id] = (unreadCounts[id] || 0) + 1;
+          this.apiService.setUnreadAnnouncementCount(id, unreadCounts[id]);
+        }
+      });
+      console.log('✓ Unread counts refreshed:', unreadCounts);
+
+      // Force change detection (push notifications may fire outside Angular zone)
+      this.cdr.detectChanges();
+    }).catch(err => {
+      console.error('❌ Failed to refresh unread counts:', err);
     });
-    console.log('✓ Unread counts refreshed:', unreadCounts);
-    
-    // Force change detection (push notifications may fire outside Angular zone)
-    this.cdr.detectChanges();
-  }).catch(err => {
-    console.error('❌ Failed to refresh unread counts:', err);
-  });
-}
+  }
 
   ionViewWillEnter() {
     if (this.currentProfile) {
@@ -409,32 +409,32 @@ refreshUnreadCounts() {
         this.announcementCountsTwo = cachedAnnouncementCountsTwo;
       }
 
-//       try {
-//   const announcementsRes = await this.apiService.getParentAnnouncements(parentId).toPromise();
-  
-//   console.log('🔍 Raw announcementsRes:', announcementsRes);
-//   console.log('🔍 announcementsRes.announcements:', announcementsRes?.announcements);
-//   console.log('🔍 Array length:', announcementsRes?.announcements?.length);
-  
-//   // Count ALL unread announcements
-//   const unreadCounts: { [key: number]: number } = {};
-//   if (announcementsRes?.announcements && Array.isArray(announcementsRes.announcements)) {
-//     announcementsRes.announcements.forEach((ann: any) => {
-//       console.log('🔍 Checking announcement:', ann.announcement_id, 'is_read:', ann.is_read, 'type:', typeof ann.is_read);
-//       if (ann.is_read === 0 || ann.is_read === '0' || ann.is_read === false) {
-//         const id = ann.student_id;
-//         unreadCounts[id] = (unreadCounts[id] || 0) + 1;
-//         this.apiService.setUnreadAnnouncementCount(id, unreadCounts[id]);
-//       }
-//     });
-//   } else {
-//     console.warn('⚠️ announcements is not an array or doesnt exist');
-//   }
-//   console.log('✓ Final unreadCounts:', unreadCounts);
-//   console.log('✓ ApiService.unreadAnnouncementCounts:', this.apiService.unreadAnnouncementCounts);
-// } catch (error) {
-//   console.error('❌ Failed to fetch announcements for unread count:', error);
-// }
+      //       try {
+      //   const announcementsRes = await this.apiService.getParentAnnouncements(parentId).toPromise();
+
+      //   console.log('🔍 Raw announcementsRes:', announcementsRes);
+      //   console.log('🔍 announcementsRes.announcements:', announcementsRes?.announcements);
+      //   console.log('🔍 Array length:', announcementsRes?.announcements?.length);
+
+      //   // Count ALL unread announcements
+      //   const unreadCounts: { [key: number]: number } = {};
+      //   if (announcementsRes?.announcements && Array.isArray(announcementsRes.announcements)) {
+      //     announcementsRes.announcements.forEach((ann: any) => {
+      //       console.log('🔍 Checking announcement:', ann.announcement_id, 'is_read:', ann.is_read, 'type:', typeof ann.is_read);
+      //       if (ann.is_read === 0 || ann.is_read === '0' || ann.is_read === false) {
+      //         const id = ann.student_id;
+      //         unreadCounts[id] = (unreadCounts[id] || 0) + 1;
+      //         this.apiService.setUnreadAnnouncementCount(id, unreadCounts[id]);
+      //       }
+      //     });
+      //   } else {
+      //     console.warn('⚠️ announcements is not an array or doesnt exist');
+      //   }
+      //   console.log('✓ Final unreadCounts:', unreadCounts);
+      //   console.log('✓ ApiService.unreadAnnouncementCounts:', this.apiService.unreadAnnouncementCounts);
+      // } catch (error) {
+      //   console.error('❌ Failed to fetch announcements for unread count:', error);
+      // }
       if (!cachedChildren || !cachedConsentCounts || !cachedEventCounts || !cachedAnnouncementCounts) {
         const [childrenRes, eventsRes, announcementsRes, consentFormsRes, pendingStudentsRes] = await Promise.all([
           this.apiService.getParentChildren(parentId).toPromise(),
@@ -499,7 +499,7 @@ refreshUnreadCounts() {
           }
         });
         console.log('Unread counts:', unreadCounts);
-console.log('ApiService unreadAnnouncementCounts:', this.apiService.unreadAnnouncementCounts);
+        console.log('ApiService unreadAnnouncementCounts:', this.apiService.unreadAnnouncementCounts);
         await this._storage?.set('announcementCounts', this.announcementCounts);
         await this._storage?.set('announcementCountsTwo', this.announcementCountsTwo);
         // Process pending students data
@@ -520,6 +520,7 @@ console.log('ApiService unreadAnnouncementCounts:', this.apiService.unreadAnnoun
       }
       // Update selected child data
       if (this.selectedChild) this.updateSelectedChildData();
+      this.refreshUnreadCounts();
       this.isLoading = false;
     } catch (error) {
       this.isLoading = false;
