@@ -16,6 +16,8 @@ import { Storage } from '@ionic/storage-angular';
 })
 export class AppComponent implements OnInit {
   parent: ParentProfile | null = null;
+  private toastQueue: string[] = [];
+   private isToastDisplaying = false;
   constructor(
     private toastController: ToastController,
     private modalCtrl: ModalController,
@@ -36,20 +38,59 @@ export class AppComponent implements OnInit {
       if ('vibrate' in navigator) {
         navigator.vibrate(800);
       }
+// // ← ADD THIS DEBUGGING:
+//   console.log('📬 Full notification object:', notification);
+//   console.log('📬 notification.title:', notification.title);
+//   console.log('📬 notification.data:', notification.data);
+//   console.log('📬 notification.data?.student_name:', notification.data?.student_name);
 
-      // Show a simple toast for the announcement
-      const toast = await this.toastController.create({
-        message: notification.title
-          ? `${notification.title}`
-          : 'New Update',
-        duration: 4000,
-        position: 'top',
-        color: 'primary'
-      });
-      toast.present();
+//       // Show a simple toast for the announcement
+//       const toast = await this.toastController.create({
+//         message: `${notification.body || 'Your child'}: ${notification.title || 'New Update'}`,
+//         duration: 4000,
+//         position: 'top',
+//         color: 'primary',
+//          cssClass: `toast-${this.toastQueue.length}` // Different position for each
+//       });
+//       toast.present();
+
+ const message = `${notification.body || 'Your child'}: ${notification.title || 'New Update'}`;
+      this.showQueuedToast(message);
+
 
       this.apiService.notifyNewAnnouncement();
     });
+  }
+
+  private async showQueuedToast(message: string) {
+    this.toastQueue.push(message);
+    
+    if (!this.isToastDisplaying) {
+      this.processToastQueue();
+    }
+  }
+  private async processToastQueue() {
+    if (this.toastQueue.length === 0) {
+      this.isToastDisplaying = false;
+      return;
+    }
+
+    this.isToastDisplaying = true;
+    const message = this.toastQueue.shift();
+
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 4000,
+      position: 'top',
+      color: 'primary'
+    });
+
+    await toast.present();
+    
+    // Wait for toast duration + buffer before showing next one
+    setTimeout(() => {
+      this.processToastQueue();
+    }, 4500); // 4000ms duration + 500ms buffer
   }
 
   initializeApp() {
