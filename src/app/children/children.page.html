@@ -43,9 +43,9 @@
             <!-- Badge at top right -->
             <span class="student-badge">
               {{
-              (consentFormCounts[child.student_id] || 0) +
-              (schoolEventCounts[child.student_id] || 0) +
-              (announcementCounts[child.student_id] || 0)
+              (unreadConsentFormCounts[child.student_id] || 0) +
+              (unreadEventCounts[child.student_id] || 0) +
+              (unreadAnnouncementCounts[child.student_id] || 0)
               }}
             </span>
             <div class="student-avatar">

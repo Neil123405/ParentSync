@@ -298,7 +298,7 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     this.apiService.getParentAnnouncements(parentId).toPromise(),
     this.apiService.getParentEvents(parentId).toPromise(),
     this.apiService.getAllUnsignedConsentFormsForParent(parentId).toPromise()
-  ]).then(([announcementsRes, eventsRes, consentFormsRes]) => {
+  ]).then(async ([announcementsRes, eventsRes, consentFormsRes]) => {
     // Count unread announcements
     const unreadAnnouncementCounts: { [key: number]: number } = {};
     announcementsRes.announcements.forEach((ann: any) => {
@@ -332,6 +332,11 @@ export class ChildrenPage implements OnInit, AfterViewInit {
       unreadEventCounts, 
       unreadConsentFormCounts  // ← ADD THIS
     });
+
+    // In refreshUnreadCounts(), after setting all counts in the ApiService:
+await this._storage?.set('unreadAnnouncementCounts', unreadAnnouncementCounts);
+await this._storage?.set('unreadEventCounts', unreadEventCounts);
+await this._storage?.set('unreadConsentFormCounts', unreadConsentFormCounts);
 
       // Force change detection (push notifications may fire outside Angular zone)
       this.cdr.detectChanges();
@@ -409,6 +414,9 @@ export class ChildrenPage implements OnInit, AfterViewInit {
 
   async clearCache() {
     await this._storage?.remove('laravelChildren');
+    await this._storage?.remove('unreadAnnouncementCounts');
+    await this._storage?.remove('unreadEventCounts');
+    await this._storage?.remove('unreadConsentFormCounts');
   }
 
   async loadData() {
@@ -428,6 +436,28 @@ export class ChildrenPage implements OnInit, AfterViewInit {
       const cachedAnnouncementCounts = await this._storage?.get('announcementCounts');
       const cachedEventCountsTwo = await this._storage?.get('schoolEventCountsTwo');
       const cachedAnnouncementCountsTwo = await this._storage?.get('announcementCountsTwo');
+
+      // Restore cached unread counts immediately
+const cachedUnreadAnnouncements = await this._storage?.get('unreadAnnouncementCounts') || {};
+const cachedUnreadEvents = await this._storage?.get('unreadEventCounts') || {};
+const cachedUnreadConsentForms = await this._storage?.get('unreadConsentFormCounts') || {};
+
+// Set them in the ApiService immediately
+Object.keys(cachedUnreadAnnouncements).forEach(key => {
+  this.apiService.setUnreadAnnouncementCount(+key, cachedUnreadAnnouncements[key]);
+});
+Object.keys(cachedUnreadEvents).forEach(key => {
+  this.apiService.setUnreadEventCount(+key, cachedUnreadEvents[key]);
+});
+Object.keys(cachedUnreadConsentForms).forEach(key => {
+  this.apiService.setUnreadConsentFormCount(+key, cachedUnreadConsentForms[key]);
+});
+
+console.log('✓ Restored cached unread counts:', { 
+  cachedUnreadAnnouncements, 
+  cachedUnreadEvents, 
+  cachedUnreadConsentForms 
+});
 
       // Use cached data if available
       if (cachedChildren) {
