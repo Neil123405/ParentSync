@@ -55,14 +55,43 @@ export class AppComponent implements OnInit {
 //       toast.present();
 
  const message = `${notification.body || 'Your child'}: ${notification.title || 'New Update'}`;
-      this.showQueuedToast(message);
+      this.showQueuedToast(message, notification.data);
 
 
       this.apiService.notifyNewAnnouncement();
     });
+
+    PushNotifications.addListener('pushNotificationActionPerformed', (notification: any) => {
+    console.log('📬 Notification clicked:', notification);
+    this.handleNotificationAction(notification.notification.data);
+  });
   }
 
-  private async showQueuedToast(message: string) {
+  // ← ADD THIS METHOD:
+private handleNotificationAction(data: any) {
+  if (!data || !data.type) {
+    console.log('No routing data in notification');
+    return;
+  }
+
+  console.log('🎯 Navigating based on type:', data.type);
+
+   switch (data.type) {
+    case 'consent_form':
+      this.router.navigate(['/consent-form-detail', data.form_id, data.student_id]);
+      break;
+    case 'event':
+      this.router.navigate(['/event-detail', data.event_id, data.student_id]);
+      break;
+    case 'announcement':
+      this.router.navigate(['/announcement-detail', data.announcement_id, data.student_id]);  // ← Fixed
+      break;
+    default:
+      console.log('Unknown notification type:', data.type);
+  }
+}
+
+  private async showQueuedToast(message: string, data?: any) {
     this.toastQueue.push(message);
     
     if (!this.isToastDisplaying) {
