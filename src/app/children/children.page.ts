@@ -327,6 +327,41 @@ export class ChildrenPage implements OnInit, AfterViewInit {
       }
     });
 
+    const announcementGrouped: { [key: number]: any[] } = {};
+    announcementsRes.announcements.forEach((ann: any) => {
+      if (!announcementGrouped[ann.student_id]) {
+        announcementGrouped[ann.student_id] = [];
+      }
+      announcementGrouped[ann.student_id].push(ann);
+    });
+    this.announcementCountsTwo = announcementGrouped;
+
+    const eventGrouped: { [key: number]: any[] } = {};
+    eventsRes.events.forEach((event: any) => {
+      if (!eventGrouped[event.student_id]) {
+        eventGrouped[event.student_id] = [];
+      }
+      eventGrouped[event.student_id].push(event);
+    });
+    this.schoolEventCountsTwo = eventGrouped;
+
+    const consentFormGrouped: { [key: number]: any[] } = {};
+    consentFormsRes.forms.forEach((form: any) => {
+      if (!consentFormGrouped[form.student_id]) {
+        consentFormGrouped[form.student_id] = [];
+      }
+      consentFormGrouped[form.student_id].push(form);
+    });
+    this.consentFormCountsTwo = consentFormGrouped;
+
+    // Refresh the preview lists for currently selected child
+    this.updateSelectedChildData();
+
+    // Save updated preview data to cache
+    await this._storage?.set('announcementCountsTwo', announcementGrouped);
+    await this._storage?.set('schoolEventCountsTwo', eventGrouped);
+    await this._storage?.set('consentFormCountsTwo', consentFormGrouped);
+
     console.log('✓ Unread counts refreshed:', { 
       unreadAnnouncementCounts, 
       unreadEventCounts, 
