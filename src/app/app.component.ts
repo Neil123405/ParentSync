@@ -178,7 +178,8 @@ private handleNotificationAction(data: any) {
           this.performFullLogout();
           this.router.navigateByUrl('/login', { replaceUrl: true });
         },
-        error: () => {
+        error: (err) => {
+          console.error('FCM token removal failed, but proceeding with logout:', err);
           this.performFullLogout();
           this.router.navigateByUrl('/login', { replaceUrl: true });
         }
@@ -190,8 +191,10 @@ private handleNotificationAction(data: any) {
   }
 
   private async performFullLogout() {
+     this.apiService.clearAppState();
   // Step 2: Clear all storage via ApiService
   this.apiService.logout();
+  
 
   // Step 3: Clear Ionic Storage cache
   await this.clearIonicStorage();
@@ -199,13 +202,42 @@ private handleNotificationAction(data: any) {
   // Step 4: Clear browser caches & cookies
   this.clearBrowserCache();
 
+   this.toastQueue = [];
+  this.isToastDisplaying = false;
+
+
   // Step 5: Navigate to login
   this.router.navigateByUrl('/login', { replaceUrl: true });
 }
 
 private async clearIonicStorage() {
-  const storage = await this.storage.create();
-  await storage.clear();
+  try {
+    const storage = await this.storage.create();
+    
+    // Specific keys to clear (including badge state and all cache)
+    const keysToRemove = [
+      'hasNewNotification',  // ← Badge state
+      'unreadAnnouncementCounts',
+      'unreadEventCounts',
+      'unreadConsentFormCounts',
+      'announcementCountsTwo',
+      'schoolEventCountsTwo',
+      'consentFormCountsTwo',
+      'calendarEvents',
+      'consentFormCount',
+      'eventCount'
+    ];
+    
+    // Remove each key individually for safety
+    for (const key of keysToRemove) {
+      await storage.remove(key);
+    }
+    
+    // Or clear everything if you prefer
+    await storage.clear();
+  } catch (error) {
+    console.error('Error clearing storage:', error);
+  }
 }
 
 private clearBrowserCache() {

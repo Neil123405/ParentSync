@@ -144,27 +144,27 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     } else {
       console.error('FullCalendar element not found');
     }
-    setTimeout(() => {
-      this.initializeSwipeGesture();
-    }, 500); // 500ms delay
+    // setTimeout(() => {
+    //   this.initializeSwipeGesture();
+    // }, 500); // 500ms delay
   }
 
-  initializeSwipeGesture() {
-    // Use a more specific selector if possible, or ensure this is the only one
-    const calendarElement = document.querySelector('full-calendar');
-    if (calendarElement) {
-      this.gesture = this.gestureCtrl.create({
-        el: calendarElement,
-        gestureName: 'swipe',
-        threshold: 15,
-        passive: true, // Add this to prevent conflicts with scrolling
-        onEnd: (ev) => this.handleSwipe(ev),
-      });
-      this.gesture.enable(true);
-    } else {
-      console.error('FullCalendar element not found for swipe gesture.');
-    }
-  }
+  // initializeSwipeGesture() {
+  //   // Use a more specific selector if possible, or ensure this is the only one
+  //   const calendarElement = document.querySelector('full-calendar');
+  //   if (calendarElement) {
+  //     this.gesture = this.gestureCtrl.create({
+  //       el: calendarElement,
+  //       gestureName: 'swipe',
+  //       threshold: 15,
+  //       passive: true, // Add this to prevent conflicts with scrolling
+  //       onEnd: (ev) => this.handleSwipe(ev),
+  //     });
+  //     this.gesture.enable(true);
+  //   } else {
+  //     console.error('FullCalendar element not found for swipe gesture.');
+  //   }
+  // }
 
   handleSwipe(ev: any) {
     const calendarElement =

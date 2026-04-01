@@ -201,3 +201,31 @@ button:active,
     }
   }
 }
+
+.notification-badge {
+  position: absolute;
+  top: 5px;
+  right: 25px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(54, 40, 150, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(54, 40, 150, 0.4);
+  }
+  50% {
+    box-shadow: 0 2px 16px rgba(54, 40, 150, 0.8);
+  }
+}
+
+// Make sure footer-tab has position: relative
+.footer-tab {
+  position: relative;  // ← Important for badge positioning
+  // ... rest of your styles
+}

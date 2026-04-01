@@ -74,6 +74,18 @@ export class ApiService {
       { headers: this.getHeaders() }
     );
   }
+resetNotification$ = new Subject<void>();
+  clearAppState() {
+  // Reset all unread count maps
+  this.unreadAnnouncementCounts = {};
+  this.unreadEventCounts = {};
+  this.unreadConsentFormCounts = {};
+  
+  // Reset the Subject to prevent stale subscriptions
+  this.announcementReceived$ = new Subject<void>();
+   this.resetNotification$.next();
+  this.resetNotification$ = new Subject<void>();
+}
 
   // Method to trigger the broadcast
   notifyNewAnnouncement() {
