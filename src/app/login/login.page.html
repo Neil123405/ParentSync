@@ -54,8 +54,8 @@
         <ion-item lines="none">
           <ion-icon name="lock-closed" slot="start"></ion-icon>
           <ion-input #passwordInput [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required placeholder="Enter your password"></ion-input>
-          <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'" (pointerdown)="$event.preventDefault()"
-            (click)="togglePassword(passwordInput)" class="toggle-icon"></ion-icon>
+          <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'" (pointerdown)="togglePassword(passwordInput); $event.preventDefault(); $event.stopPropagation()"
+             class="toggle-icon"></ion-icon>
         </ion-item>
       </div>
 
@@ -129,8 +129,8 @@
           <ion-icon name="lock-closed" slot="start"></ion-icon>
           <ion-input #passwordInputRegister [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required></ion-input>
           <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'"
-            (pointerdown)="$event.preventDefault()"
-            (click)="togglePassword(passwordInputRegister)" class="toggle-icon"></ion-icon>
+            (pointerdown)="togglePassword(passwordInputRegister); $event.preventDefault()"
+             class="toggle-icon"></ion-icon>
         </ion-item>
       </div>
 

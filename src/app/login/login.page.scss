@@ -211,6 +211,8 @@
         font-size: 20px;
         cursor: pointer;
         transition: color 0.2s ease;
+        user-select: none;
+  -webkit-user-select: none;
 
         &:active {
           color: #2d67c0;

@@ -43,11 +43,20 @@ export class LoginPage implements AfterViewInit, OnDestroy {
   showPassword = false;
   rememberMe = false;
 
-  togglePassword(passwordInput: IonInput) {
+  togglePassword(passwordInput: any) {
   this.showPassword = !this.showPassword;
-  setTimeout(() => {
-    passwordInput.setFocus();
-  }, 0);
+  // if (passwordInput) {
+  //   passwordInput.setFocus().then(() => passwordInput.blur());
+  // }
+    setTimeout(() => {
+    if (passwordInput) {
+      passwordInput.blur();
+      Keyboard.hide();
+    }
+  }, 50);
+  // setTimeout(() => {
+  //   passwordInput.setFocus();
+  // }, 0);
 }
 
   ngOnInit() {
