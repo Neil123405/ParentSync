@@ -50,6 +50,7 @@ export class ConsentFormsPage implements OnInit {
       next: (response) => {
         console.log('✓ Consent form marked as read:', response);
         form.is_read = 1;  // ← Update local object to hide badge
+        this.apiService.itemMarkedAsRead$.next({ type: 'form', studentId: this.studentId });
       },
       error: (error) => console.error('❌ Error marking consent form as read:', error)
     });

@@ -23,8 +23,8 @@ export class GlobalFooterComponent implements OnInit {
   showFooter: boolean = true;
   parent: any;
   currentProfile: ParentProfile | null = null;
-    hasNewNotification: boolean = false;  // ← ADD THIS
-    private _storage: Storage | null = null;
+  hasNewNotification: boolean = false;  // ← ADD THIS
+  private _storage: Storage | null = null;
 
 
   constructor(
@@ -38,29 +38,33 @@ export class GlobalFooterComponent implements OnInit {
     private storage: Storage  // ← ADD THIS
   ) { }
 
-   ngOnInit() {
+  async ngOnInit() {
     this.storage.create().then(storage => {
-    this._storage = storage;
-    
-    // Restore badge state from storage (handle the Promise correctly)
-    this._storage.get('hasNewNotification').then(savedBadgeState => {
-      if (savedBadgeState === true) {
-        this.hasNewNotification = true;
-        this.cdr.markForCheck();
+      this._storage = storage;
+    });
+
+    // Subscribe to user changes and restore badge when user is available
+    this.apiService.currentUser$.subscribe(async (user) => {
+      if (user && user.user_id) {
+        const userId = user.user_id;
+        const savedBadgeState = await this._storage?.get(`hasNewNotification_${userId}`);
+        if (savedBadgeState === true) {
+          this.hasNewNotification = true;
+          this.cdr.markForCheck();
+        }
       }
     });
-  });
     // Set initial route and footer visibility, showing footer on all routes except '/login'
     this.currentRoute = this.router.url;
     if (this.currentRoute.startsWith('/login') || this.currentRoute === '/' || this.currentRoute === '') {
-    this.currentRoute = '/home';
-  }
+      this.currentRoute = '/home';
+    }
     this.showFooter = !this.currentRoute.startsWith('/login');
-// const savedBadgeState = this._storage?.get('hasNewNotification');
-//     if (savedBadgeState === true) {
-//       this.hasNewNotification = true;
-//       this.cdr.markForCheck();
-//     }
+    // const savedBadgeState = this._storage?.get('hasNewNotification');
+    //     if (savedBadgeState === true) {
+    //       this.hasNewNotification = true;
+    //       this.cdr.markForCheck();
+    //     }
     // Listen for route changes, so to show the footer only on specific routes like Home, Dashboard, etc.
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
@@ -70,8 +74,9 @@ export class GlobalFooterComponent implements OnInit {
 
         if (this.currentRoute === '/children') {
           this.hasNewNotification = false;
-          if (this._storage) {
-            await this._storage.remove('hasNewNotification');
+          const userId = this.apiService.getCurrentUser()?.user_id;
+          if (userId) {
+            this._storage?.set(`hasNewNotification_${userId}`, false);
           }
           this.cdr.markForCheck();
         }
@@ -83,16 +88,17 @@ export class GlobalFooterComponent implements OnInit {
 
     this.apiService.announcementReceived$.subscribe(async () => {
       this.hasNewNotification = true;
-      if (this._storage) {
-        await this._storage.set('hasNewNotification', true);
-      }
       this.cdr.markForCheck();
+      const userId = this.apiService.getCurrentUser()?.user_id;
+      if (userId) {
+        this._storage?.set(`hasNewNotification_${userId}`, true);
+      }
     });
 
     this.apiService.resetNotification$.subscribe(() => {
-    this.hasNewNotification = false;
-    this.cdr.markForCheck();
-  });
+      this.hasNewNotification = false;
+      this.cdr.markForCheck();
+    });
   }
 
   openAccountMenu(event: Event) {

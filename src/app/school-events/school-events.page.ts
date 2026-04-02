@@ -49,6 +49,7 @@ export class SchoolEventsPage implements OnInit {
     next: (response) => {
       event.is_read = 1;
       console.log('✓ Event marked as read:', response);
+      this.apiService.itemMarkedAsRead$.next({ type: 'event', studentId: event.student_id });
     },
     error: (error) => console.error('❌ Error marking event as read:', error)
   });

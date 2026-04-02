@@ -216,7 +216,7 @@ private async clearIonicStorage() {
     
     // Specific keys to clear (including badge state and all cache)
     const keysToRemove = [
-      'hasNewNotification',  // ← Badge state
+      // 'hasNewNotification',  // ← Badge state
       'unreadAnnouncementCounts',
       'unreadEventCounts',
       'unreadConsentFormCounts',
@@ -234,7 +234,7 @@ private async clearIonicStorage() {
     }
     
     // Or clear everything if you prefer
-    await storage.clear();
+    // await storage.clear();
   } catch (error) {
     console.error('Error clearing storage:', error);
   }
