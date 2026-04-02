@@ -217,6 +217,9 @@ private async clearIonicStorage() {
     // Specific keys to clear (including badge state and all cache)
     const keysToRemove = [
       // 'hasNewNotification',  // ← Badge state
+      'cachedAnnouncements',
+      'cachedEvents',
+      'cachedChildrenWithPhotos',
       'unreadAnnouncementCounts',
       'unreadEventCounts',
       'unreadConsentFormCounts',
@@ -225,7 +228,8 @@ private async clearIonicStorage() {
       'consentFormCountsTwo',
       'calendarEvents',
       'consentFormCount',
-      'eventCount'
+      'eventCount',
+      'laravelChildren'
     ];
     
     // Remove each key individually for safety
