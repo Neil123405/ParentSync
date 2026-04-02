@@ -161,8 +161,8 @@ export class ChildrenPage implements OnInit, AfterViewInit {
   }
 
   get unreadEventCounts() {
-  return this.apiService.unreadEventCounts;
-}
+    return this.apiService.unreadEventCounts;
+  }
 
   handleAttendanceSwipe(ev: any) {
     const calendarElement = this.elementRef.nativeElement.querySelector('full-calendar');
@@ -257,6 +257,10 @@ export class ChildrenPage implements OnInit, AfterViewInit {
       this.refreshUnreadCounts(); // Call new method
     });
 
+    this.apiService.itemMarkedAsRead$.subscribe(({ type, studentId }) => {
+  console.log(`📝 ${type} marked as read for student ${studentId}, refreshing counts...`);
+  this.refreshUnreadCounts();
+});
 
     // Load data including this.consentFormCounts
     if (this.currentProfile) {
@@ -294,85 +298,95 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     if (!parentId) return;
 
     // Fetch both announcements AND events
-  Promise.all([
-    this.apiService.getParentAnnouncements(parentId).toPromise(),
-    this.apiService.getParentEvents(parentId).toPromise(),
-    this.apiService.getAllUnsignedConsentFormsForParent(parentId).toPromise()
-  ]).then(async ([announcementsRes, eventsRes, consentFormsRes]) => {
-    // Count unread announcements
-    const unreadAnnouncementCounts: { [key: number]: number } = {};
-    announcementsRes.announcements.forEach((ann: any) => {
-      if (ann.is_read === 0 || ann.is_read === '0' || ann.is_read === false) {
-        const id = ann.student_id;
-        unreadAnnouncementCounts[id] = (unreadAnnouncementCounts[id] || 0) + 1;
-        this.apiService.setUnreadAnnouncementCount(id, unreadAnnouncementCounts[id]);
-      }
-    });
+    Promise.all([
+      this.apiService.getParentAnnouncements(parentId).toPromise(),
+      this.apiService.getParentEvents(parentId).toPromise(),
+      this.apiService.getAllUnsignedConsentFormsForParent(parentId).toPromise()
+    ]).then(async ([announcementsRes, eventsRes, consentFormsRes]) => {
+      // Count unread announcements
+      const unreadAnnouncementCounts: { [key: number]: number } = {};
+      announcementsRes.announcements.forEach((ann: any) => {
+        if (ann.is_read === 0 || ann.is_read === '0' || ann.is_read === false) {
+          const id = ann.student_id;
+          unreadAnnouncementCounts[id] = (unreadAnnouncementCounts[id] || 0) + 1;
+          this.apiService.setUnreadAnnouncementCount(id, unreadAnnouncementCounts[id]);
+        }
+      });
 
-    // Count unread events
-    const unreadEventCounts: { [key: number]: number } = {};
-    eventsRes.events.forEach((event: any) => {
-      if (event.is_read === 0 || event.is_read === '0' || event.is_read === false) {
-        const id = event.student_id;
-        unreadEventCounts[id] = (unreadEventCounts[id] || 0) + 1;
-        this.apiService.setUnreadEventCount(id, unreadEventCounts[id]);
-      }
-    });
-     const unreadConsentFormCounts: { [key: number]: number } = {};
-    consentFormsRes.forms.forEach((form: any) => {
-      if (form.is_read === 0 || form.is_read === '0' || form.is_read === false) {
-        const id = form.student_id;
-        unreadConsentFormCounts[id] = (unreadConsentFormCounts[id] || 0) + 1;
-        this.apiService.setUnreadConsentFormCount(id, unreadConsentFormCounts[id]);
-      }
-    });
+      // Count unread events
+      const unreadEventCounts: { [key: number]: number } = {};
+      eventsRes.events.forEach((event: any) => {
+        if (event.is_read === 0 || event.is_read === '0' || event.is_read === false) {
+          const id = event.student_id;
+          unreadEventCounts[id] = (unreadEventCounts[id] || 0) + 1;
+          this.apiService.setUnreadEventCount(id, unreadEventCounts[id]);
+        }
+      });
 
-    const announcementGrouped: { [key: number]: any[] } = {};
-    announcementsRes.announcements.forEach((ann: any) => {
-      if (!announcementGrouped[ann.student_id]) {
-        announcementGrouped[ann.student_id] = [];
-      }
-      announcementGrouped[ann.student_id].push(ann);
-    });
-    this.announcementCountsTwo = announcementGrouped;
+      const unreadConsentFormCounts: { [key: number]: number } = {};
+      consentFormsRes.forms.forEach((form: any) => {
+        if (form.is_read === 0 || form.is_read === '0' || form.is_read === false) {
+          const id = form.student_id;
+          unreadConsentFormCounts[id] = (unreadConsentFormCounts[id] || 0) + 1;
+          this.apiService.setUnreadConsentFormCount(id, unreadConsentFormCounts[id]);
+        }
+      });
 
-    const eventGrouped: { [key: number]: any[] } = {};
-    eventsRes.events.forEach((event: any) => {
-      if (!eventGrouped[event.student_id]) {
-        eventGrouped[event.student_id] = [];
-      }
-      eventGrouped[event.student_id].push(event);
-    });
-    this.schoolEventCountsTwo = eventGrouped;
+      const announcementGrouped: { [key: number]: any[] } = {};
+      announcementsRes.announcements.forEach((ann: any) => {
+        if (!announcementGrouped[ann.student_id]) {
+          announcementGrouped[ann.student_id] = [];
+        }
+        announcementGrouped[ann.student_id].push(ann);
+      });
+      this.announcementCountsTwo = announcementGrouped;
 
-    const consentFormGrouped: { [key: number]: any[] } = {};
-    consentFormsRes.forms.forEach((form: any) => {
-      if (!consentFormGrouped[form.student_id]) {
-        consentFormGrouped[form.student_id] = [];
-      }
-      consentFormGrouped[form.student_id].push(form);
-    });
-    this.consentFormCountsTwo = consentFormGrouped;
+      const eventGrouped: { [key: number]: any[] } = {};
+      eventsRes.events.forEach((event: any) => {
+        if (!eventGrouped[event.student_id]) {
+          eventGrouped[event.student_id] = [];
+        }
+        eventGrouped[event.student_id].push(event);
+      });
+      this.schoolEventCountsTwo = eventGrouped;
 
-    // Refresh the preview lists for currently selected child
-    this.updateSelectedChildData();
+      const consentFormGrouped: { [key: number]: any[] } = {};
+      consentFormsRes.forms.forEach((form: any) => {
+        if (!consentFormGrouped[form.student_id]) {
+          consentFormGrouped[form.student_id] = [];
+        }
+        consentFormGrouped[form.student_id].push(form);
+      });
+      this.consentFormCountsTwo = consentFormGrouped;
 
-    // Save updated preview data to cache
-    await this._storage?.set('announcementCountsTwo', announcementGrouped);
-    await this._storage?.set('schoolEventCountsTwo', eventGrouped);
-    await this._storage?.set('consentFormCountsTwo', consentFormGrouped);
+      // Refresh the preview lists for currently selected child
+      // this.updateSelectedChildData();
 
-    console.log('✓ Unread counts refreshed:', { 
-      unreadAnnouncementCounts, 
-      unreadEventCounts, 
-      unreadConsentFormCounts  // ← ADD THIS
-    });
+      // Save updated preview data to cache
+      // await this._storage?.set('announcementCountsTwo', announcementGrouped);
+      // await this._storage?.set('schoolEventCountsTwo', eventGrouped);
+      // await this._storage?.set('consentFormCountsTwo', consentFormGrouped);
 
-    // In refreshUnreadCounts(), after setting all counts in the ApiService:
-await this._storage?.set('unreadAnnouncementCounts', unreadAnnouncementCounts);
-await this._storage?.set('unreadEventCounts', unreadEventCounts);
-await this._storage?.set('unreadConsentFormCounts', unreadConsentFormCounts);
+      console.log('✓ Unread counts refreshed:', {
+        unreadAnnouncementCounts,
+        unreadEventCounts,
+        unreadConsentFormCounts  // ← ADD THIS
+      });
 
+      // In refreshUnreadCounts(), after setting all counts in the ApiService:
+      // await this._storage?.set('unreadAnnouncementCounts', unreadAnnouncementCounts);
+      // await this._storage?.set('unreadEventCounts', unreadEventCounts);
+      // await this._storage?.set('unreadConsentFormCounts', unreadConsentFormCounts);
+
+      await Promise.all([
+        this._storage?.set('announcementCountsTwo', announcementGrouped),
+        this._storage?.set('schoolEventCountsTwo', eventGrouped),
+        this._storage?.set('consentFormCountsTwo', consentFormGrouped),
+        this._storage?.set('unreadAnnouncementCounts', unreadAnnouncementCounts),
+        this._storage?.set('unreadEventCounts', unreadEventCounts),
+        this._storage?.set('unreadConsentFormCounts', unreadConsentFormCounts)
+      ]);
+      this.updateSelectedChildData();
       // Force change detection (push notifications may fire outside Angular zone)
       this.cdr.detectChanges();
     }).catch(err => {
@@ -402,6 +416,7 @@ await this._storage?.set('unreadConsentFormCounts', unreadConsentFormCounts);
           // If no last selected child is found, select the first child
           this.selectChildAndCenter(this.laravelChildren[0], 0);
         }
+        // this.refreshUnreadCounts();
       });
     }
   }
@@ -455,6 +470,7 @@ await this._storage?.set('unreadConsentFormCounts', unreadConsentFormCounts);
   }
 
   async loadData() {
+    console.log('📥 loadData() called with currentProfile:', this.currentProfile);
     if (!this.currentProfile) {
       return;
     }
@@ -464,35 +480,52 @@ await this._storage?.set('unreadConsentFormCounts', unreadConsentFormCounts);
     try {
       // Load children
       const parentId = this.currentProfile.parent_id;
-      const cachedChildren = await this._storage?.get('laravelChildren');
-      const cachedConsentCounts = await this._storage?.get('consentFormCounts');
-      const cachedConsentCountsTwo = await this._storage?.get('consentFormCountsTwo');
-      const cachedEventCounts = await this._storage?.get('schoolEventCounts');
-      const cachedAnnouncementCounts = await this._storage?.get('announcementCounts');
-      const cachedEventCountsTwo = await this._storage?.get('schoolEventCountsTwo');
-      const cachedAnnouncementCountsTwo = await this._storage?.get('announcementCountsTwo');
+      const [
+        cachedChildren,
+        cachedConsentCounts,
+        cachedConsentCountsTwo,
+        cachedEventCounts,
+        cachedAnnouncementCounts,
+        cachedEventCountsTwo,
+        cachedAnnouncementCountsTwo,
+        cachedUnreadAnnouncements,
+        cachedUnreadEvents,
+        cachedUnreadConsentForms
+      ] = await Promise.all([
+        this._storage?.get('laravelChildren'),
+        this._storage?.get('consentFormCounts'),
+        this._storage?.get('consentFormCountsTwo'),
+        this._storage?.get('schoolEventCounts'),
+        this._storage?.get('announcementCounts'),
+        this._storage?.get('schoolEventCountsTwo'),
+        this._storage?.get('announcementCountsTwo'),
+        this._storage?.get('unreadAnnouncementCounts'),
+        this._storage?.get('unreadEventCounts'),
+        this._storage?.get('unreadConsentFormCounts')
+      ]);
 
-      // Restore cached unread counts immediately
-const cachedUnreadAnnouncements = await this._storage?.get('unreadAnnouncementCounts') || {};
-const cachedUnreadEvents = await this._storage?.get('unreadEventCounts') || {};
-const cachedUnreadConsentForms = await this._storage?.get('unreadConsentFormCounts') || {};
+      // Set them in the ApiService immediately
+      if (cachedUnreadAnnouncements) {
+        Object.keys(cachedUnreadAnnouncements).forEach(key => {
+          this.apiService.setUnreadAnnouncementCount(+key, cachedUnreadAnnouncements[key]);
+        });
+      }
+      if (cachedUnreadEvents) {
+        Object.keys(cachedUnreadEvents).forEach(key => {
+          this.apiService.setUnreadEventCount(+key, cachedUnreadEvents[key]);
+        });
+      }
+      if (cachedUnreadConsentForms) {
+        Object.keys(cachedUnreadConsentForms).forEach(key => {
+          this.apiService.setUnreadConsentFormCount(+key, cachedUnreadConsentForms[key]);
+        });
+      }
 
-// Set them in the ApiService immediately
-Object.keys(cachedUnreadAnnouncements).forEach(key => {
-  this.apiService.setUnreadAnnouncementCount(+key, cachedUnreadAnnouncements[key]);
-});
-Object.keys(cachedUnreadEvents).forEach(key => {
-  this.apiService.setUnreadEventCount(+key, cachedUnreadEvents[key]);
-});
-Object.keys(cachedUnreadConsentForms).forEach(key => {
-  this.apiService.setUnreadConsentFormCount(+key, cachedUnreadConsentForms[key]);
-});
-
-console.log('✓ Restored cached unread counts:', { 
-  cachedUnreadAnnouncements, 
-  cachedUnreadEvents, 
-  cachedUnreadConsentForms 
-});
+      console.log('✓ Restored cached unread counts:', {
+        cachedUnreadAnnouncements,
+        cachedUnreadEvents,
+        cachedUnreadConsentForms
+      });
 
       // Use cached data if available
       if (cachedChildren) {
@@ -549,7 +582,7 @@ console.log('✓ Restored cached unread counts:', {
 
         if (childrenRes.success) {
           this.laravelChildren = childrenRes.children || [];
-          await this._storage?.set('laravelChildren', this.laravelChildren);
+          // await this._storage?.set('laravelChildren', this.laravelChildren);
         }
         const today = new Date();
         const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -562,10 +595,10 @@ console.log('✓ Restored cached unread counts:', {
           },
           form => form.student_id
         );
-        this.consentFormCounts = consentFormCounts;
-        await this._storage?.set('consentFormCounts', this.consentFormCounts);
-        this.consentFormCountsTwo = consentFormGrouped;
-        await this._storage?.set('consentFormCountsTwo', this.consentFormCountsTwo);
+        // this.consentFormCounts = consentFormCounts;
+        // await this._storage?.set('consentFormCounts', this.consentFormCounts);
+        // this.consentFormCountsTwo = consentFormGrouped;
+        // await this._storage?.set('consentFormCountsTwo', this.consentFormCountsTwo);
         const { grouped: eventGrouped, counts: eventCounts } = this.processData(
           eventsRes.events,
           event => {
@@ -575,10 +608,10 @@ console.log('✓ Restored cached unread counts:', {
           },
           event => event.student_id
         );
-        this.schoolEventCountsTwo = eventGrouped;
-        this.schoolEventCounts = eventCounts;
-        await this._storage?.set('schoolEventCounts', this.schoolEventCounts);
-        await this._storage?.set('schoolEventCountsTwo', this.schoolEventCountsTwo);
+        // this.schoolEventCountsTwo = eventGrouped;
+        // this.schoolEventCounts = eventCounts;
+        // await this._storage?.set('schoolEventCounts', this.schoolEventCounts);
+        // await this._storage?.set('schoolEventCountsTwo', this.schoolEventCountsTwo);
         const { grouped: announcementGrouped, counts: announcementCounts } = this.processData(
           announcementsRes.announcements,
           announcement => {
@@ -588,25 +621,67 @@ console.log('✓ Restored cached unread counts:', {
           },
           announcement => announcement.student_id
         );
-        this.announcementCountsTwo = announcementGrouped;
-        this.announcementCounts = announcementCounts;
+        const unreadAnnouncementCounts: { [key: number]: number } = {};
+        const unreadEventCounts: { [key: number]: number } = {};
+        const unreadConsentFormCounts: { [key: number]: number } = {};
+        // this.announcementCountsTwo = announcementGrouped;
+        // this.announcementCounts = announcementCounts;
         // Simple: count ALL unread announcements (no date filter)
-        const unreadCounts: { [key: number]: number } = {};
+        // const unreadCounts: { [key: number]: number } = {};
+        // announcementsRes.announcements.forEach((ann: any) => {
+        //   if (ann.is_read === 0 || ann.is_read === '0') {
+        //     const id = ann.student_id;
+        //     unreadCounts[id] = (unreadCounts[id] || 0) + 1;
+        //     // Sync to ApiService
+        //     this.apiService.setUnreadAnnouncementCount(id, unreadCounts[id]);
+        //   }
+        // });
         announcementsRes.announcements.forEach((ann: any) => {
-          if (ann.is_read === 0 || ann.is_read === '0') {
+          if (ann.is_read === 0 || ann.is_read === '0' || ann.is_read === false) {
             const id = ann.student_id;
-            unreadCounts[id] = (unreadCounts[id] || 0) + 1;
-            // Sync to ApiService
-            this.apiService.setUnreadAnnouncementCount(id, unreadCounts[id]);
+            unreadAnnouncementCounts[id] = (unreadAnnouncementCounts[id] || 0) + 1;
+            this.apiService.setUnreadAnnouncementCount(id, unreadAnnouncementCounts[id]);
           }
         });
-        console.log('Unread counts:', unreadCounts);
-        console.log('ApiService unreadAnnouncementCounts:', this.apiService.unreadAnnouncementCounts);
-        await this._storage?.set('announcementCounts', this.announcementCounts);
-        await this._storage?.set('announcementCountsTwo', this.announcementCountsTwo);
-        // Process pending students data
-        this.pendingStudents = pendingStudentsRes.pending || [];
 
+        eventsRes.events.forEach((event: any) => {
+          if (event.is_read === 0 || event.is_read === '0' || event.is_read === false) {
+            const id = event.student_id;
+            unreadEventCounts[id] = (unreadEventCounts[id] || 0) + 1;
+            this.apiService.setUnreadEventCount(id, unreadEventCounts[id]);
+          }
+        });
+
+        consentFormsRes.forms.forEach((form: any) => {
+          if (form.is_read === 0 || form.is_read === '0' || form.is_read === false) {
+            const id = form.student_id;
+            unreadConsentFormCounts[id] = (unreadConsentFormCounts[id] || 0) + 1;
+            this.apiService.setUnreadConsentFormCount(id, unreadConsentFormCounts[id]);
+          }
+        });
+        this.consentFormCounts = consentFormCounts;
+        this.consentFormCountsTwo = consentFormGrouped;
+        this.schoolEventCounts = eventCounts;
+        this.schoolEventCountsTwo = eventGrouped;
+        this.announcementCounts = announcementCounts;
+        this.announcementCountsTwo = announcementGrouped;
+        this.pendingStudents = pendingStudentsRes.pending || [];
+        // console.log('Unread counts:', unreadCounts);
+        // console.log('ApiService unreadAnnouncementCounts:', this.apiService.unreadAnnouncementCounts);
+        // BATCH ALL STORAGE WRITES - This is the key optimization!
+        await Promise.all([
+          this._storage?.set('laravelChildren', this.laravelChildren),
+          this._storage?.set('consentFormCounts', this.consentFormCounts),
+          this._storage?.set('consentFormCountsTwo', this.consentFormCountsTwo),
+          this._storage?.set('schoolEventCounts', this.schoolEventCounts),
+          this._storage?.set('schoolEventCountsTwo', this.schoolEventCountsTwo),
+          this._storage?.set('announcementCounts', this.announcementCounts),
+          this._storage?.set('announcementCountsTwo', this.announcementCountsTwo),
+          this._storage?.set('unreadAnnouncementCounts', unreadAnnouncementCounts),
+          this._storage?.set('unreadEventCounts', unreadEventCounts),
+          this._storage?.set('unreadConsentFormCounts', unreadConsentFormCounts)
+        ]);
+        // Process pending students data
         const lastSelectedChild = await this._storage?.get('lastSelectedChild');
         this.selectedChild = lastSelectedChild || null;
         if (lastSelectedChild && this.laravelChildren.length > 0) {
@@ -622,8 +697,9 @@ console.log('✓ Restored cached unread counts:', {
       }
       // Update selected child data
       if (this.selectedChild) this.updateSelectedChildData();
-      this.refreshUnreadCounts();
+      // this.refreshUnreadCounts();
       this.isLoading = false;
+      this.cdr.detectChanges();
     } catch (error) {
       this.isLoading = false;
     }

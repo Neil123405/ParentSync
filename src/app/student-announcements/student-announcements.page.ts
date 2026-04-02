@@ -38,6 +38,7 @@ export class StudentAnnouncementsPage implements OnInit {
     next: () => {
     announcement.is_read = 1;
     // this.apiService.decrementUnreadAnnouncementCount(studentId);
+    this.apiService.itemMarkedAsRead$.next({ type: 'announcement', studentId: this.studentId });
   },
   error: (err) => {
     console.warn('mark read failed', err);
