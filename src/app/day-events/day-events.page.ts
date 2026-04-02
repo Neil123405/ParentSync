@@ -12,6 +12,8 @@ import { CalendarOptions } from '@fullcalendar/core';
 import { forkJoin } from 'rxjs';
 import { AlertController } from '@ionic/angular';
 
+import { Storage } from '@ionic/storage-angular';
+
 @Component({
   selector: 'app-day-events',
   templateUrl: './day-events.page.html',
@@ -31,6 +33,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
   currentWeekStart!: Date;
   weekDays: string[] = [];
   @ViewChild('fc') fc!: FullCalendarComponent;
+  private _storage: Storage | null = null;
 
   calendarOptions: CalendarOptions = {
     initialView: 'timeGridWeek', // Week view
@@ -40,11 +43,11 @@ export class DayEventsPage implements OnInit, AfterViewInit {
       center: 'title',
       right: 'next',
     },
-     defaultTimedEventDuration: '00:10:00',
-      slotDuration: '00:30:00',
-  slotLabelInterval: '01:00:00',  
-  // slotMinTime: '07:00:00',
-  // slotMaxTime: '19:00:00',  
+    defaultTimedEventDuration: '00:10:00',
+    slotDuration: '00:30:00',
+    slotLabelInterval: '01:00:00',
+    // slotMinTime: '07:00:00',
+    // slotMaxTime: '19:00:00',  
     navLinks: true,
     navLinkDayClick: this.handleHeaderDateClick.bind(this),
     events: [], // Events will be dynamically loaded
@@ -59,7 +62,8 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     private router: Router,
     private apiService: ApiService,
     private cdr: ChangeDetectorRef,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private storage: Storage
   ) { }
 
   handleHeaderDateClick(date: Date, jsEvent: any) {
@@ -80,7 +84,8 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this._storage = await this.storage.create();
     this.date = this.route.snapshot.paramMap.get('date')!;
     this.selectedDay = new Date(this.date); // Initially select the passed date
     this.parentProfile = this.apiService.getCurrentProfile();
@@ -105,67 +110,216 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     }
     console.log('handleDateClick called wiafafasdfath dateStr:', fetchInfo.start); // Debug log
 
+    const start = new Date(fetchInfo.start);
+    const end = new Date(fetchInfo.end);
+    this.loadCachedEventsAndForms(start, end, successCallback, failureCallback);
+
+    // STEP 2: Fetch fresh data in background
+    this.fetchFreshWeekData(start, end);
     // fetch both API endpoints in parallel
-    forkJoin({
-      eventsRes: this.apiService.getParentEvents(this.parentProfile.parent_id),
-      formsRes: this.apiService.getAllUnsignedConsentFormsForParent(this.parentProfile.parent_id)
-    }).subscribe({
-      next: ({ eventsRes, formsRes }) => {
-        const start = new Date(fetchInfo.start);
-        const end = new Date(fetchInfo.end);
+    // forkJoin({
+    //   eventsRes: this.apiService.getParentEvents(this.parentProfile.parent_id),
+    //   formsRes: this.apiService.getAllUnsignedConsentFormsForParent(this.parentProfile.parent_id)
+    // }).subscribe({
+    //   next: ({ eventsRes, formsRes }) => {
+    //     const start = new Date(fetchInfo.start);
+    //     const end = new Date(fetchInfo.end);
 
-        const events = (eventsRes.events || []).filter((ev: any) => {
-          const d = new Date(ev.date);
-          return d >= start && d < end;
-        }).map((ev: any) => {
-          console.log('Event from API:', ev); // Add this
-          let startDate: Date | string;
-          if (ev.time && /^\d{2}:\d{2}:\d{2}$/.test(ev.time)) {
-            // Combine date and time: "YYYY-MM-DDTHH:mm:ss"
-            startDate = new Date(`${ev.date}T${ev.time}`);
-          } else if (/^\d{4}-\d{2}-\d{2}$/.test(ev.date)) {
-            // date-only, treat as all-day
-            startDate = ev.date;
-          } else {
-            // fallback: parse as Date
-            startDate = new Date(ev.date);
+    //     const events = (eventsRes.events || []).filter((ev: any) => {
+    //       const d = new Date(ev.date);
+    //       return d >= start && d < end;
+    //     }).map((ev: any) => {
+    //       console.log('Event from API:', ev); // Add this
+    //       let startDate: Date | string;
+    //       if (ev.time && /^\d{2}:\d{2}:\d{2}$/.test(ev.time)) {
+    //         // Combine date and time: "YYYY-MM-DDTHH:mm:ss"
+    //         startDate = new Date(`${ev.date}T${ev.time}`);
+    //       } else if (/^\d{4}-\d{2}-\d{2}$/.test(ev.date)) {
+    //         // date-only, treat as all-day
+    //         startDate = ev.date;
+    //       } else {
+    //         // fallback: parse as Date
+    //         startDate = new Date(ev.date);
+    //       }
+    //       return {
+    //         title: ev.title,
+    //         start: startDate,
+    //         className: 'event-class', // Add custom class for events
+    //         extendedProps: { type: 'event', description: ev.description, student: { first_name: ev.student_first_name, last_name: ev.student_last_name }, raw: ev }
+    //       }
+    //     });
+
+    //     const forms = (formsRes.forms || []).filter((f: any) => {
+    //       const d = new Date(f.deadline);
+    //       return d >= start && d < end;
+    //     }).map((f: any) => ({
+    //       title: 'Consent Form: ' + f.title,
+    //       start: new Date(f.deadline),
+    //       allDay: true,
+    //       className: 'consent-form-class', // Add custom class for consent forms
+    //       extendedProps: { type: 'consentForm', student: { first_name: f.student_first_name, last_name: f.student_last_name }, raw: f }
+    //     }));
+
+    //     const combined = [...events, ...forms];
+
+    //     // keep local copies used by the lists below the calendar
+    //     this.events = eventsRes.events || [];
+    //     this.forms = formsRes.forms || [];
+
+    //     // update filtered lists for currently selected day
+    //     // this.filterEventsAndForms(this.selectedDay);
+
+    //     // give events to FullCalendar
+    //     successCallback(combined);
+    //   },
+    //   error: err => {
+    //     console.error('fetchEvents error', err);
+    //     failureCallback(err);
+    //   }
+    // });
+  }
+
+  private fetchFreshWeekData(start: Date, end: Date) {
+    // Parallelize both API calls
+    Promise.all([
+      new Promise((resolve) => {
+        this.apiService.getParentEvents(this.parentProfile.parent_id).subscribe(
+          (res) => resolve(res),
+          (err) => {
+            console.error('Error fetching events:', err);
+            resolve(null);
           }
-          return {
-            title: ev.title,
-            start: startDate,
-            className: 'event-class', // Add custom class for events
-            extendedProps: { type: 'event', description: ev.description, student: { first_name: ev.student_first_name, last_name: ev.student_last_name }, raw: ev }
-          }
-        });
+        );
+      }),
+      new Promise((resolve) => {
+        this.apiService
+          .getAllUnsignedConsentFormsForParent(this.parentProfile.parent_id)
+          .subscribe(
+            (res) => resolve(res),
+            (err) => {
+              console.error('Error fetching forms:', err);
+              resolve(null);
+            }
+          );
+      }),
+    ]).then(([eventsRes, formsRes]: any) => {
+      const freshEvents = eventsRes?.events || [];
+      const freshForms = formsRes?.forms || [];
 
-        const forms = (formsRes.forms || []).filter((f: any) => {
-          const d = new Date(f.deadline);
-          return d >= start && d < end;
-        }).map((f: any) => ({
-          title: 'Consent Form: ' + f.title,
-          start: new Date(f.deadline),
-          allDay: true,
-          className: 'consent-form-class', // Add custom class for consent forms
-          extendedProps: { type: 'consentForm', student: { first_name: f.student_first_name, last_name: f.student_last_name }, raw: f }
-        }));
+      // Cache the fresh data
+      this._storage?.set('dayEventsCache', freshEvents);
+      this._storage?.set('dayFormsCache', freshForms);
 
-        const combined = [...events, ...forms];
+      // Format and update
+      const combined = this.formatEventsAndForms(
+        freshEvents,
+        freshForms,
+        start,
+        end
+      );
 
-        // keep local copies used by the lists below the calendar
-        this.events = eventsRes.events || [];
-        this.forms = formsRes.forms || [];
+      this.events = freshEvents;
+      this.forms = freshForms;
 
-        // update filtered lists for currently selected day
-        // this.filterEventsAndForms(this.selectedDay);
-
-        // give events to FullCalendar
-        successCallback(combined);
-      },
-      error: err => {
-        console.error('fetchEvents error', err);
-        failureCallback(err);
+      // Refetch calendar with fresh data
+      if (this.fc?.getApi?.()) {
+        this.fc.getApi().refetchEvents();
       }
+
+      // Update change detection
+      this.cdr.markForCheck();
     });
+  }
+
+  private formatEventsAndForms(
+    events: any[],
+    forms: any[],
+    start: Date,
+    end: Date
+  ): any[] {
+    const formattedEvents = (events || [])
+      .filter((ev: any) => {
+        const d = new Date(ev.date);
+        return d >= start && d < end;
+      })
+      .map((ev: any) => {
+        let startDate: Date | string;
+        if (ev.time && /^\d{2}:\d{2}:\d{2}$/.test(ev.time)) {
+          startDate = new Date(`${ev.date}T${ev.time}`);
+        } else if (/^\d{4}-\d{2}-\d{2}$/.test(ev.date)) {
+          startDate = ev.date;
+        } else {
+          startDate = new Date(ev.date);
+        }
+        return {
+          title: ev.title,
+          start: startDate,
+          className: 'event-class',
+          extendedProps: {
+            type: 'event',
+            description: ev.description,
+            student: {
+              first_name: ev.student_first_name,
+              last_name: ev.student_last_name,
+            },
+            raw: ev,
+          },
+        };
+      });
+
+    const formattedForms = (forms || [])
+      .filter((f: any) => {
+        const d = new Date(f.deadline);
+        return d >= start && d < end;
+      })
+      .map((f: any) => ({
+        title: 'Consent Form: ' + f.title,
+        start: new Date(f.deadline),
+        allDay: true,
+        className: 'consent-form-class',
+        extendedProps: {
+          type: 'consentForm',
+          student: {
+            first_name: f.student_first_name,
+            last_name: f.student_last_name,
+          },
+          raw: f,
+        },
+      }));
+
+    return [...formattedEvents, ...formattedForms];
+  }
+
+  private async loadCachedEventsAndForms(
+    start: Date,
+    end: Date,
+    successCallback: any,
+    failureCallback: any
+  ) {
+    try {
+      const [cachedEvents, cachedForms] = await Promise.all([
+        this._storage?.get('dayEventsCache'),
+        this._storage?.get('dayFormsCache'),
+      ]);
+
+      if (cachedEvents && cachedForms) {
+        const combined = this.formatEventsAndForms(
+          cachedEvents,
+          cachedForms,
+          start,
+          end
+        );
+        this.events = cachedEvents;
+        this.forms = cachedForms;
+        successCallback(combined);
+      } else {
+        // No cache, let the fresh fetch handle it
+        successCallback([]);
+      }
+    } catch (error) {
+      console.error('Error loading cached events:', error);
+      successCallback([]);
+    }
   }
 
   ngAfterViewInit() {
@@ -325,35 +479,35 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     console.log('Filtered Forms for', selectedDate.toDateString(), ':', this.filteredForms.length);
   }
 
- async handleEventClick(info: any) {
-  const type = info.event.extendedProps?.type;
-  const title = info.event.title ?? 'item';
-const student = info.event.extendedProps?.student;
+  async handleEventClick(info: any) {
+    const type = info.event.extendedProps?.type;
+    const title = info.event.title ?? 'item';
+    const student = info.event.extendedProps?.student;
 
-  const firstName = student?.first_name?.trim() || '';
-  const lastName = student?.last_name?.trim() || '';
-  const studentName = (firstName || lastName) ? `${firstName} ${lastName}`.trim() : 'Unknown';
-  const header = type === 'consentForm' ? 'Consent Form' : 'Event';
-  const alert = await this.alertController.create({
-    header,
-    message: `${header}  (${studentName})`,
-    buttons: [
-      { text: 'Cancel', role: 'cancel' },
-      {
-        text: 'Details',
-        handler: () => {
-          if (type === 'consentForm') {
-            this.openConsentFormDetail(info.event.extendedProps);
-          } else {
-            this.openEventDetail(info.event.extendedProps);
+    const firstName = student?.first_name?.trim() || '';
+    const lastName = student?.last_name?.trim() || '';
+    const studentName = (firstName || lastName) ? `${firstName} ${lastName}`.trim() : 'Unknown';
+    const header = type === 'consentForm' ? 'Consent Form' : 'Event';
+    const alert = await this.alertController.create({
+      header,
+      message: `${header}  (${studentName})`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Details',
+          handler: () => {
+            if (type === 'consentForm') {
+              this.openConsentFormDetail(info.event.extendedProps);
+            } else {
+              this.openEventDetail(info.event.extendedProps);
+            }
           }
         }
-      }
-    ]
-  });
+      ]
+    });
 
-  await alert.present();
-}
+    await alert.present();
+  }
 
   getWeekDays(startDate: Date): string[] {
     return Array.from({ length: 7 }, (_, i) => {
@@ -390,8 +544,10 @@ const student = info.event.extendedProps?.student;
   // When user clicks back, go to calendar page with the month of the last week visited
   goBackToCalendar() {
     // Get the last day (Saturday) of the current week
-    const lastDayOfWeek = new Date(this.currentWeekStart);
-    lastDayOfWeek.setDate(this.currentWeekStart.getDate() + 6);
+    const weekStart = this.currentWeekStart || this.selectedDay || new Date();
+  
+    const lastDayOfWeek = new Date(weekStart);
+    lastDayOfWeek.setDate(weekStart.getDate() + 6);
     const month = lastDayOfWeek.getMonth();
     const year = lastDayOfWeek.getFullYear();
 
@@ -461,51 +617,57 @@ const student = info.event.extendedProps?.student;
   //   }
   // }
 
- openEventDetail(event: any) {
-  const eventId =
-    event.id ??
-    event.event_id ??
-    event.raw?.event_id ??
-    event.raw?.id ??
-    event.extendedProps?.raw?.id; 
+  openEventDetail(event: any) {
+    const eventId =
+      event.id ??
+      event.event_id ??
+      event.raw?.event_id ??
+      event.raw?.id ??
+      event.extendedProps?.raw?.id;
 
-  const studentId =
-    event.student_id ??
-    event.raw?.student_id ??
-    event.meta?.student_id ??
-    event.extendedProps?.student?.student_id;
+    const studentId =
+      event.student_id ??
+      event.raw?.student_id ??
+      event.meta?.student_id ??
+      event.extendedProps?.student?.student_id;
 
-  if (eventId && studentId) {
-    this.router.navigate(['/event-detail', eventId, studentId]);
-  } else {
-    alert('Cannot open event details: missing student or event information.');
+    if (eventId && studentId) {
+      this.router.navigate(['/event-detail', eventId, studentId]);
+    } else {
+      alert('Cannot open event details: missing student or event information.');
+    }
   }
-}
 
   openConsentFormDetail(form: any) {
-  const formId =
-    form.form_id ??
-    form.id ??
-    form.raw?.form_id;
+    const formId =
+      form.form_id ??
+      form.id ??
+      form.raw?.form_id;
 
-  const studentId =
-    form.student_id ??
-    form.raw?.student_id ??
-    form.student?.student_id;
+    const studentId =
+      form.student_id ??
+      form.raw?.student_id ??
+      form.student?.student_id;
 
-  if (formId && studentId) {
-    this.router.navigate(['/consent-form-detail', formId, studentId]);
-  } else {
-    alert('Cannot open consent form details: missing student or form information.');
+    if (formId && studentId) {
+      this.router.navigate(['/consent-form-detail', formId, studentId]);
+    } else {
+      alert('Cannot open consent form details: missing student or form information.');
+    }
   }
-}
 
-  doRefresh(event: any) {
+  async doRefresh(event: any) {
     // Reload your data here (e.g., call loadEventsForDate and loadConsentFormsForDate)
     // this.loadEventsForDate(this.date);
     // this.loadConsentFormsForDate(this.date);
 
     // Complete the refresher after data is loaded
+    await this._storage?.remove('dayEventsCache');
+    await this._storage?.remove('dayFormsCache');
+
+    if (this.fc && this.fc.getApi) {
+      this.fc.getApi().refetchEvents();
+    }
     setTimeout(() => {
       event.target.complete();
     }, 1000); // Adjust timeout as needed or call complete after data is actually loaded

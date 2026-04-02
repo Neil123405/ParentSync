@@ -314,9 +314,11 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
 
   async loadEventsAndConsentForms() {
     const parentProfile = this.apiService.getCurrentProfile();
+    if (!parentProfile) return;
+
     if (parentProfile) {
       const cachedEvents = await this.storage.get('calendarEvents');
-      if (cachedEvents) {
+      if (cachedEvents && Array.isArray(cachedEvents) && cachedEvents.length > 0) {
         this.calendarOptions.events = cachedEvents;
 
         // Assign cached events to _calendarEvents and loadedConsentForms
@@ -326,144 +328,271 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
         this.loadedConsentForms = cachedEvents.filter(
           (event: any) => event.extendedProps.type === 'consentForm'
         );
+        this.updateMonthCounts();
       }
+      this.fetchFreshCalendarData(parentProfile);
       // Fetch children linked to the parent
-      this.apiService
-        .getParentChildren(parentProfile.parent_id)
-        .subscribe((childrenRes) => {
-          const childrenArray = childrenRes.children || [];
-          this.linkedStudentIds = childrenArray.map(
-            (child: any) => child.student_id
-          );
+      // this.apiService
+      //   .getParentChildren(parentProfile.parent_id)
+      //   .subscribe((childrenRes) => {
+      //     const childrenArray = childrenRes.children || [];
+      //     this.linkedStudentIds = childrenArray.map(
+      //       (child: any) => child.student_id
+      //     );
 
-          // If no linked students, clear consent forms and events
-          if (this.linkedStudentIds.length === 0) {
-            this.loadedConsentForms = [];
-            this.calendarOptions.events = []; // Clear calendar events
-            return;
-          }
+      //     // If no linked students, clear consent forms and events
+      //     if (this.linkedStudentIds.length === 0) {
+      //       this.loadedConsentForms = [];
+      //       this.calendarOptions.events = []; // Clear calendar events
+      //       return;
+      //     }
 
-          // Fetch events
-          this.apiService
-            .getParentEvents(parentProfile.parent_id)
-            .subscribe((res) => {
-              const events = (res.events || []).map(
-                (event: any, index: number) => {
-                  const rawId =
-                    event.event_id ??
-                    event.id ??
-                    `${event.date}-${event.title}`; // guaranteed unique key source
-                  const mappedEvent = {
-                    ...event,
-                    title: event.title,
-                    start: new Date(event.date),
-                    id: event.event_id ?? event.id ?? index,
-                    student_id: event.student_id,
-                    extendedProps: {
-                      type: 'event',
-                      originalId: rawId,
-                      description: event.description,
-                      student: {
-                        first_name: event.student_first_name,
-                        last_name: event.student_last_name,
-                      },
-                    },
-                    meta: {
-                      student_id: event.student_id,
-                      description: event.description,
-                      student: {
-                        first_name: event.student_first_name,
-                        last_name: event.student_last_name,
-                      },
-                    },
-                  };
+      //     // Fetch events
+      //     this.apiService
+      //       .getParentEvents(parentProfile.parent_id)
+      //       .subscribe((res) => {
+      //         const events = (res.events || []).map(
+      //           (event: any, index: number) => {
+      //             const rawId =
+      //               event.event_id ??
+      //               event.id ??
+      //               `${event.date}-${event.title}`; // guaranteed unique key source
+      //             const mappedEvent = {
+      //               ...event,
+      //               title: event.title,
+      //               start: new Date(event.date),
+      //               id: event.event_id ?? event.id ?? index,
+      //               student_id: event.student_id,
+      //               extendedProps: {
+      //                 type: 'event',
+      //                 originalId: rawId,
+      //                 description: event.description,
+      //                 student: {
+      //                   first_name: event.student_first_name,
+      //                   last_name: event.student_last_name,
+      //                 },
+      //               },
+      //               meta: {
+      //                 student_id: event.student_id,
+      //                 description: event.description,
+      //                 student: {
+      //                   first_name: event.student_first_name,
+      //                   last_name: event.student_last_name,
+      //                 },
+      //               },
+      //             };
 
-                  console.log('[event debug]', index, {
-                    student_id: mappedEvent.student_id,
-                    eventId: event.event_id,
-                    id: event.id,
-                    mappedId: mappedEvent.id,
-                    rawId,
-                    title: mappedEvent.title,
-                    start: mappedEvent.start,
-                  });
+      //             console.log('[event debug]', index, {
+      //               student_id: mappedEvent.student_id,
+      //               eventId: event.event_id,
+      //               id: event.id,
+      //               mappedId: mappedEvent.id,
+      //               rawId,
+      //               title: mappedEvent.title,
+      //               start: mappedEvent.start,
+      //             });
 
-                  return mappedEvent;
-                }
-              );
-              this._calendarEvents = events;
-               this.updateMonthCounts();
-              this.linkedEventIds = new Set(
-                events.map((ev: any) => ev.extendedProps?.originalId ?? ev.id)
-              );
-              // Fetch consent forms
-              this.apiService
-                .getAllUnsignedConsentFormsForParent(parentProfile.parent_id)
-                .subscribe((res) => {
-                  this.loadedConsentForms = (res.forms || []).map(
-                    (form: any) => ({
-                      ...form,
-                      student: {
-                        first_name: form.student_first_name,
-                        last_name: form.student_last_name,
-                        student_id: form.student_id,
-                      },
-                    })
-                  );
-                  const consentForms = (res.forms || []).map(
-                    (form: any, index: number) => {
-                      const mapped = {
-                        ...form,
-                        student_id: form.student_id,
-                        title: 'Consent Form: ' + form.title,
-                        start: new Date(form.deadline),
-                        id: `consent-${form.form_id}-${form.student_id}-${index}`,
-                        extendedProps: {
-                          type: 'consentForm',
-                          form_id: form.form_id,
-                          originalId: `${form.form_id}-${form.student_id}`,
-                          student_id: form.student_id,
-                          student: {
-                            first_name: form.first_name,
-                            last_name: form.last_name,
-                            student_id: form.student_id,
-                          },
-                        },
-                      };
-                      console.log(
-                        '[consent debug]',
-                        index,
-                        mapped.id,
-                        mapped.title,
-                        mapped.start,
-                        mapped.extendedProps
-                      );
-                      return mapped;
-                    }
-                  );
+      //             return mappedEvent;
+      //           }
+      //         );
+      //         this._calendarEvents = events;
+      //          this.updateMonthCounts();
+      //         this.linkedEventIds = new Set(
+      //           events.map((ev: any) => ev.extendedProps?.originalId ?? ev.id)
+      //         );
+      //         // Fetch consent forms
+      //         this.apiService
+      //           .getAllUnsignedConsentFormsForParent(parentProfile.parent_id)
+      //           .subscribe((res) => {
+      //             this.loadedConsentForms = (res.forms || []).map(
+      //               (form: any) => ({
+      //                 ...form,
+      //                 student: {
+      //                   first_name: form.student_first_name,
+      //                   last_name: form.student_last_name,
+      //                   student_id: form.student_id,
+      //                 },
+      //               })
+      //             );
+      //             const consentForms = (res.forms || []).map(
+      //               (form: any, index: number) => {
+      //                 const mapped = {
+      //                   ...form,
+      //                   student_id: form.student_id,
+      //                   title: 'Consent Form: ' + form.title,
+      //                   start: new Date(form.deadline),
+      //                   id: `consent-${form.form_id}-${form.student_id}-${index}`,
+      //                   extendedProps: {
+      //                     type: 'consentForm',
+      //                     form_id: form.form_id,
+      //                     originalId: `${form.form_id}-${form.student_id}`,
+      //                     student_id: form.student_id,
+      //                     student: {
+      //                       first_name: form.first_name,
+      //                       last_name: form.last_name,
+      //                       student_id: form.student_id,
+      //                     },
+      //                   },
+      //                 };
+      //                 console.log(
+      //                   '[consent debug]',
+      //                   index,
+      //                   mapped.id,
+      //                   mapped.title,
+      //                   mapped.start,
+      //                   mapped.extendedProps
+      //                 );
+      //                 return mapped;
+      //               }
+      //             );
 
-                  // Combine events and consent forms
-                  const combinedEvents = [...events, ...consentForms];
-                  console.log('Loaded calendar events:', combinedEvents.length);
-                  combinedEvents.forEach((e: any, idx: number) => {
-                    console.log(idx, {
-                      id: e.id,
-                      title: e.title,
-                      start: e.start,
-                      type: e.extendedProps?.type,
-                      dateKey: e.start?.toISOString?.(),
-                    });
-                  });
-                  this.calendarOptions.events = combinedEvents;
+      //             // Combine events and consent forms
+      //             const combinedEvents = [...events, ...consentForms];
+      //             console.log('Loaded calendar events:', combinedEvents.length);
+      //             combinedEvents.forEach((e: any, idx: number) => {
+      //               console.log(idx, {
+      //                 id: e.id,
+      //                 title: e.title,
+      //                 start: e.start,
+      //                 type: e.extendedProps?.type,
+      //                 dateKey: e.start?.toISOString?.(),
+      //               });
+      //             });
+      //             this.calendarOptions.events = combinedEvents;
 
-                  // Cache the combined events
-                  this.storage.set('calendarEvents', combinedEvents);
-                  this.updateMonthCounts();
-                });
-            });
-        });
+      //             // Cache the combined events
+      //             this.storage.set('calendarEvents', combinedEvents);
+      //             this.updateMonthCounts();
+      //           });
+      //       });
+      //   });
     }
   }
+
+  private fetchFreshCalendarData(parentProfile: any) {
+  // Use forkJoin to parallelize all three API calls instead of nesting
+  this.apiService.getParentChildren(parentProfile.parent_id).subscribe(
+    (childrenRes) => {
+      const childrenArray = childrenRes.children || [];
+      this.linkedStudentIds = childrenArray.map(
+        (child: any) => child.student_id
+      );
+
+      if (this.linkedStudentIds.length === 0) {
+        this.loadedConsentForms = [];
+        this.calendarOptions.events = [];
+        this.storage.set('calendarEvents', []);
+        return;
+      }
+
+      // Parallelize the two remaining calls
+      Promise.all([
+        new Promise((resolve) => {
+          this.apiService.getParentEvents(parentProfile.parent_id).subscribe(
+            (res) => resolve(res),
+            (err) => {
+              console.error('Error fetching events:', err);
+              resolve(null);
+            }
+          );
+        }),
+        new Promise((resolve) => {
+          this.apiService
+            .getAllUnsignedConsentFormsForParent(parentProfile.parent_id)
+            .subscribe(
+              (res) => resolve(res),
+              (err) => {
+                console.error('Error fetching consent forms:', err);
+                resolve(null);
+              }
+            );
+        }),
+      ]).then(([eventsRes, formsRes]: any) => {
+        // Process events
+        const events = (eventsRes?.events || []).map(
+          (event: any, index: number) => {
+            const rawId =
+              event.event_id ?? event.id ?? `${event.date}-${event.title}`;
+            return {
+              ...event,
+              title: event.title,
+              start: new Date(event.date),
+              id: `event-${event.event_id ?? event.id}-${event.student_id}-${index}`,
+              student_id: event.student_id,
+              extendedProps: {
+                type: 'event',
+                originalId: rawId,
+                description: event.description,
+                student: {
+                  first_name: event.student_first_name,
+                  last_name: event.student_last_name,
+                },
+              },
+              meta: {
+                student_id: event.student_id,
+                description: event.description,
+                student: {
+                  first_name: event.student_first_name,
+                  last_name: event.student_last_name,
+                },
+              },
+            };
+          }
+        );
+
+        this._calendarEvents = events;
+        this.linkedEventIds = new Set(
+          events.map((ev: any) => ev.extendedProps?.originalId ?? ev.id)
+        );
+
+        // Process consent forms
+        this.loadedConsentForms = (formsRes?.forms || []).map((form: any) => ({
+          ...form,
+          student: {
+            first_name: form.student_first_name,
+            last_name: form.student_last_name,
+            student_id: form.student_id,
+          },
+        }));
+
+        const consentForms = (formsRes?.forms || []).map(
+          (form: any, index: number) => {
+            const mapped = {
+              ...form,
+              student_id: form.student_id,
+              title: 'Consent Form: ' + form.title,
+              start: new Date(form.deadline),
+              id: `consent-${form.form_id}-${form.student_id}-${index}`,
+              extendedProps: {
+                type: 'consentForm',
+                form_id: form.form_id,
+                originalId: `${form.form_id}-${form.student_id}`,
+                student_id: form.student_id,
+                student: {
+                  first_name: form.student_first_name,
+                  last_name: form.student_last_name,
+                  student_id: form.student_id,
+                },
+              },
+            };
+            return mapped;
+          }
+        );
+
+        // Combine and update calendar
+        const combinedEvents = [...events, ...consentForms];
+        this.calendarOptions.events = combinedEvents;
+
+        // Trigger change detection and update counts
+        this.cdr.markForCheck();
+        this.updateMonthCounts();
+
+        // Cache the fresh data
+        this.storage.set('calendarEvents', combinedEvents);
+      });
+    }
+  );
+}
 
   async clearCalendarCache() {
     await this.storage.remove('calendarEvents');
@@ -492,8 +621,9 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   }
 
   openEventDetail(event: any) {
-    const rawEventId = event.id ?? event.event_id;
-    const eventId = Number(rawEventId);
+    // const rawEventId = event.id ?? event.event_id;
+    // const eventId = Number(rawEventId);
+    const eventId = event.event_id ?? event.id;  // Get original event_id
     // let studentId = event.student_id ?? event.meta?.student_id;
     const studentId =
       event.extendedProps?.student?.student_id ??
@@ -505,11 +635,11 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     //   studentId = event.student.student_id;
     // }
 
-    if (!isNaN(eventId) && studentId) {
+    if ((eventId) && studentId) {
       this.router.navigate(['/event-detail', eventId, studentId]);
     } else {
       // Show a toast or alert for missing info
-      console.error('Invalid eventId or studentId', { rawEventId, eventId, studentId, event });
+      console.error('Invalid eventId or studentId', { eventId, studentId, event });
       alert('Cannot open event details: missing student or event information.');
     }
   }
