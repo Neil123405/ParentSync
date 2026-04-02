@@ -32,6 +32,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.parent = this.apiService.getCurrentProfile();
+    
     PushNotifications.addListener('pushNotificationReceived', async (notification: PushNotificationSchema) => {
       Haptics.impact({ style: ImpactStyle.Heavy });
 
@@ -53,7 +54,16 @@ export class AppComponent implements OnInit {
 //          cssClass: `toast-${this.toastQueue.length}` // Different position for each
 //       });
 //       toast.present();
+let userId = this.parent?.parent_id;
+    if (!userId && notification.data?.parent_id) {
+      userId = notification.data.parent_id;
+    }
 
+    // If we have a userId, save the badge state
+    if (userId) {
+      const storage = await this.storage.create();
+      await storage.set(`hasNewNotification_${userId}`, true);
+    }
  const message = `${notification.body || 'Your child'}: ${notification.title || 'New Update'}`;
       this.showQueuedToast(message, notification.data);
 
