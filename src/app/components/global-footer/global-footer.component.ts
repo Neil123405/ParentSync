@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnChanges, ChangeDetectorRef, Input, SimpleChanges } from '@angular/core';
 
 import { Router, NavigationEnd } from '@angular/router';
 
@@ -12,21 +12,33 @@ import { AddStudentModalComponent } from '../add-student-modal/add-student-modal
 
 import { Storage } from '@ionic/storage-angular';  // ← ADD THIS
 
+import { BehaviorSubject } from 'rxjs';
+
 @Component({
   selector: 'app-global-footer',
   templateUrl: './global-footer.component.html',
   styleUrls: ['./global-footer.component.scss'],
   standalone: false
 })
-export class GlobalFooterComponent implements OnInit {
+export class GlobalFooterComponent implements OnInit, OnChanges {
   currentRoute: string = '';
   showFooter: boolean = true;
   parent: any;
   currentProfile: ParentProfile | null = null;
-  hasNewNotification: boolean = false;  // ← ADD THIS
+  hasNewNotification: boolean = false;
   private _storage: Storage | null = null;
-
-
+  // private _badgeState: boolean = false;
+  badgeState$ = new BehaviorSubject<boolean>(false);  // ← NEW
+  badgeState: boolean = false;  // For template binding
+//  @Input() 
+//   set badgeState(value: boolean) {
+//     console.log('🔔 [@Input] badgeState setter called with value:', value);
+//     this._badgeState = value;
+//     this.cdr.markForCheck();
+//   }
+//   get badgeState(): boolean {
+//     return this._badgeState;
+//   }
   constructor(
     private router: Router,
     private modalController: ModalController,
@@ -35,12 +47,25 @@ export class GlobalFooterComponent implements OnInit {
     private apiService: ApiService,
     private alertController: AlertController,
     private cdr: ChangeDetectorRef,
-    private storage: Storage  // ← ADD THIS
+    private storage: Storage
   ) { }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('🔄 ngOnChanges fired:', changes);
+    if (changes['badgeState']) {
+      console.log('🔄 Badge state input changed to:', this.badgeState);
+      this.cdr.markForCheck();
+    }
+  }
 
   async ngOnInit() {
     this.storage.create().then(storage => {
       this._storage = storage;
+    });
+
+    this.badgeState$.subscribe(state => {
+      this.badgeState = state;
+      this.cdr.markForCheck();
     });
 
     // Subscribe to user changes and restore badge when user is available
@@ -69,10 +94,13 @@ export class GlobalFooterComponent implements OnInit {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(async (event: NavigationEnd) => {
+        console.log('🛣️ Navigation to:', event.url);
         this.currentRoute = event.url;
         this.showFooter = !this.currentRoute.startsWith('/login');
 
         if (this.currentRoute === '/children') {
+          console.log('🚨 AUTO-CLEARING BADGE - navigated to /children');
+          this.clearBadge();
           this.hasNewNotification = false;
           const userId = this.apiService.getCurrentUser()?.user_id;
           if (userId) {
@@ -88,6 +116,7 @@ export class GlobalFooterComponent implements OnInit {
 
     this.apiService.announcementReceived$.subscribe(async () => {
       this.hasNewNotification = true;
+      this.badgeState$.next(true);
       this.cdr.markForCheck();
       const userId = this.apiService.getCurrentUser()?.user_id;
       if (userId) {
@@ -97,8 +126,40 @@ export class GlobalFooterComponent implements OnInit {
 
     this.apiService.resetNotification$.subscribe(() => {
       this.hasNewNotification = false;
+      this.badgeState$.next(false);
       this.cdr.markForCheck();
     });
+  }
+
+  navigateAndClearBadge(route: string) {
+  console.log('📍 Current route:', this.currentRoute, 'Target route:', route);
+  if (this.currentRoute === route) {
+    console.log('⚠️ Already on this route, NOT navigating');
+    return;  // ← Prevent re-navigation if already there
+  }
+  this.router.navigate([route]);
+  this.clearBadge();
+}
+
+  private clearBadge() {
+    const parentId = this.apiService.getCurrentProfile()?.parent_id;  // ✅ CORRECT - This is PARENT ID
+    if (!parentId) return;
+
+    console.log('🔄 Clearing badge for parent:', parentId);
+this.badgeState$.next(false);
+  this.hasNewNotification = false;
+  this.cdr.markForCheck();
+    this.apiService.updateDeviceNotificationState(parentId, 0).subscribe(
+      (response: any) => {
+        // this.badgeState$.next(false);
+        // this.hasNewNotification = false;
+        // this.cdr.markForCheck();
+        console.log('✅ Badge cleared in database');
+      },
+      (error) => {
+        console.error('Error clearing badge:', error);
+      }
+    );
   }
 
   openAccountMenu(event: Event) {
