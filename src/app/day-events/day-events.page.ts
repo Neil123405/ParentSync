@@ -85,9 +85,11 @@ export class DayEventsPage implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
-    this._storage = await this.storage.create();
+   
     this.date = this.route.snapshot.paramMap.get('date')!;
-    this.selectedDay = new Date(this.date); // Initially select the passed date
+     const [year, month, day] = this.date.split('-').map(Number);
+  this.selectedDay = new Date(year, month - 1, day);
+   this._storage = await this.storage.create();
     this.parentProfile = this.apiService.getCurrentProfile();
 
     // Set currentWeekStart to the Sunday of the selected date's week
@@ -99,7 +101,13 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     // this.loadEventsForDate(this.date);
     // this.loadConsentFormsForDate(this.date);
     this.calendarOptions.events = this.fetchEvents.bind(this);
-    this.calendarOptions.initialDate = this.date;
+    const pad = (n: number) => String(n).padStart(2, '0');
+const paddedYear = this.selectedDay.getFullYear();
+const paddedMonth = pad(this.selectedDay.getMonth() + 1);
+const paddedDay = pad(this.selectedDay.getDate());
+this.calendarOptions.initialDate = `${paddedYear}-${paddedMonth}-${paddedDay}`;
+console.log('🔵 ngOnInit - this.selectedDay:', this.selectedDay);
+console.log('🔵 initialDate set to:', `${paddedYear}-${paddedMonth}-${paddedDay}`);
     // this.loadEventsAndConsentFormsForWeek(this.date);
   }
 
@@ -324,14 +332,28 @@ export class DayEventsPage implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     // ensure calendar shows the clicked date's week
-    const selectedDate = this.date ? new Date(this.date) : new Date();
+    // const selectedDate = this.selectedDay || new Date();
+    const selectedDateObj = this.selectedDay;
+  const weekStart = new Date(selectedDateObj);
+  weekStart.setDate(selectedDateObj.getDate() - selectedDateObj.getDay()); // Sunday of that week
+  this.currentWeekStart = weekStart;
+
+    const pad = (n: number) => String(n).padStart(2, '0');
+  const dateStr = `${this.selectedDay.getFullYear()}-${pad(this.selectedDay.getMonth() + 1)}-${pad(this.selectedDay.getDate())}`;
+    console.log('🟢 ngAfterViewInit - selectedDay:', this.selectedDay);
+  console.log('🟢 gotoDate will be called with:', dateStr);
+  
     // small timeout to ensure FullCalendar instance is ready
     setTimeout(() => {
       if (this.fc && this.fc.getApi) {
-        this.fc.getApi().gotoDate(selectedDate);
+        console.log('🟢 Calling gotoDate with:', dateStr);
+        this.fc.getApi().gotoDate(dateStr);
         this.fc.getApi().changeView('timeGridWeek');
-      }
-    }, 0);
+        console.log('🟢 gotoDate call completed.');
+      }else {
+    console.error('❌ Calendar API not ready in time!'); // Add this for debugging
+  }
+    }, 100);
   }
 
   loadEventsAndConsentFormsForWeek(date: any) {
@@ -401,7 +423,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
           //   this.fc.getApi().gotoDate(selectedDate);
           //   this.fc.getApi().changeView('timeGridWeek');
           // }
-          if (this.fc && this.fc.getApi) {
+          if (this.fc?.getApi) {
             // this.fc.getApi().gotoDate(new Date(date));
             this.fc.getApi().refetchEvents();
           }

@@ -84,7 +84,7 @@
                   <div class="student-avatar">
                     <ng-container
                       *ngIf="getStudentById(studentId)?.photo_url && getStudentById(studentId)?.photo_url.startsWith('http'); else noPhoto">
-                      <img [src]="getStudentById(studentId)?.photo_url" alt="Student Photo" class="student-photo" />
+                      <img [src]="getStudentById(studentId)?.photo_url" alt="Student Photo" class="student-photo" loading="lazy" />
                     </ng-container>
                     <ng-template #noPhoto>
                       <div class="student-placeholder">
