@@ -1,17 +1,18 @@
 <ion-content [fullscreen]="true" scrollY="true" class="login-background" #content>
-  
+
   <!-- Premium Header Section -->
   <div class="premium-header">
     <div class="header-content">
       <div class="security-badge">
         <ion-icon name="shield-checkmark"></ion-icon>
-        <span>Secure Portal Access12345</span>
+        <span>Secure Portal Access</span>
       </div>
-      
+
       <div class="branding-section">
         <h2 class="brand-greeting">{{ isRegistering ? 'Join Us,' : 'Welcome!,' }}</h2>
         <h1 class="brand-title">{{ isRegistering ? 'Create Your Account' : 'Sign In!' }}</h1>
-        <p class="brand-subtitle">{{ isRegistering ? 'Connect with your school community' : 'Use your account as a parent to continue.' }}</p>
+        <p class="brand-subtitle">{{ isRegistering ? 'Connect with your school community' : 'Use your account as a
+          parent to continue.' }}</p>
       </div>
 
       <!-- Decorative bubble with logo -->
@@ -37,15 +38,16 @@
 
   <!-- Form Card Container -->
   <div class="form-card-wrapper">
-    
+
     <!-- Login Form -->
-    <div class="form-card" [class.keyboard-open]="keyboardOpen" *ngIf="!isRegistering">
+    <div class="form-card" *ngIf="!isRegistering" [class.keyboard-open]="keyboardOpen">
       <!-- Login Form Fields -->
       <div class="input-container">
         <label>USERNAME</label>
         <ion-item lines="none">
           <ion-icon name="person" slot="start"></ion-icon>
-          <ion-input type="text" [(ngModel)]="credentials.username" required placeholder="Enter your username"></ion-input>
+          <ion-input type="text" [(ngModel)]="credentials.username" required
+            placeholder="Enter your username"></ion-input>
         </ion-item>
       </div>
 
@@ -54,8 +56,7 @@
         <ion-item lines="none">
           <ion-icon name="lock-closed" slot="start"></ion-icon>
           <ion-input #passwordInput [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required placeholder="Enter your password"></ion-input>
-          <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'" (pointerdown)="togglePassword(passwordInput); $event.preventDefault(); $event.stopPropagation()"
-             class="toggle-icon"></ion-icon>
+          <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'" (pointerdown)="togglePassword(passwordInput); $event.preventDefault(); $event.stopPropagation()" class="toggle-icon"></ion-icon>
         </ion-item>
       </div>
 
@@ -78,13 +79,12 @@
     </div>
 
     <!-- Registration Form -->
-    <div class="form-card" [class.keyboard-open]="keyboardOpen" *ngIf="isRegistering">
+    <div class="form-card" *ngIf="isRegistering" [class.keyboard-open]="keyboardOpen">
       <div class="input-container">
         <label>FIRST NAME</label>
         <ion-item lines="none">
           <ion-icon name="person" slot="start"></ion-icon>
-          <ion-input type="text" [(ngModel)]="parentInfo.first_name" required
-            placeholder="Your first name"></ion-input>
+          <ion-input type="text" [(ngModel)]="parentInfo.first_name" required placeholder="Your first name"></ion-input>
         </ion-item>
       </div>
 
@@ -92,8 +92,7 @@
         <label>LAST NAME</label>
         <ion-item lines="none">
           <ion-icon name="person" slot="start"></ion-icon>
-          <ion-input type="text" [(ngModel)]="parentInfo.last_name" required
-            placeholder="Your last name"></ion-input>
+          <ion-input type="text" [(ngModel)]="parentInfo.last_name" required placeholder="Your last name"></ion-input>
         </ion-item>
       </div>
 
@@ -101,8 +100,7 @@
         <label>EMAIL ADDRESS</label>
         <ion-item lines="none">
           <ion-icon name="mail" slot="start"></ion-icon>
-          <ion-input type="email" [(ngModel)]="parentInfo.email" required
-            placeholder="your.email@example.com"></ion-input>
+          <ion-input type="email" [(ngModel)]="parentInfo.email" required placeholder="your.email@example.com"></ion-input>
         </ion-item>
       </div>
 
@@ -118,8 +116,7 @@
         <label>USERNAME</label>
         <ion-item lines="none">
           <ion-icon name="person" slot="start"></ion-icon>
-          <ion-input type="text" [(ngModel)]="credentials.username" required
-            placeholder="Choose a username"></ion-input>
+          <ion-input type="text" [(ngModel)]="credentials.username" required placeholder="Choose a username"></ion-input>
         </ion-item>
       </div>
 
@@ -127,10 +124,8 @@
         <label>PASSWORD</label>
         <ion-item lines="none">
           <ion-icon name="lock-closed" slot="start"></ion-icon>
-          <ion-input #passwordInputRegister [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required></ion-input>
-          <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'"
-            (pointerdown)="togglePassword(passwordInputRegister); $event.preventDefault()"
-             class="toggle-icon"></ion-icon>
+          <ion-input #passwordInputRegister [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password" required placeholder="Choose a password"></ion-input>
+          <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'" (pointerdown)="togglePassword(passwordInputRegister); $event.preventDefault()" class="toggle-icon"></ion-icon>
         </ion-item>
       </div>
 

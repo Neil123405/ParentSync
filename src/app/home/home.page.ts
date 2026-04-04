@@ -30,6 +30,14 @@ export class HomePage implements OnInit {
   eventSort: string = 'latest';
   eventLimit: number = 5;
 
+  selectedStudents: any[] = [];
+  isStudentsModalOpen: boolean = false;
+
+  parent: ParentProfile | null = null;
+  userPhotoUrl: string = '';
+
+  activeTab: string = 'announcements';
+
   constructor(
     private apiService: ApiService,
     private router: Router,
@@ -37,28 +45,6 @@ export class HomePage implements OnInit {
   ) {
 
   }
-
-  selectedStudents: any[] = [];
-  isStudentsModalOpen: boolean = false;
-
-  async showAssociatedStudents(event: Event, studentIds: number[]) {
-    event.stopPropagation(); // Prevent opening the announcement detail page
-
-    this.selectedStudents = studentIds
-      .map(id => this.getStudentById(id))
-      .filter(s => s !== undefined);
-
-    if (this.selectedStudents.length > 0) {
-      this.isStudentsModalOpen = true;
-    }
-  }
-
-  setStudentModalOpen(isOpen: boolean) {
-    this.isStudentsModalOpen = isOpen;
-  }
-
-  parent: ParentProfile | null = null;
-  userPhotoUrl: string = '';
 
   ngOnInit() {
     this.storage.create(); // Ensure storage is ready
@@ -88,6 +74,89 @@ export class HomePage implements OnInit {
     this.parent = profile ? (profile as ParentProfile) : null;
   }
 
+  ionViewWillEnter() {
+    if (this.currentProfile) {
+      this.loadChildrenWithPhotos();
+      this.loadAnnouncementsAndEvents();
+    }
+  }
+
+  get filteredAnnouncements() {
+    let list = this.laravelAnnouncements;
+    list = [...list].sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+    return list;
+  }
+
+  get filteredEvents() {
+    let list = this.laravelEvents;
+    list = [...list].sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+    return list;
+  }
+
+  get studentsWithAnnouncements() {
+    const studentIds = new Set(this.filteredAnnouncements.map(a => a.student_id));
+    return this.laravelChildren.filter(child => studentIds.has(child.student_id));
+  }
+
+  get studentsWithEvents() {
+    const studentIds = new Set(this.filteredEvents.map(e => e.student_id));
+    return this.laravelChildren.filter(child => studentIds.has(child.student_id));
+  }
+
+  get groupedAnnouncements() {
+    const groups: { [key: string]: { announcement: any, studentIds: number[] } } = {};
+
+    for (const ann of this.filteredAnnouncements) {
+      const key = ann.announcement_id;
+
+      if (!groups[key]) {
+        groups[key] = {
+          announcement: ann,
+          studentIds: []
+        };
+      }
+      groups[key].studentIds.push(ann.student_id);
+    }
+
+    return Object.values(groups).sort((a, b) => {
+      return new Date(b.announcement.created_at).getTime() - new Date(a.announcement.created_at).getTime();
+    });
+  }
+
+  get groupedEvents() {
+    const groups: { [key: string]: { event: any, studentIds: number[] } } = {};
+
+    for (const event of this.filteredEvents) {
+      const key = event.event_id || event.id;
+
+      if (!groups[key]) {
+        groups[key] = {
+          event: event,
+          studentIds: []
+        };
+      }
+      groups[key].studentIds.push(event.student_id);
+    }
+
+    return Object.values(groups).sort((a, b) => {
+      return new Date(b.event.created_at).getTime() - new Date(a.event.created_at).getTime();
+    });
+  }
+
+  async showAssociatedStudents(event: Event, studentIds: number[]) {
+    event.stopPropagation(); // Prevent opening the announcement detail page
+
+    this.selectedStudents = studentIds.map(id => this.getStudentById(id)).filter(s => s !== undefined);
+
+    if (this.selectedStudents.length > 0) {
+      this.isStudentsModalOpen = true;
+    }
+  }
+
   async loadChildrenWithPhotos() {
     if (!this.currentProfile) {
       return;
@@ -112,13 +181,6 @@ export class HomePage implements OnInit {
         console.error('Error fetching children with photos:', error);
       },
     });
-  }
-
-  ionViewWillEnter() {
-    if (this.currentProfile) {
-      this.loadChildrenWithPhotos();
-      this.loadAnnouncementsAndEvents();
-    }
   }
 
   async loadAnnouncementsAndEvents() {
@@ -185,62 +247,6 @@ export class HomePage implements OnInit {
     return this.laravelChildren.find(child => child.student_id === studentId);
   }
 
-  get filteredAnnouncements() {
-    let list = this.laravelAnnouncements;
-    list = [...list].sort((a, b) => {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
-    return list;
-  }
-
-  get filteredEvents() {
-    let list = this.laravelEvents;
-    list = [...list].sort((a, b) => {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
-    return list;
-  }
-
-  get studentsWithAnnouncements() {
-    const studentIds = new Set(this.filteredAnnouncements.map(a => a.student_id));
-    return this.laravelChildren.filter(child => studentIds.has(child.student_id));
-  }
-
-  goToStudentAnnouncements(studentId: number) {
-    this.router.navigate(['/student-announcements', studentId]);
-  }
-
-  get studentsWithEvents() {
-    const studentIds = new Set(this.filteredEvents.map(e => e.student_id));
-    return this.laravelChildren.filter(child => studentIds.has(child.student_id));
-  }
-
-  goToStudentEvents(studentId: number) {
-    this.router.navigate(['/school-events', studentId]);
-  }
-
-  get groupedAnnouncements() {
-    const groups: { [key: string]: { announcement: any, studentIds: number[] } } = {};
-
-    for (const ann of this.filteredAnnouncements) {
-      const key = ann.announcement_id;
-
-      if (!groups[key]) {
-        groups[key] = {
-          announcement: ann,
-          studentIds: []
-        };
-      }
-      groups[key].studentIds.push(ann.student_id);
-    }
-
-    return Object.values(groups).sort((a, b) => {
-      return new Date(b.announcement.created_at).getTime() - new Date(a.announcement.created_at).getTime();
-    });
-  }
-
-  activeTab: string = 'announcements';
-
   showAnnouncementInfo() {
     alert('This button shows information about announcements.');
   }
@@ -253,23 +259,116 @@ export class HomePage implements OnInit {
     this.activeTab = tab;
   }
 
-  get groupedEvents() {
-    const groups: { [key: string]: { event: any, studentIds: number[] } } = {};
-
-    for (const event of this.filteredEvents) {
-      const key = event.event_id || event.id;
-
-      if (!groups[key]) {
-        groups[key] = {
-          event: event,
-          studentIds: []
-        };
-      }
-      groups[key].studentIds.push(event.student_id);
-    }
-
-    return Object.values(groups).sort((a, b) => {
-      return new Date(b.event.created_at).getTime() - new Date(a.event.created_at).getTime();
-    });
+  setStudentModalOpen(isOpen: boolean) {
+    this.isStudentsModalOpen = isOpen;
   }
+
 }
+
+// Trash code
+
+// ngOnInit() {
+//   this.storage.create(); // Ensure storage is ready
+//   this.apiService.currentUser$.subscribe(user => {
+//     this.currentUser = user;
+//     if (!this.currentUser) {
+//       this.router.navigate(['/login']);
+//     }
+//   });
+//   this.apiService.currentProfile$.subscribe(profile => {
+//     this.currentProfile = profile;
+//     if (this.currentProfile) {
+//       this.loadAnnouncementsAndEvents();
+//       this.loadChildrenWithPhotos();
+//     }
+//   });
+//   this.apiService.profileUpdated$.subscribe(() => {
+//     if (this.currentProfile) {
+//       this.loadAnnouncementsAndEvents();
+//       this.loadChildrenWithPhotos();
+//     }
+//   });
+//   const profile = this.apiService.getCurrentProfile();
+//   this.parent = profile ? (profile as ParentProfile) : null;
+// }
+
+// get filteredAnnouncements() {
+//     let list = this.laravelAnnouncements;
+//     list = [...list].sort((a, b) => {
+//       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+//     });
+//     return list;
+//   }
+
+// get filteredEvents() {
+//     let list = this.laravelEvents;
+//     list = [...list].sort((a, b) => {
+//       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+//     });
+//     return list;
+//   }
+
+// get studentsWithAnnouncements() {
+//     const studentIds = new Set(this.filteredAnnouncements.map(a => a.student_id));
+//     return this.laravelChildren.filter(child => studentIds.has(child.student_id));
+//   }
+
+// get studentsWithEvents() {
+//   const studentIds = new Set(this.filteredEvents.map(e => e.student_id));
+//   return this.laravelChildren.filter(child => studentIds.has(child.student_id));
+// }
+
+// get groupedAnnouncements() {
+//     const groups: { [key: string]: { announcement: any, studentIds: number[] } } = {};
+//     for (const ann of this.filteredAnnouncements) {
+//       const key = ann.announcement_id;
+//       if (!groups[key]) {
+//         groups[key] = {
+//           announcement: ann,
+//           studentIds: []
+//         };
+//       }
+//       groups[key].studentIds.push(ann.student_id);
+//     }
+
+//     return Object.values(groups).sort((a, b) => {
+//       return new Date(b.announcement.created_at).getTime() - new Date(a.announcement.created_at).getTime();
+//     });
+//   }
+
+// get groupedEvents() {
+//   const groups: { [key: string]: { event: any, studentIds: number[] } } = {};
+//   for (const event of this.filteredEvents) {
+//     const key = event.event_id || event.id;
+//     if (!groups[key]) {
+//       groups[key] = {
+//         event: event,
+//         studentIds: []
+//       };
+//     }
+//     groups[key].studentIds.push(event.student_id);
+//   }
+
+//   return Object.values(groups).sort((a, b) => {
+//     return new Date(b.event.created_at).getTime() - new Date(a.event.created_at).getTime();
+//   });
+// }
+
+// ionViewWillEnter() {
+//   if (this.currentProfile) {
+//     this.loadChildrenWithPhotos();
+//     this.loadAnnouncementsAndEvents();
+//   }
+// }
+
+// setStudentModalOpen(isOpen: boolean) {
+//   this.isStudentsModalOpen = isOpen;
+// }
+
+// goToStudentAnnouncements(studentId: number) {
+//   this.router.navigate(['/student-announcements', studentId]);
+// }
+
+// goToStudentEvents(studentId: number) {
+//   this.router.navigate(['/school-events', studentId]);
+// }

@@ -85,11 +85,11 @@ export class DayEventsPage implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
-   
+
     this.date = this.route.snapshot.paramMap.get('date')!;
-     const [year, month, day] = this.date.split('-').map(Number);
-  this.selectedDay = new Date(year, month - 1, day);
-   this._storage = await this.storage.create();
+    const [year, month, day] = this.date.split('-').map(Number);
+    this.selectedDay = new Date(year, month - 1, day);
+    this._storage = await this.storage.create();
     this.parentProfile = this.apiService.getCurrentProfile();
 
     // Set currentWeekStart to the Sunday of the selected date's week
@@ -102,12 +102,12 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     // this.loadConsentFormsForDate(this.date);
     this.calendarOptions.events = this.fetchEvents.bind(this);
     const pad = (n: number) => String(n).padStart(2, '0');
-const paddedYear = this.selectedDay.getFullYear();
-const paddedMonth = pad(this.selectedDay.getMonth() + 1);
-const paddedDay = pad(this.selectedDay.getDate());
-this.calendarOptions.initialDate = `${paddedYear}-${paddedMonth}-${paddedDay}`;
-console.log('🔵 ngOnInit - this.selectedDay:', this.selectedDay);
-console.log('🔵 initialDate set to:', `${paddedYear}-${paddedMonth}-${paddedDay}`);
+    const paddedYear = this.selectedDay.getFullYear();
+    const paddedMonth = pad(this.selectedDay.getMonth() + 1);
+    const paddedDay = pad(this.selectedDay.getDate());
+    this.calendarOptions.initialDate = `${paddedYear}-${paddedMonth}-${paddedDay}`;
+    console.log('🔵 ngOnInit - this.selectedDay:', this.selectedDay);
+    console.log('🔵 initialDate set to:', `${paddedYear}-${paddedMonth}-${paddedDay}`);
     // this.loadEventsAndConsentFormsForWeek(this.date);
   }
 
@@ -334,15 +334,15 @@ console.log('🔵 initialDate set to:', `${paddedYear}-${paddedMonth}-${paddedDa
     // ensure calendar shows the clicked date's week
     // const selectedDate = this.selectedDay || new Date();
     const selectedDateObj = this.selectedDay;
-  const weekStart = new Date(selectedDateObj);
-  weekStart.setDate(selectedDateObj.getDate() - selectedDateObj.getDay()); // Sunday of that week
-  this.currentWeekStart = weekStart;
+    const weekStart = new Date(selectedDateObj);
+    weekStart.setDate(selectedDateObj.getDate() - selectedDateObj.getDay()); // Sunday of that week
+    this.currentWeekStart = weekStart;
 
     const pad = (n: number) => String(n).padStart(2, '0');
-  const dateStr = `${this.selectedDay.getFullYear()}-${pad(this.selectedDay.getMonth() + 1)}-${pad(this.selectedDay.getDate())}`;
+    const dateStr = `${this.selectedDay.getFullYear()}-${pad(this.selectedDay.getMonth() + 1)}-${pad(this.selectedDay.getDate())}`;
     console.log('🟢 ngAfterViewInit - selectedDay:', this.selectedDay);
-  console.log('🟢 gotoDate will be called with:', dateStr);
-  
+    console.log('🟢 gotoDate will be called with:', dateStr);
+
     // small timeout to ensure FullCalendar instance is ready
     setTimeout(() => {
       if (this.fc && this.fc.getApi) {
@@ -350,9 +350,9 @@ console.log('🔵 initialDate set to:', `${paddedYear}-${paddedMonth}-${paddedDa
         this.fc.getApi().gotoDate(dateStr);
         this.fc.getApi().changeView('timeGridWeek');
         console.log('🟢 gotoDate call completed.');
-      }else {
-    console.error('❌ Calendar API not ready in time!'); // Add this for debugging
-  }
+      } else {
+        console.error('❌ Calendar API not ready in time!'); // Add this for debugging
+      }
     }, 100);
   }
 
@@ -567,7 +567,7 @@ console.log('🔵 initialDate set to:', `${paddedYear}-${paddedMonth}-${paddedDa
   goBackToCalendar() {
     // Get the last day (Saturday) of the current week
     const weekStart = this.currentWeekStart || this.selectedDay || new Date();
-  
+
     const lastDayOfWeek = new Date(weekStart);
     lastDayOfWeek.setDate(weekStart.getDate() + 6);
     const month = lastDayOfWeek.getMonth();

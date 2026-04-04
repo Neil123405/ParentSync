@@ -119,7 +119,10 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
         {
           text: 'Yes',
           handler: () => {
-            this.router.navigate(['/day-events', dateStr]);
+            const [year, month, day] = dateStr.split('-').map(Number);
+          const localDate = new Date(year, month - 1, day);
+          const isoString = localDate.toISOString().split('T')[0];
+          this.router.navigate(['/day-events', isoString]);
           },
         },
       ],

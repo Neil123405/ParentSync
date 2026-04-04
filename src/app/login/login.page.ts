@@ -1,10 +1,9 @@
 import { Component, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
-import { AlertController, LoadingController, IonInput } from '@ionic/angular';
+import { AlertController, LoadingController, IonContent } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 import { PushNotifications } from '@capacitor/push-notifications';
-import { IonContent } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -30,34 +29,15 @@ export class LoginPage implements AfterViewInit, OnDestroy {
 
   isRegistering = false;
   keyboardOpen = false;
-  // private keyboardShowListener: any;
-  // private keyboardHideListener: any;
+  showPassword = false;
+  rememberMe = false;
 
   constructor(
     private apiService: ApiService,
     private alertController: AlertController,
     private loadingController: LoadingController,
     private router: Router
-  ) {}
-
-  showPassword = false;
-  rememberMe = false;
-
-  togglePassword(passwordInput: any) {
-  this.showPassword = !this.showPassword;
-  // if (passwordInput) {
-  //   passwordInput.setFocus().then(() => passwordInput.blur());
-  // }
-    setTimeout(() => {
-    if (passwordInput) {
-      passwordInput.blur();
-      Keyboard.hide();
-    }
-  }, 50);
-  // setTimeout(() => {
-  //   passwordInput.setFocus();
-  // }, 0);
-}
+  ) { }
 
   ngOnInit() {
     // this.setupKeyboardListeners();
@@ -65,6 +45,33 @@ export class LoginPage implements AfterViewInit, OnDestroy {
       username: '',
       password: '',
     };
+    this.parentInfo = {
+      first_name: '',
+      last_name: '',
+      email: '',
+      contactNo: '',
+    };
+  }
+
+  ngAfterViewInit() {
+    // Remove old focus listeners and scrolling
+    // Add keyboard listeners instead
+    this.setupKeyboardListeners();
+  }
+
+  ngOnDestroy() {
+    // if (this.keyboardShowListener) {
+    //   this.keyboardShowListener.remove();
+    // }
+    // if (this.keyboardHideListener) {
+    //   this.keyboardHideListener.remove();
+    // }
+    Keyboard.removeAllListeners();
+  }
+
+  ionViewWillEnter() {
+    this.credentials = { username: '', password: '' };
+    // Optionally, also clear registration fields if needed:
     this.parentInfo = {
       first_name: '',
       last_name: '',
@@ -86,34 +93,22 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     });
   }
 
-  ionViewWillEnter() {
-    this.credentials = { username: '', password: '' };
-    // Optionally, also clear registration fields if needed:
-    this.parentInfo = {
-      first_name: '',
-      last_name: '',
-      email: '',
-      contactNo: '',
-    };
+  togglePassword(passwordInput: any) {
+    this.showPassword = !this.showPassword;
+    // if (passwordInput) {
+    //   passwordInput.setFocus().then(() => passwordInput.blur());
+    // }
+    setTimeout(() => {
+      if (passwordInput) {
+        passwordInput.blur();
+        Keyboard.hide();
+      }
+    }, 50);
+    // setTimeout(() => {
+    //   passwordInput.setFocus();
+    // }, 0);
   }
 
-  // prevents keyboard from covering input fields
-  ngAfterViewInit() {
-    // Remove old focus listeners and scrolling
-    // Add keyboard listeners instead
-    this.setupKeyboardListeners();
-  }
-
-  // cleans up the keyboard listener when the component is destroyed
-  ngOnDestroy() {
-    // if (this.keyboardShowListener) {
-    //   this.keyboardShowListener.remove();
-    // }
-    // if (this.keyboardHideListener) {
-    //   this.keyboardHideListener.remove();
-    // }
-    Keyboard.removeAllListeners();
-  }
 
   async login() {
     const payload = {
@@ -126,16 +121,13 @@ export class LoginPage implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const loading = await this.loadingController.create({
-      message: 'Logging in...',
-    });
+    const loading = await this.loadingController.create({ message: 'Logging in...', });
     await loading.present();
 
     this.apiService.login(payload).subscribe({
       next: async (response) => {
         await loading.dismiss();
         // console.log('Login successful:', response);
-
         // Replace the localStorage line with:
         this.apiService.setToken(response.token, this.rememberMe);
         // Store user data using ApiService
@@ -172,13 +164,11 @@ export class LoginPage implements AfterViewInit, OnDestroy {
           }
         }
         // --- End FCM Registration ---
-
         this.router.navigate(['/home']);
       },
       error: async (error) => {
         await loading.dismiss();
         // console.error('Login failed:', error);
-
         const errorMessage = error.error?.message || 'Invalid credentials';
         this.showAlert('Login Failed', errorMessage);
       },
@@ -217,20 +207,14 @@ export class LoginPage implements AfterViewInit, OnDestroy {
       contactNo: this.parentInfo.contactNo,
     };
 
-    const loading = await this.loadingController.create({
-      message: 'Creating account...',
-    });
+    const loading = await this.loadingController.create({ message: 'Creating account...',});
     await loading.present();
 
     this.apiService.register(userData).subscribe({
       next: async (response) => {
         await loading.dismiss();
         // console.log('Registration successful:', response);
-
-        this.showAlert(
-          'Success',
-          'Account created successfully! You can now login.'
-        );
+        this.showAlert( 'Success', 'Account created successfully! You can now login.' );
         this.isRegistering = false;
         this.clearForms();
       },
@@ -241,15 +225,13 @@ export class LoginPage implements AfterViewInit, OnDestroy {
         let errorMessage = error.error?.message || 'Registration failed';
         // If there are validation errors, append them to the message
         if (error.error?.errors) {
-          const details = Object.entries(error.error.errors)
-            .map(([field, messages]) => `${field}: ${messages as string[]}`)
-            .join(' | ');
+          const details = Object.entries(error.error.errors).map(([field, messages]) => `${field}: ${messages as string[]}`).join(' | ');
           errorMessage += ' ' + details;
         }
         this.showAlert('Registration Failed', errorMessage);
       },
     });
-    // console.log('API URL:', environment.apiUrl); // <-- Add this line
+    // console.log('API URL:', environment.apiUrl);
   }
 
   private async showAlert(header: string, message: string) {
@@ -304,3 +286,61 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     return phoneRegex.test(contactNo);
   }
 }
+
+// TRASH-SECTION (DON'T)
+
+// ngOnInit() {
+//   // this.setupKeyboardListeners();
+//   this.credentials = {
+//     username: '',
+//     password: '',
+//   };
+//   this.parentInfo = {
+//     first_name: '',
+//     last_name: '',
+//     email: '',
+//     contactNo: '',
+//   };
+// }
+
+// prevents keyboard from covering input fields
+// ngAfterViewInit() {
+//   // Remove old focus listeners and scrolling
+//   // Add keyboard listeners instead
+//   this.setupKeyboardListeners();
+// }
+
+// cleans up the keyboard listener when the component is destroyed
+// ngOnDestroy() {
+//   // if (this.keyboardShowListener) {
+//   //   this.keyboardShowListener.remove();
+//   // }
+//   // if (this.keyboardHideListener) {
+//   //   this.keyboardHideListener.remove();
+//   // }
+//   Keyboard.removeAllListeners();
+// }
+
+// ionViewWillEnter() {
+//   this.credentials = { username: '', password: '' };
+//   // Optionally, also clear registration fields if needed:
+//   this.parentInfo = {
+//     first_name: '',
+//     last_name: '',
+//     email: '',
+//     contactNo: '',
+//   };
+// }
+
+// setupKeyboardListeners() {
+//   Keyboard.addListener('keyboardWillShow', () => {
+//     this.keyboardOpen = true;
+//     // setTimeout(() => {
+//     //   this.content.scrollToBottom(300);
+//     // }, 200);
+//   });
+
+//   Keyboard.addListener('keyboardWillHide', () => {
+//     this.keyboardOpen = false;
+//   });
+// }
