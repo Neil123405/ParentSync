@@ -556,17 +556,17 @@ export class ChildrenPage implements OnInit, AfterViewInit {
               handler: () => {
                 if (this.currentProfile && this.currentProfile.parent_id !== undefined) {
                   this.apiService.linkStudentToParent(this.currentProfile.parent_id, studentId, firstName, lastName, birthdate).subscribe({
-                      next: async (response) => {
-                        if (response.success) {
-                          this.showToast('Student linked successfully!');
-                          await this.clearCache();
-                          this.loadData();
-                        } else {
-                          this.showToast(response.message);
-                        }
-                      },
-                      error: () => this.showToast('Failed to link student.')
-                    });
+                    next: async (response) => {
+                      if (response.success) {
+                        this.showToast('Student linked successfully!');
+                        await this.clearCache();
+                        this.loadData();
+                      } else {
+                        this.showToast(response.message);
+                      }
+                    },
+                    error: () => this.showToast('Failed to link student.')
+                  });
                 } else {
                   this.showToast('Parent ID is missing.');
                 }
@@ -845,9 +845,29 @@ export class ChildrenPage implements OnInit, AfterViewInit {
 
   updateSelectedChildData() {
     if (this.selectedChild && this.selectedChild.student_id) {
-      this.upcomingConsentForms = this.consentFormCountsTwo[this.selectedChild.student_id] || [];
-      this.upcomingEvents = this.schoolEventCountsTwo[this.selectedChild.student_id] || [];
-      this.recentAnnouncements = this.announcementCountsTwo[this.selectedChild.student_id] || [];
+      const studentId = this.selectedChild.student_id;
+      const today = new Date();
+      const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+      // Filter consent forms: only those due in next 5 days
+      this.upcomingConsentForms = (this.consentFormCountsTwo[studentId] || []).filter((form: any) => {
+        const deadlineDate = new Date(new Date(form.deadline).toDateString());
+        const diffDays = (deadlineDate.getTime() - todayDate.getTime()) / (1000 * 3600 * 24);
+        return diffDays >= 0 && diffDays <= 5;
+      });
+
+      // Filter events: only those in next 10 days
+      this.upcomingEvents = (this.schoolEventCountsTwo[studentId] || []).filter((event: any) => {
+        const eventDate = new Date(event.date);
+        const diffDays = (eventDate.getTime() - todayDate.getTime()) / (1000 * 3600 * 24);
+        return diffDays >= 0 && diffDays <= 10;
+      });
+
+      // Filter announcements: only from today
+      this.recentAnnouncements = (this.announcementCountsTwo[studentId] || []).filter((announcement: any) => {
+        const announcementDate = new Date(new Date(announcement.created_at).toDateString());
+        return announcementDate.getTime() === todayDate.getTime();
+      });
     } else {
       this.upcomingConsentForms = [];
       this.upcomingEvents = [];

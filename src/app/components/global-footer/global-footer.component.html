@@ -1,26 +1,17 @@
 <div *ngIf="showFooter" class="global-footer-container">
   <div class="footer-buttons">
     <!-- Home Button -->
-    <div 
-      class="footer-tab"
-      [class.active]="isActive('/home')"
-      (click)="navigateTo('/home')">
+    <div class="footer-tab" [class.active]="isActive('/home')" (click)="navigateTo('/home')">
       <ion-icon name="home"></ion-icon>
       <span>Home</span>
     </div>
-    
+
     <!-- Children Button -->
-    <div 
-      class="footer-tab"
-      [class.active]="isActive('/children')"
-      (click)="navigateAndClearBadge('/children')">
+    <div class="footer-tab" [class.active]="isActive('/children')" (click)="navigateAndClearBadge('/children')">
       <ion-icon name="people"></ion-icon>
       <span>Children</span>
-        <div class="notification-badge" *ngIf="badgeState || hasNewNotification"></div>
+      <div class="notification-badge" *ngIf="badgeState || hasNewNotification"></div>
       <!-- DEBUG OUTPUT -->
-  <div style="font-size: 8px; color: red; margin-top: 2px;">
-    BS:{{badgeState}} | HN:{{hasNewNotification}}
-  </div>
     </div>
 
     <div class="floating-add-btn-container">
@@ -30,10 +21,7 @@
     </div>
 
     <!-- Calendar Button -->
-    <div 
-      class="footer-tab"
-      [class.active]="isActive('/calendar')"
-      (click)="navigateTo('/calendar')">
+    <div class="footer-tab" [class.active]="isActive('/calendar')" (click)="navigateTo('/calendar')">
       <ion-icon name="calendar"></ion-icon>
       <span>Calendar</span>
     </div>
