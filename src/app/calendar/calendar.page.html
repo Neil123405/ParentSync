@@ -2,26 +2,26 @@
   <div class="enhanced-calendar-header">
     <!-- Background Gradient -->
     <div class="header-gradient"></div>
-    
+
     <!-- Decorative Elements -->
     <div class="header-decoration">
       <div class="deco-circle deco-1"></div>
       <div class="deco-circle deco-2"></div>
       <div class="deco-circle deco-3"></div>
     </div>
-    
+
     <!-- Header Content -->
     <div class="header-content">
       <div class="month-display">
-  <button class="nav-arrow" (click)="goToPrevious()">
-    <ion-icon name="chevron-back"></ion-icon>
-  </button>
-  <h1 class="current-month">{{ currentMonth }}</h1>
-  <button class="nav-arrow" (click)="goToNext()">
-    <ion-icon name="chevron-forward"></ion-icon>
-  </button>
-</div>
-      
+        <button class="nav-arrow" (click)="goToPrevious()">
+          <ion-icon name="chevron-back"></ion-icon>
+        </button>
+        <h1 class="current-month">{{ currentMonth }}</h1>
+        <button class="nav-arrow" (click)="goToNext()">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </button>
+      </div>
+
       <div class="stats-row">
         <!-- Event Count Indicator -->
         <div class="stat-card event-stat">
@@ -33,7 +33,7 @@
             <span class="stat-label">Events</span>
           </div>
         </div>
-        
+
         <!-- Consent Form Count Indicator -->
         <div class="stat-card form-stat">
           <div class="stat-icon-wrapper">
@@ -63,8 +63,7 @@
   <!-- Modern Tab Switcher -->
   <div class="modern-tab-switcher">
     <div class="tab-slider-container">
-      <div class="tab-background-slider" [style.transform]="'translateX(' + (showUpcomingEvents ? '0%' : '100%') + ')'">
-      </div>
+      <div class="tab-background-slider" [style.transform]="'translateX(' + (showUpcomingEvents ? '0%' : '100%') + ')'"></div>
 
       <button class="modern-tab-button" [class.active]="showUpcomingEvents" (click)="showUpcomingEvents = true">
         <ion-icon name="calendar" class="tab-icon"></ion-icon>
@@ -90,14 +89,12 @@
           </div>
           <div class="header-content">
             <h2 class="card-title">Upcoming Events</h2>
-            <p class="card-subtitle">{{ upcomingEvents.length }} event{{ upcomingEvents.length !== 1 ? 's' : '' }}
-              scheduled</p>
+            <p class="card-subtitle">{{ upcomingEvents.length }} event{{ upcomingEvents.length !== 1 ? 's' : '' }} scheduled</p>
           </div>
         </div>
 
         <div class="card-body" *ngIf="upcomingEvents.length > 0; else noEventsTemplate">
-          <div class="event-item" *ngFor="let event of upcomingEvents; let i = index" (click)="openEventDetail(event)"
-            [style.animation-delay]="i * 100 + 'ms'">
+          <div class="event-item" *ngFor="let event of upcomingEvents; let i = index" (click)="openEventDetail(event)" [style.animation-delay]="i * 100 + 'ms'">
 
             <div class="event-date-badge">
               <span class="date-day">{{ event.start | date:'dd' }}</span>
@@ -148,14 +145,12 @@
           </div>
           <div class="header-content">
             <h2 class="card-title">Consent Forms</h2>
-            <p class="card-subtitle">{{ upcomingConsentForms.length }} form{{ upcomingConsentForms.length !== 1 ? 's' :
-              '' }} pending</p>
+            <p class="card-subtitle">{{ upcomingConsentForms.length }} form{{ upcomingConsentForms.length !== 1 ? 's' : '' }} pending</p>
           </div>
         </div>
 
         <div class="card-body" *ngIf="upcomingConsentForms.length > 0; else noFormsTemplate">
-          <div class="form-item" *ngFor="let form of upcomingConsentForms; let i = index"
-            (click)="openConsentFormDetail(form)" [style.animation-delay]="i * 100 + 'ms'">
+          <div class="form-item" *ngFor="let form of upcomingConsentForms; let i = index" (click)="openConsentFormDetail(form)" [style.animation-delay]="i * 100 + 'ms'">
 
             <div class="form-priority-badge">
               <span class="date-day">{{ form.deadline | date:'dd' }}</span>
@@ -196,5 +191,5 @@
       </div>
     </div>
   </div>
-   <div class="content-bottom-spacer"></div>
+  <div class="content-bottom-spacer"></div>
 </ion-content>
