@@ -26,19 +26,16 @@
         <ion-icon name="chevron-back"></ion-icon>
       </button>
 
-      <button class="nav-arrow nav-arrow-right" [disabled]="centerCardIndex === laravelChildren.length - 1"
-        (click)="goToNextCard()">
+      <button class="nav-arrow nav-arrow-right" [disabled]="centerCardIndex === laravelChildren.length - 1" (click)="goToNextCard()">
         <ion-icon name="chevron-forward"></ion-icon>
       </button>
 
-      <div class="students-carousel-wrapper" #carouselWrapper (pan)="onPan($event)" (panend)="onPanEnd($event)"
-        (swipe)="onSwipe($event)">
+      <div class="students-carousel-wrapper" #carouselWrapper >
         <div *ngIf="!isLoading">
           <div *ngFor="let child of laravelChildren; let i = index" class="student-card-carousel"
-            [class.center]="centerCardIndex === i" [class.left]="i < centerCardIndex"
-            [class.right]="i > centerCardIndex" [class.long-pressed]="longPressedId === child.student_id"
-            (click)="selectChildAndCenter(child, i)" (mousedown)="startPress($event, child)" (mouseup)="endPress()"
-            (mouseleave)="endPress()" (touchstart)="startPress($event, child)" (touchend)="endPress()"
+            [class.center]="centerCardIndex === i" [class.left]="i < centerCardIndex" [class.right]="i > centerCardIndex" 
+            [class.long-pressed]="longPressedId === child.student_id" (click)="selectChildAndCenter(child, i)" 
+            (mousedown)="startPress($event, child)" (mouseup)="endPress()" (mouseleave)="endPress()" (touchstart)="startPress($event, child)" (touchend)="endPress()"
             [style.transform]="getCardTransform(i)" style="position: absolute;">
             <!-- Badge at top right -->
             <span class="student-badge">
@@ -72,18 +69,13 @@
 
   <!-- Action Buttons (Tasks & Timeline) -->
   <div class="ion-padding action-buttons" style="display: flex; gap: 8px;">
-    <ion-button expand="block" class="children-btn" [disabled]="!selectedChild"
-      [fill]="activeSection === 'tasks' ? 'solid' : 'outline'" (click)="showSection('tasks')" style="flex: 1;">
+    <ion-button (click)="showSection('tasks')" expand="block" class="children-btn" [disabled]="!selectedChild" [fill]="activeSection === 'tasks' ? 'solid' : 'outline'" style="flex: 1;">
       <ion-icon name="list" class="list" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button expand="block" class="children-btn" [disabled]="!selectedChild"
-      [fill]="activeSection === 'attendance' ? 'solid' : 'outline'" (click)="showSection('attendance')"
-      style="flex: 1;">
+    <ion-button (click)="showSection('attendance')" expand="block" class="children-btn" [disabled]="!selectedChild" [fill]="activeSection === 'attendance' ? 'solid' : 'outline'" style="flex: 1;">
       <ion-icon name="calendar-outline" class="calendar" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button expand="block" class="children-btn" [disabled]="!selectedChild"
-      [fill]="activeSection === 'milestones' ? 'solid' : 'outline'" (click)="showSection('milestones')"
-      style="flex: 1;">
+    <ion-button (click)="showSection('milestones')" expand="block" class="children-btn" [disabled]="!selectedChild" [fill]="activeSection === 'milestones' ? 'solid' : 'outline'" style="flex: 1;">
       <ion-icon name="trophy-outline" class="trophy" slot="icon-only"></ion-icon>
     </ion-button>
   </div>
@@ -96,9 +88,7 @@
         <div class="task-icon-wrapper">
           <img src="assets/images/consent.png" alt="Consent Forms" class="task-icon" />
         </div>
-        <div class="task-badge-top">
-          {{ unreadConsentFormCounts[selectedChild.student_id] || 0 }}
-        </div>
+        <div class="task-badge-top">{{ unreadConsentFormCounts[selectedChild.student_id] || 0 }}</div>
       </div>
       <div class="task-card-body">
         <h3 class="task-title">Consent Forms</h3>
@@ -131,9 +121,7 @@
         <div class="task-icon-wrapper">
           <img src="assets/images/events.png" alt="School Events" class="task-icon" />
         </div>
-        <div class="task-badge-top">
-          {{ unreadEventCounts[selectedChild.student_id] || 0 }}
-        </div>
+        <div class="task-badge-top">{{ unreadEventCounts[selectedChild.student_id] || 0 }}</div>
       </div>
       <div class="task-card-body">
         <h3 class="task-title">Events</h3>
@@ -167,9 +155,7 @@
         <div class="task-icon-wrapper">
           <img src="assets/images/announcements.png" alt="Announcements" class="task-icon" />
         </div>
-        <div class="task-badge-top">
-          {{ unreadAnnouncementCounts[selectedChild.student_id] || 0 }}
-        </div>
+        <div class="task-badge-top">{{ unreadAnnouncementCounts[selectedChild.student_id] || 0 }}</div>
       </div>
       <div class="task-card-body">
         <h3 class="task-title">Announcements</h3>
@@ -310,7 +296,7 @@
 
     <!-- Year Filter Dropdown -->
     <div class="year-filter">
-      <ion-select interface="popover" [(ngModel)]="selectedYear" mode="ios">
+      <ion-select interface="popover" mode="ios" [(ngModel)]="selectedYear">
         <ion-select-option *ngFor="let year of availableYears" [value]="year">
           {{ year }}
         </ion-select-option>
@@ -376,9 +362,7 @@
   <ion-list *ngIf="pendingStudents.length">
     <ion-list-header color="tertiary">Pending Students</ion-list-header>
     <ion-item *ngFor="let student of pendingStudents">
-      <ion-label>
-        (ID: {{ student.student_id }})
-      </ion-label>
+      <ion-label>(ID: {{ student.student_id }})</ion-label>
       <ion-note slot="end" color="tertiary">Pending Verification</ion-note>
     </ion-item>
   </ion-list>
@@ -387,3 +371,7 @@
   <div style="height: 80px;"></div>
 
 </ion-content>
+
+<!-- TRASH -->
+<!--  (swipe)="onSwipe($event)" -->
+  <!--  (pan)="onPan($event)" (panend)="onPanEnd($event)" -->
