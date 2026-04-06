@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef, ElementRef, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { ToastController, ModalController } from '@ionic/angular';
@@ -104,7 +104,8 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     private storage: Storage,
     private gestureCtrl: GestureController,
     private cdr: ChangeDetectorRef,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private ngZone: NgZone
   ) { }
 
   async ngOnInit() {
@@ -129,13 +130,17 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     });
 
     this.apiService.announcementReceived$.subscribe(() => {
-      console.log('📢 New announcement detected! Refreshing unread counts...');
-      this.refreshUnreadCounts(); // Call new method
+      this.ngZone.run(() => {
+        console.log('📢 New announcement detected! Refreshing unread counts...');
+        this.refreshUnreadCounts(); // Call new method
+      });
     });
 
     this.apiService.itemMarkedAsRead$.subscribe(({ type, studentId }) => {
-      console.log(`📝 ${type} marked as read for student ${studentId}, refreshing counts...`);
-      this.refreshUnreadCounts();
+      this.ngZone.run(() => {
+        console.log(`📝 ${type} marked as read for student ${studentId}, refreshing counts...`);
+        this.refreshUnreadCounts();
+      });
     });
 
     // Load data
