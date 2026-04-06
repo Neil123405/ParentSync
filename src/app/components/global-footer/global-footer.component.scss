@@ -213,6 +213,7 @@ button:active,
   border: 2px solid white;
   box-shadow: 0 2px 8px rgba(54, 40, 150, 0.4);
   animation: pulse 2s infinite;
+  z-index: 2; 
 }
 
 @keyframes pulse {
