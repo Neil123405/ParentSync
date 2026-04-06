@@ -444,8 +444,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
           }),
           new Promise((resolve) => {
             this.apiService
-              .getAllUnsignedConsentFormsForParent(parentProfile.parent_id)
-              .subscribe(
+              .getAllUnsignedConsentFormsForParent(parentProfile.parent_id).subscribe(
                 (res) => resolve(res),
                 (err) => {
                   console.error('Error fetching consent forms:', err);
@@ -457,8 +456,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
           // Process events
           const events = (eventsRes?.events || []).map(
             (event: any, index: number) => {
-              const rawId =
-                event.event_id ?? event.id ?? `${event.date}-${event.title}`;
+              const rawId = event.event_id ?? event.id ?? `${event.date}-${event.title}`;
               return {
                 ...event,
                 title: event.title,

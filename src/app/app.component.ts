@@ -1,52 +1,14 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { Platform } from '@ionic/angular';
 import { PushNotifications, PushNotificationSchema } from '@capacitor/push-notifications';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
-import { ToastController, ModalController, MenuController } from '@ionic/angular';
+import { App } from '@capacitor/app';
+import { ToastController, ModalController, MenuController, Platform } from '@ionic/angular';
+import { Storage } from '@ionic/storage-angular';
+import { GlobalFooterComponent } from './components/global-footer/global-footer.component';
 import { ApiService, ParentProfile } from './services/api.service';
 import { AccountMenuModalComponent } from './components/account-menu-modal/account-menu-modal.component';
-import { Storage } from '@ionic/storage-angular';
-import { App } from '@capacitor/app';
-import { ChangeDetectorRef } from '@angular/core';
-import { NgZone } from '@angular/core';
-import { GlobalFooterComponent } from './components/global-footer/global-footer.component';
-import { APP_INITIALIZER } from '@angular/core';
 
-export function initializeBadgeState(apiService: ApiService, storage: Storage) {
-  return async () => {
-    try {
-      const profile = apiService.getCurrentProfile();
-      if (!profile?.parent_id) {
-        return Promise.resolve();  // ← Return resolved promise
-      }
-
-      const cached = await storage.get(`badgeState_${profile.parent_id}`);
-      if (cached !== null) {
-        console.log('📦 Cached badge:', cached);
-        return Promise.resolve(cached);  // ← Return resolved promise
-      }
-
-      return new Promise((resolve) => {
-        apiService.getDeviceNotificationState(profile.parent_id).subscribe(
-          (response: any) => {
-            const state = response.notified === 1;
-            console.log('📢 Fetched badge on startup:', state);
-            storage.set(`badgeState_${profile.parent_id}`, state);
-            resolve(state);
-          },
-          (error) => {
-            console.error('Error fetching badge on startup:', error);
-            resolve(false);
-          }
-        );
-      });
-    } catch (error) {
-      console.error('Badge initialization error:', error);
-      return Promise.resolve();  // ← Return resolved promise on error
-    }
-  };
-}
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -60,6 +22,7 @@ export class AppComponent implements OnInit {
   private toastQueue: string[] = [];
   private isToastDisplaying = false;
   showBadge: boolean = false;
+
   constructor(
     private toastController: ToastController,
     private modalCtrl: ModalController,
@@ -69,7 +32,7 @@ export class AppComponent implements OnInit {
     private platform: Platform,
     private storage: Storage,
     private cdr: ChangeDetectorRef,
-    private ngZone: NgZone  // ← ADD THIS
+    private ngZone: NgZone
 
   ) {
     this.initializeApp();
@@ -83,19 +46,17 @@ export class AppComponent implements OnInit {
       this.checkBadgeState(this.parent.parent_id);
     }
 
-    // ← ADD THIS: Listen for app coming back to foreground
-  // ← WRAP IN ngZone.run()
-  App.addListener('appStateChange', (state) => {
-    this.ngZone.run(() => {  // ← ADD THIS
-      if (state.isActive) {
-        console.log('📱 App resumed - rechecking badge state');
-        const parentId = this.apiService.getCurrentProfile()?.parent_id;
-        if (parentId) {
-          this.checkBadgeState(parentId);
+    App.addListener('appStateChange', (state) => {
+      this.ngZone.run(() => {
+        if (state.isActive) {
+          console.log('📱 App resumed - rechecking badge state');
+          const parentId = this.apiService.getCurrentProfile()?.parent_id;
+          if (parentId) {
+            this.checkBadgeState(parentId);
+          }
         }
-      }
-    });  // ← ADD THIS
-  });
+      });
+    });
 
     PushNotifications.addListener('pushNotificationReceived', async (notification: PushNotificationSchema) => {
       Haptics.impact({ style: ImpactStyle.Heavy });
@@ -103,40 +64,14 @@ export class AppComponent implements OnInit {
       if ('vibrate' in navigator) {
         navigator.vibrate(800);
       }
-      // // ← ADD THIS DEBUGGING:
-      //   console.log('📬 Full notification object:', notification);
-      //   console.log('📬 notification.title:', notification.title);
-      //   console.log('📬 notification.data:', notification.data);
-      //   console.log('📬 notification.data?.student_name:', notification.data?.student_name);
-
-      //       // Show a simple toast for the announcement
-      //       const toast = await this.toastController.create({
-      //         message: `${notification.body || 'Your child'}: ${notification.title || 'New Update'}`,
-      //         duration: 4000,
-      //         position: 'top',
-      //         color: 'primary',
-      //          cssClass: `toast-${this.toastQueue.length}` // Different position for each
-      //       });
-      //       toast.present();
-      // let userId = this.parent?.parent_id;
-      // if (!userId && notification.data?.parent_id) {
-      //   userId = notification.data.parent_id;
-      // }
       const parentId = this.apiService.getCurrentProfile()?.parent_id;
-if (parentId) {
-  const storage = await this.storage.create();
-  await storage.set(`hasNewNotification_${parentId}`, true);
-  await storage.set(`badgeState_${parentId}`, true);
-  console.log('💾 Cached badge on notification for parent:', parentId);
-  this.showBadge = true;
-}
-      // If we have a userId, save the badge state
-      // if (userId) {
-      //   const storage = await this.storage.create();
-      //   await storage.set(`hasNewNotification_${userId}`, true);
-      //    await storage.set(`badgeState_${userId}`, true);
-      //   this.showBadge = true;
-      // }
+      if (parentId) {
+        const storage = await this.storage.create();
+        await storage.set(`hasNewNotification_${parentId}`, true);
+        await storage.set(`badgeState_${parentId}`, true);
+        this.showBadge = true;
+      }
+
       const message = `${notification.body || 'Your child'}: ${notification.title || 'New Update'}`;
       this.showQueuedToast(message, notification.data);
 
@@ -151,29 +86,29 @@ if (parentId) {
   }
 
   private async checkBadgeState(parentId: number) {
-const storage = await this.storage.create();
+    const storage = await this.storage.create();
     this.storage.get(`badgeState_${parentId}`).then(cached => {
-    if (cached !== null) {
-      console.log('📦 Cached badge on resume:', cached);
-      this.showBadge = cached;
-      if (this.globalFooter) {
-        this.globalFooter.badgeState$.next(cached);
+      if (cached !== null) {
+        console.log('📦 Cached badge on resume:', cached);
+        this.showBadge = cached;
+        if (this.globalFooter) {
+          this.globalFooter.badgeState$.next(cached);
+        }
+        this.cdr.markForCheck();
       }
-      this.cdr.markForCheck();
-    }
-  });
+    });
     this.apiService.getDeviceNotificationState(parentId).subscribe(
       (response: any) => {
         console.log('📢 Badge state from backend:', response.notified);
-      const newState = response.notified === 1;
-      console.log('✅ Setting showBadge to:', newState);
-      this.showBadge = newState;
-      console.log('✅ After setting, showBadge is:', this.showBadge);
-      if (this.globalFooter) {
-        this.globalFooter.badgeState$.next(newState);
-      }
-      this.storage.set(`badgeState_${parentId}`, newState);
-      this.cdr.markForCheck();
+        const newState = response.notified === 1;
+        console.log('✅ Setting showBadge to:', newState);
+        this.showBadge = newState;
+        console.log('✅ After setting, showBadge is:', this.showBadge);
+        if (this.globalFooter) {
+          this.globalFooter.badgeState$.next(newState);
+        }
+        this.storage.set(`badgeState_${parentId}`, newState);
+        this.cdr.markForCheck();
       },
       (error) => {
         console.error('Error checking badge state:', error);
@@ -183,7 +118,6 @@ const storage = await this.storage.create();
     );
   }
 
-  // ← ADD THIS METHOD:
   private handleNotificationAction(data: any) {
     if (!data || !data.type) {
       console.log('No routing data in notification');
@@ -368,3 +302,68 @@ const storage = await this.storage.create();
     }
   }
 }
+
+
+// TRASH
+// // ← ADD THIS DEBUGGING:
+//   console.log('📬 Full notification object:', notification);
+//   console.log('📬 notification.title:', notification.title);
+//   console.log('📬 notification.data:', notification.data);
+//   console.log('📬 notification.data?.student_name:', notification.data?.student_name);
+
+//       // Show a simple toast for the announcement
+//       const toast = await this.toastController.create({
+//         message: `${notification.body || 'Your child'}: ${notification.title || 'New Update'}`,
+//         duration: 4000,
+//         position: 'top',
+//         color: 'primary',
+//          cssClass: `toast-${this.toastQueue.length}` // Different position for each
+//       });
+//       toast.present();
+// let userId = this.parent?.parent_id;
+// if (!userId && notification.data?.parent_id) {
+//   userId = notification.data.parent_id;
+// }
+
+// If we have a userId, save the badge state
+// if (userId) {
+//   const storage = await this.storage.create();
+//   await storage.set(`hasNewNotification_${userId}`, true);
+//    await storage.set(`badgeState_${userId}`, true);
+//   this.showBadge = true;
+// }
+
+// export function initializeBadgeState(apiService: ApiService, storage: Storage) {
+//   return async () => {
+//     try {
+//       const profile = apiService.getCurrentProfile();
+//       if (!profile?.parent_id) {
+//         return Promise.resolve();  // ← Return resolved promise
+//       }
+
+//       const cached = await storage.get(`badgeState_${profile.parent_id}`);
+//       if (cached !== null) {
+//         console.log('📦 Cached badge:', cached);
+//         return Promise.resolve(cached);  // ← Return resolved promise
+//       }
+
+//       return new Promise((resolve) => {
+//         apiService.getDeviceNotificationState(profile.parent_id).subscribe(
+//           (response: any) => {
+//             const state = response.notified === 1;
+//             console.log('📢 Fetched badge on startup:', state);
+//             storage.set(`badgeState_${profile.parent_id}`, state);
+//             resolve(state);
+//           },
+//           (error) => {
+//             console.error('Error fetching badge on startup:', error);
+//             resolve(false);
+//           }
+//         );
+//       });
+//     } catch (error) {
+//       console.error('Badge initialization error:', error);
+//       return Promise.resolve();  // ← Return resolved promise on error
+//     }
+//   };
+// }

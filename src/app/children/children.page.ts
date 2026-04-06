@@ -336,10 +336,6 @@ export class ChildrenPage implements OnInit, AfterViewInit {
           },
           form => form.student_id
         );
-        // this.consentFormCounts = consentFormCounts;
-        // await this._storage?.set('consentFormCounts', this.consentFormCounts);
-        // this.consentFormCountsTwo = consentFormGrouped;
-        // await this._storage?.set('consentFormCountsTwo', this.consentFormCountsTwo);
         const { grouped: eventGrouped, counts: eventCounts } = this.processData(
           eventsRes.events,
           event => {
