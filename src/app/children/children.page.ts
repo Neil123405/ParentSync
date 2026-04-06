@@ -361,6 +361,10 @@ export class ChildrenPage implements OnInit, AfterViewInit {
         const unreadAnnouncementCounts: { [key: number]: number } = {};
         const unreadEventCounts: { [key: number]: number } = {};
         const unreadConsentFormCounts: { [key: number]: number } = {};
+        this.laravelChildren.forEach(child => {
+          unreadAnnouncementCounts[child.student_id] = 0;
+          this.apiService.setUnreadAnnouncementCount(child.student_id, 0);
+        });
         announcementsRes.announcements.forEach((ann: any) => {
           if (ann.is_read === 0 || ann.is_read === '0' || ann.is_read === false) {
             const id = ann.student_id;
@@ -368,7 +372,10 @@ export class ChildrenPage implements OnInit, AfterViewInit {
             this.apiService.setUnreadAnnouncementCount(id, unreadAnnouncementCounts[id]);
           }
         });
-
+        this.laravelChildren.forEach(child => {
+          unreadEventCounts[child.student_id] = 0;
+          this.apiService.setUnreadEventCount(child.student_id, 0);
+        });
         eventsRes.events.forEach((event: any) => {
           if (event.is_read === 0 || event.is_read === '0' || event.is_read === false) {
             const id = event.student_id;
@@ -377,6 +384,10 @@ export class ChildrenPage implements OnInit, AfterViewInit {
           }
         });
 
+        this.laravelChildren.forEach(child => {
+          unreadConsentFormCounts[child.student_id] = 0;
+          this.apiService.setUnreadConsentFormCount(child.student_id, 0);
+        });
         consentFormsRes.forms.forEach((form: any) => {
           if (form.is_read === 0 || form.is_read === '0' || form.is_read === false) {
             const id = form.student_id;

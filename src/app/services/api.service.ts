@@ -65,12 +65,12 @@ export class ApiService {
   // Add this near the other Subjects
   itemMarkedAsRead$ = new Subject<{ type: 'announcement' | 'event' | 'form', studentId: number }>();
 
- getDeviceNotificationState(parentId: number): Observable<any> {
-  return this.http.get(
-    `${this.apiUrl}/parent/${parentId}/device-notification-state`,
-    { headers: this.getHeaders() }  // ✅ Wrap in options object
-  );
-}
+  getDeviceNotificationState(parentId: number): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/parent/${parentId}/device-notification-state`,
+      { headers: this.getHeaders() }  // ✅ Wrap in options object
+    );
+  }
 
   updateDeviceNotificationState(parentId: number, notified: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/parent/${parentId}/device-notification-state`, { notified: notified }, { headers: this.getHeaders() });
