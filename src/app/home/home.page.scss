@@ -164,16 +164,16 @@
     &.deco-1 {
       width: 80px;
       height: 80px;
-      top: 10px; // FIX: Moved inside header
-      right: 20px; // FIX: Moved inside header
+      top: 10px;
+      right: 20px;
       animation-delay: 0s;
     }
 
     &.deco-2 {
       width: 120px;
       height: 120px;
-      top: 40px; // FIX: Adjusted position
-      right: -40px; // FIX: Slightly inside
+      top: 40px;
+      right: -40px;
       animation-delay: 2s;
       opacity: 0.8;
     }
@@ -181,8 +181,8 @@
     &.deco-3 {
       width: 60px;
       height: 60px;
-      bottom: 20px; // FIX: Moved inside header
-      left: 20px; // FIX: Moved inside header
+      bottom: 20px;
+      left: 20px;
       animation-delay: 4s;
       opacity: 0.6;
     }
