@@ -142,6 +142,16 @@ ion-content {
   font-size: 0.85rem !important;
 }
 
+:host ::ng-deep .announcement-class {
+  background: #9B59B6 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(102, 187, 106, 0.2) !important;
+  font-weight: 500 !important;
+  font-size: 0.85rem !important;
+}
+
 // ===================================
 // MODERN CARD STYLES
 // ===================================
@@ -508,7 +518,7 @@ ion-card {
 }
 
 /* ===== ALL-DAY EVENTS (GREEN CONSENT FORMS) ===== */
-:host ::ng-deep .fc-daygrid-event.consent-form-class {
+:host ::ng-deep .fc-daygrid-event.consent-form-class, :host ::ng-deep .fc-daygrid-event.announcement-class {
   width: 10px !important;
   max-width: 20px !important;
   margin: 4px auto !important;
@@ -525,6 +535,16 @@ ion-card {
 }
 
 :host ::ng-deep .fc-daygrid-event.consent-form-class .fc-event-main {
+  padding: 0 !important;
+  min-height: auto !important;
+}
+
+:host ::ng-deep .fc-daygrid-event.announcement-class .fc-event-title,
+:host ::ng-deep .fc-daygrid-event.announcement-class .fc-event-time {
+  display: none !important;
+}
+
+:host ::ng-deep .fc-daygrid-event.announcement-class .fc-event-main {
   padding: 0 !important;
   min-height: auto !important;
 }

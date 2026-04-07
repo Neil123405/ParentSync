@@ -37,6 +37,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   linkedStudentIds: number[] = [];
   linkedEventIds: Set<number> = new Set<number>();
   loadedConsentForms: any[] = [];
+  loadedAnnouncements: any[] = [];
 
   showUpcomingEvents: boolean = true;
   timezoneName: string = '';
@@ -45,6 +46,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   currentMonth: string = '';
   consentFormCount: number = 0;
   eventCount: number = 0;
+  announcementCount: number = 0;
 
   currentLocation: string = 'Fetching location...';
 
@@ -90,13 +92,16 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     this._storage = await this.storage.create();
     const cachedConsentFormCount = await this.storage.get('consentFormCount');
     const cachedEventCount = await this.storage.get('eventCount');
-
+    const cachedAnnouncementCount = await this.storage.get('announcementCount');
     if (cachedConsentFormCount !== null && cachedConsentFormCount !== undefined) {
       this.consentFormCount = cachedConsentFormCount;
     }
 
     if (cachedEventCount !== null && cachedEventCount !== undefined) {
       this.eventCount = cachedEventCount;
+    }
+    if (cachedAnnouncementCount !== null && cachedAnnouncementCount !== undefined) {
+      this.announcementCount = cachedAnnouncementCount;
     }
     await this.loadEventsAndConsentForms();
     await this.updateMonthCounts();
@@ -151,7 +156,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     const studentText = `${studentFirstName} ${studentLastName}`.trim();
 
     const studentName = studentText || `ID ${event.extendedProps?.student_id ?? event.student_id ?? 'unknown'}`;
-    const header = type === 'consentForm' ? 'Consent Form' : 'Event';
+    const header = type === 'consentForm' ? 'Consent Form' : type === 'announcement' ? 'Announcement' : 'Event';
     const message = `${header}` + ` ` + `(${studentName})`;
 
     const alert = await this.alertController.create({
@@ -164,6 +169,8 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
           handler: () => {
             if (type === 'consentForm') {
               this.openConsentFormDetail(event);
+            } else if (type === 'announcement') {
+              this.openAnnouncementDetail(event); // <-- ADD THIS
             } else {
               this.openEventDetail(event);
             }
@@ -407,10 +414,19 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
       );
     }).length;
 
+    // Count Announcements for the currently visible month
+    this.announcementCount = (this.loadedAnnouncements || []).filter((ann: any) => {
+      const annDate = normalizeDate(new Date(ann.start));
+      return (
+        annDate.getFullYear() === centerDate.getFullYear() &&
+        annDate.getMonth() === centerDate.getMonth()
+      );
+    }).length;
+
     // Save to storage so they persist
     this.storage.set('consentFormCount', this.consentFormCount);
     this.storage.set('eventCount', this.eventCount);
-
+    this.storage.set('announcementCount', this.announcementCount);
     // Force the screen to update the numbers immediately
     this.cdr.detectChanges();
   }
@@ -452,7 +468,13 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
                 }
               );
           }),
-        ]).then(([eventsRes, formsRes]: any) => {
+          new Promise((resolve) => {
+            this.apiService.getParentAnnouncements(parentProfile.parent_id).subscribe(
+              (res) => resolve(res),
+              (err) => { console.error('Error fetching announcements:', err); resolve(null); }
+            );
+          })
+        ]).then(([eventsRes, formsRes, announcementsRes]: any) => {
           // Process events
           const events = (eventsRes?.events || []).map(
             (event: any, index: number) => {
@@ -523,8 +545,30 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
             }
           );
 
+          const announcements = (announcementsRes?.announcements || []).map(
+            (ann: any, index: number) => ({
+              ...ann,
+              title: '📢 ' + (ann.title || 'Announcement'),
+              start: new Date(ann.created_at), // or use ann.date if that field exists
+              id: `announcement-${ann.id}-${ann.student_id}-${index}`,
+              student_id: ann.student_id,
+              backgroundColor: '#9B59B6', // Purple for announcements
+              borderColor: '#9B59B6',
+              extendedProps: {
+                type: 'announcement',
+                announcementId: ann.id,
+                description: ann.description || ann.message || '',
+                student: {
+                  first_name: ann.student_first_name,
+                  last_name: ann.student_last_name,
+                  student_id: ann.student_id,
+                },
+              },
+            })
+          );
+          this.loadedAnnouncements = announcements;
           // Combine and update calendar
-          const combinedEvents = [...events, ...consentForms];
+          const combinedEvents = [...events, ...consentForms, ...announcements];
           this.calendarOptions.events = combinedEvents;
 
           // Trigger change detection and update counts
@@ -545,20 +589,20 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     const maxDaysAhead = 14;
     // filters events within the current month and within the next 14 days, then sorts by date
     return (this._calendarEvents || []).filter((ev: any) => {
-        if (ev.extendedProps?.type !== 'event') return false;
+      if (ev.extendedProps?.type !== 'event') return false;
 
-        const evDate = new Date(ev.start);
-        const evDayOnly = startOfDay(evDate);
-        const daysDiff = (evDayOnly.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+      const evDate = new Date(ev.start);
+      const evDayOnly = startOfDay(evDate);
+      const daysDiff = (evDayOnly.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
 
-        // CHECK 1: Is it in the Month/Year we are looking at?
-        const isThisMonth = evDate.getFullYear() === centerDate.getFullYear() && evDate.getMonth() === centerDate.getMonth();
+      // CHECK 1: Is it in the Month/Year we are looking at?
+      const isThisMonth = evDate.getFullYear() === centerDate.getFullYear() && evDate.getMonth() === centerDate.getMonth();
 
-        // CHECK 2: Is it within 14 days of today?
-        const isWithin14Days = daysDiff >= 0 && daysDiff <= maxDaysAhead;
+      // CHECK 2: Is it within 14 days of today?
+      const isWithin14Days = daysDiff >= 0 && daysDiff <= maxDaysAhead;
 
-        return isThisMonth && isWithin14Days;
-      })
+      return isThisMonth && isWithin14Days;
+    })
       .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
   }
 
@@ -647,9 +691,11 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     dot.style.margin = '0 auto';
 
     if (type === 'event') {
-      dot.style.backgroundColor = 'blue'; // Blue dot for events
+      dot.style.backgroundColor = '#3788d8'; // Blue for events
     } else if (type === 'consentForm') {
-      dot.style.backgroundColor = 'green'; // Green dot for consent forms
+      dot.style.backgroundColor = '#FF6B6B'; // Red for consent forms
+    } else if (type === 'announcement') {
+      dot.style.backgroundColor = '#9B59B6'; // Purple for announcements
     }
 
     return { domNodes: [dot] };
@@ -702,6 +748,17 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
       alert(
         'Cannot open consent form details: missing student or form information.'
       );
+    }
+  }
+
+  openAnnouncementDetail(event: any) {
+    const announcementId = event.extendedProps?.announcementId ?? event.id;
+    const studentId = event.extendedProps?.student_id ?? event.student_id;
+
+    if (announcementId && studentId) {
+      this.router.navigate(['/announcement-detail', announcementId, studentId]);
+    } else {
+      console.error('Missing announcementId or studentId');
     }
   }
 

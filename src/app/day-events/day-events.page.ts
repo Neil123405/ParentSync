@@ -25,8 +25,10 @@ export class DayEventsPage implements OnInit, AfterViewInit {
   selectedDay: Date = new Date(); // Track the selected day
   events: any[] = [];
   forms: any[] = [];
+  announcements: any[] = [];  // <-- ADD THIS
   filteredEvents: any[] = []; // Filtered events for the selected day
   filteredForms: any[] = []; // Filtered forms for the selected day
+  filteredAnnouncements: any[] = [];  // <-- ADD THIS
   parentProfile: any;
   isUserClick: boolean = false; // Flag to distinguish user clicks from navigation
   // Week navigation state
@@ -210,24 +212,34 @@ export class DayEventsPage implements OnInit, AfterViewInit {
             }
           );
       }),
-    ]).then(([eventsRes, formsRes]: any) => {
+      new Promise((resolve) => {
+        this.apiService.getParentAnnouncements(this.parentProfile.parent_id).subscribe(
+          (res) => resolve(res),
+          (err) => { console.error('Error fetching announcements:', err); resolve(null); }
+        );
+      }),
+    ]).then(([eventsRes, formsRes, announcementsRes]: any) => {
       const freshEvents = eventsRes?.events || [];
       const freshForms = formsRes?.forms || [];
+      const freshAnnouncements = announcementsRes?.announcements || [];
 
       // Cache the fresh data
       this._storage?.set('dayEventsCache', freshEvents);
       this._storage?.set('dayFormsCache', freshForms);
+      this._storage?.set('dayAnnouncementsCache', freshAnnouncements);
 
       // Format and update
       const combined = this.formatEventsAndForms(
         freshEvents,
         freshForms,
+        freshAnnouncements,
         start,
         end
       );
 
       this.events = freshEvents;
       this.forms = freshForms;
+      this.announcements = freshAnnouncements;
 
       // Refetch calendar with fresh data
       if (this.fc?.getApi?.()) {
@@ -242,6 +254,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
   private formatEventsAndForms(
     events: any[],
     forms: any[],
+    announcements: any[],
     start: Date,
     end: Date
   ): any[] {
@@ -295,7 +308,27 @@ export class DayEventsPage implements OnInit, AfterViewInit {
         },
       }));
 
-    return [...formattedEvents, ...formattedForms];
+    const formattedAnnouncements = (announcements || [])
+      .filter((ann: any) => {
+        const d = new Date(ann.created_at);
+        return d >= start && d < end;
+      })
+      .map((ann: any) => ({
+        title: 'Announcement: ' + ann.title,
+        start: new Date(ann.created_at),
+        allDay: true,        
+        className: 'announcement-class',
+        extendedProps: {
+          type: 'announcement',
+          description: ann.content || ann.message,
+          student: {
+            first_name: ann.student_first_name,
+            last_name: ann.student_last_name,
+          },
+          raw: ann,
+        },
+      }));
+    return [...formattedEvents, ...formattedForms, ...formattedAnnouncements];
   }
 
   private async loadCachedEventsAndForms(
@@ -305,20 +338,23 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     failureCallback: any
   ) {
     try {
-      const [cachedEvents, cachedForms] = await Promise.all([
+      const [cachedEvents, cachedForms, cachedAnnouncements] = await Promise.all([
         this._storage?.get('dayEventsCache'),
         this._storage?.get('dayFormsCache'),
+        this._storage?.get('dayAnnouncementsCache'),
       ]);
 
-      if (cachedEvents && cachedForms) {
+      if (cachedEvents && cachedForms && cachedAnnouncements) {
         const combined = this.formatEventsAndForms(
           cachedEvents,
           cachedForms,
+          cachedAnnouncements,
           start,
           end
         );
         this.events = cachedEvents;
         this.forms = cachedForms;
+        this.announcements = cachedAnnouncements;
         successCallback(combined);
       } else {
         // No cache, let the fresh fetch handle it
@@ -497,8 +533,16 @@ export class DayEventsPage implements OnInit, AfterViewInit {
       return formYear === selectedYear && formMonth === selectedMonth && formDay === selectedDayNum;
     });
 
+    this.filteredAnnouncements = this.announcements.filter((ann: any) => {
+      const annDate = new Date(ann.created_at);
+      return annDate.getFullYear() === selectedYear &&
+        annDate.getMonth() === selectedMonth &&
+        annDate.getDate() === selectedDayNum;
+    });
+
     console.log('Filtered Events for', selectedDate.toDateString(), ':', this.filteredEvents.length);
     console.log('Filtered Forms for', selectedDate.toDateString(), ':', this.filteredForms.length);
+    console.log('Filtered Announcements for', selectedDate.toDateString(), ':', this.filteredAnnouncements.length);
   }
 
   async handleEventClick(info: any) {
@@ -509,7 +553,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     const firstName = student?.first_name?.trim() || '';
     const lastName = student?.last_name?.trim() || '';
     const studentName = (firstName || lastName) ? `${firstName} ${lastName}`.trim() : 'Unknown';
-    const header = type === 'consentForm' ? 'Consent Form' : 'Event';
+    const header = type === 'consentForm' ? 'Consent Form' : type === 'announcement' ? 'Announcement' : 'Event';
     const alert = await this.alertController.create({
       header,
       message: `${header}  (${studentName})`,
@@ -520,6 +564,8 @@ export class DayEventsPage implements OnInit, AfterViewInit {
           handler: () => {
             if (type === 'consentForm') {
               this.openConsentFormDetail(info.event.extendedProps);
+            } else if (type === 'announcement') {
+              this.openAnnouncementDetail(info.event.extendedProps);
             } else {
               this.openEventDetail(info.event.extendedProps);
             }
@@ -529,6 +575,14 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     });
 
     await alert.present();
+  }
+
+  openAnnouncementDetail(announcement: any) {
+    const announcementId = announcement.id;
+    const studentId = announcement.student_id;
+    if (announcementId && studentId) {
+      this.router.navigate(['/announcement-detail', announcementId, studentId]);
+    }
   }
 
   getWeekDays(startDate: Date): string[] {
