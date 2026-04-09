@@ -127,6 +127,67 @@
     </ng-template>
   </div>
 
+  <!-- Modern Announcements Card -->
+  <!-- Modern Announcements Card -->
+  <!-- Modern Announcements Card -->
+  <div class="modern-card announcements-card">
+    <div class="card-header">
+      <div class="header-icon-wrapper announcements-theme">
+        <ion-icon name="megaphone" class="header-icon"></ion-icon>
+      </div>
+      <div class="header-content">
+        <h2 class="card-title">Announcements</h2>
+        <p class="card-subtitle">{{ filteredAnnouncements.length }} announcement{{ filteredAnnouncements.length !== 1 ?
+          's' : '' }}</p>
+      </div>
+    </div>
+
+    <div class="card-body" *ngIf="filteredAnnouncements.length > 0; else noAnnouncementsTemplate">
+      <div class="announcement-item" *ngFor="let announcement of filteredAnnouncements; let i = index"
+        (click)="openAnnouncementDetail(announcement)" [style.animation-delay]="i * 100 + 'ms'">
+
+        <div class="announcement-date-badge">
+          <span class="date-day">{{ announcement.created_at | date:'dd' }}</span>
+          <span class="date-month">{{ announcement.created_at | date:'MMM' }}</span>
+        </div>
+
+        <div class="announcement-content">
+          <h3 class="announcement-title">{{ announcement.title }}</h3>
+
+          <div class="announcement-details">
+            <div class="announcement-date" *ngIf="announcement.created_at">
+              <ion-icon name="time-outline" class="detail-icon"></ion-icon>
+              <span>Posted: {{ announcement.created_at | date:'mediumDate' }}</span>
+            </div>
+
+            <div class="announcement-description" *ngIf="announcement.content || announcement.message">
+              <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
+              <span>{{ announcement.content || announcement.message }}</span>
+            </div>
+
+            <!-- This will only show if you actually have student_* fields -->
+            <div class="announcement-student" *ngIf="announcement.student_first_name && announcement.student_last_name">
+              <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
+              <span>{{ announcement.student_first_name }} {{ announcement.student_last_name }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="announcement-arrow">
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noAnnouncementsTemplate>
+      <div class="empty-state">
+        <ion-icon name="megaphone-outline" class="empty-icon"></ion-icon>
+        <h3 class="empty-title">No Announcements</h3>
+        <p class="empty-subtitle">No announcements for this day</p>
+      </div>
+    </ng-template>
+  </div>
+
   <!-- Dynamic bottom spacing -->
   <div style="height: 60px;"></div>
 </ion-content>

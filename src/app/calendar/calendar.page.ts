@@ -550,13 +550,13 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
               ...ann,
               title: '📢 ' + (ann.title || 'Announcement'),
               start: new Date(ann.created_at), // or use ann.date if that field exists
-              id: `announcement-${ann.id}-${ann.student_id}-${index}`,
+              id: `announcement-${ann.announcement_id}-${ann.student_id}-${index}`,
               student_id: ann.student_id,
               backgroundColor: '#9B59B6', // Purple for announcements
               borderColor: '#9B59B6',
               extendedProps: {
                 type: 'announcement',
-                announcementId: ann.id,
+                announcementId: ann.announcement_id,
                 description: ann.description || ann.message || '',
                 student: {
                   first_name: ann.student_first_name,
@@ -752,13 +752,21 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   }
 
   openAnnouncementDetail(event: any) {
-    const announcementId = event.extendedProps?.announcementId ?? event.id;
-    const studentId = event.extendedProps?.student_id ?? event.student_id;
+    const announcementId =
+      event.extendedProps?.announcementId ??
+      event.extendedProps?.raw?.announcement_id ??
+      event.announcement_id ??
+      event.id;
+    const studentId =
+      event.extendedProps?.student?.student_id ??
+      event.student_id ??
+      event.extendedProps?.student_id ??
+      event.extendedProps?.raw?.student_id;
 
     if (announcementId && studentId) {
       this.router.navigate(['/announcement-detail', announcementId, studentId]);
     } else {
-      console.error('Missing announcementId or studentId');
+      console.error('Missing announcementId or studentId', event);
     }
   }
 

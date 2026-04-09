@@ -316,7 +316,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
       .map((ann: any) => ({
         title: 'Announcement: ' + ann.title,
         start: new Date(ann.created_at),
-        allDay: true,        
+        allDay: true,
         className: 'announcement-class',
         extendedProps: {
           type: 'announcement',
@@ -578,10 +578,20 @@ export class DayEventsPage implements OnInit, AfterViewInit {
   }
 
   openAnnouncementDetail(announcement: any) {
-    const announcementId = announcement.id;
-    const studentId = announcement.student_id;
+    const announcementId =
+      announcement.announcement_id ??
+      announcement.id ??
+      announcement.raw?.announcement_id ??
+      announcement.raw?.id;
+    const studentId =
+      announcement.student_id ??
+      announcement.raw?.student_id ??
+      announcement.extendedProps?.student?.student_id;
+
     if (announcementId && studentId) {
       this.router.navigate(['/announcement-detail', announcementId, studentId]);
+    } else {
+      console.warn('Missing announcement or student id', announcement);
     }
   }
 

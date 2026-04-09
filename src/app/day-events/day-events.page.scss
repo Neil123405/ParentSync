@@ -50,14 +50,14 @@ ion-content {
   padding: 12px !important;
   font-weight: 600 !important;
   transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  
+
   &:hover,
   &:focus {
     background: transparent !important;
     color: #764ba2 !important;
     box-shadow: none !important;
   }
-  
+
   &:active {
     transform: translateY(0) !important;
   }
@@ -166,11 +166,18 @@ ion-content {
 }
 
 .events-card {
-  border-top: 4px solid purple;
+  border-top: 4px solid linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
+  ;
 }
 
 .forms-card {
-  border-top: 4px solid purple;
+  border-top: 4px solid linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
+  ;
+}
+
+.announcements-card {
+  border-top: 4px solid linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
+  ;
 }
 
 // ===================================
@@ -200,6 +207,10 @@ ion-content {
 
   &.forms-theme {
     background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
+  }
+
+  &.announcements-theme {
+    background: linear-gradient(135deg, #9B59B6 0%, #7D3FA0 100%);
   }
 
   .header-icon {
@@ -238,7 +249,8 @@ ion-content {
 // EVENT & FORM ITEMS
 // ===================================
 .event-item,
-.form-item {
+.form-item,
+.announcement-item {
   display: flex;
   align-items: center;
   padding: 20px 24px;
@@ -272,6 +284,7 @@ ion-content {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -345,17 +358,65 @@ ion-content {
   }
 }
 
+.announcement-date-badge {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #9B59B6 0%, #7D3FA0 100%);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  box-shadow: 0 4px 16px rgba(155, 89, 182, 0.2);
+
+  .date-day {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+  }
+
+  .date-month {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.announcement-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+
+  .detail-icon {
+    font-size: 0.9rem;
+    color: #bdc3c7;
+    flex-shrink: 0;
+  }
+
+  span {
+    line-height: 1.4;
+  }
+}
+
 // ===================================
 // CONTENT & DETAILS
 // ===================================
 .event-content,
-.form-content {
+.form-content,
+.announcement-content {
   flex: 1;
   min-width: 0;
 }
 
 .event-title,
-.form-title {
+.form-title,
+.announcement-title {
   margin: 0 0 8px 0;
   font-size: 1.1rem;
   font-weight: 600;
@@ -364,7 +425,8 @@ ion-content {
 }
 
 .event-details,
-.form-details {
+.form-details,
+.announcement-details {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -375,7 +437,9 @@ ion-content {
 .event-student,
 .form-deadline,
 .form-description,
-.form-student {
+.form-student,
+.announcement-description,
+.announcement-student {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -397,7 +461,8 @@ ion-content {
 // ARROW ICONS
 // ===================================
 .event-arrow,
-.form-arrow {
+.form-arrow,
+.announcement-arrow {
   margin-left: 12px;
 
   .arrow-icon {
@@ -464,19 +529,22 @@ ion-card {
   }
 
   .event-item,
-  .form-item {
+  .form-item,
+  .announcement-item {
     padding: 16px 20px;
   }
 
   .event-date-badge,
-  .form-priority-badge {
+  .form-priority-badge,
+  .announcement-date-badge {
     width: 52px;
     height: 52px;
     margin-right: 12px;
   }
 
   .event-title,
-  .form-title {
+  .form-title,
+  .announcement-title {
     font-size: 1rem;
   }
 }
@@ -490,7 +558,7 @@ ion-card {
 
 // ADDITIONAL STYLES FOR FULLCALENDAR LINKS
 :host ::ng-deep a.fc-col-header-cell-cushion {
-  
+
   &:hover {
     text-decoration: none !important;
   }
@@ -518,7 +586,8 @@ ion-card {
 }
 
 /* ===== ALL-DAY EVENTS (GREEN CONSENT FORMS) ===== */
-:host ::ng-deep .fc-daygrid-event.consent-form-class, :host ::ng-deep .fc-daygrid-event.announcement-class {
+:host ::ng-deep .fc-daygrid-event.consent-form-class,
+:host ::ng-deep .fc-daygrid-event.announcement-class {
   width: 10px !important;
   max-width: 20px !important;
   margin: 4px auto !important;

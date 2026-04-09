@@ -13,12 +13,10 @@
 // ===================================
 .enhanced-calendar-header {
   position: relative;
-  background: linear-gradient(
-    160deg,
-    #18145f 0%,
-    #3d3899 42%,
-    #6ea8ff 100%
-  ) !important;
+  background: linear-gradient(160deg,
+      #18145f 0%,
+      #3d3899 42%,
+      #6ea8ff 100%) !important;
   padding: 32px 20px 24px 20px;
   overflow: hidden;
   min-height: 180px;
@@ -30,12 +28,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    160deg,
-    #18145f 0%,
-    #3d3899 42%,
-    #6ea8ff 100%
-  ) !important;
+  background: linear-gradient(160deg,
+      #18145f 0%,
+      #3d3899 42%,
+      #6ea8ff 100%) !important;
   z-index: 1;
 }
 
@@ -55,7 +51,7 @@
   border-radius: 50%;
   background: rgba(135, 206, 235, 0.7);
   border: 2px solid rgba(255, 255, 255, 0.5);
-  
+
   &.deco-1 {
     width: 120px;
     height: 120px;
@@ -63,7 +59,7 @@
     right: 20px;
     animation: float 6s ease-in-out infinite;
   }
-  
+
   &.deco-2 {
     width: 80px;
     height: 80px;
@@ -71,7 +67,7 @@
     left: 20px;
     animation: float 8s ease-in-out infinite reverse;
   }
-  
+
   &.deco-3 {
     width: 60px;
     height: 60px;
@@ -83,9 +79,12 @@
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0) scale(1);
   }
+
   50% {
     transform: translateY(-5px) scale(1.05);
   }
@@ -158,6 +157,10 @@
 
 .form-stat .stat-icon-wrapper {
   background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
+}
+
+.announcement-stat .stat-icon-wrapper {
+  background: linear-gradient(135deg, #9B59B6 0%, #7D3FA0 100%);
 }
 
 .stat-content {
@@ -236,12 +239,10 @@ full-calendar {
   left: 4px;
   width: calc(50% - 4px);
   height: calc(100% - 8px);
-  background: linear-gradient(
-    160deg,
-    #18145f 0%,
-    #3d3899 42%,
-    #6ea8ff 100%
-  ) !important;
+  background: linear-gradient(160deg,
+      #18145f 0%,
+      #3d3899 42%,
+      #6ea8ff 100%) !important;
   border-radius: 16px;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
@@ -277,6 +278,7 @@ full-calendar {
   }
 
   &.active {
+
     .tab-icon,
     .tab-text {
       color: white;
@@ -595,6 +597,7 @@ full-calendar {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -606,6 +609,7 @@ full-calendar {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -617,6 +621,7 @@ full-calendar {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -643,11 +648,11 @@ full-calendar {
 
 .event-stat {
   animation: glowingPurple 6s infinite ease-in-out;
-  
+
   .stat-number {
     animation: textColorPurple 6s infinite ease-in-out;
   }
-  
+
   .stat-label {
     animation: textColorPurple 6s infinite ease-in-out;
   }
@@ -655,21 +660,36 @@ full-calendar {
 
 .form-stat {
   animation: glowingPurple 6s infinite ease-in-out;
-  
+
   .stat-number {
     animation: textColorPurple 6s infinite ease-in-out;
   }
-  
+
+  .stat-label {
+    animation: textColorPurple 6s infinite ease-in-out;
+  }
+}
+
+.announcement-stat {
+  animation: glowingPurple 6s infinite ease-in-out;
+
+  .stat-number {
+    animation: textColorPurple 6s infinite ease-in-out;
+  }
+
   .stat-label {
     animation: textColorPurple 6s infinite ease-in-out;
   }
 }
 
 @keyframes glowingPurple {
-  0%, 100% {
+
+  0%,
+  100% {
     background: linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%);
     box-shadow: 0 0 20px rgba(33, 150, 243, 0.5);
   }
+
   50% {
     background: linear-gradient(135deg, #E3F2FD, #FFFFFF);
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
@@ -677,10 +697,13 @@ full-calendar {
 }
 
 @keyframes glowingGreen {
-  0%, 100% {
+
+  0%,
+  100% {
     background: linear-gradient(135deg, #66BB6A, #43A047);
     box-shadow: 0 0 20px rgba(102, 187, 106, 0.5);
   }
+
   50% {
     background: linear-gradient(135deg, #E8F5E9, #FFFFFF);
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
@@ -697,9 +720,12 @@ full-calendar {
 // }
 
 @keyframes textColorPurple {
-  0%, 100% {
+
+  0%,
+  100% {
     color: rgba(255, 255, 255, 0.9);
   }
+
   50% {
     color: purple;
   }
@@ -731,11 +757,11 @@ full-calendar {
   .modern-content-wrapper {
     margin: 0 12px;
   }
-  
+
   .content-bottom-spacer {
     height: 40px;
   }
-  
+
   full-calendar {
     max-height: 70vh;
   }
@@ -746,24 +772,24 @@ full-calendar {
     padding: 24px 16px 20px 16px;
     min-height: 160px;
   }
-  
+
   .current-month {
     font-size: 1.6rem;
   }
-  
+
   .stat-icon-wrapper {
     width: 42px;
     height: 42px;
-    
+
     .stat-icon {
       font-size: 1.3rem;
     }
   }
-  
+
   .stat-number {
     font-size: 1.5rem;
   }
-  
+
   .stat-label {
     font-size: 0.75rem;
   }
@@ -822,11 +848,11 @@ full-calendar {
       font-size: 1.1rem;
     }
   }
-  
+
   .content-bottom-spacer {
     height: 30px;
   }
-  
+
   full-calendar {
     max-height: 60vh;
     min-height: 300px;
@@ -843,7 +869,7 @@ full-calendar {
   .content-bottom-spacer {
     height: 20px;
   }
-  
+
   full-calendar {
     min-height: 250px;
     max-height: 50vh;
