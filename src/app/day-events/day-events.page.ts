@@ -36,6 +36,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
   weekDays: string[] = [];
   @ViewChild('fc') fc!: FullCalendarComponent;
   private _storage: Storage | null = null;
+  initialLoadComplete = false;
 
   calendarOptions: CalendarOptions = {
     initialView: 'timeGridWeek', // Week view
@@ -78,39 +79,48 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     const newWeekStart = new Date(info.start);
     if (this.currentWeekStart && newWeekStart.getTime() !== this.currentWeekStart.getTime() && !this.isLoadingWeek) {
       this.currentWeekStart = newWeekStart;
-      if (!this.isUserClick) { // Only set selectedDay if not a user click
-        this.selectedDay = new Date(newWeekStart);
-        this.cdr.detectChanges(); // Force view update
+
+      if (this.initialLoadComplete && !this.isUserClick) {
+        const weekEnd = new Date(newWeekStart);
+        weekEnd.setDate(newWeekStart.getDate() + 7);
+
+        if (this.selectedDay < newWeekStart || this.selectedDay >= weekEnd) {
+          this.selectedDay = new Date(newWeekStart);
+        }
+        this.cdr.detectChanges();
       }
+
       this.loadEventsAndConsentFormsForWeek(newWeekStart.toISOString().slice(0, 10));
     }
   }
 
   async ngOnInit() {
-
     this.date = this.route.snapshot.paramMap.get('date')!;
     const [year, month, day] = this.date.split('-').map(Number);
     this.selectedDay = new Date(year, month - 1, day);
     this._storage = await this.storage.create();
     this.parentProfile = this.apiService.getCurrentProfile();
 
-    // Set currentWeekStart to the Sunday of the selected date's week
-    // const selectedDate = new Date(this.date);
-    // this.currentWeekStart = new Date(selectedDate);
-    // this.currentWeekStart.setDate(selectedDate.getDate() - selectedDate.getDay());
-    // this.weekDays = this.getWeekDays(this.currentWeekStart);
-
-    // this.loadEventsForDate(this.date);
-    // this.loadConsentFormsForDate(this.date);
     this.calendarOptions.events = this.fetchEvents.bind(this);
-    const pad = (n: number) => String(n).padStart(2, '0');
-    const paddedYear = this.selectedDay.getFullYear();
-    const paddedMonth = pad(this.selectedDay.getMonth() + 1);
-    const paddedDay = pad(this.selectedDay.getDate());
-    this.calendarOptions.initialDate = `${paddedYear}-${paddedMonth}-${paddedDay}`;
-    console.log('🔵 ngOnInit - this.selectedDay:', this.selectedDay);
-    console.log('🔵 initialDate set to:', `${paddedYear}-${paddedMonth}-${paddedDay}`);
-    // this.loadEventsAndConsentFormsForWeek(this.date);
+    this.calendarOptions.initialDate = this.date;
+
+    const weekStart = new Date(this.selectedDay);
+    weekStart.setDate(this.selectedDay.getDate() - this.selectedDay.getDay());
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    this.currentWeekStart = weekStart;
+
+    await this.loadCachedWeekData(weekStart, weekEnd);
+
+    this.fetchFreshWeekData(weekStart, weekEnd).then(() => {
+      this.filterEventsAndForms(this.selectedDay);
+      this.cdr.detectChanges();
+
+      const api = this.fc?.getApi?.();
+      if (api) {
+        api.refetchEvents();
+      }
+    });
   }
 
   fetchEvents(fetchInfo: any, successCallback: any, failureCallback: any) {
@@ -189,9 +199,30 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     // });
   }
 
+  private async loadCachedWeekData(start: Date, end: Date): Promise<boolean> {
+    try {
+      const [cachedEvents, cachedForms, cachedAnnouncements] = await Promise.all([
+        this._storage?.get('dayEventsCache'),
+        this._storage?.get('dayFormsCache'),
+        this._storage?.get('dayAnnouncementsCache'),
+      ]);
+
+      if (cachedEvents || cachedForms || cachedAnnouncements) {
+        this.events = cachedEvents || [];
+        this.forms = cachedForms || [];
+        this.announcements = cachedAnnouncements || [];
+        this.filterEventsAndForms(this.selectedDay);
+        return true;
+      }
+    } catch (err) {
+      console.error('loadCachedWeekData error', err);
+    }
+    return false;
+  }
+
   private fetchFreshWeekData(start: Date, end: Date) {
     // Parallelize both API calls
-    Promise.all([
+    return Promise.all([
       new Promise((resolve) => {
         this.apiService.getParentEvents(this.parentProfile.parent_id).subscribe(
           (res) => resolve(res),
@@ -237,9 +268,9 @@ export class DayEventsPage implements OnInit, AfterViewInit {
       //   end
       // );
 
-      // this.events = freshEvents;
-      // this.forms = freshForms;
-      // this.announcements = freshAnnouncements;
+      this.events = freshEvents;
+      this.forms = freshForms;
+      this.announcements = freshAnnouncements;
 
       // // Refetch calendar with fresh data
       // if (this.fc?.getApi?.()) {
@@ -351,20 +382,19 @@ export class DayEventsPage implements OnInit, AfterViewInit {
         this._storage?.get('dayAnnouncementsCache'),
       ]);
 
-      if (cachedEvents && cachedForms && cachedAnnouncements) {
+      if (cachedEvents || cachedForms || cachedAnnouncements) {
         const combined = this.formatEventsAndForms(
-          cachedEvents,
-          cachedForms,
-          cachedAnnouncements,
+          cachedEvents || [],
+          cachedForms || [],
+          cachedAnnouncements || [],
           start,
           end
         );
-        this.events = cachedEvents;
-        this.forms = cachedForms;
-        this.announcements = cachedAnnouncements;
+        this.events = cachedEvents || [];
+        this.forms = cachedForms || [];
+        this.announcements = cachedAnnouncements || [];
         successCallback(combined);
       } else {
-        // No cache, let the fresh fetch handle it
         successCallback([]);
       }
     } catch (error) {
@@ -396,13 +426,15 @@ export class DayEventsPage implements OnInit, AfterViewInit {
       } else {
         console.error('❌ Calendar API not ready in time!'); // Add this for debugging
       }
+      this.initialLoadComplete = true;
     }, 100);
   }
 
   async loadEventsAndConsentFormsForWeek(date: any) {
     if (this.isLoadingWeek) return; // Prevent multiple loads
     this.isLoadingWeek = true;
-    const selectedDate = new Date(date);
+    const [year, month, day] = date.split('-').map(Number);
+    const selectedDate = new Date(year, month - 1, day);
     const weekStart = new Date(selectedDate);
     weekStart.setDate(selectedDate.getDate() - selectedDate.getDay()); // Start of the week (Sunday)
 
@@ -418,9 +450,23 @@ export class DayEventsPage implements OnInit, AfterViewInit {
 
     await this.fetchFreshWeekData(weekStart, weekEnd);
 
-    if (this.fc?.getApi?.()) {
-      this.fc.getApi().refetchEvents();
-    }
+    const combinedEvents = this.formatEventsAndForms(
+      this.events,
+      this.forms,
+      this.announcements,
+      weekStart,
+      weekEnd
+    );
+
+    // Update the calendar options with the actual event list
+    // this.calendarOptions = {
+    //   ...this.calendarOptions,
+    //   events: combinedEvents,
+    // };
+
+    // if (this.fc?.getApi?.()) {
+    //   this.fc.getApi().refetchEvents();
+    // }
 
     this.filterEventsAndForms(this.selectedDay);
     this.isLoadingWeek = false;
