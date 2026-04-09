@@ -125,7 +125,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     this.loadCachedEventsAndForms(start, end, successCallback, failureCallback);
 
     // STEP 2: Fetch fresh data in background
-    this.fetchFreshWeekData(start, end);
+    // this.fetchFreshWeekData(start, end);
     // fetch both API endpoints in parallel
     // forkJoin({
     //   eventsRes: this.apiService.getParentEvents(this.parentProfile.parent_id),
@@ -228,26 +228,33 @@ export class DayEventsPage implements OnInit, AfterViewInit {
       this._storage?.set('dayFormsCache', freshForms);
       this._storage?.set('dayAnnouncementsCache', freshAnnouncements);
 
-      // Format and update
-      const combined = this.formatEventsAndForms(
+      // // Format and update
+      // const combined = this.formatEventsAndForms(
+      //   freshEvents,
+      //   freshForms,
+      //   freshAnnouncements,
+      //   start,
+      //   end
+      // );
+
+      // this.events = freshEvents;
+      // this.forms = freshForms;
+      // this.announcements = freshAnnouncements;
+
+      // // Refetch calendar with fresh data
+      // if (this.fc?.getApi?.()) {
+      //   this.fc.getApi().refetchEvents();
+      // }
+
+      // Update change detection
+      this.cdr.markForCheck();
+      return this.formatEventsAndForms(
         freshEvents,
         freshForms,
         freshAnnouncements,
         start,
         end
       );
-
-      this.events = freshEvents;
-      this.forms = freshForms;
-      this.announcements = freshAnnouncements;
-
-      // Refetch calendar with fresh data
-      if (this.fc?.getApi?.()) {
-        this.fc.getApi().refetchEvents();
-      }
-
-      // Update change detection
-      this.cdr.markForCheck();
     });
   }
 
@@ -392,7 +399,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     }, 100);
   }
 
-  loadEventsAndConsentFormsForWeek(date: any) {
+  async loadEventsAndConsentFormsForWeek(date: any) {
     if (this.isLoadingWeek) return; // Prevent multiple loads
     this.isLoadingWeek = true;
     const selectedDate = new Date(date);
@@ -402,82 +409,86 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6); // End of the week (Saturday)
 
-    //   if (weekStart.getMonth() !== selectedDate.getMonth()) {
-    //   weekStart.setMonth(selectedDate.getMonth());
-    //   weekStart.setDate(1); // Set to the first day of the clicked month
-    // }
-
-    // if (weekEnd.getMonth() !== selectedDate.getMonth()) {
-    //   weekEnd.setMonth(selectedDate.getMonth());
-    //   weekEnd.setDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate()); // Last day of the clicked month
-    // }
-
     this.currentWeekStart = new Date(weekStart);
 
-    if (this.parentProfile) {
-      // Fetch events for the week
-      this.apiService.getParentEvents(this.parentProfile.parent_id).subscribe((res) => {
-        this.events = res.events || [];
-        const events = (res.events || []).filter((event: any) => {
-          const eventDate = new Date(event.date);
-          return eventDate >= weekStart && eventDate <= weekEnd;
-        }).map((event: any) => ({
-          title: event.title,
-          start: new Date(event.date),
-          extendedProps: {
-            type: 'event',
-            description: event.description,
-            student: {
-              first_name: event.first_name,
-              last_name: event.last_name,
-            },
-          },
-        }));
-
-        // Fetch consent forms for the week
-        this.apiService.getAllUnsignedConsentFormsForParent(this.parentProfile.parent_id).subscribe((res) => {
-          this.forms = res.forms || [];
-          this.filterEventsAndForms(this.selectedDay); // Filter for the selected day
-          const consentForms = (res.forms || []).filter((form: any) => {
-            const formDeadline = new Date(form.deadline);
-            return formDeadline >= weekStart && formDeadline <= weekEnd;
-          }).map((form: any) => ({
-            title: 'Consent Form: ' + form.title,
-            start: new Date(form.deadline),
-            extendedProps: {
-              type: 'consentForm',
-              student: {
-                first_name: form.first_name,
-                last_name: form.last_name,
-              },
-            },
-          }));
-
-          // Combine events and consent forms
-          // this.calendarOptions.events = [...events, ...consentForms];
-          // if (this.fc && this.fc.getApi) {
-          //   this.fc.getApi().gotoDate(selectedDate);
-          //   this.fc.getApi().changeView('timeGridWeek');
-          // }
-          if (this.fc?.getApi) {
-            // this.fc.getApi().gotoDate(new Date(date));
-            this.fc.getApi().refetchEvents();
-          }
-          const combined = [...events, ...consentForms];
-          // if (this.fc && this.fc.getApi) {
-          //   const api = this.fc.getApi();
-          //    // remove existing rendered events then add this week's events (keeps function eventSource intact)
-          //     api.removeAllEvents();
-          //   combined.forEach(ev => api.addEvent(ev));
-          // }
-          // this.filterEventsAndForms(this.selectedDay);
-          this.isLoadingWeek = false;
-          // if (this.fc && this.fc.getApi) {
-          //   this.fc.getApi().gotoDate(new Date(this.selectedDay));
-          // }
-        });
-      });
+    if (!this.parentProfile) {
+      this.isLoadingWeek = false;
+      return;
     }
+
+    await this.fetchFreshWeekData(weekStart, weekEnd);
+
+    if (this.fc?.getApi?.()) {
+      this.fc.getApi().refetchEvents();
+    }
+
+    this.filterEventsAndForms(this.selectedDay);
+    this.isLoadingWeek = false;
+
+    // if (this.parentProfile) {
+    //   // Fetch events for the week
+    //   this.apiService.getParentEvents(this.parentProfile.parent_id).subscribe((res) => {
+    //     this.events = res.events || [];
+    //     const events = (res.events || []).filter((event: any) => {
+    //       const eventDate = new Date(event.date);
+    //       return eventDate >= weekStart && eventDate <= weekEnd;
+    //     }).map((event: any) => ({
+    //       title: event.title,
+    //       start: new Date(event.date),
+    //       extendedProps: {
+    //         type: 'event',
+    //         description: event.description,
+    //         student: {
+    //           first_name: event.first_name,
+    //           last_name: event.last_name,
+    //         },
+    //       },
+    //     }));
+
+    //     // Fetch consent forms for the week
+    //     this.apiService.getAllUnsignedConsentFormsForParent(this.parentProfile.parent_id).subscribe((res) => {
+    //       this.forms = res.forms || [];
+    //       this.filterEventsAndForms(this.selectedDay); // Filter for the selected day
+    //       const consentForms = (res.forms || []).filter((form: any) => {
+    //         const formDeadline = new Date(form.deadline);
+    //         return formDeadline >= weekStart && formDeadline <= weekEnd;
+    //       }).map((form: any) => ({
+    //         title: 'Consent Form: ' + form.title,
+    //         start: new Date(form.deadline),
+    //         extendedProps: {
+    //           type: 'consentForm',
+    //           student: {
+    //             first_name: form.first_name,
+    //             last_name: form.last_name,
+    //           },
+    //         },
+    //       }));
+
+    //       // Combine events and consent forms
+    //       // this.calendarOptions.events = [...events, ...consentForms];
+    //       // if (this.fc && this.fc.getApi) {
+    //       //   this.fc.getApi().gotoDate(selectedDate);
+    //       //   this.fc.getApi().changeView('timeGridWeek');
+    //       // }
+    //       if (this.fc?.getApi) {
+    //         // this.fc.getApi().gotoDate(new Date(date));
+    //         this.fc.getApi().refetchEvents();
+    //       }
+    //       const combined = [...events, ...consentForms];
+    //       // if (this.fc && this.fc.getApi) {
+    //       //   const api = this.fc.getApi();
+    //       //    // remove existing rendered events then add this week's events (keeps function eventSource intact)
+    //       //     api.removeAllEvents();
+    //       //   combined.forEach(ev => api.addEvent(ev));
+    //       // }
+    //       // this.filterEventsAndForms(this.selectedDay);
+    //       this.isLoadingWeek = false;
+    //       // if (this.fc && this.fc.getApi) {
+    //       //   this.fc.getApi().gotoDate(new Date(this.selectedDay));
+    //       // }
+    //     });
+    //   });
+    // }
   }
 
   handleDateClick(info: any) {
