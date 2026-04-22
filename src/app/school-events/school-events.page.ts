@@ -59,9 +59,13 @@ export class SchoolEventsPage implements OnInit {
 }
 
   doRefresh(event: any) {
-  this.ngOnInit();
-  setTimeout(() => {
-    event.target.complete();
-  }, 1000); // Or call complete after data is actually loaded
+    if (this.studentId) {
+      this.apiService.clearStudentEventsCache(this.studentId);
+    }
+    this.ngOnInit();
+    setTimeout(() => {
+      event.target.complete();
+    }, 1000); // Or call complete after data is actually loaded
+  }
 }
-}
+

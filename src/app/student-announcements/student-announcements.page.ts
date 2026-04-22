@@ -56,6 +56,9 @@ export class StudentAnnouncementsPage implements OnInit {
 }
 
   doRefresh(event: any) {
+    if (this.studentId) {
+      this.apiService.clearStudentAnnouncementsCache(this.studentId);
+    }
     this.ngOnInit();
     setTimeout(() => {
       event.target.complete();

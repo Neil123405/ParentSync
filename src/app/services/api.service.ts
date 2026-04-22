@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 // import { Http } from '@capacitor-community/http';
@@ -46,6 +47,11 @@ export class ApiService {
   
   // Cache for consent form details
   private consentFormDetailCache = new Map<string, any>();
+  
+  // Caches for list data
+  private consentFormsCache = new Map<number, any>();
+  private studentEventsCache = new Map<number, any>();
+  private studentAnnouncementsCache = new Map<number, any>();
 
   // User management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -300,9 +306,14 @@ export class ApiService {
   }
 
   getStudentAnnouncements(studentId: number): Observable<any> {
+    const cached = this.studentAnnouncementsCache.get(studentId);
+    if (cached) return of(cached);
+
     return this.http.get(`${this.apiUrl}/student/${studentId}/announcements`, {
       headers: this.getHeaders(),
-    });
+    }).pipe(
+      tap(res => this.studentAnnouncementsCache.set(studentId, res))
+    );
   }
 
   markAnnouncementAsRead(announcementId: number, studentId: number) {
@@ -332,9 +343,14 @@ export class ApiService {
   // }
 
   getStudentEvents(studentId: number): Observable<any> {
+    const cached = this.studentEventsCache.get(studentId);
+    if (cached) return of(cached);
+
     return this.http.get(`${this.apiUrl}/student/${studentId}/events`, {
       headers: this.getHeaders(),
-    });
+    }).pipe(
+      tap(res => this.studentEventsCache.set(studentId, res))
+    );
   }
 
   // participateInEvent(eventId: number, studentId: number): Observable<any> {
@@ -351,9 +367,39 @@ export class ApiService {
 
   // Consent Forms
   getConsentFormsForStudent(studentId: number): Observable<any> {
+    const cached = this.consentFormsCache.get(studentId);
+    if (cached) return of(cached);
+
     return this.http.get(`${this.apiUrl}/consent-forms/student/${studentId}`, {
       headers: this.getHeaders(),
-    });
+    }).pipe(
+      tap(res => this.consentFormsCache.set(studentId, res))
+    );
+  }
+  
+  // Clear caches for list data (called on refresh)
+  clearConsentFormsCache(studentId?: number) {
+    if (studentId) {
+      this.consentFormsCache.delete(studentId);
+    } else {
+      this.consentFormsCache.clear();
+    }
+  }
+  
+  clearStudentEventsCache(studentId?: number) {
+    if (studentId) {
+      this.studentEventsCache.delete(studentId);
+    } else {
+      this.studentEventsCache.clear();
+    }
+  }
+  
+  clearStudentAnnouncementsCache(studentId?: number) {
+    if (studentId) {
+      this.studentAnnouncementsCache.delete(studentId);
+    } else {
+      this.studentAnnouncementsCache.clear();
+    }
   }
 
   getConsentFormDetail(formId: number, studentId: number): Observable<any> {

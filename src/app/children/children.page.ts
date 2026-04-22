@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { ToastController, ModalController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
+import { firstValueFrom } from 'rxjs';
 import { ApiService, User, ParentProfile } from '../services/api.service';
 import { AddStudentModalComponent } from '../components/add-student-modal/add-student-modal.component';
 import { ChildOptionsModalComponent } from '../components/child-options-modal/child-options-modal.component';
@@ -618,15 +619,30 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     }
   }
 
-  goToConsentForms(child: LaravelStudent) {
+  async goToConsentForms(child: LaravelStudent) {
+    try {
+      await firstValueFrom(this.apiService.getConsentFormsForStudent(child.student_id));
+    } catch (err) {
+      console.warn('Consent forms prefetch failed', err);
+    }
     this.router.navigate(['/consent-forms', child.student_id]);
   }
 
-  goToSchoolEvents(child: LaravelStudent) {
+  async goToSchoolEvents(child: LaravelStudent) {
+    try {
+      await firstValueFrom(this.apiService.getStudentEvents(child.student_id));
+    } catch (err) {
+      console.warn('School events prefetch failed', err);
+    }
     this.router.navigate(['/school-events', child.student_id]);
   }
 
-  goToStudentAnnouncements(child: LaravelStudent) {
+  async goToStudentAnnouncements(child: LaravelStudent) {
+    try {
+      await firstValueFrom(this.apiService.getStudentAnnouncements(child.student_id));
+    } catch (err) {
+      console.warn('Announcements prefetch failed', err);
+    }
     this.router.navigate(['/student-announcements', child.student_id]);
   }
 

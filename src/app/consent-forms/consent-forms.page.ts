@@ -83,6 +83,7 @@ export class ConsentFormsPage implements OnInit {
   }
 
   doRefresh(event: any) {
+    this.apiService.clearConsentFormsCache(this.studentId);
     this.ngOnInit();
     setTimeout(() => {
       event.target.complete();
