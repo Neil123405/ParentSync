@@ -39,11 +39,11 @@
 
     <!-- Events List -->
     <div *ngIf="!loading">
-      <div class="event-list-item" *ngFor="let event of events" (click)="openEventDetail(event)">
+      <div class="event-list-item" *ngFor="let event of sortedEvents" (click)="openEventDetail(event)">
         <div class="unread-badge" *ngIf="event.is_read === 0 || event.is_read === '0'"></div>
         <div class="date-badge">
-          <span class="date-day">{{ event.date | date:'d' }}</span>
-          <span class="date-month">{{ event.date | date:'MMM' }}</span>
+          <span class="date-day">{{ event.created_at | date:'d' }}</span>
+          <span class="date-month">{{ event.created_at | date:'MMM' }}</span>
         </div>
 
         <div class="event-avatar">
@@ -57,6 +57,18 @@
             {{ event.location }}
           </p>
           <div class="event-details">
+            <span class="meta-item">
+              <ion-icon name="calendar-outline"></ion-icon>
+              Date: {{ event.date | date:'mediumDate' }}
+            </span>
+            <span class="meta-item">
+              <ion-icon name="time-outline"></ion-icon>
+              Time: {{ event.time || 'All Day' }}
+            </span>
+            <!-- <p class="event-time">
+              <ion-icon name="time-outline"></ion-icon>
+              Time: {{ event.time || 'All Day' }}
+            </p> -->
             <p class="event-teacher">
               <ion-icon name="person-outline"></ion-icon>
               Organized by {{ (event.first_name && event.last_name) ? (event.first_name + ' ' + event.last_name) :
@@ -67,10 +79,10 @@
               {{ event.subject_name }} | {{ event.section_name }}
             </p>
           </div>
-          <p class="event-time">
+          <!-- <p class="event-time">
             <ion-icon name="time-outline"></ion-icon>
             {{ event.time || 'All Day' }}
-          </p>
+          </p> -->
         </div>
 
         <div class="event-actions">

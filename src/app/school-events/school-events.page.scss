@@ -219,8 +219,7 @@ ion-content {
   white-space: nowrap;
 }
 
-.event-meta,
-.event-time {
+.event-meta {
   margin: 4px 0;
   font-size: 0.85rem;
   color: #7f8c8d;
@@ -231,6 +230,7 @@ ion-content {
   ion-icon {
     font-size: 1rem;
     color: #bdc3c7;
+    flex-shrink: 0;
   }
 }
 
@@ -239,6 +239,20 @@ ion-content {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+
+  ion-icon {
+    font-size: 1rem;
+    color: #bdc3c7;
+    flex-shrink: 0;
+  }
 }
 
 .event-teacher,
@@ -253,6 +267,7 @@ ion-content {
   ion-icon {
     font-size: 1rem;
     color: #bdc3c7;
+    flex-shrink: 0;
   }
 }
 

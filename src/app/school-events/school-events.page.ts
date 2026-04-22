@@ -43,6 +43,14 @@ export class SchoolEventsPage implements OnInit {
     }
   }
 
+  get sortedEvents() {
+    return this.events.sort((a, b) => {
+      const dateA = new Date(a.created_at ?? a.createdAt ?? a.date ?? 0).getTime();
+      const dateB = new Date(b.created_at ?? b.createdAt ?? b.date ?? 0).getTime();
+      return dateB - dateA;
+    });
+  }
+
   openEventDetail(event: any) {
   // Just mark as read, don't decrement (will be recounted on next refresh)
   this.apiService.markEventAsRead(event.event_id, event.student_id).subscribe({

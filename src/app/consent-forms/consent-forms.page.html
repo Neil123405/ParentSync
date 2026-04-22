@@ -60,8 +60,8 @@
         (click)="openConsentForm(form)">
         <div class="unread-badge" *ngIf="form.is_read === 0 || form.is_read === '0'"></div>
         <div class="date-badge forms-badge" [class.signed-badge]="form.signed">
-          <span class="date-day">{{ form.deadline | date:'d' }}</span>
-          <span class="date-month">{{ form.deadline | date:'MMM' }}</span>
+          <span class="date-day">{{ form.created_at | date:'d' }}</span>
+          <span class="date-month">{{ form.created_at | date:'MMM' }}</span>
         </div>
 
         <div class="form-avatar" [class.signed-avatar]="form.signed">
@@ -73,7 +73,7 @@
           <p class="form-description">{{ form.description }}</p>
           <div class="form-meta">
             <span class="meta-item">
-              <ion-icon name="time-outline"></ion-icon>
+              <ion-icon name="calendar-outline"></ion-icon>
               Deadline: {{ form.deadline | date:'mediumDate' }}
             </span>
             <span class="meta-item teacher-item">

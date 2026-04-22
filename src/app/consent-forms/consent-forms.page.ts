@@ -41,15 +41,20 @@ export class ConsentFormsPage implements OnInit {
   }
 
   get filteredConsentForms() {
+    let filtered = this.consentForms;
     if (this.filter === 'signed') {
-      return this.consentForms.filter(f => f.signed);
+      filtered = this.consentForms.filter(f => f.signed);
+    } else if (this.filter === 'unsigned') {
+      filtered = this.consentForms.filter(f => !f.signed);
+    } else if (this.filter === 'declined') {
+      filtered = this.consentForms.filter(f => f.declined);
     }
-    if (this.filter === 'unsigned') {
-      return this.consentForms.filter(f => !f.signed);
-    }
-    if (this.filter === 'declined') 
-      return this.consentForms.filter(f => f.declined);
-    return this.consentForms;
+    // Sort by created_at descending (newest first)
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.created_at ?? a.createdAt ?? 0).getTime();
+      const dateB = new Date(b.created_at ?? b.createdAt ?? 0).getTime();
+      return dateB - dateA;
+    });
   }
 
   openConsentForm(form: any) {
