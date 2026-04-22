@@ -7,19 +7,27 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content *ngIf="form">
-  <!-- Decorative Consent Forms Button (not clickable) -->
-  <!-- <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
-    <ion-button expand="block" class="task-btn giant-btn">
-      <span class="btn-content">
-        <img src="assets/images/consent.png" alt="Consent Forms" class="task-img-giant" />
-        <span class="btn-label">Consent Form</span>
-      </span>
-    </ion-button>
-  </div> -->
+<ion-content>
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Loading consent form...</p>
+  </div>
+
+  <!-- Form Content -->
+  <div *ngIf="!isLoading && form">
+    <!-- Decorative Consent Forms Button (not clickable) -->
+    <!-- <div class="task-btn-wrapper" style="margin: 24px 0 16px 0;">
+      <ion-button expand="block" class="task-btn giant-btn">
+        <span class="btn-content">
+          <img src="assets/images/consent.png" alt="Consent Forms" class="task-img-giant" />
+          <span class="btn-label">Consent Form</span>
+        </span>
+      </ion-button>
+    </div> -->
 
 
-  <div class="page-header form-header">
+    <div class="page-header form-header">
     <div class="header-background">
       <div class="deco-circle deco-1"></div>
       <div class="deco-circle deco-2"></div>
@@ -122,5 +130,6 @@
   </div>
   <div style="height: 70px;">
 
+  </div>
   </div>
 </ion-content>

@@ -20,6 +20,7 @@ export class ConsentFormDetailPage implements OnInit {
   signatureImage: string | null = null;
   declined = false;
   showSignaturePad = false;
+  isLoading = false;
 
   
   signaturePadOptions: Object = {
@@ -88,35 +89,42 @@ async submitDeclined() {
 }
 
 private loadFormDetail() {
-  this.apiService.getConsentFormDetail(this.formId, this.studentId).subscribe(res => {
-    this.form = res.form;
+  this.isLoading = true;
+  this.apiService.getConsentFormDetail(this.formId, this.studentId).subscribe({
+    next: (res) => {
+      this.form = res.form;
 
-    // Debug: see if signature_path is empty or not
-    console.log('signature_path:', this.form.signature_path);
+      // Debug: see if signature_path is empty or not
+      console.log('signature_path:', this.form.signature_path);
 
-    const signature = res.signature; // <-- signature record (may be null)
-    const hasSignature = !!(signature?.signed_at || signature?.signature_path);
-    const isDeclined = !!signature?.declined;
+      const signature = res.signature; // <-- signature record (may be null)
+      const hasSignature = !!(signature?.signed_at || signature?.signature_path);
+      const isDeclined = !!signature?.declined;
 
-     this.alreadySigned = hasSignature && !isDeclined;
-    this.declined = isDeclined;
+       this.alreadySigned = hasSignature && !isDeclined;
+      this.declined = isDeclined;
 
-    // Debug output
-    console.log('signature record:', signature);
-    if (res.signatureImage) {
-        if (res.signatureImage.startsWith('data:')) {
-          // Already a data URL
-          this.signatureImage = res.signatureImage;
-        } else if (res.signatureImage.startsWith('http')) {
-          // It's a URL from backend
-          this.signatureImage = res.signatureImage;
+      // Debug output
+      console.log('signature record:', signature);
+      if (res.signatureImage) {
+          if (res.signatureImage.startsWith('data:')) {
+            // Already a data URL
+            this.signatureImage = res.signatureImage;
+          } else if (res.signatureImage.startsWith('http')) {
+            // It's a URL from backend
+            this.signatureImage = res.signatureImage;
+          } else {
+            // Assume it's base64
+            this.signatureImage = `data:image/png;base64,${res.signatureImage}`;
+          }
         } else {
-          // Assume it's base64
-          this.signatureImage = `data:image/png;base64,${res.signatureImage}`;
+          this.signatureImage = null;
         }
-      } else {
-        this.signatureImage = null;
-      }
+      this.isLoading = false;
+    },
+    error: () => {
+      this.isLoading = false;
+    }
   });
 }
 
