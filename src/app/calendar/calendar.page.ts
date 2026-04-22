@@ -85,7 +85,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private storage: Storage,
     private elementRef: ElementRef,
-    private alertController: AlertController // <--- add this
+    private alertController: AlertController
   ) { }
 
   async ngOnInit() {
@@ -141,6 +141,14 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
 
   async handleEventClick(info: any) {
     const event = info.event;
+    console.log('Calendar event clicked', {
+    id: event.id,
+    title: event.title,
+    start: event.start,
+    end: event.end,
+    extendedProps: event.extendedProps,
+    all: event.toPlainObject ? event.toPlainObject() : event
+  });
     const type = event.extendedProps?.type;
     const studentExtended = event.extendedProps?.student || {};
     const studentFirstName =
@@ -157,10 +165,12 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
 
     const studentName = studentText || `ID ${event.extendedProps?.student_id ?? event.student_id ?? 'unknown'}`;
     const header = type === 'consentForm' ? 'Consent Form' : type === 'announcement' ? 'Announcement' : 'Event';
-    const message = `${header}` + ` ` + `(${studentName})`;
+    const eventTitle = event.title || event.extendedProps?.title || 'No title';
+    const message = `${eventTitle}\n(${studentName})`;
 
     const alert = await this.alertController.create({
       header,
+      cssClass: 'custom-alert',
       message,
       buttons: [
         { text: 'Cancel', role: 'cancel' },
@@ -170,7 +180,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
             if (type === 'consentForm') {
               this.openConsentFormDetail(event);
             } else if (type === 'announcement') {
-              this.openAnnouncementDetail(event); // <-- ADD THIS
+              this.openAnnouncementDetail(event);
             } else {
               this.openEventDetail(event);
             }
@@ -394,7 +404,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
               const mapped = {
                 ...form,
                 student_id: form.student_id,
-                title: 'Consent Form: ' + form.title,
+                title: form.title,
                 start: new Date(form.deadline),
                 id: `consent-${form.form_id}-${form.student_id}-${index}`,
                 extendedProps: {

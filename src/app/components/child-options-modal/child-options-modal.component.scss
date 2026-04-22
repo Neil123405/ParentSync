@@ -282,11 +282,21 @@ ion-content {
   }
 
   &.photo-card::before {
-    background: blue;
+    background: linear-gradient(
+    160deg,
+    #18145f 0%,
+    #3d3899 42%,
+    #6ea8ff 100%
+  );
   }
 
   &.unlink-card::before {
-    background: blue;
+    background: linear-gradient(
+    160deg,
+    #18145f 0%,
+    #3d3899 42%,
+    #6ea8ff 100%
+  );
   }
 
   // Interaction states
@@ -367,11 +377,27 @@ ion-content {
 // ============================================================================
 
 .info-card {
+  position: relative;
   padding: 20px;
   background: white;
-  border-left: 4px solid blue;
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(
+      160deg,
+      #18145f 0%,
+      #3d3899 42%,
+      #6ea8ff 100%
+    );
+  }
 }
 
 .info-header {

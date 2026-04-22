@@ -87,3 +87,7 @@
   --ion-color-primary-shade: #5568d3;
   --ion-color-primary-tint: #7f8ef5;
 }
+
+.custom-alert .alert-message{
+  white-space: pre-line;
+}

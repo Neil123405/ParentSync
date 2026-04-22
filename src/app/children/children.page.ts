@@ -530,70 +530,70 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     toast.present();
   }
 
-  async openAddStudentModal() {
-    const modal = await this.modalController.create({
-      component: AddStudentModalComponent
-    });
-    modal.onDidDismiss().then((result) => {
-      if (result.data && result.data.student_id) {
-        this.addStudentById(
-          result.data.student_id,
-          result.data.first_name,
-          result.data.last_name,
-          result.data.birthdate
-        );
-      }
-    });
-    await modal.present();
-  }
+  // async openAddStudentModal() {
+  //   const modal = await this.modalController.create({
+  //     component: AddStudentModalComponent
+  //   });
+  //   modal.onDidDismiss().then((result) => {
+  //     if (result.data && result.data.student_id) {
+  //       this.addStudentById(
+  //         result.data.student_id,
+  //         result.data.first_name,
+  //         result.data.last_name,
+  //         result.data.birthdate
+  //       );
+  //     }
+  //   });
+  //   await modal.present();
+  // }
 
-  async addStudentById(studentId: number, firstName: string, lastName: string, birthdate: string) {
-    if (!studentId || !this.currentProfile) {
-      this.showToast('Please enter a valid Student ID, First Name, and Last Name.');
-      return;
-    }
-    this.apiService.getStudentProfile(studentId).subscribe({
-      next: async (profile) => {
-        const alert = await this.alertController.create({
-          header: 'Confirm Link',
-          message: `Are you sure you want to link this student to your account? (ID: ${profile.student_id})`,
-          cssClass: 'purple-alert',
-          buttons: [
-            {
-              text: 'Cancel',
-              role: 'cancel'
-            },
-            {
-              text: 'Yes',
-              handler: () => {
-                if (this.currentProfile && this.currentProfile.parent_id !== undefined) {
-                  this.apiService.linkStudentToParent(this.currentProfile.parent_id, studentId, firstName, lastName, birthdate).subscribe({
-                    next: async (response) => {
-                      if (response.success) {
-                        this.showToast('Student linked requested.');
-                        await this.clearCache();
-                        this.loadData();
-                      } else {
-                        this.showToast(response.message);
-                      }
-                    },
-                    error: () => this.showToast('Failed to link student.')
-                  });
-                } else {
-                  this.showToast('Parent ID is missing.');
-                }
-              }
-            }
-          ]
-        });
+  // async addStudentById(studentId: number, firstName: string, lastName: string, birthdate: string) {
+  //   if (!studentId || !this.currentProfile) {
+  //     this.showToast('Please enter a valid Student ID, First Name, and Last Name.');
+  //     return;
+  //   }
+  //   this.apiService.getStudentProfile(studentId).subscribe({
+  //     next: async (profile) => {
+  //       const alert = await this.alertController.create({
+  //         header: 'Confirm Link',
+  //         message: `Are you sure you want to link this student to your account? (ID: ${profile.student_id})`,
+  //         cssClass: 'purple-alert',
+  //         buttons: [
+  //           {
+  //             text: 'Cancel',
+  //             role: 'cancel'
+  //           },
+  //           {
+  //             text: 'Yes',
+  //             handler: () => {
+  //               if (this.currentProfile && this.currentProfile.parent_id !== undefined) {
+  //                 this.apiService.linkStudentToParent(this.currentProfile.parent_id, studentId, firstName, lastName, birthdate).subscribe({
+  //                   next: async (response) => {
+  //                     if (response.success) {
+  //                       this.showToast('Student linked requested.');
+  //                       await this.clearCache();
+  //                       this.loadData();
+  //                     } else {
+  //                       this.showToast(response.message);
+  //                     }
+  //                   },
+  //                   error: () => this.showToast('Failed to link student.')
+  //                 });
+  //               } else {
+  //                 this.showToast('Parent ID is missing.');
+  //               }
+  //             }
+  //           }
+  //         ]
+  //       });
 
-        await alert.present();
-      },
-      error: () => {
-        this.showToast('Student not found.');
-      }
-    });
-  }
+  //       await alert.present();
+  //     },
+  //     error: () => {
+  //       this.showToast('Student not found.');
+  //     }
+  //   });
+  // }
 
   async openChildOptions(ev: Event, child: LaravelStudent) {
     ev.stopPropagation();
