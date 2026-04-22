@@ -570,7 +570,7 @@ export class ChildrenPage implements OnInit, AfterViewInit {
                   this.apiService.linkStudentToParent(this.currentProfile.parent_id, studentId, firstName, lastName, birthdate).subscribe({
                     next: async (response) => {
                       if (response.success) {
-                        this.showToast('Student linked successfully!');
+                        this.showToast('Student linked requested.');
                         await this.clearCache();
                         this.loadData();
                       } else {
