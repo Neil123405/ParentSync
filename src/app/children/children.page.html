@@ -304,45 +304,53 @@
     </div>
   </div>
 
-  <div class="milestones-grid">
-    <div *ngFor="let milestone of filteredMilestones; let i = index" class="milestone-card" [class.milestone-animate]="true" [style.animation-delay]="i * 0.1 + 's'">
-      <div class="milestone-header">
-        <div class="milestone-icon-wrapper">
-          <ion-icon name="trophy" class="milestone-icon"></ion-icon>
-          <div class="milestone-shine"></div>
-        </div>
-        <div class="milestone-badge">
-          <ion-icon name="checkmark-circle" color="success"></ion-icon>
-        </div>
-      </div>
-      
-      <div class="milestone-body">
-        <h3 class="milestone-title">{{ milestone.title }}</h3>
-        <p class="milestone-description">{{ milestone.description }}</p>
-        
-        <div class="milestone-meta">
-          <div class="meta-item">
-            <ion-icon name="person-outline"></ion-icon>
-            <span>From {{ milestone.teacher.first_name }} {{ milestone.teacher.last_name }}</span>
-          </div>
-          <div class="meta-item">
-            <ion-icon name="calendar-outline"></ion-icon>
-            <span>{{ milestone.achieved_on | date:'MMM d, y' }}</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="milestone-footer">
-        <div class="milestone-ribbon">Achievement Unlocked!</div>
-      </div>
-    </div>
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Loading milestones...</p>
   </div>
 
-  <div *ngIf="filteredMilestones.length === 0" class="no-milestones">
-    <div class="empty-state">
-      <ion-icon name="filter-outline" class="empty-icon"></ion-icon>
-      <h3>No Milestones Found</h3>
-      <p>No achievements found for the year {{ selectedYear }}</p>
+  <div *ngIf="!isLoading">
+    <div class="milestones-grid">
+      <div *ngFor="let milestone of filteredMilestones; let i = index" class="milestone-card" [class.milestone-animate]="true" [style.animation-delay]="i * 0.1 + 's'">
+        <div class="milestone-header">
+          <div class="milestone-icon-wrapper">
+            <ion-icon name="trophy" class="milestone-icon"></ion-icon>
+            <div class="milestone-shine"></div>
+          </div>
+          <div class="milestone-badge">
+            <ion-icon name="checkmark-circle" color="success"></ion-icon>
+          </div>
+        </div>
+        
+        <div class="milestone-body">
+          <h3 class="milestone-title">{{ milestone.title }}</h3>
+          <p class="milestone-description">{{ milestone.description }}</p>
+          
+          <div class="milestone-meta">
+            <div class="meta-item">
+              <ion-icon name="person-outline"></ion-icon>
+              <span>From {{ milestone.teacher.first_name }} {{ milestone.teacher.last_name }}</span>
+            </div>
+            <div class="meta-item">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>{{ milestone.achieved_on | date:'MMM d, y' }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="milestone-footer">
+          <div class="milestone-ribbon">Achievement Unlocked!</div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="filteredMilestones.length === 0" class="no-milestones">
+      <div class="empty-state">
+        <ion-icon name="filter-outline" class="empty-icon"></ion-icon>
+        <h3>No Milestones Found</h3>
+        <p>No achievements found for the year {{ selectedYear }}</p>
+      </div>
     </div>
   </div>
 </div>

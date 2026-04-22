@@ -886,6 +886,30 @@
 }
 
 // ===================================
+// LOADING STATE
+// ===================================
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 80px 0;
+
+  ion-spinner {
+    margin-bottom: 16px;
+    --color: var(--ion-color-primary);
+  }
+
+  p {
+    color: #7f8c8d;
+    font-size: 14px;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+// ===================================
 // MILESTONES SECTION
 // ===================================
 .milestones-section {
