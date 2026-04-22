@@ -78,6 +78,8 @@ async submitDeclined() {
                 this.declined = true;
                 this.alreadySigned = false;
                 this.signatureImage = null;
+                // Clear cache so next load fetches fresh data
+                this.apiService.clearConsentFormCache(this.formId, this.studentId);
                 this.loadFormDetail(); // reload status if backend provides it
               }
             });
@@ -92,40 +94,45 @@ private loadFormDetail() {
   this.isLoading = true;
   this.apiService.getConsentFormDetail(this.formId, this.studentId).subscribe({
     next: (res) => {
-      this.form = res.form;
-
-      // Debug: see if signature_path is empty or not
-      console.log('signature_path:', this.form.signature_path);
-
-      const signature = res.signature; // <-- signature record (may be null)
-      const hasSignature = !!(signature?.signed_at || signature?.signature_path);
-      const isDeclined = !!signature?.declined;
-
-       this.alreadySigned = hasSignature && !isDeclined;
-      this.declined = isDeclined;
-
-      // Debug output
-      console.log('signature record:', signature);
-      if (res.signatureImage) {
-          if (res.signatureImage.startsWith('data:')) {
-            // Already a data URL
-            this.signatureImage = res.signatureImage;
-          } else if (res.signatureImage.startsWith('http')) {
-            // It's a URL from backend
-            this.signatureImage = res.signatureImage;
-          } else {
-            // Assume it's base64
-            this.signatureImage = `data:image/png;base64,${res.signatureImage}`;
-          }
-        } else {
-          this.signatureImage = null;
-        }
+      // Process the response (either from cache or fresh API call)
+      this.processFormDetail(res);
       this.isLoading = false;
     },
     error: () => {
       this.isLoading = false;
     }
   });
+}
+
+private processFormDetail(res: any) {
+  this.form = res.form;
+
+  // Debug: see if signature_path is empty or not
+  console.log('signature_path:', this.form.signature_path);
+
+  const signature = res.signature; // <-- signature record (may be null)
+  const hasSignature = !!(signature?.signed_at || signature?.signature_path);
+  const isDeclined = !!signature?.declined;
+
+  this.alreadySigned = hasSignature && !isDeclined;
+  this.declined = isDeclined;
+
+  // Debug output
+  console.log('signature record:', signature);
+  if (res.signatureImage) {
+    if (res.signatureImage.startsWith('data:')) {
+      // Already a data URL
+      this.signatureImage = res.signatureImage;
+    } else if (res.signatureImage.startsWith('http')) {
+      // It's a URL from backend
+      this.signatureImage = res.signatureImage;
+    } else {
+      // Assume it's base64
+      this.signatureImage = `data:image/png;base64,${res.signatureImage}`;
+    }
+  } else {
+    this.signatureImage = null;
+  }
 }
 
   onDrawEnd() {
@@ -158,6 +165,8 @@ private loadFormDetail() {
                 } else {
                   this.signatureImage = signatureData;
                 }
+                // Clear cache so next load fetches fresh data
+                this.apiService.clearConsentFormCache(this.formId, this.studentId);
                 // Notify that this form was signed
                 // this.apiService.consentFormSigned$.next({ formId: this.formId, studentId: this.studentId });
               }

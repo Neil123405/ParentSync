@@ -43,6 +43,9 @@ interface SignConsentResponse {
 })
 export class ApiService {
   private apiUrl = 'http://localhost:8000/api';
+  
+  // Cache for consent form details
+  private consentFormDetailCache = new Map<string, any>();
 
   // User management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -354,10 +357,37 @@ export class ApiService {
   }
 
   getConsentFormDetail(formId: number, studentId: number): Observable<any> {
-    return this.http.get(
-      `${this.apiUrl}/consent-forms/${formId}/student/${studentId}`,
-      { headers: this.getHeaders() }
-    );
+    const cacheKey = `${formId}-${studentId}`;
+    const cached = this.consentFormDetailCache.get(cacheKey);
+    
+    // If cache exists, return it as observable
+    if (cached) {
+      return new Observable(observer => {
+        observer.next(cached);
+        observer.complete();
+      });
+    }
+    
+    // Otherwise fetch from API and cache the result
+    return new Observable(observer => {
+      this.http.get(
+        `${this.apiUrl}/consent-forms/${formId}/student/${studentId}`,
+        { headers: this.getHeaders() }
+      ).subscribe({
+        next: (res) => {
+          this.consentFormDetailCache.set(cacheKey, res);
+          observer.next(res);
+          observer.complete();
+        },
+        error: (err) => observer.error(err)
+      });
+    });
+  }
+  
+  // Clear cache for a specific consent form (called after signing/declining)
+  clearConsentFormCache(formId: number, studentId: number) {
+    const cacheKey = `${formId}-${studentId}`;
+    this.consentFormDetailCache.delete(cacheKey);
   }
 
   getStudentProfile(studentId: number): Observable<any> {

@@ -63,7 +63,18 @@ export class ConsentFormsPage implements OnInit {
       error: (error) => console.error('❌ Error marking consent form as read:', error)
     });
 
-    this.router.navigate(['/consent-form-detail', form.form_id, this.studentId]);
+    // Prefetch consent form detail before navigating
+    this.apiService.getConsentFormDetail(form.form_id, this.studentId).subscribe({
+      next: () => {
+        // Data is cached, now navigate to detail page
+        this.router.navigate(['/consent-form-detail', form.form_id, this.studentId]);
+      },
+      error: (error) => {
+        console.error('Error prefetching consent form detail:', error);
+        // Still navigate even if prefetch fails, detail page will handle it
+        this.router.navigate(['/consent-form-detail', form.form_id, this.studentId]);
+      }
+    });
   }
   onActionButtonClick(form: any, event: Event) {
     event?.preventDefault?.();
