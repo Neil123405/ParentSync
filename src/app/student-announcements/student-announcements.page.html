@@ -30,44 +30,56 @@
   </div>
 
   <div class="content-wrapper">
-    <div class="announcement-list-item" *ngFor="let announcement of announcements" (click)="openAnnouncementDetail(announcement)">
-      <div class="unread-badge" *ngIf="announcement.is_read === 0 || announcement.is_read === '0'"></div>
-      <div class="date-badge announcements-badge">
-        <span class="date-day">{{ announcement.created_at | date:'d' }}</span>
-        <span class="date-month">{{ announcement.created_at | date:'MMM' }}</span>
-      </div>
-      
-      <div class="announcement-avatar">
-        <ion-icon name="megaphone-outline"></ion-icon>
-      </div>
-      
-      <div class="announcement-info">
-        <h3 class="announcement-title">{{ announcement.title }}</h3>
-        <p class="announcement-preview">{{ announcement.content | slice:0:60 }}{{ announcement.content.length > 60 ? '...' : '' }}</p>
-        <div class="announcement-meta">
-          <p class="announcement-teacher">
-            <ion-icon name="person-outline"></ion-icon>
-            Posted by {{ (announcement.first_name && announcement.last_name) ? (announcement.first_name + ' ' + announcement.last_name) : 'Admin' }}
-          </p>
-          <p class="announcement-details" *ngIf="announcement.subject_name || announcement.section_name">
-            <ion-icon name="school-outline"></ion-icon>
-            {{ announcement.subject_name }} | {{ announcement.section_name }}
-          </p>
-        </div>
-      </div>
-      
-      <div class="announcement-actions">
-        <button class="action-btn read-btn" (click)="openAnnouncementDetail(announcement); $event.stopPropagation()">
-          Read
-        </button>
-      </div>
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="loading">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Loading announcements...</p>
     </div>
 
-    <!-- Empty State -->
-    <div class="empty-state" *ngIf="announcements.length === 0">
-      <ion-icon name="megaphone-outline" class="empty-icon"></ion-icon>
-      <h3 class="empty-title">No Announcements</h3>
-      <p class="empty-subtitle">You're all caught up!</p>
+    <!-- Announcements List -->
+    <div *ngIf="!loading">
+      <div class="announcement-list-item" *ngFor="let announcement of announcements"
+        (click)="openAnnouncementDetail(announcement)">
+        <div class="unread-badge" *ngIf="announcement.is_read === 0 || announcement.is_read === '0'"></div>
+        <div class="date-badge announcements-badge">
+          <span class="date-day">{{ announcement.created_at | date:'d' }}</span>
+          <span class="date-month">{{ announcement.created_at | date:'MMM' }}</span>
+        </div>
+
+        <div class="announcement-avatar">
+          <ion-icon name="megaphone-outline"></ion-icon>
+        </div>
+
+        <div class="announcement-info">
+          <h3 class="announcement-title">{{ announcement.title }}</h3>
+          <p class="announcement-preview">{{ announcement.content | slice:0:60 }}{{ announcement.content.length > 60 ?
+            '...' : '' }}</p>
+          <div class="announcement-meta">
+            <p class="announcement-teacher">
+              <ion-icon name="person-outline"></ion-icon>
+              Posted by {{ (announcement.first_name && announcement.last_name) ? (announcement.first_name + ' ' +
+              announcement.last_name) : 'Admin' }}
+            </p>
+            <p class="announcement-details" *ngIf="announcement.subject_name || announcement.section_name">
+              <ion-icon name="school-outline"></ion-icon>
+              {{ announcement.subject_name }} | {{ announcement.section_name }}
+            </p>
+          </div>
+        </div>
+
+        <div class="announcement-actions">
+          <button class="action-btn read-btn" (click)="openAnnouncementDetail(announcement); $event.stopPropagation()">
+            Read
+          </button>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="announcements.length === 0">
+        <ion-icon name="megaphone-outline" class="empty-icon"></ion-icon>
+        <h3 class="empty-title">No Announcements</h3>
+        <p class="empty-subtitle">You're all caught up!</p>
+      </div>
     </div>
   </div>
 </ion-content>

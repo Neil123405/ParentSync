@@ -14,6 +14,7 @@ export class ConsentFormsPage implements OnInit {
   studentId!: number;
   consentForms: any[] = [];
   filter: 'all' | 'signed' | 'unsigned' | 'declined' = 'all';
+  loading = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -23,8 +24,15 @@ export class ConsentFormsPage implements OnInit {
 
   ngOnInit() {
     this.studentId = +this.route.snapshot.paramMap.get('studentId')!;
-    this.apiService.getConsentFormsForStudent(this.studentId).subscribe(res => {
-      this.consentForms = res.forms;
+    this.loading = true;
+    this.apiService.getConsentFormsForStudent(this.studentId).subscribe({
+      next: (res) => {
+        this.consentForms = res.forms;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 

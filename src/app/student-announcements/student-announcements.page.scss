@@ -334,6 +334,28 @@ ion-content {
 }
 
 // ===================================
+// LOADING STATE
+// ===================================
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+
+  ion-spinner {
+    margin-bottom: 16px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    color: #7f8c8d;
+  }
+}
+
+// ===================================
 // RESPONSIVE DESIGN
 // ===================================
 @media (max-width: 480px) {

@@ -11,6 +11,7 @@ import { ApiService } from '../services/api.service';
 export class StudentAnnouncementsPage implements OnInit {
   studentId!: number;
   announcements: any[] = [];
+  loading = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -20,11 +21,17 @@ export class StudentAnnouncementsPage implements OnInit {
 
   ngOnInit() {
     this.studentId = +this.route.snapshot.paramMap.get('studentId')!;
-    this.apiService.getStudentAnnouncements(this.studentId).subscribe(res => {
-      this.announcements = res.announcements || [];
-      console.log('announcements', this.announcements);
+    this.loading = true;
+    this.apiService.getStudentAnnouncements(this.studentId).subscribe({
+      next: (res) => {
+        this.announcements = res.announcements || [];
+        console.log('announcements', this.announcements);
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
-    
   }
 
   openAnnouncementDetail(announcement: any) {
