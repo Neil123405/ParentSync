@@ -147,7 +147,8 @@ export class AccountMenuModalComponent implements OnInit {
     const toast = await this.toastController.create({
       message,
       duration: 2000,
-      position: 'bottom'
+      position: 'bottom',
+      color: 'primary'
     });
     toast.present();
   }
