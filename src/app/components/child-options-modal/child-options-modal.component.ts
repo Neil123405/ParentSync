@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { ModalController, ToastController, ActionSheetController, IonicModule } from '@ionic/angular';
+import { ModalController, ToastController, ActionSheetController, AlertController, IonicModule } from '@ionic/angular';
 
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
@@ -22,7 +22,8 @@ export class ChildOptionsModalComponent implements OnInit {
     private modalCtrl: ModalController,
     private apiService: ApiService,
     private toastController: ToastController,
-    private actionSheetController: ActionSheetController
+    private actionSheetController: ActionSheetController,
+    private alertController: AlertController
   ) { }
 
   ngOnInit() { }
@@ -81,14 +82,31 @@ export class ChildOptionsModalComponent implements OnInit {
     }
   }
 
-  unlinkStudent(child: any) {
-    this.apiService.unlinkStudentFromParent(child.student_id).subscribe({
-      next: () => {
-        this.showToast('Student unlinked!');
-        this.modalCtrl.dismiss({ unlinked: true });
-      },
-      error: () => this.showToast('Failed to unlink student.')
+  async unlinkStudent(child: any) {
+    const alert = await this.alertController.create({
+      header: 'Unlink student',
+      message: 'Are you sure you want to unlink this student?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Unlink',
+          handler: () => {
+            this.apiService.unlinkStudentFromParent(child.student_id).subscribe({
+              next: () => {
+                this.showToast('Student unlinked!');
+                this.modalCtrl.dismiss({ unlinked: true });
+              },
+              error: () => this.showToast('Failed to unlink student.')
+            });
+          }
+        }
+      ]
     });
+
+    await alert.present();
   }
 
   async showToast(message: string) {
