@@ -43,7 +43,7 @@ interface SignConsentResponse {
   providedIn: 'root',
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = 'http://192.168.1.3:8000/api';
   
   // Cache for consent form details
   private consentFormDetailCache = new Map<string, any>();

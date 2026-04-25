@@ -365,6 +365,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
                 student_id: event.student_id,
                 extendedProps: {
                   type: 'event',
+                  event_id: event.id,
                   originalId: rawId,
                   description: event.description,
                   student: {
@@ -586,7 +587,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   openEventDetail(event: any) {
     // const rawEventId = event.id ?? event.event_id;
     // const eventId = Number(rawEventId);
-    const eventId = event.event_id ?? event.id;  // Get original event_id
+    const eventId = event.extendedProps?.event_id ?? event.event_id ?? event.id;  // Get original event_id
     // let studentId = event.student_id ?? event.meta?.student_id;
     const studentId =
       event.extendedProps?.student?.student_id ??
