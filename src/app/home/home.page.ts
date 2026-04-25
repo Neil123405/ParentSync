@@ -71,7 +71,9 @@ export class HomePage implements OnInit {
     });
 
     const profile = this.apiService.getCurrentProfile();
-    this.parent = profile ? (profile as ParentProfile) : null;
+    this.apiService.currentProfile$.subscribe(profile => {
+      this.parent = profile ? (profile as ParentProfile) : null;
+    });
   }
 
   ionViewWillEnter() {

@@ -19,7 +19,7 @@ import { AccountMenuModalComponent } from './components/account-menu-modal/accou
 export class AppComponent implements OnInit {
   @ViewChild(GlobalFooterComponent) globalFooter!: GlobalFooterComponent;
   parent: ParentProfile | null = null;
-  private toastQueue: string[] = [];
+  private toastQueue: { message: string; data: any }[] = [];
   private isToastDisplaying = false;
   showBadge: boolean = false;
 
@@ -142,7 +142,7 @@ export class AppComponent implements OnInit {
   }
 
   private async showQueuedToast(message: string, data?: any) {
-    this.toastQueue.push(message);
+    this.toastQueue.push({ message, data });
 
     if (!this.isToastDisplaying) {
       this.processToastQueue();
@@ -155,13 +155,27 @@ export class AppComponent implements OnInit {
     }
 
     this.isToastDisplaying = true;
-    const message = this.toastQueue.shift();
+    const item = this.toastQueue.shift();
+    const message = item?.message;
+    const data = item?.data;
 
     const toast = await this.toastController.create({
       message: message,
       duration: 4000,
       position: 'top',
-      color: 'primary'
+      color: 'primary',
+      buttons: [
+        {
+          text: 'View',
+          handler: () => {
+            this.handleNotificationAction(data);
+          }
+        },
+        {
+          text: 'Dismiss',
+          role: 'cancel'
+        }
+      ]
     });
 
     await toast.present();
