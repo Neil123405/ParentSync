@@ -96,9 +96,9 @@
         </div>
 
         <div class="form-actions">
-          <button type="button" class="action-btn" [class.sign-btn]="!form.signed" [class.view-btn]="form.signed"
+          <button type="button" class="action-btn" [class.sign-btn]="!form.signed && !form.declined" [class.view-btn]="form.signed" [class.declined-btn]="form.declined"
             (click)="onActionButtonClick(form, $event)">
-            {{ form.signed ? 'View' : 'Sign' }}
+            {{ form.signed || form.declined ? 'View' : 'Sign' }}
           </button>
         </div>
       </div>

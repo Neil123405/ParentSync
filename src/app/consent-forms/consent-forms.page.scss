@@ -396,6 +396,16 @@ ion-list {
       transform: scale(0.95);
     }
   }
+
+  &.declined-btn {
+    background: linear-gradient(160deg, #18145f 0%, #3d3899 42%, #6ea8ff 100%) !important;
+    color: white;
+    box-shadow: 0 2px 8px rgba(156, 39, 176, 0.3);
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
 }
 
 // ===================================

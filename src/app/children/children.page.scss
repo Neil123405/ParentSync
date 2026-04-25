@@ -202,7 +202,7 @@
   }
   
   &.long-pressed {
-    background: #e8f5e9 !important;
+    background: #E3F2FD !important;
     transform: scale(0.95);
     transition: all 0.2s ease;
   }
@@ -620,6 +620,24 @@
   background: #f6f8ff;
   min-height: 100vh;
   padding-bottom: 80px;
+  ::ng-deep {
+    .fc-event-title {
+      font-size: 0.65rem !important;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fc-daygrid-event {
+      padding: 0 2px !important;
+      margin: 1px 0 !important;
+    }
+
+    .fc-daygrid-event-harness {
+      padding: 1px !important;
+    }
+  }
 }
 
 .calendar-header {
