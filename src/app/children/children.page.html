@@ -15,11 +15,23 @@
 
 <ion-content [fullscreen]="true">
   <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
-    <ion-refresher-content></ion-refresher-content>
+    <ion-refresher-content
+      pullingIcon="arrow-down"
+      pullingText="Pull to refresh">
+    </ion-refresher-content>
   </ion-refresher>
-  <!-- Horizontal Students Section -->
-  <!-- List of Children -->
-  <div class="students-horizontal-section ion-padding-top">
+
+  <!-- TOP-LEVEL LOADING INDICATOR -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Loading data...</p>
+  </div>
+
+  <!-- Hide content while loading -->
+  <div *ngIf="!isLoading || laravelChildren.length > 0">
+    <!-- Horizontal Students Section -->
+    <!-- List of Children -->
+    <div class="students-horizontal-section ion-padding-top">
     <div class="students-carousel-container">
       <!-- Navigation arrows -->
       <button class="nav-arrow nav-arrow-left" [disabled]="centerCardIndex === 0" (click)="goToPrevCard()">
@@ -377,6 +389,7 @@
 
   <!-- Add bottom padding -->
   <div style="height: 80px;"></div>
+  </div>
 
 </ion-content>
 

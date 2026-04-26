@@ -180,32 +180,43 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     }, 500);
   }
 
-  ionViewWillEnter() {
-    if (this.currentProfile) {
-      // loadData gives us the children and unread counts, which are needed before we can select and center the child card
-      this.loadData().then(async () => {
-        if (!this._storage) {
-          this._storage = await this.storage.create();
-        }
-        // Check if selectedChild is already set
-        // !this.selectedChild is important because if we already have a selected child (e.g. from navigating back to this page), we don't want to override it with the lastSelectedChild from storage
-        if (!this.selectedChild && this.laravelChildren.length > 0) {
-          // Try to restore the last selected child from storage
-          const lastSelectedChild = await this.storage.get('lastSelectedChild');
+  async ionViewWillEnter() {
 
-          if (lastSelectedChild) {
-            const index = this.laravelChildren.findIndex(child => child.student_id === lastSelectedChild.student_id);
-            if (index !== -1) {
-              this.selectChildAndCenter(this.laravelChildren[index], index);
-              return;
-            }
+    if (!this.currentProfile) return;
+
+    try {
+      // Show loading spinner
+      this.isLoading = true;
+      this.cdr.detectChanges();
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Force reload data fresh from API
+      if (!this._storage) {
+        this._storage = await this.storage.create();
+      }
+      await this.loadData();
+
+      this.isLoading = false;
+      this.cdr.detectChanges();
+
+      // Restore selected child or select first
+      if (!this.selectedChild && this.laravelChildren.length > 0) {
+        const lastSelectedChild = await this.storage.get('lastSelectedChild');
+        if (lastSelectedChild) {
+          const index = this.laravelChildren.findIndex(
+            child => child.student_id === lastSelectedChild.student_id
+          );
+          if (index !== -1) {
+            this.selectChildAndCenter(this.laravelChildren[index], index);
+            return;
           }
-
-          // If no last selected child is found, select the first child
-          this.selectChildAndCenter(this.laravelChildren[0], 0);
         }
-        // this.refreshUnreadCounts();
-      });
+        this.selectChildAndCenter(this.laravelChildren[0], 0);
+      }
+    } catch (error) {      
+      this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 

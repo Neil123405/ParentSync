@@ -44,10 +44,10 @@ interface SignConsentResponse {
 })
 export class ApiService {
   private apiUrl = 'http://192.168.1.3:8000/api';
-  
+
   // Cache for consent form details
   private consentFormDetailCache = new Map<string, any>();
-  
+
   // Caches for list data
   private consentFormsCache = new Map<number, any>();
   private studentEventsCache = new Map<number, any>();
@@ -98,6 +98,12 @@ export class ApiService {
   }
   resetNotification$ = new Subject<void>();
   clearAppState() {
+    // Clear all Map caches
+    this.consentFormDetailCache.clear();
+    this.consentFormsCache.clear();
+    this.studentEventsCache.clear();
+    this.studentAnnouncementsCache.clear();
+
     // Reset all unread count maps
     this.unreadAnnouncementCounts = {};
     this.unreadEventCounts = {};
@@ -107,6 +113,10 @@ export class ApiService {
     this.announcementReceived$ = new Subject<void>();
     this.resetNotification$.next();
     this.resetNotification$ = new Subject<void>();
+
+    // Also clear BehaviorSubjects
+    this.currentUserSubject.next(null);
+    this.currentProfileSubject.next(null);
   }
 
   // Method to trigger the broadcast
@@ -376,7 +386,7 @@ export class ApiService {
       tap(res => this.consentFormsCache.set(studentId, res))
     );
   }
-  
+
   // Clear caches for list data (called on refresh)
   clearConsentFormsCache(studentId?: number) {
     if (studentId) {
@@ -385,7 +395,7 @@ export class ApiService {
       this.consentFormsCache.clear();
     }
   }
-  
+
   clearStudentEventsCache(studentId?: number) {
     if (studentId) {
       this.studentEventsCache.delete(studentId);
@@ -393,7 +403,7 @@ export class ApiService {
       this.studentEventsCache.clear();
     }
   }
-  
+
   clearStudentAnnouncementsCache(studentId?: number) {
     if (studentId) {
       this.studentAnnouncementsCache.delete(studentId);
@@ -405,7 +415,7 @@ export class ApiService {
   getConsentFormDetail(formId: number, studentId: number): Observable<any> {
     const cacheKey = `${formId}-${studentId}`;
     const cached = this.consentFormDetailCache.get(cacheKey);
-    
+
     // If cache exists, return it as observable
     if (cached) {
       return new Observable(observer => {
@@ -413,7 +423,7 @@ export class ApiService {
         observer.complete();
       });
     }
-    
+
     // Otherwise fetch from API and cache the result
     return new Observable(observer => {
       this.http.get(
@@ -429,7 +439,7 @@ export class ApiService {
       });
     });
   }
-  
+
   // Clear cache for a specific consent form (called after signing/declining)
   clearConsentFormCache(formId: number, studentId: number) {
     const cacheKey = `${formId}-${studentId}`;

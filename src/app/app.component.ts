@@ -85,6 +85,37 @@ export class AppComponent implements OnInit {
     });
   }
 
+  private clearBrowserCache() {
+    if ('caches' in window) {
+      caches.keys().then(names => {
+        names.forEach(name => caches.delete(name));
+      });
+    }
+  }
+
+  private handleNotificationAction(data: any) {
+    if (!data || !data.type) {
+      console.log('No routing data in notification');
+      return;
+    }
+
+    console.log('🎯 Navigating based on type:', data.type);
+
+    switch (data.type) {
+      case 'consent_form':
+        this.router.navigate(['/consent-form-detail', data.form_id, data.student_id]);
+        break;
+      case 'event':
+        this.router.navigate(['/event-detail', data.event_id, data.student_id]);
+        break;
+      case 'announcement':
+        this.router.navigate(['/announcement-detail', data.announcement_id, data.student_id]);  // ← Fixed
+        break;
+      default:
+        console.log('Unknown notification type:', data.type);
+    }
+  }
+
   private async checkBadgeState(parentId: number) {
     const storage = await this.storage.create();
     this.storage.get(`badgeState_${parentId}`).then(cached => {
@@ -118,29 +149,6 @@ export class AppComponent implements OnInit {
     );
   }
 
-  private handleNotificationAction(data: any) {
-    if (!data || !data.type) {
-      console.log('No routing data in notification');
-      return;
-    }
-
-    console.log('🎯 Navigating based on type:', data.type);
-
-    switch (data.type) {
-      case 'consent_form':
-        this.router.navigate(['/consent-form-detail', data.form_id, data.student_id]);
-        break;
-      case 'event':
-        this.router.navigate(['/event-detail', data.event_id, data.student_id]);
-        break;
-      case 'announcement':
-        this.router.navigate(['/announcement-detail', data.announcement_id, data.student_id]);  // ← Fixed
-        break;
-      default:
-        console.log('Unknown notification type:', data.type);
-    }
-  }
-
   private async showQueuedToast(message: string, data?: any) {
     this.toastQueue.push({ message, data });
 
@@ -148,6 +156,7 @@ export class AppComponent implements OnInit {
       this.processToastQueue();
     }
   }
+
   private async processToastQueue() {
     if (this.toastQueue.length === 0) {
       this.isToastDisplaying = false;
@@ -186,31 +195,57 @@ export class AppComponent implements OnInit {
     }, 4500); // 4000ms duration + 500ms buffer
   }
 
-  initializeApp() {
-    this.platform.ready().then(() => {
-      // Handle back button globally to prevent re-entry after logout
-      this.platform.backButton.subscribeWithPriority(10, () => {
-        const currentUrl = this.router.url;
-        if (currentUrl === '/login') {
-          // If on login page, exit the app instead of allowing back navigation
-          if ((window as any).Capacitor?.isNativePlatform) {
-            (window as any).Capacitor.Plugins.App.exitApp();
-          } else {
-            // In browser, prevent default back behavior
-            window.history.replaceState(null, '', '/login');
-          }
-        } else {
-          // Allow normal back navigation for other pages
-          window.history.back();
-        }
-      });
-    });
+  private async performFullLogout() {
+    this.apiService.clearAppState();
+    // Step 2: Clear all storage via ApiService
+    this.apiService.logout();
+
+    // Step 3: Clear Ionic Storage cache
+    await this.clearIonicStorage();
+
+    // Step 4: Clear browser caches & cookies
+    this.clearBrowserCache();
+
+    this.toastQueue = [];
+    this.isToastDisplaying = false;
+
+    // Step 5: Navigate to login
+    this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 
-  onMenuOpen() {
-    this.parent = this.apiService.getCurrentProfile();
-  }
+  private async clearIonicStorage() {
+    try {
+      const storage = await this.storage.create();
 
+      // Specific keys to clear (including badge state and all cache)
+      const keysToRemove = [
+        // 'hasNewNotification',  // ← Badge state
+        'cachedAnnouncements',
+        'cachedEvents',
+        'cachedChildrenWithPhotos',
+        'unreadAnnouncementCounts',
+        'unreadEventCounts',
+        'unreadConsentFormCounts',
+        'announcementCountsTwo',
+        'schoolEventCountsTwo',
+        'consentFormCountsTwo',
+        'calendarEvents',
+        'consentFormCount',
+        'eventCount',
+        'laravelChildren'
+      ];
+
+      // Remove each key individually for safety
+      for (const key of keysToRemove) {
+        await storage.remove(key);
+      }
+
+      // Or clear everything if you prefer
+      // await storage.clear();
+    } catch (error) {
+      console.error('Error clearing storage:', error);
+    }
+  }
 
   async openProfileSettings() {
     const modal = await this.modalCtrl.create({
@@ -254,67 +289,31 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private async performFullLogout() {
-    this.apiService.clearAppState();
-    // Step 2: Clear all storage via ApiService
-    this.apiService.logout();
-
-
-    // Step 3: Clear Ionic Storage cache
-    await this.clearIonicStorage();
-
-    // Step 4: Clear browser caches & cookies
-    this.clearBrowserCache();
-
-    this.toastQueue = [];
-    this.isToastDisplaying = false;
-
-
-    // Step 5: Navigate to login
-    this.router.navigateByUrl('/login', { replaceUrl: true });
-  }
-
-  private async clearIonicStorage() {
-    try {
-      const storage = await this.storage.create();
-
-      // Specific keys to clear (including badge state and all cache)
-      const keysToRemove = [
-        // 'hasNewNotification',  // ← Badge state
-        'cachedAnnouncements',
-        'cachedEvents',
-        'cachedChildrenWithPhotos',
-        'unreadAnnouncementCounts',
-        'unreadEventCounts',
-        'unreadConsentFormCounts',
-        'announcementCountsTwo',
-        'schoolEventCountsTwo',
-        'consentFormCountsTwo',
-        'calendarEvents',
-        'consentFormCount',
-        'eventCount',
-        'laravelChildren'
-      ];
-
-      // Remove each key individually for safety
-      for (const key of keysToRemove) {
-        await storage.remove(key);
-      }
-
-      // Or clear everything if you prefer
-      // await storage.clear();
-    } catch (error) {
-      console.error('Error clearing storage:', error);
-    }
-  }
-
-  private clearBrowserCache() {
-    if ('caches' in window) {
-      caches.keys().then(names => {
-        names.forEach(name => caches.delete(name));
+  initializeApp() {
+    this.platform.ready().then(() => {
+      // Handle back button globally to prevent re-entry after logout
+      this.platform.backButton.subscribeWithPriority(10, () => {
+        const currentUrl = this.router.url;
+        if (currentUrl === '/login') {
+          // If on login page, exit the app instead of allowing back navigation
+          if ((window as any).Capacitor?.isNativePlatform) {
+            (window as any).Capacitor.Plugins.App.exitApp();
+          } else {
+            // In browser, prevent default back behavior
+            window.history.replaceState(null, '', '/login');
+          }
+        } else {
+          // Allow normal back navigation for other pages
+          window.history.back();
+        }
       });
-    }
+    });
   }
+
+  onMenuOpen() {
+    this.parent = this.apiService.getCurrentProfile();
+  }
+
 }
 
 

@@ -17,12 +17,10 @@
 
 .premium-header {
   position: relative;
-  background: linear-gradient(
-    160deg,
-    #18145f 0%,
-    #3d3899 42%,
-    #6ea8ff 100%
-  ) !important;
+  background: linear-gradient(160deg,
+      #18145f 0%,
+      #3d3899 42%,
+      #6ea8ff 100%) !important;
   padding: 32px 20px 48px;
   border-bottom-left-radius: 32px;
   border-bottom-right-radius: 32px;
@@ -212,7 +210,7 @@
         cursor: pointer;
         transition: color 0.2s ease;
         user-select: none;
-  -webkit-user-select: none;
+        -webkit-user-select: none;
 
         &:active {
           color: #2d67c0;
@@ -224,12 +222,15 @@
   // Remember Me
   .remember-me {
     margin: 16px 0 24px;
-    
+
     ion-checkbox {
       --size: 18px;
+      --background: #ffffff;
+      --border-color: #cbd5e1;
       --checkbox-background-checked: #2d67c0;
       --checkbox-border-color: #cbd5e1;
       --checkbox-border-color-checked: #2d67c0;
+      --checkmark-color: #ffffff;
 
       span {
         font-size: 13px;
@@ -249,7 +250,7 @@
     --padding-top: 14px;
     --padding-bottom: 14px;
     --box-shadow: 0 10px 25px rgba(45, 103, 192, 0.3);
-    
+
     margin-top: 8px;
     margin-bottom: 20px;
     font-size: 15px;
