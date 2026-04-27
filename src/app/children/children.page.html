@@ -34,11 +34,11 @@
     <div class="students-horizontal-section ion-padding-top">
     <div class="students-carousel-container">
       <!-- Navigation arrows -->
-      <button class="nav-arrow nav-arrow-left" [disabled]="centerCardIndex === 0" (click)="goToPrevCard()">
+      <button class="nav-arrow nav-arrow-left" [disabled]="centerCardIndex === 0 || laravelChildren.length === 0" (click)="goToPrevCard()">
         <ion-icon name="chevron-back"></ion-icon>
       </button>
 
-      <button class="nav-arrow nav-arrow-right" [disabled]="centerCardIndex === laravelChildren.length - 1" (click)="goToNextCard()">
+      <button class="nav-arrow nav-arrow-right" [disabled]="centerCardIndex === laravelChildren.length - 1 || laravelChildren.length === 0" (click)="goToNextCard()">
         <ion-icon name="chevron-forward"></ion-icon>
       </button>
 
