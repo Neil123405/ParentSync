@@ -9,7 +9,9 @@
 
 <ion-content>
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content pullingIcon="" pullingText="Pull to refresh">
+     <ion-refresher-content
+      pullingIcon="arrow-down"
+      pullingText="Pull to refresh">
     </ion-refresher-content>
   </ion-refresher>
   <!-- Decorative Consent Forms Button (not clickable) -->
@@ -50,10 +52,10 @@
   <!-- Consent Forms List -->
   <div class="content-wrapper">
     <!-- Loading State -->
-    <div class="loading-state" *ngIf="loading">
+    <!-- <div class="loading-state" *ngIf="loading">
       <ion-spinner name="crescent" color="primary"></ion-spinner>
       <p>Loading consent forms...</p>
-    </div>
+    </div> -->
 
     <!-- Forms List -->
     <div *ngIf="!loading">
@@ -97,8 +99,7 @@
         </div>
 
         <div class="form-actions">
-          <button type="button" class="action-btn" [class.sign-btn]="!form.signed && !form.declined"
-            [class.view-btn]="form.signed" [class.declined-btn]="form.declined"
+          <button type="button" class="action-btn" [class.sign-btn]="!form.signed && !form.declined" [class.view-btn]="form.signed" [class.declined-btn]="form.declined"
             (click)="onActionButtonClick(form, $event)">
             {{ form.signed || form.declined ? 'View' : 'Sign' }}
           </button>

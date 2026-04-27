@@ -9,7 +9,7 @@
 
 <ion-content>
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content pullingIcon="" pullingText="Pull to refresh">
+    <ion-refresher-content pullingIcon="arrow-down" pullingText="Pull to refresh">
     </ion-refresher-content>
   </ion-refresher>
   <!-- Decorative Announcements Button (not clickable) -->
@@ -32,10 +32,10 @@
 
   <div class="content-wrapper">
     <!-- Loading State -->
-    <div class="loading-state" *ngIf="loading">
+    <!-- <div class="loading-state" *ngIf="loading">
       <ion-spinner name="crescent" color="primary"></ion-spinner>
       <p>Loading announcements...</p>
-    </div>
+    </div> -->
 
     <!-- Announcements List -->
     <div *ngIf="!loading">

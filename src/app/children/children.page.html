@@ -16,16 +16,16 @@
 <ion-content [fullscreen]="true">
   <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
     <ion-refresher-content
-      pullingIcon=""
+      pullingIcon="arrow-down"
       pullingText="Pull to refresh">
     </ion-refresher-content>
   </ion-refresher>
 
   <!-- TOP-LEVEL LOADING INDICATOR -->
-  <div *ngIf="isLoading" class="loading-overlay">
+  <!-- <div *ngIf="isLoading" class="loading-overlay">
     <ion-spinner name="crescent" color="primary"></ion-spinner>
     <p>Loading data...</p>
-  </div>
+  </div> -->
 
   <!-- Hide content while loading -->
   <div *ngIf="!isLoading || laravelChildren.length > 0">
