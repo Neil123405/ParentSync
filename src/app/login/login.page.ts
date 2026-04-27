@@ -127,15 +127,9 @@ export class LoginPage implements AfterViewInit, OnDestroy {
     this.apiService.login(payload).subscribe({
       next: async (response) => {
         await loading.dismiss();
-        // console.log('Login successful:', response);
-        // Replace the localStorage line with:
         this.apiService.setToken(response.token, this.rememberMe);
         // Store user data using ApiService
         this.apiService.setCurrentUser(response.user, response.profile, this.rememberMe);
-        // console.log('After setCurrentUser:', {
-        //   user: this.apiService.getCurrentUser(),
-        //   profile: this.apiService.getCurrentProfile()
-        // });
 
         // --- FCM Registration and Token Sending ---
         // Only run on device (not browser)
@@ -145,17 +139,13 @@ export class LoginPage implements AfterViewInit, OnDestroy {
             if (permResult.receive === 'granted') {
               await PushNotifications.register();
               // listens for the registration event granted by the phone
-              PushNotifications.addListener('registration', (token) => {
-                // console.log('FCM Token:', token.value);
+              PushNotifications.addListener('registration', (token) => {                
                 this.apiService.setFcmToken(token.value);
                 const profile = this.apiService.getCurrentProfile();
                 if (profile) {
                   this.apiService
                     .savePushToken(profile.parent_id, token.value)
-                    .subscribe(); // {
-                  //   next: (res) => console.log('Token saved!', res),
-                  //   error: (err) => console.error('Failed to save token', err)
-                  // });
+                    .subscribe();
                 }
               });
             }

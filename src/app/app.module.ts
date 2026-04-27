@@ -6,17 +6,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { IonicStorageModule } from '@ionic/storage-angular';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
-
-import { IonicStorageModule } from '@ionic/storage-angular'; // Import Ionic Storage
-
-
-
-
-
 
 @NgModule({
   declarations: [AppComponent
@@ -28,9 +22,9 @@ import { IonicStorageModule } from '@ionic/storage-angular'; // Import Ionic Sto
     HttpClientModule,
     FormsModule,
     SharedModule,
-    IonicStorageModule.forRoot() // Initialize Ionic Storage
+    IonicStorageModule.forRoot()
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

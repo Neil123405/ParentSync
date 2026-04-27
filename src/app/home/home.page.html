@@ -28,7 +28,8 @@
 
       <!-- Dashboard Summary Pills -->
       <div class="dashboard-summary">
-        <button class="summary-pill summary-pill-consent" [class.active]="activeTab === 'consentForms'" (click)="setTab('consentForms')">
+        <button class="summary-pill summary-pill-consent" [class.active]="activeTab === 'consentForms'"
+          (click)="setTab('consentForms')">
           <span class="summary-count">{{ consentFormCount }}</span>
           <span class="summary-label">Consent Forms</span>
         </button>
@@ -162,7 +163,8 @@
 
                 <!-- Preview of announcement content (optional) -->
                 <p class="announcement-preview" *ngIf="group.announcement.content">
-                  {{ group.announcement.content | slice:0:100 }}{{ group.announcement.content.length > 100 ? '...' : '' }}
+                  {{ group.announcement.content | slice:0:100 }}{{ group.announcement.content.length > 100 ? '...' : ''
+                  }}
                 </p>
 
                 <!-- Teacher/Author info -->
@@ -198,7 +200,8 @@
               <div class="student-photos-column" (click)="showAssociatedStudents($event, group.studentIds)">
                 <ng-container *ngFor="let studentId of group.studentIds.slice(0, 3); let i = index">
                   <div class="student-avatar">
-                    <ng-container *ngIf="getStudentById(studentId)?.photo_url && getStudentById(studentId)?.photo_url.startsWith('http'); else noPhoto">
+                    <ng-container
+                      *ngIf="getStudentById(studentId)?.photo_url && getStudentById(studentId)?.photo_url.startsWith('http'); else noPhoto">
                       <img [src]="getStudentById(studentId)?.photo_url" alt="Student Photo" class="student-photo" />
                     </ng-container>
                     <ng-template #noPhoto>
@@ -278,7 +281,8 @@
               <!-- Student Avatar Column -->
               <div class="student-photos-column">
                 <div class="student-avatar">
-                  <ng-container *ngIf="getStudentById(form.student_id)?.photo_url && getStudentById(form.student_id)?.photo_url.startsWith('http'); else noPhoto">
+                  <ng-container
+                    *ngIf="getStudentById(form.student_id)?.photo_url && getStudentById(form.student_id)?.photo_url.startsWith('http'); else noPhoto">
                     <img [src]="getStudentById(form.student_id)?.photo_url" alt="Student Photo" class="student-photo" />
                   </ng-container>
                   <ng-template #noPhoto>
@@ -314,7 +318,8 @@
                 <!-- Student and Teacher info -->
                 <p class="announcement-preview">
                   <ng-container *ngIf="getStudentById(form.student_id)">
-                    <strong>{{ getStudentById(form.student_id)?.first_name }} {{ getStudentById(form.student_id)?.last_name }}</strong>
+                    <strong>{{ getStudentById(form.student_id)?.first_name }} {{
+                      getStudentById(form.student_id)?.last_name }}</strong>
                   </ng-container>
                 </p>
 
@@ -344,7 +349,8 @@
 <!-- ...existing code... -->
 
 <!-- Associated Students Modal -->
-<ion-modal [isOpen]="isStudentsModalOpen" (didDismiss)="setStudentModalOpen(false)" [initialBreakpoint]="0.3" [breakpoints]="[0, 0.3, 0.85]">
+<ion-modal [isOpen]="isStudentsModalOpen" (didDismiss)="setStudentModalOpen(false)" [initialBreakpoint]="0.3"
+  [breakpoints]="[0, 0.3, 0.85]">
   <ng-template>
     <ion-header>
       <ion-toolbar class="modal-header-gradient">

@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
-
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Observable, BehaviorSubject, Subject, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
-// import { Http } from '@capacitor-community/http';
-// import { PushNotifications } from '@capacitor/push-notifications';
 
 export interface User {
   user_id: number;
@@ -38,7 +35,7 @@ interface SignConsentResponse {
   success: boolean;
   signatureImage?: string;
 }
-// environment.apiUrl ||
+
 @Injectable({
   providedIn: 'root',
 })
@@ -65,13 +62,11 @@ export class ApiService {
   public unreadAnnouncementCounts: { [studentId: number]: number } = {};
   public unreadEventCounts: { [studentId: number]: number } = {};
   public unreadConsentFormCounts: { [studentId: number]: number } = {};
-  // consentFormSigned$ = new Subject<{ formId: number, studentId: number }>();
 
   private fcmToken: string | null = null;
 
   // Broadcast when new announcement received
-  announcementReceived$ = new Subject<void>();
-  // Add this near the other Subjects
+  announcementReceived$ = new Subject<void>();  
   itemMarkedAsRead$ = new Subject<{ type: 'announcement' | 'event' | 'form', studentId: number }>();
 
   getDeviceNotificationState(parentId: number): Observable<any> {
@@ -341,16 +336,12 @@ export class ApiService {
       { headers: this.getHeaders() }
     );
   }
+  
   getAnnouncementDetail(announcementId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/announcements/${announcementId}`, {
       headers: this.getHeaders(),
     });
   }
-
-  // Events
-  // getParentEvents(parentId: number): Observable<any> {
-  //   return this.http.get(`${this.apiUrl}/parent/${parentId}/events`, { headers: this.getHeaders() });
-  // }
 
   getStudentEvents(studentId: number): Observable<any> {
     const cached = this.studentEventsCache.get(studentId);
@@ -362,12 +353,6 @@ export class ApiService {
       tap(res => this.studentEventsCache.set(studentId, res))
     );
   }
-
-  // participateInEvent(eventId: number, studentId: number): Observable<any> {
-  //   return this.http.post(`${this.apiUrl}/events/${eventId}/participate`,
-  //     { student_id: studentId },
-  //     { headers: this.getHeaders() });
-  // }
 
   getEventDetail(eventId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/events/${eventId}`, {
@@ -452,20 +437,12 @@ export class ApiService {
     });
   }
 
-  // getAllEvents() {
-  //   return this.http.get<{ events: any[] }>(`${this.apiUrl}/events`, { headers: this.getHeaders() });
-  // }
-
   // Attendance
   getStudentAttendance(studentId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/student/${studentId}/attendance`, {
       headers: this.getHeaders(),
     });
   }
-
-  // getAttendanceSummary(studentId: number): Observable<any> {
-  //   return this.http.get(`${this.apiUrl}/attendance/student/${studentId}/summary`, { headers: this.getHeaders() });
-  // }
 
   linkStudentToParent(
     parentId: number,
