@@ -216,10 +216,8 @@ export class AppComponent implements OnInit {
   private async clearIonicStorage() {
     try {
       const storage = await this.storage.create();
-
-      // Specific keys to clear (including badge state and all cache)
+      
       const keysToRemove = [
-        // 'hasNewNotification',  // ← Badge state
         'cachedAnnouncements',
         'cachedEvents',
         'cachedChildrenWithPhotos',
@@ -232,7 +230,8 @@ export class AppComponent implements OnInit {
         'calendarEvents',
         'consentFormCount',
         'eventCount',
-        'laravelChildren'
+        'laravelChildren',
+        'lastSelectedChild'
       ];
 
       // Remove each key individually for safety
