@@ -21,6 +21,7 @@ export class HomePage implements OnInit {
   laravelAnnouncements: any[] = [];
   laravelChildren: any[] = [];
   laravelEvents: any[] = [];
+  laravelConsentForms: any[] = [];
 
   announcementStudentFilter: string = '';
   announcementSort: string = 'latest';
@@ -37,6 +38,17 @@ export class HomePage implements OnInit {
   userPhotoUrl: string = '';
 
   activeTab: string = 'announcements';
+
+  // Dashboard counts
+  consentFormCount: number = 0;
+  eventCount: number = 0;
+  announcementCount: number = 0;
+
+  // Feed state tracking
+  activeFeedState = {
+    loading: false,
+    error: false
+  };
 
   constructor(
     private apiService: ApiService,
@@ -149,6 +161,14 @@ export class HomePage implements OnInit {
     });
   }
 
+  get filteredConsentForms() {
+    let list = this.laravelConsentForms;
+    list = [...list].sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+    return list;
+  }
+
   async showAssociatedStudents(event: Event, studentIds: number[]) {
     event.stopPropagation(); // Prevent opening the announcement detail page
 
@@ -190,18 +210,27 @@ export class HomePage implements OnInit {
 
     const cachedAnnouncements = await this.storage.get('cachedAnnouncements');
     const cachedEvents = await this.storage.get('cachedEvents');
+    const cachedConsentForms = await this.storage.get('cachedConsentForms');
 
     if (cachedAnnouncements) {
       this.laravelAnnouncements = cachedAnnouncements;
+      this.updateCounts();
     }
 
     if (cachedEvents) {
       this.laravelEvents = cachedEvents;
+      this.updateCounts();
+    }
+
+    if (cachedConsentForms) {
+      this.laravelConsentForms = cachedConsentForms;
+      this.updateCounts();
     }
 
     this.apiService.getParentAnnouncements(this.currentProfile.parent_id).subscribe({
       next: async (response) => {
         this.laravelAnnouncements = response.announcements || [];
+        this.updateCounts();
         // Cache the announcements
         await this.storage.set('cachedAnnouncements', this.laravelAnnouncements);
       },
@@ -213,11 +242,24 @@ export class HomePage implements OnInit {
     this.apiService.getParentEvents(this.currentProfile.parent_id).subscribe({
       next: async (response) => {
         this.laravelEvents = response.events || [];
+        this.updateCounts();
         // Cache the events
         await this.storage.set('cachedEvents', this.laravelEvents);
       },
       error: (error) => {
         console.error('Error fetching events:', error);
+      },
+    });
+
+    this.apiService.getAllUnsignedConsentFormsForParent(this.currentProfile.parent_id).subscribe({
+      next: async (response) => {
+        this.laravelConsentForms = response.forms || [];
+        this.updateCounts();
+        // Cache the consent forms
+        await this.storage.set('cachedConsentForms', this.laravelConsentForms);
+      },
+      error: (error) => {
+        console.error('Error fetching consent forms:', error);
       },
     });
   }
@@ -226,6 +268,7 @@ export class HomePage implements OnInit {
     await this.storage.remove('cachedChildrenWithPhotos');
     await this.storage.remove('cachedAnnouncements');
     await this.storage.remove('cachedEvents');
+    await this.storage.remove('cachedConsentForms');
   }
 
   async refreshData(event?: any) {
@@ -243,6 +286,10 @@ export class HomePage implements OnInit {
 
   openEventDetail(event: any) {
     this.router.navigate(['/event-detail', event.id]);
+  }
+
+  openConsentFormDetail(form: any) {
+    this.router.navigate(['/consent-form-detail', form.form_id, form.student_id]);
   }
 
   getStudentById(studentId: number) {
@@ -263,6 +310,64 @@ export class HomePage implements OnInit {
 
   setStudentModalOpen(isOpen: boolean) {
     this.isStudentsModalOpen = isOpen;
+  }
+
+  // Helper methods for dashboard UI
+  getStudentInitials(studentId: number): string {
+    const student = this.getStudentById(studentId);
+    if (student) {
+      const first = student.first_name?.charAt(0) || '';
+      const last = student.last_name?.charAt(0) || '';
+      return (first + last).toUpperCase();
+    }
+    return '?';
+  }
+
+  getStudentCountLabel(studentIds: number[]): string {
+    const count = studentIds.length;
+    if (count === 1) return '1 Student';
+    return `${count} Students`;
+  }
+
+  // getTeacherName(item: any): string {
+  //   if (item.first_name && item.last_name) {
+  //     return `${item.first_name} ${item.last_name}`;
+  //   }
+  //   return 'Teacher';
+  // }
+
+  getDueStatusLabel(form: any): string {
+    if (!form.deadline) return 'No Deadline';
+    
+    const today = new Date();
+    const deadline = new Date(form.deadline);
+    const daysUntilDue = Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysUntilDue < 0) return 'Overdue';
+    if (daysUntilDue === 0) return 'Due Today';
+    if (daysUntilDue === 1) return 'Due Tomorrow';
+    if (daysUntilDue <= 7) return `${daysUntilDue} Days Left`;
+    return 'Upcoming';
+  }
+
+  getTeacherOrAuthorName(item: any): string {
+    // Handle multiple possible field names for teacher/author
+    const firstName = item?.teacher_first_name || item?.author_first_name || item?.first_name || '';
+    const lastName = item?.teacher_last_name || item?.author_last_name || item?.last_name || '';
+    const fullName = `${firstName} ${lastName}`.trim();
+    return fullName || 'School Staff';
+  }
+
+  // retryActiveTab(): void {
+  //   this.activeFeedState.error = false;
+  //   this.activeFeedState.loading = true;
+  //   this.loadAnnouncementsAndEvents();
+  // }
+
+  private updateCounts(): void {
+    this.consentFormCount = this.filteredConsentForms.length;
+    this.eventCount = this.filteredEvents.length;
+    this.announcementCount = this.filteredAnnouncements.length;
   }
 
 }

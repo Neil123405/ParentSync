@@ -26,27 +26,20 @@
         </div>
       </div>
 
-      <!-- Tab navigation -->
-      <div class="tab-navigation">
-        <div class="tab-container">
-          <button class="modern-tab" [class.active]="activeTab === 'announcements'" (click)="setTab('announcements')">
-            <div class="tab-content">
-              <ion-icon name="megaphone-outline" class="tab-icon"></ion-icon>
-              <span class="tab-label">Announcements</span>
-            </div>
-          </button>
-
-          <button class="modern-tab" [class.active]="activeTab === 'events'" (click)="setTab('events')">
-            <div class="tab-content">
-              <ion-icon name="calendar-outline" class="tab-icon"></ion-icon>
-              <span class="tab-label">Events</span>
-            </div>
-          </button>
-        </div>
-
-        <!-- Active tab indicator -->
-        <div class="tab-indicator" [style.transform]="'translateX(' + (activeTab === 'events' ? '100%' : '0%') + ')'">
-        </div>
+      <!-- Dashboard Summary Pills -->
+      <div class="dashboard-summary">
+        <button class="summary-pill summary-pill-consent" [class.active]="activeTab === 'consentForms'" (click)="setTab('consentForms')">
+          <span class="summary-count">{{ consentFormCount }}</span>
+          <span class="summary-label">Consent Forms</span>
+        </button>
+        <button class="summary-pill" [class.active]="activeTab === 'events'" (click)="setTab('events')">
+          <span class="summary-count">{{ eventCount }}</span>
+          <span class="summary-label">Events</span>
+        </button>
+        <button class="summary-pill" [class.active]="activeTab === 'announcements'" (click)="setTab('announcements')">
+          <span class="summary-count">{{ announcementCount }}</span>
+          <span class="summary-label">Announcements</span>
+        </button>
       </div>
     </div>
 
@@ -82,7 +75,7 @@
                     </ng-container>
                     <ng-template #noPhoto>
                       <div class="student-placeholder">
-                        <ion-icon name="person"></ion-icon>
+                        {{ getStudentInitials(studentId) }}
                       </div>
                     </ng-template>
                   </div>
@@ -124,6 +117,12 @@
                 <p class="announcement-preview" *ngIf="group.announcement.content">
                   {{ group.announcement.content | slice:0:100 }}{{ group.announcement.content.length > 100 ? '...' : '' }}
                 </p>
+
+                <!-- Teacher/Author info -->
+                <p class="announcement-teacher" *ngIf="getTeacherOrAuthorName(group.announcement)">
+                  <ion-icon name="person-outline" style="margin-right: 4px;"></ion-icon>
+                  {{ getTeacherOrAuthorName(group.announcement) }}
+                </p>
               </div>
 
               <!-- Arrow indicator -->
@@ -157,7 +156,7 @@
                     </ng-container>
                     <ng-template #noPhoto>
                       <div class="student-placeholder">
-                        <ion-icon name="person"></ion-icon>
+                        {{ getStudentInitials(studentId) }}
                       </div>
                     </ng-template>
                   </div>
@@ -199,6 +198,12 @@
                 <p class="announcement-preview" *ngIf="group.event.description">
                   {{ group.event.description | slice:0:100 }}{{ group.event.description.length > 100 ? '...' : '' }}
                 </p>
+
+                <!-- Teacher/Author info -->
+                <p class="announcement-teacher" *ngIf="getTeacherOrAuthorName(group.event)">
+                  <ion-icon name="person-outline" style="margin-right: 4px;"></ion-icon>
+                  {{ getTeacherOrAuthorName(group.event) }}
+                </p>
               </div>
 
               <!-- Arrow indicator -->
@@ -213,6 +218,77 @@
       <div *ngIf="filteredEvents.length === 0" class="empty-state">
         <ion-icon name="calendar-outline" class="empty-icon"></ion-icon>
         <p class="empty-text">No events available</p>
+      </div>
+    </div>
+
+    <!-- Consent Forms Tab -->
+    <div *ngIf="activeTab === 'consentForms'">
+      <!-- Consent Forms List -->
+      <ng-container *ngFor="let form of filteredConsentForms">
+        <div class="announcement-wrapper">
+          <ion-card class="announcement-card clickable" (click)="openConsentFormDetail(form)">
+            <ion-card-content class="announcement-card-content">
+              <!-- Student Avatar Column -->
+              <div class="student-photos-column">
+                <div class="student-avatar">
+                  <ng-container *ngIf="getStudentById(form.student_id)?.photo_url && getStudentById(form.student_id)?.photo_url.startsWith('http'); else noPhoto">
+                    <img [src]="getStudentById(form.student_id)?.photo_url" alt="Student Photo" class="student-photo" />
+                  </ng-container>
+                  <ng-template #noPhoto>
+                    <div class="student-placeholder">
+                      {{ getStudentInitials(form.student_id) }}
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+
+              <!-- Consent Form Content -->
+              <div class="announcement-details">
+                <div class="announcement-header">
+                  <ion-icon name="document-text" class="announcement-icon"></ion-icon>
+                  <div class="consent-title-block">
+                    <h3 class="announcement-title">{{ form.title }}</h3>
+                    <span class="urgency-badge">{{ getDueStatusLabel(form) }}</span>
+                  </div>
+                </div>
+
+                <div class="announcement-meta">
+                  <div class="meta-item">
+                    <ion-icon name="school-outline" class="meta-icon"></ion-icon>
+                    <span class="meta-text">{{ form.subject_name }}</span>
+                  </div>
+
+                  <div class="meta-item" *ngIf="form.deadline">
+                    <ion-icon name="calendar-outline" class="meta-icon"></ion-icon>
+                    <span class="meta-text">Due: {{ form.deadline | date:'MMM d, y' }}</span>
+                  </div>
+                </div>
+
+                <!-- Student and Teacher info -->
+                <p class="announcement-preview">
+                  <ng-container *ngIf="getStudentById(form.student_id)">
+                    <strong>{{ getStudentById(form.student_id)?.first_name }} {{ getStudentById(form.student_id)?.last_name }}</strong>
+                  </ng-container>
+                </p>
+
+                <p class="announcement-teacher" *ngIf="getTeacherOrAuthorName(form)">
+                  <ion-icon name="person-outline" style="margin-right: 4px;"></ion-icon>
+                  {{ getTeacherOrAuthorName(form) }}
+                </p>
+              </div>
+
+              <!-- Arrow indicator -->
+              <div class="card-arrow">
+                <ion-icon name="chevron-forward-outline"></ion-icon>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </ng-container>
+
+      <div *ngIf="filteredConsentForms.length === 0" class="empty-state">
+        <ion-icon name="document-text-outline" class="empty-icon"></ion-icon>
+        <p class="empty-text">No consent forms available</p>
       </div>
     </div>
   </div>

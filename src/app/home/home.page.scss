@@ -21,12 +21,10 @@
 .modern-header {
   position: relative;
   height: 160px;
-  background: linear-gradient(
-    160deg,
-    #18145f 0%,
-    #3d3899 42%,
-    #6ea8ff 100%
-  ) !important;
+  background: linear-gradient(160deg,
+      #18145f 0%,
+      #3d3899 42%,
+      #6ea8ff 100%) !important;
   border-radius: 0 0 32px 32px;
   padding: 0;
   z-index: 1;
@@ -38,12 +36,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    160deg,
-    #18145f 0%,
-    #3d3899 42%,
-    #6ea8ff 100%
-  ) !important;
+  background: linear-gradient(160deg,
+      #18145f 0%,
+      #3d3899 42%,
+      #6ea8ff 100%) !important;
   z-index: 1;
 }
 
@@ -202,65 +198,41 @@
 }
 
 // ===================================
-// TAB NAVIGATION
+// DASHBOARD SUMMARY
 // ===================================
-.tab-navigation {
-  position: relative;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
-  padding: 4px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 4px;
 }
 
-.tab-container {
+.summary-pill {
+  appearance: none;
   display: flex;
-  position: relative;
-  z-index: 2;
-}
-
-.modern-tab {
-  flex: 1;
-  background: transparent;
-  border: none;
-  padding: 12px 16px;
-  border-radius: 12px;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  z-index: 2;
+  transition: all 0.2s ease;
+  text-align: left;
 
-  .tab-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .tab-icon {
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.7);
-    transition: all 0.3s ease;
-  }
-
-  .tab-label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
-    transition: all 0.3s ease;
-    letter-spacing: 0.3px;
+  &.summary-pill-consent {
+    // background: rgba(255, 214, 102, 0.2);
+    // border-color: rgba(255, 214, 102, 0.35);
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.22);
   }
 
   &.active {
-
-    .tab-icon,
-    .tab-label {
-      color: white;
-    }
-
-    .tab-icon {
-      transform: scale(1.1);
-    }
+    background: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.45);
+    box-shadow: 0 8px 18px rgba(17, 25, 40, 0.18);
+    transform: translateY(-1px);
   }
 
   &:active {
@@ -268,19 +240,23 @@
   }
 }
 
-.tab-indicator {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: calc(50% - 4px);
-  height: calc(100% - 8px);
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 12px;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  z-index: 1;
+.summary-count {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
 }
+
+.summary-label {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+//   border: 1px solid rgba(255, 255, 255, 0.3);
+//   z-index: 1;
+// }
 
 // ===================================
 // ANNOUNCEMENT & EVENT CARDS
@@ -569,15 +545,14 @@
   .student-placeholder {
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, #3d3899, #6ea8ff);
     display: flex;
     align-items: center;
     justify-content: center;
-
-    ion-icon {
-      font-size: 24px;
-      color: rgba(0, 0, 0, 0.4);
-    }
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
   }
 }
 
@@ -654,6 +629,15 @@
   opacity: 0.9;
 }
 
+.announcement-teacher {
+  margin: 8px 0 0 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+}
+
 .card-arrow {
   display: flex;
   align-items: center;
@@ -709,6 +693,64 @@
 }
 
 // ===================================
+// DASHBOARD STATE CARDS & BADGES
+// ===================================
+.dashboard-state-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 160px;
+  margin-bottom: 12px;
+  padding: 28px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: center;
+
+  p {
+    margin: 0;
+    color: #5f6473;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  ion-spinner,
+  ion-icon {
+    color: #3d3899;
+    font-size: 1.8rem;
+  }
+
+  ion-button {
+    --color: #3d3899;
+  }
+
+  &.error-state {
+    background: #fff8f8;
+  }
+}
+
+.consent-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.urgency-badge {
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 214, 102, 0.22);
+  color: #9a5b00;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+// ===================================
 // RESPONSIVE
 // ===================================
 @media (max-width: 480px) {
@@ -729,16 +771,16 @@
     height: 44px;
   }
 
-  .modern-tab {
-    padding: 10px 12px;
+  .dashboard-summary {
+    gap: 8px;
+  }
 
-    .tab-label {
-      font-size: 0.85rem;
-    }
+  .summary-pill {
+    padding: 9px 10px;
+  }
 
-    .tab-icon {
-      font-size: 1rem;
-    }
+  .summary-label {
+    font-size: 0.68rem;
   }
 
   .announcement-card-content {
@@ -773,20 +815,10 @@
 }
 
 @media (max-width: 360px) {
-  .modern-tab {
-    .tab-content {
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .tab-label {
-      font-size: 0.75rem;
-    }
-
-    .tab-icon {
-      font-size: 1.1rem;
-    }
+  .dashboard-summary {
+    grid-template-columns: 1fr;
   }
+
 }
 
 // ===================================
@@ -803,13 +835,11 @@ ion-header.ios {
   }
 }
 
-.modal-header-gradient {  
-  --background: linear-gradient(
-    160deg,
-    #18145f 0%,
-    #3d3899 42%,
-    #6ea8ff 100%
-  ) !important;
+.modal-header-gradient {
+  --background: linear-gradient(160deg,
+      #18145f 0%,
+      #3d3899 42%,
+      #6ea8ff 100%) !important;
 }
 
 .modal-header-gradient ion-toolbar {

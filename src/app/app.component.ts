@@ -229,6 +229,7 @@ export class AppComponent implements OnInit {
       const keysToRemove = [
         'cachedAnnouncements',
         'cachedEvents',
+        'cachedConsentForms',
         'cachedChildrenWithPhotos',
         'unreadAnnouncementCounts',
         'unreadEventCounts',
