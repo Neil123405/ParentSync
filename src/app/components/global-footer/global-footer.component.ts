@@ -30,15 +30,15 @@ export class GlobalFooterComponent implements OnInit, OnChanges {
   // private _badgeState: boolean = false;
   badgeState$ = new BehaviorSubject<boolean>(false);  // ← NEW
   badgeState: boolean = false;  // For template binding
-//  @Input() 
-//   set badgeState(value: boolean) {
-//     console.log('🔔 [@Input] badgeState setter called with value:', value);
-//     this._badgeState = value;
-//     this.cdr.markForCheck();
-//   }
-//   get badgeState(): boolean {
-//     return this._badgeState;
-//   }
+  //  @Input() 
+  //   set badgeState(value: boolean) {
+  //     console.log('🔔 [@Input] badgeState setter called with value:', value);
+  //     this._badgeState = value;
+  //     this.cdr.markForCheck();
+  //   }
+  //   get badgeState(): boolean {
+  //     return this._badgeState;
+  //   }
   constructor(
     private router: Router,
     private modalController: ModalController,
@@ -132,23 +132,28 @@ export class GlobalFooterComponent implements OnInit, OnChanges {
   }
 
   navigateAndClearBadge(route: string) {
-  console.log('📍 Current route:', this.currentRoute, 'Target route:', route);
-  if (this.currentRoute === route) {
-    console.log('⚠️ Already on this route, NOT navigating');
-    return;  // ← Prevent re-navigation if already there
+    console.log('📍 Current route:', this.currentRoute, 'Target route:', route);
+    if (this.currentRoute === route) {
+      console.log('⚠️ Already on this route, NOT navigating');
+      return;  // ← Prevent re-navigation if already there
+    }
+    this.router.navigate([route]);
+    this.clearBadge();
   }
-  this.router.navigate([route]);
-  this.clearBadge();
-}
 
-  private clearBadge() {
+  private async clearBadge() {
     const parentId = this.apiService.getCurrentProfile()?.parent_id;  // ✅ CORRECT - This is PARENT ID
     if (!parentId) return;
-
+    const userId = this.apiService.getCurrentUser()?.user_id;
     console.log('🔄 Clearing badge for parent:', parentId);
-this.badgeState$.next(false);
-  this.hasNewNotification = false;
-  this.cdr.markForCheck();
+    this.badgeState$.next(false);
+    this.hasNewNotification = false;
+    this.cdr.markForCheck();
+    await this.storage?.set('badgeState' + parentId, false);
+    if (userId) {
+      await this.storage?.set('hasNewNotification' + userId, false);
+    }
+
     this.apiService.updateDeviceNotificationState(parentId, 0).subscribe(
       (response: any) => {
         // this.badgeState$.next(false);

@@ -59,24 +59,33 @@ export class AppComponent implements OnInit {
     });
 
     PushNotifications.addListener('pushNotificationReceived', async (notification: PushNotificationSchema) => {
-      Haptics.impact({ style: ImpactStyle.Heavy });
+      this.ngZone.run(async () => {  // ← Ensure code runs in Angular's zone
+        Haptics.impact({ style: ImpactStyle.Heavy });
 
-      if ('vibrate' in navigator) {
-        navigator.vibrate(800);
-      }
-      const parentId = this.apiService.getCurrentProfile()?.parent_id;
-      if (parentId) {
-        const storage = await this.storage.create();
-        await storage.set(`hasNewNotification_${parentId}`, true);
-        await storage.set(`badgeState_${parentId}`, true);
-        this.showBadge = true;
-      }
+        if ('vibrate' in navigator) {
+          navigator.vibrate(800);
+        }
 
-      const message = `${notification.body || 'Your child'}: ${notification.title || 'New Update'}`;
-      this.showQueuedToast(message, notification.data);
+        const parentId = this.apiService.getCurrentProfile()?.parent_id;
+        if (parentId) {
+          const storage = await this.storage.create();
+          await storage.set(`hasNewNotification_${parentId}`, true);
+          await storage.set(`badgeState_${parentId}`, true);
+          this.showBadge = true;
 
+          // Update global footer badge directly
+          if (this.globalFooter) {
+            this.globalFooter.badgeState$.next(true);
+            this.globalFooter.hasNewNotification = true;
+          }
+        }
 
-      this.apiService.notifyNewAnnouncement();
+        const message = `${notification.body || 'Your child'}: ${notification.title || 'New Update'}`;
+        this.showQueuedToast(message, notification.data);
+
+        this.apiService.notifyNewAnnouncement();  // Also emit the observable as backup
+        this.cdr.markForCheck();
+      });
     });
 
     PushNotifications.addListener('pushNotificationActionPerformed', (notification: any) => {
@@ -216,7 +225,7 @@ export class AppComponent implements OnInit {
   private async clearIonicStorage() {
     try {
       const storage = await this.storage.create();
-      
+
       const keysToRemove = [
         'cachedAnnouncements',
         'cachedEvents',
