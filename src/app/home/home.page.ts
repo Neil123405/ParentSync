@@ -47,7 +47,16 @@ export class HomePage implements OnInit {
   // Feed state tracking
   activeFeedState = {
     loading: false,
-    error: false
+    error: false,
+    isInitialLoad: true
+  };
+
+  // Track individual data source load completion
+  private dataLoaded = {
+    announcements: false,
+    events: false,
+    consentForms: false,
+    children: false
   };
 
   constructor(
@@ -197,16 +206,25 @@ export class HomePage implements OnInit {
           this.laravelChildren = response.children || [];
           // Cache the children data
           await this.storage.set('cachedChildrenWithPhotos', this.laravelChildren);
+          this.dataLoaded.children = true;
+          this.checkAllDataLoaded();
         }
       },
       error: (error) => {
         console.error('Error fetching children with photos:', error);
+        this.dataLoaded.children = true;
+        this.checkAllDataLoaded();
       },
     });
   }
 
   async loadAnnouncementsAndEvents() {
     if (!this.currentProfile) return;
+
+    // Set loading state for initial load
+    if (this.activeFeedState.isInitialLoad) {
+      this.activeFeedState.loading = true;
+    }
 
     const cachedAnnouncements = await this.storage.get('cachedAnnouncements');
     const cachedEvents = await this.storage.get('cachedEvents');
@@ -233,9 +251,13 @@ export class HomePage implements OnInit {
         this.updateCounts();
         // Cache the announcements
         await this.storage.set('cachedAnnouncements', this.laravelAnnouncements);
+        this.dataLoaded.announcements = true;
+        this.checkAllDataLoaded();
       },
       error: (error) => {
         console.error('Error fetching announcements:', error);
+        this.dataLoaded.announcements = true;
+        this.checkAllDataLoaded();
       },
     });
 
@@ -245,9 +267,13 @@ export class HomePage implements OnInit {
         this.updateCounts();
         // Cache the events
         await this.storage.set('cachedEvents', this.laravelEvents);
+        this.dataLoaded.events = true;
+        this.checkAllDataLoaded();
       },
       error: (error) => {
         console.error('Error fetching events:', error);
+        this.dataLoaded.events = true;
+        this.checkAllDataLoaded();
       },
     });
 
@@ -257,9 +283,13 @@ export class HomePage implements OnInit {
         this.updateCounts();
         // Cache the consent forms
         await this.storage.set('cachedConsentForms', this.laravelConsentForms);
+        this.dataLoaded.consentForms = true;
+        this.checkAllDataLoaded();
       },
       error: (error) => {
         console.error('Error fetching consent forms:', error);
+        this.dataLoaded.consentForms = true;
+        this.checkAllDataLoaded();
       },
     });
   }
@@ -368,6 +398,18 @@ export class HomePage implements OnInit {
     this.consentFormCount = this.filteredConsentForms.length;
     this.eventCount = this.filteredEvents.length;
     this.announcementCount = this.filteredAnnouncements.length;
+  }
+
+  private checkAllDataLoaded(): void {
+    if (
+      this.dataLoaded.announcements &&
+      this.dataLoaded.events &&
+      this.dataLoaded.consentForms &&
+      this.dataLoaded.children
+    ) {
+      this.activeFeedState.loading = false;
+      this.activeFeedState.isInitialLoad = false;
+    }
   }
 
 }

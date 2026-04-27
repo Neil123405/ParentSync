@@ -58,8 +58,55 @@
       <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
 
+    <!-- Loading Skeleton Cards -->
+    <ng-container *ngIf="activeFeedState.loading">
+      <ng-container *ngFor="let item of [1,2,3]">
+        <div class="announcement-wrapper">
+          <ion-card class="announcement-card skeleton-card">
+            <ion-card-content class="announcement-card-content">
+              <!-- Skeleton Avatar Column -->
+              <div class="student-photos-column">
+                <div class="student-avatar">
+                  <div class="skeleton-avatar"></div>
+                </div>
+              </div>
+
+              <!-- Skeleton Content -->
+              <div class="announcement-details">
+                <div class="announcement-header">
+                  <div class="skeleton-line skeleton-icon"></div>
+                  <div style="flex: 1; margin-left: 12px;">
+                    <div class="skeleton-line skeleton-title"></div>
+                  </div>
+                </div>
+
+                <div class="announcement-meta">
+                  <div class="meta-item">
+                    <div class="skeleton-line skeleton-text" style="width: 70%;"></div>
+                  </div>
+                  <div class="meta-item">
+                    <div class="skeleton-line skeleton-text" style="width: 80%;"></div>
+                  </div>
+                </div>
+
+                <div class="skeleton-line skeleton-preview" style="margin-top: 12px; width: 90%;"></div>
+                <div class="skeleton-line skeleton-preview" style="margin-top: 8px; width: 60%;"></div>
+
+                <div class="skeleton-line skeleton-teacher" style="margin-top: 12px; width: 75%;"></div>
+              </div>
+
+              <!-- Skeleton Arrow -->
+              <div class="card-arrow">
+                <div class="skeleton-line" style="width: 20px; height: 20px;"></div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </ng-container>
+    </ng-container>
+
     <!-- Announcements Tab -->
-    <div *ngIf="activeTab === 'announcements'">
+    <div *ngIf="activeTab === 'announcements' && !activeFeedState.loading">
       <ng-container *ngFor="let group of groupedAnnouncements">
         <div class="announcement-wrapper">
           <ion-card class="announcement-card clickable" (click)="openAnnouncement(group.announcement)">
@@ -141,7 +188,7 @@
     </div>
 
     <!-- Events Tab -->
-    <div *ngIf="activeTab === 'events'">
+    <div *ngIf="activeTab === 'events' && !activeFeedState.loading">
       <!-- Events List -->
       <ng-container *ngFor="let group of groupedEvents">
         <div class="announcement-wrapper">
@@ -222,7 +269,7 @@
     </div>
 
     <!-- Consent Forms Tab -->
-    <div *ngIf="activeTab === 'consentForms'">
+    <div *ngIf="activeTab === 'consentForms' && !activeFeedState.loading">
       <!-- Consent Forms List -->
       <ng-container *ngFor="let form of filteredConsentForms">
         <div class="announcement-wrapper">
