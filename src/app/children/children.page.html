@@ -15,385 +15,391 @@
 
 <ion-content [fullscreen]="true">
   <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
-    <ion-refresher-content
-      pullingIcon="arrow-down"
-      pullingText="Pull to refresh"
-      class="loading-overlay">
+    <ion-refresher-content pullingIcon="chevron-down-circle-outline" pullingText="Pull to refresh"
+      refreshingSpinner="none" refreshingText="Refreshing...">
     </ion-refresher-content>
   </ion-refresher>
 
   <!-- TOP-LEVEL LOADING INDICATOR -->
-  <!-- <div *ngIf="isLoading" class="loading-overlay">
+  <div *ngIf="isLoading" class="loading-overlay">
     <ion-spinner name="crescent" color="primary"></ion-spinner>
     <p>Loading data...</p>
-  </div> -->
+  </div>
 
   <!-- Hide content while loading -->
   <div *ngIf="!isLoading || laravelChildren.length > 0">
     <!-- Horizontal Students Section -->
     <!-- List of Children -->
     <div class="students-horizontal-section ion-padding-top">
-    <div class="students-carousel-container">
-      <!-- Navigation arrows -->
-      <button class="nav-arrow nav-arrow-left" [disabled]="centerCardIndex === 0 || laravelChildren.length === 0" (click)="goToPrevCard()">
-        <ion-icon name="chevron-back"></ion-icon>
-      </button>
+      <div class="students-carousel-container">
+        <!-- Navigation arrows -->
+        <button class="nav-arrow nav-arrow-left" [disabled]="centerCardIndex === 0 || laravelChildren.length === 0"
+          (click)="goToPrevCard()">
+          <ion-icon name="chevron-back"></ion-icon>
+        </button>
 
-      <button class="nav-arrow nav-arrow-right" [disabled]="centerCardIndex === laravelChildren.length - 1 || laravelChildren.length === 0" (click)="goToNextCard()">
-        <ion-icon name="chevron-forward"></ion-icon>
-      </button>
+        <button class="nav-arrow nav-arrow-right"
+          [disabled]="centerCardIndex === laravelChildren.length - 1 || laravelChildren.length === 0"
+          (click)="goToNextCard()">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </button>
 
-      <div class="students-carousel-wrapper" #carouselWrapper >
-        <div *ngIf="!isLoading">
-          <div *ngFor="let child of laravelChildren; let i = index" class="student-card-carousel"
-            [class.center]="centerCardIndex === i" [class.left]="i < centerCardIndex" [class.right]="i > centerCardIndex" 
-            [class.long-pressed]="longPressedId === child.student_id" (click)="selectChildAndCenter(child, i)" 
-            (mousedown)="startPress($event, child)" (mouseup)="endPress()" (mouseleave)="endPress()" (touchstart)="startPress($event, child)" (touchend)="endPress()"
-            [style.transform]="getCardTransform(i)" style="position: absolute;">
-            <!-- Badge at top right -->
-            <span class="student-badge">
-              {{
-              (unreadConsentFormCounts[child.student_id] || 0) +
-              (unreadEventCounts[child.student_id] || 0) +
-              (unreadAnnouncementCounts[child.student_id] || 0)
-              }}
-            </span>
-            <div class="student-avatar">
-              <ng-container *ngIf="child.photo_url && child.photo_url.startsWith('http'); else childNoPhoto">
-                <img [src]="child?.photo_url" alt="Student Photo" />
-              </ng-container>
-              <ng-template #childNoPhoto>
-                <ion-icon name="person-circle"></ion-icon>
-              </ng-template>
+        <div class="students-carousel-wrapper" #carouselWrapper>
+          <div *ngIf="!isLoading">
+            <div *ngFor="let child of laravelChildren; let i = index" class="student-card-carousel"
+              [class.center]="centerCardIndex === i" [class.left]="i < centerCardIndex"
+              [class.right]="i > centerCardIndex" [class.long-pressed]="longPressedId === child.student_id"
+              (click)="selectChildAndCenter(child, i)" (mousedown)="startPress($event, child)" (mouseup)="endPress()"
+              (mouseleave)="endPress()" (touchstart)="startPress($event, child)" (touchend)="endPress()"
+              [style.transform]="getCardTransform(i)" style="position: absolute;">
+              <!-- Badge at top right -->
+              <span class="student-badge">
+                {{
+                (unreadConsentFormCounts[child.student_id] || 0) +
+                (unreadEventCounts[child.student_id] || 0) +
+                (unreadAnnouncementCounts[child.student_id] || 0)
+                }}
+              </span>
+              <div class="student-avatar">
+                <ng-container *ngIf="child.photo_url && child.photo_url.startsWith('http'); else childNoPhoto">
+                  <img [src]="child?.photo_url" alt="Student Photo" />
+                </ng-container>
+                <ng-template #childNoPhoto>
+                  <ion-icon name="person-circle"></ion-icon>
+                </ng-template>
+              </div>
+              <div class="student-info">
+                <h4>{{ child.first_name }}</h4>
+                <h4>{{ child.last_name }}</h4>
+                <p>Grade {{ child.grade_level }}</p>
+              </div>
             </div>
-            <div class="student-info">
-              <h4>{{ child.first_name }}</h4>
-              <h4>{{ child.last_name }}</h4>
-              <p>Grade {{ child.grade_level }}</p>
+          </div>
+          <div *ngIf="laravelChildren.length === 0 && !isLoading" class="no-data">
+            <p>No children</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons (Tasks & Timeline) -->
+    <div class="ion-padding action-buttons" style="display: flex; gap: 8px;">
+      <ion-button (click)="showSection('tasks')" expand="block" class="children-btn" [disabled]="!selectedChild"
+        [fill]="activeSection === 'tasks' ? 'solid' : 'outline'" style="flex: 1;">
+        <ion-icon name="list" class="list" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="showSection('attendance')" expand="block" class="children-btn" [disabled]="!selectedChild"
+        [fill]="activeSection === 'attendance' ? 'solid' : 'outline'" style="flex: 1;">
+        <ion-icon name="calendar-outline" class="calendar" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="showSection('milestones')" expand="block" class="children-btn" [disabled]="!selectedChild"
+        [fill]="activeSection === 'milestones' ? 'solid' : 'outline'" style="flex: 1;">
+        <ion-icon name="trophy-outline" class="trophy" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Consent Forms and School Events Buttons under Tasks -->
+    <!-- Replace the existing tasks-buttons div (lines 110-144) with: -->
+    <div *ngIf="activeSection === 'tasks' && selectedChild" class="tasks-section">
+      <div class="task-card task-card-blue" (click)="goToConsentForms(selectedChild)">
+        <div class="task-card-header">
+          <div class="task-icon-wrapper">
+            <img src="assets/images/consent.png" alt="Consent Forms" class="task-icon" />
+          </div>
+          <div class="task-badge-top">{{ unreadConsentFormCounts[selectedChild.student_id] || 0 }}</div>
+        </div>
+        <div class="task-card-body">
+          <h3 class="task-title">Consent Forms</h3>
+          <div class="task-preview">
+            <div *ngFor="let form of upcomingConsentForms.slice(0, 3); let i = index" class="preview-item">
+              <div class="preview-header">
+                <ion-icon name="document-text-outline" class="preview-icon"></ion-icon>
+                <p class="preview-title">{{ form.title }}</p>
+              </div>
+              <div class="preview-meta">
+                <span class="meta-chip">Section: {{ form.section_name }}</span>
+                <span class="meta-chip">Subject: {{ form.subject_name }}</span>
+                <span class="meta-chip">Teacher: {{ form.first_name }} {{ form.last_name }}</span>
+                <span class="meta-chip deadline">Due: {{ form.deadline | date:'MMM d' }}</span>
+              </div>
+            </div>
+            <p *ngIf="upcomingConsentForms.length === 0" class="no-data">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              All caught up!
+            </p>
+          </div>
+        </div>
+        <div class="task-card-footer">
+          <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
+        </div>
+      </div>
+
+      <div class="task-card task-card-pink" (click)="goToSchoolEvents(selectedChild)">
+        <div class="task-card-header">
+          <div class="task-icon-wrapper">
+            <img src="assets/images/events.png" alt="School Events" class="task-icon" />
+          </div>
+          <div class="task-badge-top">{{ unreadEventCounts[selectedChild.student_id] || 0 }}</div>
+        </div>
+        <div class="task-card-body">
+          <h3 class="task-title">Events</h3>
+          <div class="task-preview">
+            <div *ngFor="let event of upcomingEvents.slice(0, 2); let i = index" class="preview-item">
+              <div class="preview-header">
+                <ion-icon name="calendar-outline" class="preview-icon"></ion-icon>
+                <p class="preview-title">{{ event.title }}</p>
+              </div>
+              <div class="preview-meta">
+                <span class="meta-chip">Section: {{ event.section_name }}</span>
+                <span class="meta-chip">Subject: {{ event.subject_name }}</span>
+                <span class="meta-chip">Teacher: {{ event.first_name }} {{ event.last_name }}</span>
+                <span class="meta-chip date">Date: {{ event.date | date:'MMM d' }}</span>
+              </div>
+            </div>
+            <p *ngIf="upcomingEvents.length === 0" class="no-data">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              No upcoming events
+            </p>
+          </div>
+        </div>
+
+        <div class="task-card-footer">
+          <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
+        </div>
+      </div>
+
+      <div class="task-card task-card-purple" (click)="goToStudentAnnouncements(selectedChild)">
+        <div class="task-card-header">
+          <div class="task-icon-wrapper">
+            <img src="assets/images/announcements.png" alt="Announcements" class="task-icon" />
+          </div>
+          <div class="task-badge-top">{{ unreadAnnouncementCounts[selectedChild.student_id] || 0 }}</div>
+        </div>
+        <div class="task-card-body">
+          <h3 class="task-title">Announcements</h3>
+          <div class="task-preview">
+            <div *ngFor="let announcement of recentAnnouncements.slice(0, 2); let i = index" class="preview-item">
+              <div class="preview-header">
+                <ion-icon name="megaphone-outline" class="preview-icon"></ion-icon>
+                <p class="preview-title">{{ announcement.title }}</p>
+              </div>
+              <div class="preview-meta">
+                <span class="meta-chip">Section: {{ announcement.section_name }}</span>
+                <span class="meta-chip">Subject: {{ announcement.subject_name }}</span>
+                <span class="meta-chip">Teacher: {{ announcement.first_name }} {{ announcement.last_name }}</span>
+                <span class="meta-chip date">Created on: {{ announcement.created_at | date:'MMM d' }}</span>
+              </div>
+            </div>
+            <p *ngIf="recentAnnouncements.length === 0" class="no-data">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              No new announcements
+            </p>
+          </div>
+        </div>
+
+        <div class="task-card-footer">
+          <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance Section -->
+    <div *ngIf="activeSection === 'attendance' && selectedChild" class="attendance-section">
+      <!-- Enhanced Calendar Header -->
+      <div class="calendar-header">
+        <div class="calendar-header-gradient"></div>
+
+        <!-- Month Display (Centered) -->
+        <div class="calendar-month-year">
+          <h1 class="calendar-month">{{ attendanceCurrentMonth }}</h1>
+        </div>
+
+        <!-- Quick Stats Cards -->
+        <div class="calendar-stats">
+          <div class="stat-card stat-present">
+            <div class="stat-icon">
+              <ion-icon name="checkmark-circle"></ion-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">{{ presentCount }}</span>
+              <span class="stat-label">Present</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-absent">
+            <div class="stat-icon">
+              <ion-icon name="close-circle"></ion-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">{{ absentCount }}</span>
+              <span class="stat-label">Absent</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-late">
+            <div class="stat-icon">
+              <ion-icon name="time"></ion-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">{{ lateCount }}</span>
+              <span class="stat-label">Late</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-excused">
+            <div class="stat-icon">
+              <ion-icon name="document-text"></ion-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">{{ excusedCount }}</span>
+              <span class="stat-label">Excused</span>
             </div>
           </div>
         </div>
-        <div *ngIf="laravelChildren.length === 0 && !isLoading" class="no-data">
-          <p>No children</p>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Action Buttons (Tasks & Timeline) -->
-  <div class="ion-padding action-buttons" style="display: flex; gap: 8px;">
-    <ion-button (click)="showSection('tasks')" expand="block" class="children-btn" [disabled]="!selectedChild" [fill]="activeSection === 'tasks' ? 'solid' : 'outline'" style="flex: 1;">
-      <ion-icon name="list" class="list" slot="icon-only"></ion-icon>
-    </ion-button>
-    <ion-button (click)="showSection('attendance')" expand="block" class="children-btn" [disabled]="!selectedChild" [fill]="activeSection === 'attendance' ? 'solid' : 'outline'" style="flex: 1;">
-      <ion-icon name="calendar-outline" class="calendar" slot="icon-only"></ion-icon>
-    </ion-button>
-    <ion-button (click)="showSection('milestones')" expand="block" class="children-btn" [disabled]="!selectedChild" [fill]="activeSection === 'milestones' ? 'solid' : 'outline'" style="flex: 1;">
-      <ion-icon name="trophy-outline" class="trophy" slot="icon-only"></ion-icon>
-    </ion-button>
-  </div>
-
-  <!-- Consent Forms and School Events Buttons under Tasks -->
-  <!-- Replace the existing tasks-buttons div (lines 110-144) with: -->
-  <div *ngIf="activeSection === 'tasks' && selectedChild" class="tasks-section">
-    <div class="task-card task-card-blue" (click)="goToConsentForms(selectedChild)">
-      <div class="task-card-header">
-        <div class="task-icon-wrapper">
-          <img src="assets/images/consent.png" alt="Consent Forms" class="task-icon" />
-        </div>
-        <div class="task-badge-top">{{ unreadConsentFormCounts[selectedChild.student_id] || 0 }}</div>
-      </div>
-      <div class="task-card-body">
-        <h3 class="task-title">Consent Forms</h3>
-        <div class="task-preview">
-          <div *ngFor="let form of upcomingConsentForms.slice(0, 3); let i = index" class="preview-item">
-            <div class="preview-header">
-              <ion-icon name="document-text-outline" class="preview-icon"></ion-icon>
-              <p class="preview-title">{{ form.title }}</p>
-            </div>
-            <div class="preview-meta">
-              <span class="meta-chip">Section: {{ form.section_name }}</span>
-              <span class="meta-chip">Subject: {{ form.subject_name }}</span>
-              <span class="meta-chip">Teacher: {{ form.first_name }} {{ form.last_name }}</span>
-              <span class="meta-chip deadline">Due: {{ form.deadline | date:'MMM d' }}</span>
-            </div>
-          </div>
-          <p *ngIf="upcomingConsentForms.length === 0" class="no-data">
-            <ion-icon name="checkmark-circle-outline"></ion-icon>
-            All caught up!
-          </p>
-        </div>
-      </div>
-      <div class="task-card-footer">
-        <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
-      </div>
-    </div>
-
-    <div class="task-card task-card-pink" (click)="goToSchoolEvents(selectedChild)">
-      <div class="task-card-header">
-        <div class="task-icon-wrapper">
-          <img src="assets/images/events.png" alt="School Events" class="task-icon" />
-        </div>
-        <div class="task-badge-top">{{ unreadEventCounts[selectedChild.student_id] || 0 }}</div>
-      </div>
-      <div class="task-card-body">
-        <h3 class="task-title">Events</h3>
-        <div class="task-preview">
-          <div *ngFor="let event of upcomingEvents.slice(0, 2); let i = index" class="preview-item">
-            <div class="preview-header">
-              <ion-icon name="calendar-outline" class="preview-icon"></ion-icon>
-              <p class="preview-title">{{ event.title }}</p>
-            </div>
-            <div class="preview-meta">
-              <span class="meta-chip">Section: {{ event.section_name }}</span>
-              <span class="meta-chip">Subject: {{ event.subject_name }}</span>
-              <span class="meta-chip">Teacher: {{ event.first_name }} {{ event.last_name }}</span>
-              <span class="meta-chip date">Date: {{ event.date | date:'MMM d' }}</span>
-            </div>
-          </div>
-          <p *ngIf="upcomingEvents.length === 0" class="no-data">
-            <ion-icon name="checkmark-circle-outline"></ion-icon>
-            No upcoming events
-          </p>
+        <!-- Calendar Icon Decoration -->
+        <div class="calendar-decoration">
+          <ion-icon name="calendar" class="calendar-bg-icon"></ion-icon>
         </div>
       </div>
 
-      <div class="task-card-footer">
-        <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
-      </div>
-    </div>
-
-    <div class="task-card task-card-purple" (click)="goToStudentAnnouncements(selectedChild)">
-      <div class="task-card-header">
-        <div class="task-icon-wrapper">
-          <img src="assets/images/announcements.png" alt="Announcements" class="task-icon" />
-        </div>
-        <div class="task-badge-top">{{ unreadAnnouncementCounts[selectedChild.student_id] || 0 }}</div>
-      </div>
-      <div class="task-card-body">
-        <h3 class="task-title">Announcements</h3>
-        <div class="task-preview">
-          <div *ngFor="let announcement of recentAnnouncements.slice(0, 2); let i = index" class="preview-item">
-            <div class="preview-header">
-              <ion-icon name="megaphone-outline" class="preview-icon"></ion-icon>
-              <p class="preview-title">{{ announcement.title }}</p>
-            </div>
-            <div class="preview-meta">
-              <span class="meta-chip">Section: {{ announcement.section_name }}</span>
-              <span class="meta-chip">Subject: {{ announcement.subject_name }}</span>
-              <span class="meta-chip">Teacher: {{ announcement.first_name }} {{ announcement.last_name }}</span>
-              <span class="meta-chip date">Created on: {{ announcement.created_at | date:'MMM d' }}</span>
-            </div>
-          </div>
-          <p *ngIf="recentAnnouncements.length === 0" class="no-data">
-            <ion-icon name="checkmark-circle-outline"></ion-icon>
-            No new announcements
-          </p>
-        </div>
-      </div>
-
-      <div class="task-card-footer">
-        <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
-      </div>
-    </div>
-  </div>
-
- <!-- Attendance Section -->
-<div *ngIf="activeSection === 'attendance' && selectedChild" class="attendance-section">
-  <!-- Enhanced Calendar Header -->
-  <div class="calendar-header">
-    <div class="calendar-header-gradient"></div>
-    
-    <!-- Month Display (Centered) -->
-    <div class="calendar-month-year">
-      <h1 class="calendar-month">{{ attendanceCurrentMonth }}</h1>
-    </div>
-    
-    <!-- Quick Stats Cards -->
-    <div class="calendar-stats">
-      <div class="stat-card stat-present">
-        <div class="stat-icon">
-          <ion-icon name="checkmark-circle"></ion-icon>
-        </div>
-        <div class="stat-info">
-          <span class="stat-value">{{ presentCount }}</span>
-          <span class="stat-label">Present</span>
-        </div>
-      </div>
-      
-      <div class="stat-card stat-absent">
-        <div class="stat-icon">
-          <ion-icon name="close-circle"></ion-icon>
-        </div>
-        <div class="stat-info">
-          <span class="stat-value">{{ absentCount }}</span>
-          <span class="stat-label">Absent</span>
-        </div>
-      </div>
-      
-      <div class="stat-card stat-late">
-        <div class="stat-icon">
-          <ion-icon name="time"></ion-icon>
-        </div>
-        <div class="stat-info">
-          <span class="stat-value">{{ lateCount }}</span>
-          <span class="stat-label">Late</span>
-        </div>
-      </div>
-
-      <div class="stat-card stat-excused">
-        <div class="stat-icon">
-          <ion-icon name="document-text"></ion-icon>
-        </div>
-        <div class="stat-info">
-          <span class="stat-value">{{ excusedCount }}</span>
-          <span class="stat-label">Excused</span>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Calendar Icon Decoration -->
-    <div class="calendar-decoration">
-      <ion-icon name="calendar" class="calendar-bg-icon"></ion-icon>
-    </div>
-  </div>
-
-  <!-- Calendar Content -->
-  <ion-card-content class="attendance-calendar-content">
-    <full-calendar [options]="calendarOptions" #attendanceCalendar></full-calendar>
-  </ion-card-content>
-
-  <!-- Legend -->
-  <div class="attendance-legend">
-    <div class="legend-item">
-      <div class="legend-color present-color"></div>
-      <span class="legend-label">Present</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-color absent-color"></div>
-      <span class="legend-label">Absent</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-color late-color"></div>
-      <span class="legend-label">Late</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-color excused-color"></div>
-      <span class="legend-label">Excused</span>
-    </div>
-  </div>
-
-  <!-- Empty State -->
-  <div *ngIf="attendanceEvents.length === 0" class="empty-attendance-state">
-    <ion-icon name="calendar-outline" class="empty-icon"></ion-icon>
-    <h3>No Attendance Records</h3>
-    <p>Attendance records will appear here once available</p>
-  </div>
-
-  <!-- Bottom Spacer -->
-  <div class="content-bottom-spacer"></div>
-</div>
-
-  <!-- Consent Forms Section -->
-  <!-- Timeline Section -->
-  <!-- Milestones Section -->
-<div *ngIf="activeSection === 'milestones' && selectedChild" class="milestones-section ion-padding">
-  <div class="section-header">
-    <div class="header-text">
-      <h2 class="section-title">
-        <ion-icon name="trophy" color="warning"></ion-icon>
-        Milestones
-      </h2>
-      <p class="section-subtitle">Track your children's achievements and progress</p>
-    </div>
-
-    <!-- Year Filter Dropdown -->
-    <div class="year-filter">
-      <ion-select interface="popover" mode="ios" [(ngModel)]="selectedYear">
-        <ion-select-option *ngFor="let year of availableYears" [value]="year">
-          {{ year }}
-        </ion-select-option>
-      </ion-select>
-    </div>
-  </div>
-
-  <!-- Loading State -->
-  <div class="loading-state" *ngIf="isLoading">
-    <ion-spinner name="crescent" color="primary"></ion-spinner>
-    <p>Loading milestones...</p>
-  </div>
-
-  <div *ngIf="!isLoading">
-    <div class="milestones-grid">
-      <div *ngFor="let milestone of filteredMilestones; let i = index" class="milestone-card" [class.milestone-animate]="true" [style.animation-delay]="i * 0.1 + 's'">
-        <div class="milestone-header">
-          <div class="milestone-icon-wrapper">
-            <ion-icon name="trophy" class="milestone-icon"></ion-icon>
-            <div class="milestone-shine"></div>
-          </div>
-          <div class="milestone-badge">
-            <ion-icon name="checkmark-circle" color="success"></ion-icon>
-          </div>
-        </div>
-        
-        <div class="milestone-body">
-          <h3 class="milestone-title">{{ milestone.title }}</h3>
-          <p class="milestone-description">{{ milestone.description }}</p>
-          
-          <div class="milestone-meta">
-            <div class="meta-item">
-              <ion-icon name="person-outline"></ion-icon>
-              <span>From {{ milestone.teacher.first_name }} {{ milestone.teacher.last_name }}</span>
-            </div>
-            <div class="meta-item">
-              <ion-icon name="calendar-outline"></ion-icon>
-              <span>{{ milestone.achieved_on | date:'MMM d, y' }}</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="milestone-footer">
-          <div class="milestone-ribbon">Achievement Unlocked!</div>
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="filteredMilestones.length === 0" class="no-milestones">
-      <div class="empty-state">
-        <ion-icon name="filter-outline" class="empty-icon"></ion-icon>
-        <h3>No Milestones Found</h3>
-        <p>No achievements found for the year {{ selectedYear }}</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-  <!-- Default message when no child is selected -->
-  <div *ngIf="!selectedChild && laravelChildren.length > 0" class="no-selection ion-padding">
-    <ion-card>
-      <ion-card-content class="ion-text-center">
-        <ion-icon name="arrow-up" size="large"></ion-icon>
-        <h3>Select a child above to view their information</h3>
-        <p>Click on any child to see their consent forms, school events, and announcements</p>
+      <!-- Calendar Content -->
+      <ion-card-content class="attendance-calendar-content">
+        <full-calendar [options]="calendarOptions" #attendanceCalendar></full-calendar>
       </ion-card-content>
-    </ion-card>
-  </div>
 
-  <!-- Pending Students Section -->
-  <ion-list *ngIf="pendingStudents.length">
-    <ion-list-header color="tertiary">Pending Students</ion-list-header>
-    <ion-item *ngFor="let student of pendingStudents">
-      <ion-label>(ID: {{ student.student_id }})</ion-label>
-      <ion-note slot="end" color="tertiary">Pending Verification</ion-note>
-    </ion-item>
-  </ion-list>
+      <!-- Legend -->
+      <div class="attendance-legend">
+        <div class="legend-item">
+          <div class="legend-color present-color"></div>
+          <span class="legend-label">Present</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color absent-color"></div>
+          <span class="legend-label">Absent</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color late-color"></div>
+          <span class="legend-label">Late</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color excused-color"></div>
+          <span class="legend-label">Excused</span>
+        </div>
+      </div>
 
-  <!-- Add bottom padding -->
-  <div style="height: 80px;"></div>
+      <!-- Empty State -->
+      <div *ngIf="attendanceEvents.length === 0" class="empty-attendance-state">
+        <ion-icon name="calendar-outline" class="empty-icon"></ion-icon>
+        <h3>No Attendance Records</h3>
+        <p>Attendance records will appear here once available</p>
+      </div>
+
+      <!-- Bottom Spacer -->
+      <div class="content-bottom-spacer"></div>
+    </div>
+
+    <!-- Consent Forms Section -->
+    <!-- Timeline Section -->
+    <!-- Milestones Section -->
+    <div *ngIf="activeSection === 'milestones' && selectedChild" class="milestones-section ion-padding">
+      <div class="section-header">
+        <div class="header-text">
+          <h2 class="section-title">
+            <ion-icon name="trophy" color="warning"></ion-icon>
+            Milestones
+          </h2>
+          <p class="section-subtitle">Track your children's achievements and progress</p>
+        </div>
+
+        <!-- Year Filter Dropdown -->
+        <div class="year-filter">
+          <ion-select interface="popover" mode="ios" [(ngModel)]="selectedYear">
+            <ion-select-option *ngFor="let year of availableYears" [value]="year">
+              {{ year }}
+            </ion-select-option>
+          </ion-select>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state" *ngIf="isLoading">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <p>Loading milestones...</p>
+      </div>
+
+      <div *ngIf="!isLoading">
+        <div class="milestones-grid">
+          <div *ngFor="let milestone of filteredMilestones; let i = index" class="milestone-card"
+            [class.milestone-animate]="true" [style.animation-delay]="i * 0.1 + 's'">
+            <div class="milestone-header">
+              <div class="milestone-icon-wrapper">
+                <ion-icon name="trophy" class="milestone-icon"></ion-icon>
+                <div class="milestone-shine"></div>
+              </div>
+              <div class="milestone-badge">
+                <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              </div>
+            </div>
+
+            <div class="milestone-body">
+              <h3 class="milestone-title">{{ milestone.title }}</h3>
+              <p class="milestone-description">{{ milestone.description }}</p>
+
+              <div class="milestone-meta">
+                <div class="meta-item">
+                  <ion-icon name="person-outline"></ion-icon>
+                  <span>From {{ milestone.teacher.first_name }} {{ milestone.teacher.last_name }}</span>
+                </div>
+                <div class="meta-item">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  <span>{{ milestone.achieved_on | date:'MMM d, y' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="milestone-footer">
+              <div class="milestone-ribbon">Achievement Unlocked!</div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="filteredMilestones.length === 0" class="no-milestones">
+          <div class="empty-state">
+            <ion-icon name="filter-outline" class="empty-icon"></ion-icon>
+            <h3>No Milestones Found</h3>
+            <p>No achievements found for the year {{ selectedYear }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Default message when no child is selected -->
+    <div *ngIf="!selectedChild && laravelChildren.length > 0" class="no-selection ion-padding">
+      <ion-card>
+        <ion-card-content class="ion-text-center">
+          <ion-icon name="arrow-up" size="large"></ion-icon>
+          <h3>Select a child above to view their information</h3>
+          <p>Click on any child to see their consent forms, school events, and announcements</p>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Pending Students Section -->
+    <ion-list *ngIf="pendingStudents.length">
+      <ion-list-header color="tertiary">Pending Students</ion-list-header>
+      <ion-item *ngFor="let student of pendingStudents">
+        <ion-label>(ID: {{ student.student_id }})</ion-label>
+        <ion-note slot="end" color="tertiary">Pending Verification</ion-note>
+      </ion-item>
+    </ion-list>
+
+    <!-- Add bottom padding -->
+    <div style="height: 80px;"></div>
   </div>
 
 </ion-content>
 
 <!-- TRASH -->
 <!--  (swipe)="onSwipe($event)" -->
-  <!--  (pan)="onPan($event)" (panend)="onPanEnd($event)" -->
+<!--  (pan)="onPan($event)" (panend)="onPanEnd($event)" -->
