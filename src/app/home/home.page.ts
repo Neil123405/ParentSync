@@ -104,6 +104,24 @@ export class HomePage implements OnInit {
     }
   }
 
+  private updateCounts(): void {
+    this.consentFormCount = this.filteredConsentForms.length;
+    this.eventCount = this.filteredEvents.length;
+    this.announcementCount = this.filteredAnnouncements.length;
+  }
+
+  private checkAllDataLoaded(): void {
+    if (
+      this.dataLoaded.announcements &&
+      this.dataLoaded.events &&
+      this.dataLoaded.consentForms &&
+      this.dataLoaded.children
+    ) {
+      this.activeFeedState.loading = false;
+      this.activeFeedState.isInitialLoad = false;
+    }
+  }
+
   get filteredAnnouncements() {
     let list = this.laravelAnnouncements;
     list = [...list].sort((a, b) => {
@@ -203,8 +221,7 @@ export class HomePage implements OnInit {
     this.apiService.getParentChildren(this.currentProfile.parent_id).subscribe({
       next: async (response) => {
         if (response.success) {
-          this.laravelChildren = response.children || [];
-          // Cache the children data
+          this.laravelChildren = response.children || [];          
           await this.storage.set('cachedChildrenWithPhotos', this.laravelChildren);
           this.dataLoaded.children = true;
           this.checkAllDataLoaded();
@@ -249,7 +266,6 @@ export class HomePage implements OnInit {
       next: async (response) => {
         this.laravelAnnouncements = response.announcements || [];
         this.updateCounts();
-        // Cache the announcements
         await this.storage.set('cachedAnnouncements', this.laravelAnnouncements);
         this.dataLoaded.announcements = true;
         this.checkAllDataLoaded();
@@ -342,7 +358,6 @@ export class HomePage implements OnInit {
     this.isStudentsModalOpen = isOpen;
   }
 
-  // Helper methods for dashboard UI
   getStudentInitials(studentId: number): string {
     const student = this.getStudentById(studentId);
     if (student) {
@@ -359,20 +374,13 @@ export class HomePage implements OnInit {
     return `${count} Students`;
   }
 
-  // getTeacherName(item: any): string {
-  //   if (item.first_name && item.last_name) {
-  //     return `${item.first_name} ${item.last_name}`;
-  //   }
-  //   return 'Teacher';
-  // }
-
   getDueStatusLabel(form: any): string {
     if (!form.deadline) return 'No Deadline';
-    
+
     const today = new Date();
     const deadline = new Date(form.deadline);
     const daysUntilDue = Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    
+
     if (daysUntilDue < 0) return 'Overdue';
     if (daysUntilDue === 0) return 'Due Today';
     if (daysUntilDue === 1) return 'Due Tomorrow';
@@ -386,30 +394,6 @@ export class HomePage implements OnInit {
     const lastName = item?.teacher_last_name || item?.author_last_name || item?.last_name || '';
     const fullName = `${firstName} ${lastName}`.trim();
     return fullName || 'School Staff';
-  }
-
-  // retryActiveTab(): void {
-  //   this.activeFeedState.error = false;
-  //   this.activeFeedState.loading = true;
-  //   this.loadAnnouncementsAndEvents();
-  // }
-
-  private updateCounts(): void {
-    this.consentFormCount = this.filteredConsentForms.length;
-    this.eventCount = this.filteredEvents.length;
-    this.announcementCount = this.filteredAnnouncements.length;
-  }
-
-  private checkAllDataLoaded(): void {
-    if (
-      this.dataLoaded.announcements &&
-      this.dataLoaded.events &&
-      this.dataLoaded.consentForms &&
-      this.dataLoaded.children
-    ) {
-      this.activeFeedState.loading = false;
-      this.activeFeedState.isInitialLoad = false;
-    }
   }
 
 }
