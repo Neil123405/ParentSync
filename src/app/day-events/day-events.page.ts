@@ -1,18 +1,17 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { FullCalendarComponent } from '@fullcalendar/angular';
-
 import { ActivatedRoute, Router } from '@angular/router';
-
-import { ApiService } from '../services/api.service';
 
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { CalendarOptions } from '@fullcalendar/core';
+import { FullCalendarComponent } from '@fullcalendar/angular';
 import { forkJoin } from 'rxjs';
 import { AlertController } from '@ionic/angular';
 
 import { Storage } from '@ionic/storage-angular';
+
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-day-events',
@@ -22,21 +21,20 @@ import { Storage } from '@ionic/storage-angular';
 })
 export class DayEventsPage implements OnInit, AfterViewInit {
   date: string = '';
-  selectedDay: Date = new Date(); // Track the selected day
+  selectedDay: Date = new Date();
   events: any[] = [];
   forms: any[] = [];
-  announcements: any[] = [];  // <-- ADD THIS
-  filteredEvents: any[] = []; // Filtered events for the selected day
-  filteredForms: any[] = []; // Filtered forms for the selected day
-  filteredAnnouncements: any[] = [];  // <-- ADD THIS
+  announcements: any[] = [];
+  filteredEvents: any[] = [];
+  filteredForms: any[] = [];
+  filteredAnnouncements: any[] = [];
   parentProfile: any;
-  isUserClick: boolean = false; // Flag to distinguish user clicks from navigation
-  // Week navigation state
+  isUserClick: boolean = false;
+  initialLoadComplete = false;
   currentWeekStart!: Date;
   weekDays: string[] = [];
   @ViewChild('fc') fc!: FullCalendarComponent;
   private _storage: Storage | null = null;
-  initialLoadComplete = false;
 
   calendarOptions: CalendarOptions = {
     initialView: 'timeGridWeek', // Week view
@@ -49,12 +47,10 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     defaultTimedEventDuration: '00:10:00',
     slotDuration: '00:30:00',
     slotLabelInterval: '01:00:00',
-    // slotMinTime: '07:00:00',
-    // slotMaxTime: '19:00:00',  
     navLinks: true,
     navLinkDayClick: this.handleHeaderDateClick.bind(this),
-    events: [], // Events will be dynamically loaded
-    editable: false, // Disable drag-and-drop for this page
+    events: [],
+    editable: false,
     dateClick: this.handleDateClick.bind(this), // Handle date clicks
     eventClick: this.handleEventClick.bind(this), // Handle event clicks
     datesSet: this.handleDatesSet.bind(this), // to detect view changes
@@ -134,69 +130,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     const end = new Date(fetchInfo.end);
     this.loadCachedEventsAndForms(start, end, successCallback, failureCallback);
 
-    // STEP 2: Fetch fresh data in background
-    // this.fetchFreshWeekData(start, end);
-    // fetch both API endpoints in parallel
-    // forkJoin({
-    //   eventsRes: this.apiService.getParentEvents(this.parentProfile.parent_id),
-    //   formsRes: this.apiService.getAllUnsignedConsentFormsForParent(this.parentProfile.parent_id)
-    // }).subscribe({
-    //   next: ({ eventsRes, formsRes }) => {
-    //     const start = new Date(fetchInfo.start);
-    //     const end = new Date(fetchInfo.end);
 
-    //     const events = (eventsRes.events || []).filter((ev: any) => {
-    //       const d = new Date(ev.date);
-    //       return d >= start && d < end;
-    //     }).map((ev: any) => {
-    //       console.log('Event from API:', ev); // Add this
-    //       let startDate: Date | string;
-    //       if (ev.time && /^\d{2}:\d{2}:\d{2}$/.test(ev.time)) {
-    //         // Combine date and time: "YYYY-MM-DDTHH:mm:ss"
-    //         startDate = new Date(`${ev.date}T${ev.time}`);
-    //       } else if (/^\d{4}-\d{2}-\d{2}$/.test(ev.date)) {
-    //         // date-only, treat as all-day
-    //         startDate = ev.date;
-    //       } else {
-    //         // fallback: parse as Date
-    //         startDate = new Date(ev.date);
-    //       }
-    //       return {
-    //         title: ev.title,
-    //         start: startDate,
-    //         className: 'event-class', // Add custom class for events
-    //         extendedProps: { type: 'event', description: ev.description, student: { first_name: ev.student_first_name, last_name: ev.student_last_name }, raw: ev }
-    //       }
-    //     });
-
-    //     const forms = (formsRes.forms || []).filter((f: any) => {
-    //       const d = new Date(f.deadline);
-    //       return d >= start && d < end;
-    //     }).map((f: any) => ({
-    //       title: 'Consent Form: ' + f.title,
-    //       start: new Date(f.deadline),
-    //       allDay: true,
-    //       className: 'consent-form-class', // Add custom class for consent forms
-    //       extendedProps: { type: 'consentForm', student: { first_name: f.student_first_name, last_name: f.student_last_name }, raw: f }
-    //     }));
-
-    //     const combined = [...events, ...forms];
-
-    //     // keep local copies used by the lists below the calendar
-    //     this.events = eventsRes.events || [];
-    //     this.forms = formsRes.forms || [];
-
-    //     // update filtered lists for currently selected day
-    //     // this.filterEventsAndForms(this.selectedDay);
-
-    //     // give events to FullCalendar
-    //     successCallback(combined);
-    //   },
-    //   error: err => {
-    //     console.error('fetchEvents error', err);
-    //     failureCallback(err);
-    //   }
-    // });
   }
 
   private async loadCachedWeekData(start: Date, end: Date): Promise<boolean> {
@@ -311,7 +245,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
           startDate = new Date(ev.date);
         }
         return {
-          title: ev.title,
+          title: '📅 ' + ev.title,
           start: startDate,
           className: 'event-class',
           extendedProps: {
@@ -332,7 +266,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
         return d >= start && d < end;
       })
       .map((f: any) => ({
-        title: 'Consent Form: ' + f.title,
+        title: '📋 ' + f.title,
         start: new Date(f.deadline),
         allDay: true,
         className: 'consent-form-class',
@@ -352,7 +286,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
         return d >= start && d < end;
       })
       .map((ann: any) => ({
-        title: 'Announcement: ' + ann.title,
+        title: '📢 ' + ann.title,
         start: new Date(ann.created_at),
         allDay: true,
         className: 'announcement-class',
@@ -458,83 +392,9 @@ export class DayEventsPage implements OnInit, AfterViewInit {
       weekEnd
     );
 
-    // Update the calendar options with the actual event list
-    // this.calendarOptions = {
-    //   ...this.calendarOptions,
-    //   events: combinedEvents,
-    // };
-
-    // if (this.fc?.getApi?.()) {
-    //   this.fc.getApi().refetchEvents();
-    // }
-
     this.filterEventsAndForms(this.selectedDay);
     this.isLoadingWeek = false;
 
-    // if (this.parentProfile) {
-    //   // Fetch events for the week
-    //   this.apiService.getParentEvents(this.parentProfile.parent_id).subscribe((res) => {
-    //     this.events = res.events || [];
-    //     const events = (res.events || []).filter((event: any) => {
-    //       const eventDate = new Date(event.date);
-    //       return eventDate >= weekStart && eventDate <= weekEnd;
-    //     }).map((event: any) => ({
-    //       title: event.title,
-    //       start: new Date(event.date),
-    //       extendedProps: {
-    //         type: 'event',
-    //         description: event.description,
-    //         student: {
-    //           first_name: event.first_name,
-    //           last_name: event.last_name,
-    //         },
-    //       },
-    //     }));
-
-    //     // Fetch consent forms for the week
-    //     this.apiService.getAllUnsignedConsentFormsForParent(this.parentProfile.parent_id).subscribe((res) => {
-    //       this.forms = res.forms || [];
-    //       this.filterEventsAndForms(this.selectedDay); // Filter for the selected day
-    //       const consentForms = (res.forms || []).filter((form: any) => {
-    //         const formDeadline = new Date(form.deadline);
-    //         return formDeadline >= weekStart && formDeadline <= weekEnd;
-    //       }).map((form: any) => ({
-    //         title: 'Consent Form: ' + form.title,
-    //         start: new Date(form.deadline),
-    //         extendedProps: {
-    //           type: 'consentForm',
-    //           student: {
-    //             first_name: form.first_name,
-    //             last_name: form.last_name,
-    //           },
-    //         },
-    //       }));
-
-    //       // Combine events and consent forms
-    //       // this.calendarOptions.events = [...events, ...consentForms];
-    //       // if (this.fc && this.fc.getApi) {
-    //       //   this.fc.getApi().gotoDate(selectedDate);
-    //       //   this.fc.getApi().changeView('timeGridWeek');
-    //       // }
-    //       if (this.fc?.getApi) {
-    //         // this.fc.getApi().gotoDate(new Date(date));
-    //         this.fc.getApi().refetchEvents();
-    //       }
-    //       const combined = [...events, ...consentForms];
-    //       // if (this.fc && this.fc.getApi) {
-    //       //   const api = this.fc.getApi();
-    //       //    // remove existing rendered events then add this week's events (keeps function eventSource intact)
-    //       //     api.removeAllEvents();
-    //       //   combined.forEach(ev => api.addEvent(ev));
-    //       // }
-    //       // this.filterEventsAndForms(this.selectedDay);
-    //       this.isLoadingWeek = false;
-    //       // if (this.fc && this.fc.getApi) {
-    //       //   this.fc.getApi().gotoDate(new Date(this.selectedDay));
-    //       // }
-    //     });
-    //   });
-    // }
   }
 
   handleDateClick(info: any) {
@@ -611,9 +471,11 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     const lastName = student?.last_name?.trim() || '';
     const studentName = (firstName || lastName) ? `${firstName} ${lastName}`.trim() : 'Unknown';
     const header = type === 'consentForm' ? 'Consent Form' : type === 'announcement' ? 'Announcement' : 'Event';
+    const message = `${title}\n(${studentName})`;
     const alert = await this.alertController.create({
       header,
-      message: `${header}  (${studentName})`,
+      cssClass: 'custom-alert',
+      message,
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         {
@@ -660,30 +522,6 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     });
   }
 
-  // onWeekDayClick(date: string) {
-  //   this.date = date;
-  //   this.loadEventsForDate(date);
-  //   this.loadConsentFormsForDate(date);
-  // }
-
-  // nextWeek() {
-  //   this.currentWeekStart.setDate(this.currentWeekStart.getDate() + 7);
-  //   this.weekDays = this.getWeekDays(this.currentWeekStart);
-  //   // Set date to first day of new week
-  //   this.date = this.weekDays[0];
-  //   this.loadEventsForDate(this.date);
-  //   this.loadConsentFormsForDate(this.date);
-  // }
-
-  // previousWeek() {
-  //   this.currentWeekStart.setDate(this.currentWeekStart.getDate() - 7);
-  //   this.weekDays = this.getWeekDays(this.currentWeekStart);
-  //   // Set date to first day of new week
-  //   this.date = this.weekDays[0];
-  //   this.loadEventsForDate(this.date);
-  //   this.loadConsentFormsForDate(this.date);
-  // }
-
   // When user clicks back, go to calendar page with the month of the last week visited
   goBackToCalendar() {
     // Get the last day (Saturday) of the current week
@@ -702,63 +540,6 @@ export class DayEventsPage implements OnInit, AfterViewInit {
       }
     });
   }
-
-  // loadEventsForDate(date: string) {
-  //   this.events = [];
-  //   if (this.parentProfile) {
-  //     this.apiService.getParentEvents(this.parentProfile.parent_id, date)
-  //       .subscribe(res => {
-  //         this.events = res.events || [];
-  //       });
-  //   }
-  // }
-
-  // loadConsentFormsForDate(date: string) {
-  //   this.forms = [];
-  //   if (this.parentProfile) {
-  //     this.apiService.getParentChildren(this.parentProfile.parent_id).subscribe(childrenRes => {
-  //       const childrenArray = childrenRes.children || [];
-  //       const studentIds = childrenArray.map((child: any) => child.student_id);
-  //       let allForms: any[] = [];
-  //       let loaded = 0;
-  //       if (studentIds.length === 0) {
-  //         this.forms = [];
-  //         return;
-  //       }
-  //       studentIds.forEach((studentId: any) => {
-  //         this.apiService.getUnsignedConsentFormsForStudent(studentId).subscribe(res => {
-  //           if (res.forms) {
-  //             const dayForms = res.forms.filter((form: any) => {
-  //               const deadlineStr = form.deadline?.slice(0, 10);
-  //               return deadlineStr === date;
-  //             });
-  //             dayForms.forEach((form: any) => {
-  //               if (!form.student) {
-  //                 const studentObj = childrenArray.find((c: any) => c.student_id === studentId);
-  //                 if (studentObj) form.student = studentObj;
-  //               }
-  //             });
-  //             allForms.push(...dayForms);
-  //           }
-  //           loaded++;
-  //           if (loaded === studentIds.length) {
-  //             this.forms = allForms;
-  //           }
-  //         });
-  //       });
-  //     });
-  //   }
-  // }
-
-  //   loadConsentFormsForDate(date: string) {
-  //   this.forms = [];
-  //   if (this.parentProfile) {
-  //     this.apiService.getAllUnsignedConsentFormsForParent(this.parentProfile.parent_id, date)
-  //       .subscribe(res => {
-  //         this.forms = res.forms || [];
-  //       });
-  //   }
-  // }
 
   openEventDetail(event: any) {
     const eventId =
@@ -816,3 +597,225 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     }, 1000); // Adjust timeout as needed or call complete after data is actually loaded
   }
 }
+
+
+// Trash code
+// if (this.parentProfile) {
+//   // Fetch events for the week
+//   this.apiService.getParentEvents(this.parentProfile.parent_id).subscribe((res) => {
+//     this.events = res.events || [];
+//     const events = (res.events || []).filter((event: any) => {
+//       const eventDate = new Date(event.date);
+//       return eventDate >= weekStart && eventDate <= weekEnd;
+//     }).map((event: any) => ({
+//       title: event.title,
+//       start: new Date(event.date),
+//       extendedProps: {
+//         type: 'event',
+//         description: event.description,
+//         student: {
+//           first_name: event.first_name,
+//           last_name: event.last_name,
+//         },
+//       },
+//     }));
+
+//     // Fetch consent forms for the week
+//     this.apiService.getAllUnsignedConsentFormsForParent(this.parentProfile.parent_id).subscribe((res) => {
+//       this.forms = res.forms || [];
+//       this.filterEventsAndForms(this.selectedDay); // Filter for the selected day
+//       const consentForms = (res.forms || []).filter((form: any) => {
+//         const formDeadline = new Date(form.deadline);
+//         return formDeadline >= weekStart && formDeadline <= weekEnd;
+//       }).map((form: any) => ({
+//         title: 'Consent Form: ' + form.title,
+//         start: new Date(form.deadline),
+//         extendedProps: {
+//           type: 'consentForm',
+//           student: {
+//             first_name: form.first_name,
+//             last_name: form.last_name,
+//           },
+//         },
+//       }));
+
+//       // Combine events and consent forms
+//       // this.calendarOptions.events = [...events, ...consentForms];
+//       // if (this.fc && this.fc.getApi) {
+//       //   this.fc.getApi().gotoDate(selectedDate);
+//       //   this.fc.getApi().changeView('timeGridWeek');
+//       // }
+//       if (this.fc?.getApi) {
+//         // this.fc.getApi().gotoDate(new Date(date));
+//         this.fc.getApi().refetchEvents();
+//       }
+//       const combined = [...events, ...consentForms];
+//       // if (this.fc && this.fc.getApi) {
+//       //   const api = this.fc.getApi();
+//       //    // remove existing rendered events then add this week's events (keeps function eventSource intact)
+//       //     api.removeAllEvents();
+//       //   combined.forEach(ev => api.addEvent(ev));
+//       // }
+//       // this.filterEventsAndForms(this.selectedDay);
+//       this.isLoadingWeek = false;
+//       // if (this.fc && this.fc.getApi) {
+//       //   this.fc.getApi().gotoDate(new Date(this.selectedDay));
+//       // }
+//     });
+//   });
+// }
+
+// loadEventsForDate(date: string) {
+//   this.events = [];
+//   if (this.parentProfile) {
+//     this.apiService.getParentEvents(this.parentProfile.parent_id, date)
+//       .subscribe(res => {
+//         this.events = res.events || [];
+//       });
+//   }
+// }
+
+// loadConsentFormsForDate(date: string) {
+//   this.forms = [];
+//   if (this.parentProfile) {
+//     this.apiService.getParentChildren(this.parentProfile.parent_id).subscribe(childrenRes => {
+//       const childrenArray = childrenRes.children || [];
+//       const studentIds = childrenArray.map((child: any) => child.student_id);
+//       let allForms: any[] = [];
+//       let loaded = 0;
+//       if (studentIds.length === 0) {
+//         this.forms = [];
+//         return;
+//       }
+//       studentIds.forEach((studentId: any) => {
+//         this.apiService.getUnsignedConsentFormsForStudent(studentId).subscribe(res => {
+//           if (res.forms) {
+//             const dayForms = res.forms.filter((form: any) => {
+//               const deadlineStr = form.deadline?.slice(0, 10);
+//               return deadlineStr === date;
+//             });
+//             dayForms.forEach((form: any) => {
+//               if (!form.student) {
+//                 const studentObj = childrenArray.find((c: any) => c.student_id === studentId);
+//                 if (studentObj) form.student = studentObj;
+//               }
+//             });
+//             allForms.push(...dayForms);
+//           }
+//           loaded++;
+//           if (loaded === studentIds.length) {
+//             this.forms = allForms;
+//           }
+//         });
+//       });
+//     });
+//   }
+// }
+
+//   loadConsentFormsForDate(date: string) {
+//   this.forms = [];
+//   if (this.parentProfile) {
+//     this.apiService.getAllUnsignedConsentFormsForParent(this.parentProfile.parent_id, date)
+//       .subscribe(res => {
+//         this.forms = res.forms || [];
+//       });
+//   }
+// }
+
+// onWeekDayClick(date: string) {
+//   this.date = date;
+//   this.loadEventsForDate(date);
+//   this.loadConsentFormsForDate(date);
+// }
+
+// nextWeek() {
+//   this.currentWeekStart.setDate(this.currentWeekStart.getDate() + 7);
+//   this.weekDays = this.getWeekDays(this.currentWeekStart);
+//   // Set date to first day of new week
+//   this.date = this.weekDays[0];
+//   this.loadEventsForDate(this.date);
+//   this.loadConsentFormsForDate(this.date);
+// }
+
+// previousWeek() {
+//   this.currentWeekStart.setDate(this.currentWeekStart.getDate() - 7);
+//   this.weekDays = this.getWeekDays(this.currentWeekStart);
+//   // Set date to first day of new week
+//   this.date = this.weekDays[0];
+//   this.loadEventsForDate(this.date);
+//   this.loadConsentFormsForDate(this.date);
+// }
+
+// Update the calendar options with the actual event list
+// this.calendarOptions = {
+//   ...this.calendarOptions,
+//   events: combinedEvents,
+// };
+
+// if (this.fc?.getApi?.()) {
+//   this.fc.getApi().refetchEvents();
+// }
+
+// STEP 2: Fetch fresh data in background
+// this.fetchFreshWeekData(start, end);
+// fetch both API endpoints in parallel
+// forkJoin({
+//   eventsRes: this.apiService.getParentEvents(this.parentProfile.parent_id),
+//   formsRes: this.apiService.getAllUnsignedConsentFormsForParent(this.parentProfile.parent_id)
+// }).subscribe({
+//   next: ({ eventsRes, formsRes }) => {
+//     const start = new Date(fetchInfo.start);
+//     const end = new Date(fetchInfo.end);
+
+//     const events = (eventsRes.events || []).filter((ev: any) => {
+//       const d = new Date(ev.date);
+//       return d >= start && d < end;
+//     }).map((ev: any) => {
+//       console.log('Event from API:', ev); // Add this
+//       let startDate: Date | string;
+//       if (ev.time && /^\d{2}:\d{2}:\d{2}$/.test(ev.time)) {
+//         // Combine date and time: "YYYY-MM-DDTHH:mm:ss"
+//         startDate = new Date(`${ev.date}T${ev.time}`);
+//       } else if (/^\d{4}-\d{2}-\d{2}$/.test(ev.date)) {
+//         // date-only, treat as all-day
+//         startDate = ev.date;
+//       } else {
+//         // fallback: parse as Date
+//         startDate = new Date(ev.date);
+//       }
+//       return {
+//         title: ev.title,
+//         start: startDate,
+//         className: 'event-class', // Add custom class for events
+//         extendedProps: { type: 'event', description: ev.description, student: { first_name: ev.student_first_name, last_name: ev.student_last_name }, raw: ev }
+//       }
+//     });
+
+//     const forms = (formsRes.forms || []).filter((f: any) => {
+//       const d = new Date(f.deadline);
+//       return d >= start && d < end;
+//     }).map((f: any) => ({
+//       title: 'Consent Form: ' + f.title,
+//       start: new Date(f.deadline),
+//       allDay: true,
+//       className: 'consent-form-class', // Add custom class for consent forms
+//       extendedProps: { type: 'consentForm', student: { first_name: f.student_first_name, last_name: f.student_last_name }, raw: f }
+//     }));
+
+//     const combined = [...events, ...forms];
+
+//     // keep local copies used by the lists below the calendar
+//     this.events = eventsRes.events || [];
+//     this.forms = formsRes.forms || [];
+
+//     // update filtered lists for currently selected day
+//     // this.filterEventsAndForms(this.selectedDay);
+
+//     // give events to FullCalendar
+//     successCallback(combined);
+//   },
+//   error: err => {
+//     console.error('fetchEvents error', err);
+//     failureCallback(err);
+//   }
+// });

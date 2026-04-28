@@ -359,7 +359,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
               const rawId = event.event_id ?? event.id ?? `${event.date}-${event.title}`;
               return {
                 ...event,
-                title: event.title,
+                title: '📅 ' + event.title,
                 start: new Date(event.date),
                 id: `event-${event.event_id ?? event.id}-${event.student_id}-${index}`,
                 student_id: event.student_id,
@@ -405,7 +405,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
               const mapped = {
                 ...form,
                 student_id: form.student_id,
-                title: form.title,
+                title: '📋 ' + form.title,
                 start: new Date(form.deadline),
                 id: `consent-${form.form_id}-${form.student_id}-${index}`,
                 extendedProps: {
