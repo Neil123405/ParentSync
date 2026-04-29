@@ -142,13 +142,13 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   async handleEventClick(info: any) {
     const event = info.event;
     console.log('Calendar event clicked', {
-    id: event.id,
-    title: event.title,
-    start: event.start,
-    end: event.end,
-    extendedProps: event.extendedProps,
-    all: event.toPlainObject ? event.toPlainObject() : event
-  });
+      id: event.id,
+      title: event.title,
+      start: event.start,
+      end: event.end,
+      extendedProps: event.extendedProps,
+      all: event.toPlainObject ? event.toPlainObject() : event
+    });
     const type = event.extendedProps?.type;
     const studentExtended = event.extendedProps?.student || {};
     const studentFirstName =
@@ -461,11 +461,12 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     );
   }
 
+  maxDaysAhead: number = 14;
   get upcomingEvents(): CalendarEvent[] {
     const calendarApi = this.calendarComponent?.getApi();
     const centerDate = calendarApi ? new Date(calendarApi.view.currentStart) : new Date();
     const now = startOfDay(new Date());
-    const maxDaysAhead = 14;
+    const maxDaysAhead = this.maxDaysAhead;
     // filters events within the current month and within the next 14 days, then sorts by date
     return (this._calendarEvents || []).filter((ev: any) => {
       if (ev.extendedProps?.type !== 'event') return false;
@@ -475,12 +476,12 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
       const daysDiff = (evDayOnly.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
 
       // CHECK 1: Is it in the Month/Year we are looking at?
-      const isThisMonth = evDate.getFullYear() === centerDate.getFullYear() && evDate.getMonth() === centerDate.getMonth();
+      // const isThisMonth = evDate.getFullYear() === centerDate.getFullYear() && evDate.getMonth() === centerDate.getMonth();
 
       // CHECK 2: Is it within 14 days of today?
       const isWithin14Days = daysDiff >= 0 && daysDiff <= maxDaysAhead;
 
-      return isThisMonth && isWithin14Days;
+      return isWithin14Days;
     })
       .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
   }
@@ -489,7 +490,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     const calendarApi = this.calendarComponent?.getApi();
     const centerDate = calendarApi ? new Date(calendarApi.view.currentStart) : new Date();
     const now = startOfDay(new Date());
-    const maxDaysAhead = 14;
+    const maxDaysAhead = this.maxDaysAhead;
 
     return (this.loadedConsentForms || [])
       .filter((form) => {
@@ -500,15 +501,28 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
         const daysDiff = (deadlineDayOnly.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
 
         // CHECK 1: Is it in the Month/Year we are looking at?
-        const isThisMonth = deadlineDate.getFullYear() === centerDate.getFullYear() &&
-          deadlineDate.getMonth() === centerDate.getMonth();
+        // const isThisMonth = deadlineDate.getFullYear() === centerDate.getFullYear() &&
+        //   deadlineDate.getMonth() === centerDate.getMonth();
 
         // CHECK 2: Is it within 14 days of today?
         const isWithin14Days = daysDiff >= 0 && daysDiff <= maxDaysAhead;
 
-        return isThisMonth && isWithin14Days;
+        return isWithin14Days;
       })
       .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
+  }
+
+  async loadMaxDaysAheadPreference() {
+    const saved = await this.storage.get('maxDaysAhead');
+    if (saved !== null) {
+      this.maxDaysAhead = saved;
+    }
+  }
+
+  async saveMaxDaysAheadPreference() {
+    await this.storage.set('maxDaysAhead', this.maxDaysAhead);
+    this.updateMonthCounts(); // Refresh the display
+    this.cdr.detectChanges();
   }
 
   get calendarEvents(): CalendarEvent[] {

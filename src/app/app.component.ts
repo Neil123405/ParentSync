@@ -59,7 +59,7 @@ export class AppComponent implements OnInit {
     });
 
     PushNotifications.addListener('pushNotificationReceived', async (notification: PushNotificationSchema) => {
-      this.ngZone.run(async () => {  // ← Ensure code runs in Angular's zone
+      this.ngZone.run(async () => { 
         Haptics.impact({ style: ImpactStyle.Heavy });
 
         if ('vibrate' in navigator) {

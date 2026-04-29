@@ -214,7 +214,7 @@ export class ChildrenPage implements OnInit, AfterViewInit {
         }
         this.selectChildAndCenter(this.laravelChildren[0], 0);
       }
-    } catch (error) {      
+    } catch (error) {
       this.isLoading = false;
       this.cdr.detectChanges();
     }
@@ -497,8 +497,7 @@ export class ChildrenPage implements OnInit, AfterViewInit {
     const cachedAttendance = await this._storage?.get(storageKey);
     if (cachedAttendance) {
       this.processAttendanceData(cachedAttendance);
-    } else {
-      this.isLoading = true; // Only show spinner if no cache
+      this.isLoading = false;
     }
 
     this.apiService.getStudentAttendance(this.selectedChild.student_id).subscribe({

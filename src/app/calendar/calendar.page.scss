@@ -921,3 +921,42 @@ ion-header {
     }
   }
 }
+
+// // ===================================
+// // MAX DAYS AHEAD CONTROL
+// // ===================================
+// .max-days-control {
+//   margin: 20px 16px;
+//   padding: 16px;
+//   background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+//   border-radius: 16px;
+//   border: 1px solid rgba(102, 126, 234, 0.15);
+  
+//   ion-label {
+//     display: block;
+//     margin-bottom: 12px;
+//     font-weight: 600;
+//     font-size: 0.95rem;
+//     color: #2c3e50;
+//   }
+
+//   ion-segment {
+//     width: 100%;
+//   }
+// }
+
+// :host ::ng-deep .max-days-control ion-segment-button {
+//   --color: #7f8c8d;
+//   --color-checked: white;
+//   border-radius: 12px;
+//   font-weight: 600;
+//   background: rgba(255, 255, 255, 0.7);
+//   border: 1px solid rgba(102, 126, 234, 0.2);
+//   margin: 3px;
+
+//   &.segment-button-checked {
+//     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+//     border-color: rgba(102, 126, 234, 0.3);
+//     --indicator-color: transparent;
+//   }
+// }
