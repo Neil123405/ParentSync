@@ -54,7 +54,6 @@ export class LoginPage implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    // Remove old focus listeners and scrolling
     // Add keyboard listeners instead
     this.setupKeyboardListeners();
   }
@@ -71,7 +70,6 @@ export class LoginPage implements AfterViewInit, OnDestroy {
 
   ionViewWillEnter() {
     this.credentials = { username: '', password: '' };
-    // Optionally, also clear registration fields if needed:
     this.parentInfo = {
       first_name: '',
       last_name: '',
@@ -137,17 +135,19 @@ export class LoginPage implements AfterViewInit, OnDestroy {
           try {
             const permResult = await PushNotifications.requestPermissions();
             if (permResult.receive === 'granted') {
-              await PushNotifications.register();
+              // await PushNotifications.register();
               // listens for the registration event granted by the phone
               PushNotifications.addListener('registration', (token) => {                
                 this.apiService.setFcmToken(token.value);
                 const profile = this.apiService.getCurrentProfile();
                 if (profile) {
+                  console.log('Saving token for parent:', profile.parent_id);  // ← Add this
                   this.apiService
                     .savePushToken(profile.parent_id, token.value)
                     .subscribe();
                 }
               });
+              await PushNotifications.register();
             }
           } catch (err) {
             console.error('Push notification setup failed:', err);

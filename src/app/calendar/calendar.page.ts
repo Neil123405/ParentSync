@@ -59,13 +59,13 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
       right: '',
     },
     events: [], // Events will be dynamically loaded
-    editable: true, // Allow drag-and-drop
+    editable: true,
     eventClick: this.handleEventClick.bind(this), // Handle event clicks
     dateClick: this.handleDateClick.bind(this), // Handle date clicks
     eventContent: this.renderEventContent.bind(this), // Custom rendering for events
 
     datesSet: (arg) => {
-      // Use the center date of the calendar view to determine the current month
+      // center date of the calendar view to determine the current month
       const centerDate = new Date(arg.view.currentStart); // Center date of the visible range
 
       // Update the current month name
@@ -269,7 +269,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     const calendarApi = this.calendarComponent?.getApi();
     // If the calendar isn't ready yet, use today's month as a backup
     const centerDate = calendarApi ? new Date(calendarApi.view.currentStart) : new Date();
-
+    // remove the time format or katong mga hours and shit
     const normalizeDate = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
     // Count Consent Forms for the currently visible month
@@ -310,7 +310,6 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
   }
 
   private fetchFreshCalendarData(parentProfile: any) {
-    // Use forkJoin to parallelize all three API calls instead of nesting
     this.apiService.getParentChildren(parentProfile.parent_id).subscribe(
       (childrenRes) => {
         const childrenArray = childrenRes.children || [];
@@ -356,11 +355,11 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
           // Process events
           const events = (eventsRes?.events || []).map(
             (event: any, index: number) => {
-              const rawId = event.event_id ?? event.id ?? `${event.date}-${event.title}`;
+              const rawId = event.event_id ?? event.id ?? `${event.start_date}-${event.title}`;
               return {
                 ...event,
                 title: '📅 ' + event.title,
-                start: new Date(event.date),
+                start: new Date(event.start_date),
                 id: `event-${event.event_id ?? event.id}-${event.student_id}-${index}`,
                 student_id: event.student_id,
                 extendedProps: {
@@ -460,13 +459,12 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
       }
     );
   }
-
-  maxDaysAhead: number = 14;
+interval: number = 14;
   get upcomingEvents(): CalendarEvent[] {
     const calendarApi = this.calendarComponent?.getApi();
     const centerDate = calendarApi ? new Date(calendarApi.view.currentStart) : new Date();
     const now = startOfDay(new Date());
-    const maxDaysAhead = this.maxDaysAhead;
+    const maxDaysAhead = this.interval;
     // filters events within the current month and within the next 14 days, then sorts by date
     return (this._calendarEvents || []).filter((ev: any) => {
       if (ev.extendedProps?.type !== 'event') return false;
@@ -475,10 +473,10 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
       const evDayOnly = startOfDay(evDate);
       const daysDiff = (evDayOnly.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
 
-      // CHECK 1: Is it in the Month/Year we are looking at?
+      
       // const isThisMonth = evDate.getFullYear() === centerDate.getFullYear() && evDate.getMonth() === centerDate.getMonth();
 
-      // CHECK 2: Is it within 14 days of today?
+      // Is it within 14 days of today
       const isWithin14Days = daysDiff >= 0 && daysDiff <= maxDaysAhead;
 
       return isWithin14Days;
@@ -490,7 +488,7 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
     const calendarApi = this.calendarComponent?.getApi();
     const centerDate = calendarApi ? new Date(calendarApi.view.currentStart) : new Date();
     const now = startOfDay(new Date());
-    const maxDaysAhead = this.maxDaysAhead;
+    const maxDaysAhead = this.interval;
 
     return (this.loadedConsentForms || [])
       .filter((form) => {
@@ -500,11 +498,11 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
         const deadlineDayOnly = startOfDay(deadlineDate);
         const daysDiff = (deadlineDayOnly.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
 
-        // CHECK 1: Is it in the Month/Year we are looking at?
+        // Is it in the Month/Year?
         // const isThisMonth = deadlineDate.getFullYear() === centerDate.getFullYear() &&
         //   deadlineDate.getMonth() === centerDate.getMonth();
 
-        // CHECK 2: Is it within 14 days of today?
+        // Is it within 14 days of today?
         const isWithin14Days = daysDiff >= 0 && daysDiff <= maxDaysAhead;
 
         return isWithin14Days;
@@ -512,18 +510,18 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
       .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
   }
 
-  async loadMaxDaysAheadPreference() {
-    const saved = await this.storage.get('maxDaysAhead');
-    if (saved !== null) {
-      this.maxDaysAhead = saved;
-    }
-  }
+  // async loadMaxDaysAheadPreference() {
+  //   const saved = await this.storage.get('maxDaysAhead');
+  //   if (saved !== null) {
+  //     this.maxDaysAhead = saved;
+  //   }
+  // }
 
-  async saveMaxDaysAheadPreference() {
-    await this.storage.set('maxDaysAhead', this.maxDaysAhead);
-    this.updateMonthCounts(); // Refresh the display
-    this.cdr.detectChanges();
-  }
+  // async saveMaxDaysAheadPreference() {
+  //   await this.storage.set('maxDaysAhead', this.maxDaysAhead);
+  //   this.updateMonthCounts(); // Refresh the display
+  //   this.cdr.detectChanges();
+  // }
 
   get calendarEvents(): CalendarEvent[] {
     return this._calendarEvents;
@@ -624,7 +622,6 @@ export class CalendarPage implements OnInit, ViewWillEnter, AfterViewInit {
 
   openConsentFormDetail(event: any) {
     const formId = event.form_id ?? event.extendedProps?.form_id;
-    // Try to get studentId from multiple possible locations
     const studentId =
       event.student_id ??
       event.extendedProps?.student_id ??

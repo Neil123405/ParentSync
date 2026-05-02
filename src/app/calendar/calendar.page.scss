@@ -960,3 +960,19 @@ ion-header {
 //     --indicator-color: transparent;
 //   }
 // }
+
+.collapse-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  ion-icon {
+    font-size: 20px;
+    color: inherit;
+    transition: transform 0.2s ease;
+  }
+}

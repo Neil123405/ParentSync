@@ -351,7 +351,7 @@ export class ChildrenPage implements OnInit, AfterViewInit {
         const { grouped: eventGrouped, counts: eventCounts } = this.processData(
           eventsRes.events,
           event => {
-            const eventDate = new Date(event.date);
+            const eventDate = new Date(new Date(event.date).toDateString());
             const diffDays = (eventDate.getTime() - todayDate.getTime()) / (1000 * 3600 * 24);
             return diffDays >= 0 && diffDays <= 10;
           },
@@ -896,7 +896,7 @@ export class ChildrenPage implements OnInit, AfterViewInit {
 
       // Filter events: only those in next 10 days
       this.upcomingEvents = (this.schoolEventCountsTwo[studentId] || []).filter((event: any) => {
-        const eventDate = new Date(event.date);
+        const eventDate = new Date(new Date(event.date).toDateString());
         const diffDays = (eventDate.getTime() - todayDate.getTime()) / (1000 * 3600 * 24);
         return diffDays >= 0 && diffDays <= 10;
       });

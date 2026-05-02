@@ -55,6 +55,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     eventClick: this.handleEventClick.bind(this), // Handle event clicks
     datesSet: this.handleDatesSet.bind(this), // to detect view changes
   };
+  expandedAccordions: string | string[] = ['events', 'forms', 'announcements'];
 
   constructor(
     private route: ActivatedRoute,
@@ -232,17 +233,17 @@ export class DayEventsPage implements OnInit, AfterViewInit {
   ): any[] {
     const formattedEvents = (events || [])
       .filter((ev: any) => {
-        const d = new Date(ev.date);
+        const d = new Date(ev.start_date);
         return d >= start && d < end;
       })
       .map((ev: any) => {
         let startDate: Date | string;
-        if (ev.time && /^\d{2}:\d{2}:\d{2}$/.test(ev.time)) {
-          startDate = new Date(`${ev.date}T${ev.time}`);
-        } else if (/^\d{4}-\d{2}-\d{2}$/.test(ev.date)) {
-          startDate = ev.date;
+        if (ev.start_time && /^\d{2}:\d{2}:\d{2}$/.test(ev.start_time)) {
+          startDate = new Date(`${ev.start_date}T${ev.start_time}`);
+        } else if (/^\d{4}-\d{2}-\d{2}$/.test(ev.start_date)) {
+          startDate = ev.start_date;
         } else {
-          startDate = new Date(ev.date);
+          startDate = new Date(ev.start_date);
         }
         return {
           title: '📅 ' + ev.title,
@@ -347,18 +348,18 @@ export class DayEventsPage implements OnInit, AfterViewInit {
 
     const pad = (n: number) => String(n).padStart(2, '0');
     const dateStr = `${this.selectedDay.getFullYear()}-${pad(this.selectedDay.getMonth() + 1)}-${pad(this.selectedDay.getDate())}`;
-    console.log('🟢 ngAfterViewInit - selectedDay:', this.selectedDay);
-    console.log('🟢 gotoDate will be called with:', dateStr);
+    // console.log('🟢 ngAfterViewInit - selectedDay:', this.selectedDay);
+    // console.log('🟢 gotoDate will be called with:', dateStr);
 
     // small timeout to ensure FullCalendar instance is ready
     setTimeout(() => {
       if (this.fc && this.fc.getApi) {
-        console.log('🟢 Calling gotoDate with:', dateStr);
+        // console.log('🟢 Calling gotoDate with:', dateStr);
         this.fc.getApi().gotoDate(dateStr);
         this.fc.getApi().changeView('timeGridWeek');
-        console.log('🟢 gotoDate call completed.');
+        // console.log('🟢 gotoDate call completed.');
       } else {
-        console.error('❌ Calendar API not ready in time!'); // Add this for debugging
+        console.error('❌ Calendar API not ready in time!');
       }
       this.initialLoadComplete = true;
     }, 100);
@@ -403,11 +404,12 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     const currentWeekStart = new Date(this.currentWeekStart);
 
     // Check if the clicked date is in the same week
+    // the multiply is the number of miliseconds in 7 days
     const isSameWeek = clickedDate >= currentWeekStart && clickedDate < new Date(currentWeekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     this.isUserClick = true; // Set flag for user click
     this.selectedDay = clickedDate; // Update selected day
-    console.log('selectedDay set to:', this.selectedDay); // Debug log
+    // console.log('selectedDay set to:', this.selectedDay); // Debug log
     this.cdr.detectChanges(); // Force view update
 
     if (!isSameWeek) {
@@ -435,7 +437,7 @@ export class DayEventsPage implements OnInit, AfterViewInit {
     const selectedDayNum = selectedDate.getDate();
 
     this.filteredEvents = this.events.filter((event: any) => {
-      const eventDate = new Date(event.date);
+      const eventDate = new Date(event.start_date);
       const eventYear = eventDate.getFullYear();
       const eventMonth = eventDate.getMonth();
       const eventDay = eventDate.getDate();
@@ -581,7 +583,6 @@ export class DayEventsPage implements OnInit, AfterViewInit {
   }
 
   async doRefresh(event: any) {
-    // Reload your data here (e.g., call loadEventsForDate and loadConsentFormsForDate)
     // this.loadEventsForDate(this.date);
     // this.loadConsentFormsForDate(this.date);
 

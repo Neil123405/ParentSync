@@ -107,10 +107,9 @@ private loadFormDetail() {
 private processFormDetail(res: any) {
   this.form = res.form;
 
-  // Debug: see if signature_path is empty or not
   console.log('signature_path:', this.form.signature_path);
 
-  const signature = res.signature; // <-- signature record (may be null)
+  const signature = res.signature;
   const hasSignature = !!(signature?.signed_at || signature?.signature_path);
   const isDeclined = !!signature?.declined;
 
@@ -135,9 +134,9 @@ private processFormDetail(res: any) {
   }
 }
 
-  onDrawEnd() {
-    // Called when signature is finished
-  }
+  // onDrawEnd() {
+  //   // Called when signature is finished
+  // }
 
   async submitSignature(signatureData: string) {
     const alert = await this.alertController.create({

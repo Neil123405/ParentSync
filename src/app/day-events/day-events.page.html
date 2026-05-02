@@ -14,179 +14,224 @@
 
   <full-calendar #fc [options]="calendarOptions"></full-calendar>
 
-  <!-- Modern Events Card -->
-  <div class="modern-card events-card">
-    <div class="card-header">
-      <div class="header-icon-wrapper events-theme">
-        <ion-icon name="calendar" class="header-icon"></ion-icon>
-      </div>
-      <div class="header-content">
-        <h2 class="card-title">Events for {{ selectedDay | date:'MMM d, yyyy' }}</h2>
-        <p class="card-subtitle">{{ filteredEvents.length }} event{{ filteredEvents.length !== 1 ? 's' : '' }} scheduled
-        </p>
-      </div>
+  <ion-accordion>
+    <div slot="header">
+      <div>fasdf</div>
     </div>
-
-    <div class="card-body" *ngIf="filteredEvents.length > 0; else noEventsTemplate">
-      <div class="event-item" *ngFor="let event of filteredEvents; let i = index" (click)="openEventDetail(event)"
-        [style.animation-delay]="i * 100 + 'ms'">
-
-        <div class="event-date-badge">
-          <span class="date-day">{{ event.start ? (event.start | date:'dd') : (event.date | date:'dd') }}</span>
-          <span class="date-month">{{ event.start ? (event.start | date:'MMM') : (event.date | date:'MMM') }}</span>
+    <div slot="content">
+      <p>asdfsadf</p>
+    </div>
+  </ion-accordion>
+  <ion-accordion-group>
+    <!-- Modern Events Card -->
+    <ion-accordion>
+      <div slot="header" class="card-header">
+        <div class="header-icon-wrapper events-theme">
+          <ion-icon name="calendar" class="header-icon"></ion-icon>
         </div>
+        <div class="header-content">
+          <h2 class="card-title">Events for {{ selectedDay | date:'MMM d, yyyy' }}</h2>
+          <p class="card-subtitle">{{ filteredEvents.length }} event{{ filteredEvents.length !== 1 ? 's' : '' }}
+            scheduled
+          </p>
+        </div>
+      </div>
+      <div slot="content">
+        <div class="card-body" *ngIf="filteredEvents.length > 0; else noEventsTemplate">
+          <div class="event-item" *ngFor="let event of filteredEvents; let i = index" (click)="openEventDetail(event)"
+            [style.animation-delay]="i * 100 + 'ms'">
 
-        <div class="event-content">
-          <h3 class="event-title">{{ event.title }}</h3>
-          <div class="event-details">
-            <div class="event-time" *ngIf="event.time">
-              <ion-icon name="time-outline" class="detail-icon"></ion-icon>
-              <span>{{ event.time }}</span>
+            <div class="event-date-badge">
+              <span class="date-day">{{ event.start ? (event.start | date:'dd') : (event.start_date | date:'dd') }}</span>
+              <span class="date-month">{{ event.start ? (event.start | date:'MMM') : (event.start_date | date:'MMM')
+                }}</span>
             </div>
-            <div class="event-description" *ngIf="event.description">
-              <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
-              <span>{{ event.description }}</span>
+
+            <div class="event-content">
+              <h3 class="event-title">{{ event.title }}</h3>
+              <div class="event-details">
+                <div class="event-time" *ngIf="event.start_time">
+                  <ion-icon name="time-outline" class="detail-icon"></ion-icon>
+                  <span>{{ event.start_time }}</span>
+                </div>
+                <div class="event-description" *ngIf="event.description">
+                  <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
+                  <span>{{ event.description }}</span>
+                </div>
+                <div class="event-student" *ngIf="event.student_first_name && event.student_last_name">
+                  <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
+                  <span>{{ event.student_first_name }} {{ event.student_last_name }}</span>
+                </div>
+                <div class="event-student" *ngIf="event.location">
+                  <ion-icon name="location-outline" class="detail-icon"></ion-icon>
+                  <span>{{ event.location }}</span>
+                </div>
+              </div>
             </div>
-            <div class="event-student" *ngIf="event.student_first_name && event.student_last_name">
-              <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
-              <span>{{ event.student_first_name }} {{ event.student_last_name }}</span>
+
+            <div class="event-arrow">
+              <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
             </div>
-            <div class="event-student" *ngIf="event.location">
-              <ion-icon name="location-outline" class="detail-icon"></ion-icon>
-              <span>{{ event.location }}</span>
+          </div>
+
+        </div>
+        <ng-template #noEventsTemplate>
+          <div class="empty-state">
+            <ion-icon name="calendar-clear-outline" class="empty-icon"></ion-icon>
+            <h3 class="empty-title">No Events Today</h3>
+            <p class="empty-subtitle">Your calendar is clear for this day</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- <ng-template #noEventsTemplate>
+        <div class="empty-state">
+          <ion-icon name="calendar-clear-outline" class="empty-icon"></ion-icon>
+          <h3 class="empty-title">No Events Today</h3>
+          <p class="empty-subtitle">Your calendar is clear for this day</p>
+        </div>
+      </ng-template> -->
+
+    </ion-accordion>
+
+    <!-- Modern Consent Forms Card -->
+    <ion-accordion>
+      <!-- <div class="modern-card forms-card"> -->
+      <div slot="header" class="card-header">
+        <div class="header-icon-wrapper forms-theme">
+          <ion-icon name="document-text" class="header-icon"></ion-icon>
+        </div>
+        <div class="header-content">
+          <h2 class="card-title">Consent Forms</h2>
+          <p class="card-subtitle">{{ filteredForms.length }} form{{ filteredForms.length !== 1 ? 's' : '' }} pending
+          </p>
+        </div>
+      </div>
+      <div slot="content">
+        <div class="card-body" *ngIf="filteredForms.length > 0; else noFormsTemplate">
+          <div class="form-item" *ngFor="let form of filteredForms; let i = index" (click)="openConsentFormDetail(form)"
+            [style.animation-delay]="i * 100 + 'ms'">
+
+            <div class="form-priority-badge">
+              <span class="date-day">{{ form.deadline | date:'dd' }}</span>
+              <span class="date-month">{{ form.deadline | date:'MMM' }}</span>
+            </div>
+
+            <div class="form-content">
+              <h3 class="form-title">{{ form.title }}</h3>
+              <div class="form-details">
+                <div class="form-deadline" *ngIf="form.deadline">
+                  <ion-icon name="time-outline" class="detail-icon"></ion-icon>
+                  <span>Deadline: {{ form.deadline | date:'mediumDate' }}</span>
+                </div>
+                <div class="form-description" *ngIf="form.description">
+                  <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
+                  <span>{{ form.description }}</span>
+                </div>
+                <div class="form-student" *ngIf="form.student_first_name && form.student_last_name">
+                  <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
+                  <span>{{ form.student_first_name }} {{ form.student_last_name }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-arrow">
+              <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
             </div>
           </div>
         </div>
+        <ng-template #noFormsTemplate>
+          <div class="empty-state">
+            <ion-icon name="document-text-outline" class="empty-icon"></ion-icon>
+            <h3 class="empty-title">No Pending Forms</h3>
+            <p class="empty-subtitle">All consent forms are up to date</p>
+          </div>
+        </ng-template>
+      </div>
 
-        <div class="event-arrow">
-          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+      <!-- <ng-template #noFormsTemplate>
+        <div class="empty-state">
+          <ion-icon name="document-text-outline" class="empty-icon"></ion-icon>
+          <h3 class="empty-title">No Pending Forms</h3>
+          <p class="empty-subtitle">All consent forms are up to date</p>
+        </div>
+      </ng-template> -->
+      <!-- </div> -->
+    </ion-accordion>
+
+    <!-- Modern Announcements Card -->
+    <!-- Modern Announcements Card -->
+    <!-- Modern Announcements Card -->
+    <ion-accordion>
+      <!-- <div class="modern-card announcements-card"> -->
+      <div slot="header" class="card-header">
+        <div class="header-icon-wrapper announcements-theme">
+          <ion-icon name="megaphone" class="header-icon"></ion-icon>
+        </div>
+        <div class="header-content">
+          <h2 class="card-title">Announcements</h2>
+          <p class="card-subtitle">{{ filteredAnnouncements.length }} announcement{{ filteredAnnouncements.length !== 1
+            ?
+            's' : '' }}</p>
         </div>
       </div>
-    </div>
+      <div slot="content">
+        <div class="card-body" *ngIf="filteredAnnouncements.length > 0; else noAnnouncementsTemplate">
+          <div class="announcement-item" *ngFor="let announcement of filteredAnnouncements; let i = index"
+            (click)="openAnnouncementDetail(announcement)" [style.animation-delay]="i * 100 + 'ms'">
 
-    <ng-template #noEventsTemplate>
-      <div class="empty-state">
-        <ion-icon name="calendar-clear-outline" class="empty-icon"></ion-icon>
-        <h3 class="empty-title">No Events Today</h3>
-        <p class="empty-subtitle">Your calendar is clear for this day</p>
-      </div>
-    </ng-template>
-  </div>
-
-  <!-- Modern Consent Forms Card -->
-  <div class="modern-card forms-card">
-    <div class="card-header">
-      <div class="header-icon-wrapper forms-theme">
-        <ion-icon name="document-text" class="header-icon"></ion-icon>
-      </div>
-      <div class="header-content">
-        <h2 class="card-title">Consent Forms</h2>
-        <p class="card-subtitle">{{ filteredForms.length }} form{{ filteredForms.length !== 1 ? 's' : '' }} pending</p>
-      </div>
-    </div>
-
-    <div class="card-body" *ngIf="filteredForms.length > 0; else noFormsTemplate">
-      <div class="form-item" *ngFor="let form of filteredForms; let i = index" (click)="openConsentFormDetail(form)"
-        [style.animation-delay]="i * 100 + 'ms'">
-
-        <div class="form-priority-badge">
-          <span class="date-day">{{ form.deadline | date:'dd' }}</span>
-          <span class="date-month">{{ form.deadline | date:'MMM' }}</span>
-        </div>
-
-        <div class="form-content">
-          <h3 class="form-title">{{ form.title }}</h3>
-          <div class="form-details">
-            <div class="form-deadline" *ngIf="form.deadline">
-              <ion-icon name="time-outline" class="detail-icon"></ion-icon>
-              <span>Deadline: {{ form.deadline | date:'mediumDate' }}</span>
+            <div class="announcement-date-badge">
+              <span class="date-day">{{ announcement.created_at | date:'dd' }}</span>
+              <span class="date-month">{{ announcement.created_at | date:'MMM' }}</span>
             </div>
-            <div class="form-description" *ngIf="form.description">
-              <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
-              <span>{{ form.description }}</span>
+
+            <div class="announcement-content">
+              <h3 class="announcement-title">{{ announcement.title }}</h3>
+
+              <div class="announcement-details">
+                <div class="announcement-date" *ngIf="announcement.created_at">
+                  <ion-icon name="time-outline" class="detail-icon"></ion-icon>
+                  <span>Posted: {{ announcement.created_at | date:'mediumDate' }}</span>
+                </div>
+
+                <div class="announcement-description" *ngIf="announcement.content || announcement.message">
+                  <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
+                  <span>{{ announcement.content || announcement.message }}</span>
+                </div>
+
+                <!-- This will only show if you actually have student_* fields -->
+                <div class="announcement-student"
+                  *ngIf="announcement.student_first_name && announcement.student_last_name">
+                  <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
+                  <span>{{ announcement.student_first_name }} {{ announcement.student_last_name }}</span>
+                </div>
+              </div>
             </div>
-            <div class="form-student" *ngIf="form.student_first_name && form.student_last_name">
-              <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
-              <span>{{ form.student_first_name }} {{ form.student_last_name }}</span>
+
+            <div class="announcement-arrow">
+              <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
             </div>
           </div>
         </div>
-
-        <div class="form-arrow">
-          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
-        </div>
-      </div>
-    </div>
-
-    <ng-template #noFormsTemplate>
-      <div class="empty-state">
-        <ion-icon name="document-text-outline" class="empty-icon"></ion-icon>
-        <h3 class="empty-title">No Pending Forms</h3>
-        <p class="empty-subtitle">All consent forms are up to date</p>
-      </div>
-    </ng-template>
-  </div>
-
-  <!-- Modern Announcements Card -->
-  <!-- Modern Announcements Card -->
-  <!-- Modern Announcements Card -->
-  <div class="modern-card announcements-card">
-    <div class="card-header">
-      <div class="header-icon-wrapper announcements-theme">
-        <ion-icon name="megaphone" class="header-icon"></ion-icon>
-      </div>
-      <div class="header-content">
-        <h2 class="card-title">Announcements</h2>
-        <p class="card-subtitle">{{ filteredAnnouncements.length }} announcement{{ filteredAnnouncements.length !== 1 ?
-          's' : '' }}</p>
-      </div>
-    </div>
-
-    <div class="card-body" *ngIf="filteredAnnouncements.length > 0; else noAnnouncementsTemplate">
-      <div class="announcement-item" *ngFor="let announcement of filteredAnnouncements; let i = index"
-        (click)="openAnnouncementDetail(announcement)" [style.animation-delay]="i * 100 + 'ms'">
-
-        <div class="announcement-date-badge">
-          <span class="date-day">{{ announcement.created_at | date:'dd' }}</span>
-          <span class="date-month">{{ announcement.created_at | date:'MMM' }}</span>
-        </div>
-
-        <div class="announcement-content">
-          <h3 class="announcement-title">{{ announcement.title }}</h3>
-
-          <div class="announcement-details">
-            <div class="announcement-date" *ngIf="announcement.created_at">
-              <ion-icon name="time-outline" class="detail-icon"></ion-icon>
-              <span>Posted: {{ announcement.created_at | date:'mediumDate' }}</span>
-            </div>
-
-            <div class="announcement-description" *ngIf="announcement.content || announcement.message">
-              <ion-icon name="information-circle-outline" class="detail-icon"></ion-icon>
-              <span>{{ announcement.content || announcement.message }}</span>
-            </div>
-
-            <!-- This will only show if you actually have student_* fields -->
-            <div class="announcement-student" *ngIf="announcement.student_first_name && announcement.student_last_name">
-              <ion-icon name="person-circle-outline" class="detail-icon"></ion-icon>
-              <span>{{ announcement.student_first_name }} {{ announcement.student_last_name }}</span>
-            </div>
+        <ng-template #noAnnouncementsTemplate>
+          <div class="empty-state">
+            <ion-icon name="megaphone-outline" class="empty-icon"></ion-icon>
+            <h3 class="empty-title">No Announcements</h3>
+            <p class="empty-subtitle">No announcements for this day</p>
           </div>
-        </div>
-
-        <div class="announcement-arrow">
-          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
-        </div>
+        </ng-template>
       </div>
-    </div>
 
-    <ng-template #noAnnouncementsTemplate>
-      <div class="empty-state">
-        <ion-icon name="megaphone-outline" class="empty-icon"></ion-icon>
-        <h3 class="empty-title">No Announcements</h3>
-        <p class="empty-subtitle">No announcements for this day</p>
-      </div>
-    </ng-template>
-  </div>
+      <!-- <ng-template #noAnnouncementsTemplate>
+        <div class="empty-state">
+          <ion-icon name="megaphone-outline" class="empty-icon"></ion-icon>
+          <h3 class="empty-title">No Announcements</h3>
+          <p class="empty-subtitle">No announcements for this day</p>
+        </div>
+      </ng-template> -->
+      <!-- </div> -->
+    </ion-accordion>
+  </ion-accordion-group>
 
   <!-- Dynamic bottom spacing -->
   <div style="height: 60px;"></div>

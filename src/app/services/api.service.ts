@@ -72,7 +72,7 @@ export class ApiService {
   getDeviceNotificationState(parentId: number): Observable<any> {
     return this.http.get(
       `${this.apiUrl}/parent/${parentId}/device-notification-state`,
-      { headers: this.getHeaders() }  // ✅ Wrap in options object
+      { headers: this.getHeaders() }
     );
   }
 
